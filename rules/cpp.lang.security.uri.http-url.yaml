@@ -1,0 +1,308 @@
+id: cpp.lang.security.uri.http-url.http-url
+message: The application may be making an insecure HTTP request which may allow attackers
+  to intercept plaintext information. Instead, the URL should use HTTPS to ensure
+  that the request is encrypted.
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  functional-categories:
+  - net::sink::http-request
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  - A03:2017 - Sensitive Data Exposure
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/cpp.lang.security.uri.http-url.http-url
+  shortlink: https://sg.run/DbKKd
+  semgrep.dev:
+    rule:
+      r_id: 114896
+      rv_id: 731845
+      rule_id: oqUgddl
+      version_id: YDTAKq7
+      url: https://semgrep.dev/playground/r/YDTAKq7/cpp.lang.security.uri.http-url.http-url
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+pattern-sources:
+- label: HTTP
+  patterns:
+  - patterns:
+    - pattern: '"$URI"
+
+        '
+    - metavariable-regex:
+        metavariable: $URI
+        regex: ^http://
+- label: PRIVATE
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: '"$IPV4"
+
+          '
+      - metavariable-regex:
+          metavariable: $IPV4
+          regex: ^(http:|https:)?//(localhost|127\.0\.0\.1|10(?:\.[0-9]+){3}|172\.16(?:\.[0-9]+){2}|192\.168(?:\.[0-9]+){2})(\b.*)?$
+    - patterns:
+      - pattern: '"$IPV6"
+
+          '
+      - metavariable-regex:
+          metavariable: $IPV6
+          regex: ^(http:|https:)?//(\[?0:0:0:0:0:0:0:1\]?|\[?::1\]?)(\b.*)?$
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - pattern-either:
+    - pattern: memccpy($TO, $FROM, ...)
+    - pattern: memcpy($TO, $FROM, ...)
+    - pattern: memcpy_s($TO, $TO_SIZE, $FROM, ...)
+    - pattern: memmove($TO, $FROM, ...)
+    - pattern: memmove_s($TO, $TO_SIZE, $FROM, ...)
+    - pattern: snprintf($TO, $SIZE, $FORMAT, ..., $FROM, ...)
+    - pattern: sprintf($TO, $FORMAT, ..., $FROM, ...)
+    - pattern: stpcpy($TO, $FROM)
+    - pattern: stpncpy($TO, $FROM, ...)
+    - pattern: strcat($TO, $FROM)
+    - pattern: strcpy($TO, $FROM)
+    - pattern: strcpy_s($TO, $SIZE, $FROM)
+    - pattern: strlcat($TO, $FROM, ...)
+    - pattern: strlcpy($TO, $FROM, ...)
+    - pattern: strncat($TO, $FROM, ...)
+    - pattern: strncpy($TO, $FROM, ...)
+    - pattern: strncpy_s($TO, $TO_SIZE, $FROM, ...)
+    - pattern: strxfrm($TO, $FROM, ...)
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $TO.append(..., $FROM, ...)
+      - pattern: $TO.append_range($FROM)
+      - pattern: $TO.assign($FROM, ...)
+      - pattern: $TO.assign_range($FROM)
+      - pattern: $TO.insert(..., $FROM, ...)
+      - pattern: $TO.insert_range($POSITION, $FROM)
+      - pattern: $TO.replace(..., $FROM, ...)
+      - pattern: $TO.replace_with_range($FIRST, $LAST, $FROM)
+      - pattern: $FROM.copy($TO, ...)
+    - metavariable-type:
+        metavariable: $TO
+        types:
+        - basic_string<$TYPE>
+        - std::basic_string<$TYPE>
+        - string
+        - std::string
+        - wstring
+        - std::wstring
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: $TO.open($FROM, ...)
+      - metavariable-type:
+          metavariable: $TO
+          types:
+          - basic_ifstream<$TYPE>
+          - std::basic_ifstream<$TYPE>
+          - ifstream
+          - std::ifstream
+          - wifstream
+          - std::wifstream
+          - basic_ofstream<$TYPE>
+          - std::basic_ofstream<$TYPE>
+          - ofstream
+          - std::ofstream
+          - wofstream
+          - std::wofstream
+          - basic_fstream<$TYPE>
+          - std::basic_fstream<$TYPE>
+          - fstream
+          - std::fstream
+          - wfstream
+          - std::wfstream
+          - basic_filebuf<$TYPE>
+          - std::basic_filebuf<$TYPE>
+          - filebuf
+          - std::filebuf
+          - wfilebuf
+          - std::wfilebuf
+    - patterns:
+      - pattern-either:
+        - pattern: $FROM.get($TO, ...)
+        - pattern: $FROM.getline($TO, ...)
+        - pattern: $FROM.read($TO, ...)
+        - pattern: $FROM.readsome($TO, ...)
+      - metavariable-type:
+          metavariable: $FROM
+          types:
+          - basic_ifstream<$TYPE>
+          - std::basic_ifstream<$TYPE>
+          - ifstream
+          - std::ifstream
+          - wifstream
+          - std::wifstream
+          - basic_ofstream<$TYPE>
+          - std::basic_ofstream<$TYPE>
+          - ofstream
+          - std::ofstream
+          - wofstream
+          - std::wofstream
+          - basic_fstream<$TYPE>
+          - std::basic_fstream<$TYPE>
+          - fstream
+          - std::fstream
+          - wfstream
+          - std::wfstream
+          - basic_filebuf<$TYPE>
+          - std::basic_filebuf<$TYPE>
+          - filebuf
+          - std::filebuf
+          - wfilebuf
+          - std::wfilebuf
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $FROM >> $TO
+      - pattern: $FROM >> $_1 >> $TO
+      - pattern: $FROM >> $_1 >> $_2 >> $TO
+      - pattern: $FROM >> $_1 >> $_2 >> $_3 >> $TO
+      - pattern: $FROM >> $_1 >> $_2 >> $_3 >> $_4 >> $TO
+    - metavariable-type:
+        metavariable: $FROM
+        types:
+        - basic_ifstream<$TYPE>
+        - std::basic_ifstream<$TYPE>
+        - ifstream
+        - std::ifstream
+        - wifstream
+        - std::wifstream
+        - basic_ofstream<$TYPE>
+        - std::basic_ofstream<$TYPE>
+        - ofstream
+        - std::ofstream
+        - wofstream
+        - std::wofstream
+        - basic_fstream<$TYPE>
+        - std::basic_fstream<$TYPE>
+        - fstream
+        - std::fstream
+        - wfstream
+        - std::wfstream
+        - basic_filebuf<$TYPE>
+        - std::basic_filebuf<$TYPE>
+        - filebuf
+        - std::filebuf
+        - wfilebuf
+        - std::wfilebuf
+        - basic_istringstream<$TYPE>
+        - std::basic_istringstream<$TYPE>
+        - istringstream
+        - std::istringstream
+        - wistringstream
+        - std::wistringstream
+        - basic_ostringstream<$TYPE>
+        - std::basic_ostringstream<$TYPE>
+        - ostringstream
+        - std::ostringstream
+        - wostringstream
+        - std::wostringstream
+        - basic_stringstream<$TYPE>
+        - std::basic_stringstream<$TYPE>
+        - stringstream
+        - std::stringstream
+        - wstringstream
+        - std::wstringstream
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $TO << $FROM
+      - pattern: $TO << $_1 << $FROM
+      - pattern: $TO << $_1 << $_2 << $FROM
+      - pattern: $TO << $_1 << $_2 << $_3 << $FROM
+      - pattern: $TO << $_1 << $_2 << $_3 << $_4 << $FROM
+    - metavariable-type:
+        metavariable: $TO
+        types:
+        - basic_ifstream<$TYPE>
+        - std::basic_ifstream<$TYPE>
+        - ifstream
+        - std::ifstream
+        - wifstream
+        - std::wifstream
+        - basic_ofstream<$TYPE>
+        - std::basic_ofstream<$TYPE>
+        - ofstream
+        - std::ofstream
+        - wofstream
+        - std::wofstream
+        - basic_fstream<$TYPE>
+        - std::basic_fstream<$TYPE>
+        - fstream
+        - std::fstream
+        - wfstream
+        - std::wfstream
+        - basic_filebuf<$TYPE>
+        - std::basic_filebuf<$TYPE>
+        - filebuf
+        - std::filebuf
+        - wfilebuf
+        - std::wfilebuf
+        - basic_istringstream<$TYPE>
+        - std::basic_istringstream<$TYPE>
+        - istringstream
+        - std::istringstream
+        - wistringstream
+        - std::wistringstream
+        - basic_ostringstream<$TYPE>
+        - std::basic_ostringstream<$TYPE>
+        - ostringstream
+        - std::ostringstream
+        - wostringstream
+        - std::wostringstream
+        - basic_stringstream<$TYPE>
+        - std::basic_stringstream<$TYPE>
+        - stringstream
+        - std::stringstream
+        - wstringstream
+        - std::wstringstream
+  to: $TO
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: curl_easy_setopt(..., $STR, ...)
+    - pattern: X509_load_http($STR, ...)
+    - pattern: X509_CRL_load_http($STR, ...)
+    - pattern: system($STR)
+    - pattern: execl($PATH, ..., $STR, ...)
+    - pattern: execle($PATH, ..., $STR, ...)
+    - pattern: execlp($PATH, ..., $STR, ...)
+    - pattern: execv($PATH, ..., $STR, ...)
+    - pattern: execve($PATH, ..., $STR, ...)
+    - pattern: execvp($PATH, ..., $STR, ...)
+    - pattern: execvP($PATH, ..., $STR, ...)
+  - focus-metavariable: $STR
+  requires: HTTP and not PRIVATE

@@ -1,0 +1,114 @@
+id: java.servlets.security.xxe.tainted-xmlreader-xxe-servlet.tainted-xmlreader-xxe-servlet
+message: 'The application is using an XML parser that has not been safely configured.
+  This might lead to XML External Entity (XXE) vulnerabilities when parsing user-controlled
+  input. An attacker can include document type definitions (DTDs) which can interact
+  with internal or external hosts. XXE can lead to other vulnerabilities, such as
+  Local File Inclusion (LFI), Remote Code Execution (RCE), and Server-side request
+  forgery (SSRF), depending on the application configuration. An attacker can also
+  use DTDs to expand recursively, leading to a Denial-of-Service (DoS) attack, also
+  known as a Billion Laughs Attack. It is our recommendation to secure this parser
+  against XXE attacks by configuring the XMLReader parser with `parser.setFeature(http://apache.org/xml/features/disallow-doctype-decl,
+  true)`. Alternatively, the following configurations also provide protection against
+  XXE attacks. `parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,"")`, configuring
+  the both of `parser.setFeature("http://xml.org/sax/features/external-general-entities",
+  false)` and `parser.setFeature("http://xml.org/sax/features/external-parameter-entities",
+  false)`. For more information, see: [Java XXE prevention](https://semgrep.dev/docs/cheat-sheets/java-xxe/)'
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-611: Improper Restriction of XML External Entity Reference'
+  - 'CWE-776: Improper Restriction of Recursive Entity References in DTDs (''XML Entity
+    Expansion'')'
+  functional-categories:
+  - web::source::cookie::Servlet
+  - web::source::http-params::Servlet
+  - web::source::http-body::Servlet
+  - web::source::header::Servlet
+  - xml::sink::xml-parser::xml.sax
+  owasp:
+  - A04:2017 - XML External Entities (XXE)
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://semgrep.dev/blog/2022/xml-security-in-java
+  - https://semgrep.dev/docs/cheat-sheets/java-xxe/
+  - https://docs.oracle.com/en/java/javase/13/security/java-api-xml-processing-jaxp-security-guide.html#GUID-D97A1F1D-8DDF-4D19-A7E5-99099F27346E
+  - https://github.com/semgrep/java-xxe-research
+  - https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+  - https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-2755
+  - https://blog.sonarsource.com/secure-xml-processor/
+  - https://blog.sonarsource.com/understanding-xxe-vulnerabilities/
+  - https://cwe.mitre.org/data/definitions/776.html
+  - https://cwe.mitre.org/data/definitions/611.html
+  - https://cwe.mitre.org/data/definitions/827.html
+  technology:
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/java.servlets.security.xxe.tainted-xmlreader-xxe-servlet.tainted-xmlreader-xxe-servlet
+  shortlink: https://sg.run/xpgz
+  semgrep.dev:
+    rule:
+      r_id: 43774
+      rv_id: 115240
+      rule_id: QrULjo
+      version_id: YDTpEgR
+      url: https://semgrep.dev/playground/r/YDTpEgR/java.servlets.security.xxe.tainted-xmlreader-xxe-servlet.tainted-xmlreader-xxe-servlet
+      origin: pro_rules
+languages:
+- java
+mode: taint
+pattern-sources:
+- label: USER_INPUT
+  patterns:
+  - pattern-either:
+    - pattern: '(HttpServletRequest $REQ).$REQFUNC(...)
+
+        '
+    - pattern: "(ServletRequest $REQ).$REQFUNC(...) \n"
+  - metavariable-regex:
+      metavariable: $REQFUNC
+      regex: ^(getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)$
+- label: XMLREADER
+  patterns:
+  - pattern: (XMLReader $PARSER)
+- label: DTD
+  by-side-effect: true
+  patterns:
+  - pattern-not-inside: "if (...) {\n  ...\n} else {\n  ...\n}\n"
+  - pattern-either:
+    - pattern: $PARSER.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+    - pattern: $PARSER.setProperty("=~/.*accessExternalDTD.*/", "");
+  - focus-metavariable: $PARSER
+- label: DISALLOW_DOCTYPE
+  by-side-effect: true
+  patterns:
+  - pattern-not-inside: "if (...) {\n  ...\n} else {\n  ...\n}\n"
+  - pattern: $PARSER.setFeature("http://apache.org/xml/features/disallow-doctype-decl",
+      true);
+  - focus-metavariable: $PARSER
+- label: GEN_ENT_DISABLED
+  by-side-effect: true
+  patterns:
+  - pattern-not-inside: "if (...) {\n  ...\n} else {\n  ...\n}\n"
+  - pattern: $PARSER.setFeature("http://xml.org/sax/features/external-general-entities",
+      false);
+  - focus-metavariable: $PARSER
+- label: PARAM_ENT_DISABLED
+  by-side-effect: true
+  patterns:
+  - pattern-not-inside: "if (...) {\n  ...\n} else {\n  ...\n}\n"
+  - pattern: $PARSER.setFeature("http://xml.org/sax/features/external-parameter-entities",
+      false);
+  - focus-metavariable: $PARSER
+pattern-sinks:
+- requires: (USER_INPUT and XMLREADER) and not (DTD or DISALLOW_DOCTYPE or (GEN_ENT_DISABLED
+    and PARAM_ENT_DISABLED))
+  patterns:
+  - pattern: (XMLReader $PARSER).parse(...)

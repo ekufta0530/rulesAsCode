@@ -1,0 +1,49 @@
+id: java.micronaut.audit.cookies.httponly-false.httponly-false
+message: Detected a cookie where the `HttpOnly` flag is either missing or disabled.
+  The `HttpOnly` cookie flag instructs the browser to forbid client-side JavaScript
+  to read the cookie. If JavaScript interaction is required, you can ignore this finding.
+  However, set the `HttpOnly` flag to `true` in all other cases.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+  functional-categories:
+  - web::search::cookie-config::Micronaut
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  technology:
+  - cookies
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/java.micronaut.audit.cookies.httponly-false.httponly-false
+  shortlink: https://sg.run/gx8Ox
+  semgrep.dev:
+    rule:
+      r_id: 115941
+      rv_id: 524266
+      rule_id: BYUXbwX
+      version_id: d6Tllgl
+      url: https://semgrep.dev/playground/r/d6Tllgl/java.micronaut.audit.cookies.httponly-false.httponly-false
+      origin: pro_rules
+languages:
+- java
+fix: 'true'
+options:
+  symbolic_propagation: true
+patterns:
+- focus-metavariable: $FALSE
+- pattern: $X. ... .httpOnly(false)
+- pattern-either:
+  - pattern: io.micronaut.http.cookie.Cookie.of(...). ... .httpOnly($FALSE)
+  - pattern: (io.micronaut.http.cookie.Cookie $C). ... .httpOnly($FALSE)
+  - pattern: (io.micronaut.http.netty.cookies.NettyCookie $C). ... .httpOnly($FALSE)
+  - pattern: (io.micronaut.http.simple.cookies.SimpleCookie $C). ... .httpOnly($FALSE)

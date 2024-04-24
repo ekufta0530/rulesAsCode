@@ -1,0 +1,239 @@
+id: typescript.nextjs.react-nextjs-router-refs.react-nextjs-router-refs
+message: Untrusted input could be used to tamper with a web page rendering, which
+  can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+  when untrusted input executes malicious JavaScript code, leading to issues such
+  as account compromise and sensitive information leakage. Validate the user input,
+  perform contextual output encoding, or sanitize the input. If you have to use dangerouslySetInnerHTML,
+  consider using a sanitization library such as DOMPurify to sanitize the HTML within.
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: HIGH
+  interfile: true
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::source::http-params::nextjs
+  - web::source::url-path-params::nextjs
+  - web::sink::html-webpage::react
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+  technology:
+  - react
+  - browser
+  - nextjs
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/typescript.nextjs.react-nextjs-router-refs.react-nextjs-router-refs
+  shortlink: https://sg.run/qLkz
+  semgrep.dev:
+    rule:
+      r_id: 27212
+      rv_id: 112051
+      rule_id: 4bUE7Y
+      version_id: 44TR6OL
+      url: https://semgrep.dev/playground/r/44TR6OL/typescript.nextjs.react-nextjs-router-refs.react-nextjs-router-refs
+      origin: pro_rules
+languages:
+- typescript
+- javascript
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import { ...,$IMPORT,... } from ''next/router''
+
+        ...
+
+        '
+    - pattern-inside: 'import $IMPORT from ''next/router'';
+
+        ...
+
+        '
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$ROUTER = $IMPORT()
+
+          ...
+
+          '
+      - pattern-either:
+        - pattern-inside: 'var { ...,$PROPS,... } = $ROUTER.query
+
+            ...
+
+            '
+        - pattern-inside: 'const { ...,$PROPS,... } = $ROUTER.query
+
+            ...
+
+            '
+        - pattern-inside: 'let { ...,$PROPS,... } = $ROUTER.query
+
+            ...
+
+            '
+      - focus-metavariable: $PROPS
+    - patterns:
+      - pattern-inside: '$ROUTER = $IMPORT()
+
+          ...
+
+          '
+      - pattern: "$ROUTER.query.$VALUE \n"
+    - patterns:
+      - pattern: $IMPORT().query.$VALUE
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$BODY = useRef(...)
+
+        ...
+
+        '
+    - pattern-inside: '$BODY = React.useRef(...)
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern: "$BODY. ... .innerHTML = $SINK \n"
+    - pattern: "$BODY.innerHTML = $SINK \n"
+    - pattern: "$BODY. ... .outerHTML = $SINK \n"
+    - pattern: "$BODY.outerHTML = $SINK \n"
+  - focus-metavariable: $SINK
+pattern-sanitizers:
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from "underscore.string"
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "underscore.string"
+
+        ...
+
+        '
+    - pattern-inside: 'import $S from "underscore.string"
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("underscore.string")
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern: $S.escapeHTML(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from "dompurify"
+
+        ...
+
+        '
+    - pattern-inside: 'import { ..., $S,... } from "dompurify"
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "dompurify"
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("dompurify")
+
+        ...
+
+        '
+    - pattern-inside: 'import $S from "isomorphic-dompurify"
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "isomorphic-dompurify"
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("isomorphic-dompurify")
+
+        ...
+
+        '
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$VALUE = $S(...)
+
+          ...
+
+          '
+      - pattern: $VALUE.sanitize(...)
+    - patterns:
+      - pattern-inside: '$VALUE = $S.sanitize
+
+          ...
+
+          '
+      - pattern: $S(...)
+    - pattern: $S.sanitize(...)
+    - pattern: $S(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from ''xss'';
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from ''xss'';
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("xss")
+
+        ...
+
+        '
+  - pattern: $S(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from ''sanitize-html'';
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "sanitize-html";
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("sanitize-html")
+
+        ...
+
+        '
+  - pattern: $S(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$S = new Remarkable()
+
+        ...
+
+        '
+  - pattern: $S.render(...)

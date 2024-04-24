@@ -1,0 +1,65 @@
+id: go.lang.security.audit.net.fs-directory-listing.fs-directory-listing
+message: 'Detected usage of ''http.FileServer'' as handler: this allows directory
+  listing and an attacker could navigate through directories looking for sensitive
+  files. Be sure to disable directory listing or restrict access to specific directories/files.'
+severity: WARNING
+languages:
+- go
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-inside: '$FS := http.FileServer(...)
+
+        ...
+
+        '
+    - pattern-either:
+      - pattern: 'http.ListenAndServe(..., $FS)
+
+          '
+      - pattern: 'http.ListenAndServeTLS(..., $FS)
+
+          '
+      - pattern: 'http.Handle(..., $FS)
+
+          '
+      - pattern: 'http.HandleFunc(..., $FS)
+
+          '
+  - patterns:
+    - pattern: 'http.$FN(..., http.FileServer(...))
+
+        '
+    - metavariable-regex:
+        metavariable: $FN
+        regex: (ListenAndServe|ListenAndServeTLS|Handle|HandleFunc)
+metadata:
+  category: security
+  cwe:
+  - 'CWE-548: Exposure of Information Through Directory Listing'
+  owasp:
+  - A06:2017 - Security Misconfiguration
+  - A01:2021 - Broken Access Control
+  references:
+  - https://github.com/OWASP/Go-SCP
+  - https://cwe.mitre.org/data/definitions/548.html
+  confidence: MEDIUM
+  technology:
+  - go
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/go.lang.security.audit.net.fs-directory-listing.fs-directory-listing
+  shortlink: https://sg.run/4R8x
+  semgrep.dev:
+    rule:
+      r_id: 21300
+      rv_id: 109618
+      rule_id: 5rU9JO
+      version_id: ZRTQN9K
+      url: https://semgrep.dev/playground/r/ZRTQN9K/go.lang.security.audit.net.fs-directory-listing.fs-directory-listing
+      origin: community

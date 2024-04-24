@@ -1,0 +1,37 @@
+id: solidity.performance.unnecessary-checked-arithmetic-in-loop.unnecessary-checked-arithmetic-in-loop
+message: A lot of times there is no risk that the loop counter can overflow.  Using
+  Solidity's unchecked block saves the overflow checks.
+metadata:
+  references:
+  - https://github.com/byterocket/c4-common-issues/blob/main/0-Gas-Optimizations.md/#g011---unnecessary-checked-arithmetic-in-for-loop
+  category: performance
+  technology:
+  - solidity
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/solidity.performance.unnecessary-checked-arithmetic-in-loop.unnecessary-checked-arithmetic-in-loop
+  shortlink: https://sg.run/OvDk
+  semgrep.dev:
+    rule:
+      r_id: 67631
+      rv_id: 110658
+      rule_id: 2ZUx1Q
+      version_id: jQTgyRZ
+      url: https://semgrep.dev/playground/r/jQTgyRZ/solidity.performance.unnecessary-checked-arithmetic-in-loop.unnecessary-checked-arithmetic-in-loop
+      origin: community
+patterns:
+- pattern-either:
+  - pattern-inside: "for ($TYPE $VAR = ... ; ...; ...) {\n  ...\n}\n"
+  - pattern-inside: "for ($TYPE $VAR = ...; ...) {\n  ...\n}\n"
+  - pattern-inside: "for ($TYPE $VAR; ...; ...) {\n  ...\n}\n"
+  - pattern-inside: "for ($TYPE $VAR; ...) {\n  ...\n}\n"
+- pattern-either:
+  - pattern: '$VAR++
+
+      '
+  - pattern: '++$VAR
+
+      '
+- pattern-not-inside: "unchecked {\n  ...\n  <... $VAR ...>;\n  ...\n}\n"
+languages:
+- solidity
+severity: INFO

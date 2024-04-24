@@ -1,0 +1,40 @@
+id: terraform.gcp.security.gcp-spanner-database-encrypted-with-cmk.gcp-spanner-database-encrypted-with-cmk
+patterns:
+- pattern: "resource \"google_spanner_database\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"google_spanner_database\" $ANYTHING {\n  ...\n \
+    \ encryption_config {\n    ...\n    kms_key_name = ...\n    ...\n  }\n  ...\n\
+    }\n"
+message: Ensure Spanner Database is encrypted with Customer Supplied Encryption Keys
+  (CSEK)
+metadata:
+  category: security
+  technology:
+  - terraform
+  - gcp
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-spanner-database-encrypted-with-cmk.gcp-spanner-database-encrypted-with-cmk
+  shortlink: https://sg.run/D6lo
+  semgrep.dev:
+    rule:
+      r_id: 33708
+      rv_id: 111036
+      rule_id: eqUbq8
+      version_id: LjTqAGd
+      url: https://semgrep.dev/playground/r/LjTqAGd/terraform.gcp.security.gcp-spanner-database-encrypted-with-cmk.gcp-spanner-database-encrypted-with-cmk
+      origin: community
+languages:
+- hcl
+severity: WARNING

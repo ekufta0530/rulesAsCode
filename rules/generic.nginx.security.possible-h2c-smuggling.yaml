@@ -1,0 +1,81 @@
+id: generic.nginx.security.possible-h2c-smuggling.possible-nginx-h2c-smuggling
+patterns:
+- pattern-either:
+  - pattern: 'proxy_http_version 1.1 ...;
+
+      ...
+
+      proxy_set_header Upgrade ...;
+
+      ...
+
+      proxy_set_header Connection ...;
+
+      '
+  - pattern: 'proxy_set_header Upgrade ...;
+
+      ...
+
+      proxy_set_header Connection ...;
+
+      ...
+
+      proxy_http_version 1.1 ...;
+
+      '
+  - pattern: 'proxy_set_header Upgrade ...;
+
+      ...
+
+      proxy_http_version 1.1 ...;
+
+      ...
+
+      proxy_set_header Connection ...;
+
+      '
+- pattern-inside: "location ... {\n  ...\n}\n"
+languages:
+- generic
+severity: WARNING
+message: 'Conditions for Nginx H2C smuggling identified. H2C smuggling allows upgrading
+  HTTP/1.1 connections to lesser-known HTTP/2 over cleartext (h2c) connections which
+  can allow a bypass of reverse proxy access controls, and lead to long-lived, unrestricted
+  HTTP traffic directly to back-end servers. To mitigate: WebSocket support required:
+  Allow only the value websocket for HTTP/1.1 upgrade headers (e.g., Upgrade: websocket).
+  WebSocket support not required: Do not forward Upgrade headers.'
+paths:
+  include:
+  - '*.conf'
+  - '*.vhost'
+  - sites-available/*
+  - sites-enabled/*
+metadata:
+  cwe:
+  - 'CWE-444: Inconsistent Interpretation of HTTP Requests (''HTTP Request/Response
+    Smuggling'')'
+  references:
+  - https://labs.bishopfox.com/tech-blog/h2c-smuggling-request-smuggling-via-http/2-cleartext-h2c
+  category: security
+  technology:
+  - nginx
+  confidence: MEDIUM
+  owasp:
+  - A04:2021 - Insecure Design
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/generic.nginx.security.possible-h2c-smuggling.possible-nginx-h2c-smuggling
+  shortlink: https://sg.run/ploZ
+  semgrep.dev:
+    rule:
+      r_id: 10562
+      rv_id: 109352
+      rule_id: 6JUq0Z
+      version_id: kbTdxrx
+      url: https://semgrep.dev/playground/r/kbTdxrx/generic.nginx.security.possible-h2c-smuggling.possible-nginx-h2c-smuggling
+      origin: community

@@ -1,0 +1,37 @@
+id: apex.lang.best-practice.ncino.accessmodifiers.globalaccessmodifiers.global-access-modifiers
+min-version: 1.44.0
+severity: WARNING
+languages:
+- apex
+metadata:
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: best-practice
+  technology:
+  - salesforce
+  references:
+  - https://cwe.mitre.org/data/definitions/284.html
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/apex.lang.best-practice.ncino.accessmodifiers.globalaccessmodifiers.global-access-modifiers
+  shortlink: https://sg.run/G5vB
+  semgrep.dev:
+    rule:
+      r_id: 72404
+      rv_id: 108976
+      rule_id: PeUy2w
+      version_id: qkT2xx3
+      url: https://semgrep.dev/playground/r/qkT2xx3/apex.lang.best-practice.ncino.accessmodifiers.globalaccessmodifiers.global-access-modifiers
+      origin: community
+message: Global classes, methods, and variables should be avoided (especially in managed
+  packages) as they can never be deleted or changed in signature. Always check twice
+  if something needs to be global.
+patterns:
+- pattern-regex: global [A-Za-z0-9_]{3,}
+- pattern-not-regex: //(\s+([a-zA-Z]+\s+)+)[a-zA-Z]+
+- pattern-not-regex: '[*](\s+([a-zA-Z]+\s+)+)[a-zA-Z]+'
+paths:
+  exclude:
+  - '*Test*'
+  - '*test*'

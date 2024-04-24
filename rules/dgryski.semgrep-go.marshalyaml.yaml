@@ -1,0 +1,24 @@
+id: dgryski.semgrep-go.marshalyaml.unmarshal-yaml-misspell
+pattern-either:
+- patterns:
+  - pattern-regex: (?i)func \((.+)\) unmarshal[l]?yaml\((.*)\)
+  - pattern-not-regex: func \(.+\) UnmarshalYAML\(
+fix: func ($1) UnmarshalYAML($2)
+message: 'Misspelling of UnmarshalYAML.
+
+  '
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.marshalyaml.unmarshal-yaml-misspell
+  shortlink: https://sg.run/xPgg
+  semgrep.dev:
+    rule:
+      r_id: 20530
+      rv_id: 33809
+      rule_id: kxUOyy
+      version_id: vdTo3o
+      url: https://semgrep.dev/playground/r/vdTo3o/dgryski.semgrep-go.marshalyaml.unmarshal-yaml-misspell
+      origin: community

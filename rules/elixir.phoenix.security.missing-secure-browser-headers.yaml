@@ -1,0 +1,46 @@
+id: elixir.phoenix.security.missing-secure-browser-headers.missing-secure-browser-headers
+message: The app is missing secure HTTP headers that attempt to mitigate XSS, click-jacking,
+  and content-sniffing attacks. Missing Secure HTTP Headers is flagged by this rule
+  when a pipeline accepts "html" requests, but does not implement the `:put_secure_browser_headers`
+  plug.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-693: Protection Mechanism Failure'
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+  technology:
+  - phoenix
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/elixir.phoenix.security.missing-secure-browser-headers.missing-secure-browser-headers
+  shortlink: https://sg.run/bwz4r
+  semgrep.dev:
+    rule:
+      r_id: 114626
+      rv_id: 257016
+      rule_id: ReUDpKo
+      version_id: xyTAL7Z
+      url: https://semgrep.dev/playground/r/xyTAL7Z/elixir.phoenix.security.missing-secure-browser-headers.missing-secure-browser-headers
+      origin: pro_rules
+languages:
+- elixir
+min-version: 1.55.2
+patterns:
+- pattern-inside:
+    pattern-either:
+    - pattern: "defmodule $ROUTER do\n  ...\n  use ..., Phoenix.Router, ...\n  ...\n\
+        end\n"
+    - pattern: "defmodule $ROUTER do\n  ...\n  use ..., :router, ...\n  ...\nend\n"
+- pattern: "pipeline $BROWSER do\n  ...\n  plug :accepts, [\"html\"]\n  ...\nend\n"
+- pattern-not: "pipeline $BROWSER do\n  ...\n  plug :put_secure_browser_headers\n\
+    \  ...\nend\n"

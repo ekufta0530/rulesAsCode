@@ -1,0 +1,45 @@
+id: problem-based-packs.insecure-transport.js-node.bypass-tls-verification.bypass-tls-verification
+message: Checks for setting the environment variable NODE_TLS_REJECT_UNAUTHORIZED
+  to 0, which disables TLS verification. This should only be used for debugging purposes.
+  Setting the option rejectUnauthorized to false bypasses verification against the
+  list of trusted CAs, which also leads to insecure transport. These options lead
+  to vulnerability to MTM attacks, and should not be used.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+  owasp: A03:2017 - Sensitive Data Exposure
+  references:
+  - https://nodejs.org/api/https.html#https_https_request_options_callback
+  - https://stackoverflow.com/questions/20433287/node-js-request-cert-has-expired#answer-29397100
+  subcategory:
+  - vuln
+  technology:
+  - node.js
+  vulnerability: Insecure Transport
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/problem-based-packs.insecure-transport.js-node.bypass-tls-verification.bypass-tls-verification
+  shortlink: https://sg.run/9oxr
+  semgrep.dev:
+    rule:
+      r_id: 9423
+      rv_id: 110111
+      rule_id: OrU3Y6
+      version_id: 9lTdWB8
+      url: https://semgrep.dev/playground/r/9lTdWB8/problem-based-packs.insecure-transport.js-node.bypass-tls-verification.bypass-tls-verification
+      origin: community
+languages:
+- javascript
+- typescript
+pattern-either:
+- pattern: 'process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
+    '
+- pattern: '{rejectUnauthorized:false}
+
+    '

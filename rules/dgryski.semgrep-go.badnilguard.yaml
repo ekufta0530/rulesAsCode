@@ -1,0 +1,27 @@
+id: dgryski.semgrep-go.badnilguard.bad-nil-guard
+patterns:
+- pattern-either:
+  - pattern: $X == nil && <... $X.$F ...>
+  - pattern: $X != nil || <... $X.$F ...>
+  - pattern: $X == nil && <... len($X) > 0 ...>
+  - pattern: <... $X.$F ...> && $X != nil
+  - pattern: <... $X.$F ...> || $X == nil
+  - pattern: <... $X.$F ...> && $X == nil
+  - pattern: <... $X.$F ...> || $X != nil
+  - pattern: <... len($X) > 0 ...> && $X == nil
+message: Bad nil guard
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.badnilguard.bad-nil-guard
+  shortlink: https://sg.run/3xdg
+  semgrep.dev:
+    rule:
+      r_id: 8687
+      rv_id: 740171
+      rule_id: JDUy2e
+      version_id: PkT04RW
+      url: https://semgrep.dev/playground/r/PkT04RW/dgryski.semgrep-go.badnilguard.bad-nil-guard
+      origin: community

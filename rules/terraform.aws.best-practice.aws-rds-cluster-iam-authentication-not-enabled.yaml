@@ -1,0 +1,26 @@
+id: terraform.aws.best-practice.aws-rds-cluster-iam-authentication-not-enabled.aws-rds-cluster-iam-authentication-not-enabled
+patterns:
+- pattern: "resource \"aws_rds_cluster\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_rds_cluster\" $ANYTHING {\n  ...\n  iam_database_authentication_enabled\
+    \ = true\n  ...\n}\n"
+message: The AWS RDS Cluster is not configured to use IAM authentication. Consider
+  using IAM for authentication.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - aws
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.aws.best-practice.aws-rds-cluster-iam-authentication-not-enabled.aws-rds-cluster-iam-authentication-not-enabled
+  shortlink: https://sg.run/eX3b
+  semgrep.dev:
+    rule:
+      r_id: 17332
+      rv_id: 110706
+      rule_id: pKUzrB
+      version_id: qkT2BW5
+      url: https://semgrep.dev/playground/r/qkT2BW5/terraform.aws.best-practice.aws-rds-cluster-iam-authentication-not-enabled.aws-rds-cluster-iam-authentication-not-enabled
+      origin: community

@@ -1,0 +1,19 @@
+id: dgryski.semgrep-go.oserrors.os-error-is-timeout
+patterns:
+- pattern: os.IsTimeout(...)
+message: New code should use errors.Is with the appropriate error type
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.oserrors.os-error-is-timeout
+  shortlink: https://sg.run/DxRY
+  semgrep.dev:
+    rule:
+      r_id: 28396
+      rv_id: 34471
+      rule_id: oqUbvL
+      version_id: e1TbKG
+      url: https://semgrep.dev/playground/r/e1TbKG/dgryski.semgrep-go.oserrors.os-error-is-timeout
+      origin: community

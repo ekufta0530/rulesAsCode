@@ -1,0 +1,58 @@
+id: apex.lang.security.ncino.dml.apexcsrfstaticconstructor.apex-csrf-static-constructor
+min-version: 1.44.0
+severity: ERROR
+languages:
+- generic
+metadata:
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  owasp:
+  - A01:2021 - Broken Access Control
+  cwe2020-top25': true
+  cwe2021-top25': true
+  cwe2022-top25': true
+  impact: HIGH
+  likelihood: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  technology:
+  - salesforce
+  references:
+  - https://cwe.mitre.org/data/definitions/352.html
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/apex.lang.security.ncino.dml.apexcsrfstaticconstructor.apex-csrf-static-constructor
+  shortlink: https://sg.run/qDW1
+  semgrep.dev:
+    rule:
+      r_id: 72412
+      rv_id: 108984
+      rule_id: WAUwG0
+      version_id: BjTXrr9
+      url: https://semgrep.dev/playground/r/BjTXrr9/apex.lang.security.ncino.dml.apexcsrfstaticconstructor.apex-csrf-static-constructor
+      origin: community
+message: 'Having DML operations in Apex class constructor or initializers can have
+  unexpected side effects: By just accessing a page, the DML statements would be executed
+  and the database would be modified. Just querying the database is permitted.'
+patterns:
+- pattern-inside: static {...}
+- pattern-either:
+  - pattern: 'insert $DATA;
+
+      '
+  - pattern: 'update $DATA;
+
+      '
+  - pattern: 'upsert $DATA;
+
+      '
+  - pattern: 'delete $DATA;
+
+      '
+paths:
+  exclude:
+  - '*Test*'
+  - '*test*'

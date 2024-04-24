@@ -1,0 +1,34 @@
+id: ajinabraham.njsscan.good.good_helmet_checks.helmet_header_xss_filter
+message: 'X-XSS-Protection header is present. More information: https://helmetjs.github.io/docs/xss-filter/'
+languages:
+- javascript
+severity: INFO
+patterns:
+- pattern-not: '$HELMET(..., {xssFilter: false}, ...)
+
+    '
+- pattern-either:
+  - pattern: '$APP.use(helmet())
+
+      '
+  - pattern: 'helmet.xssFilter(...)
+
+      '
+  - pattern: 'xssFilter(...)
+
+      '
+  - pattern: 'helmet({xssFilter: ...})
+
+      '
+metadata:
+  license: LGPL-3.0-or-later
+  source: https://semgrep.dev/r/ajinabraham.njsscan.good.good_helmet_checks.helmet_header_xss_filter
+  shortlink: https://sg.run/23QD
+  semgrep.dev:
+    rule:
+      r_id: 43663
+      rv_id: 52395
+      rule_id: eqUwPe
+      version_id: ZRT96d
+      url: https://semgrep.dev/playground/r/ZRT96d/ajinabraham.njsscan.good.good_helmet_checks.helmet_header_xss_filter
+      origin: community

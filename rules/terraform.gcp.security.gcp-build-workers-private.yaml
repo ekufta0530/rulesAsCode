@@ -1,0 +1,46 @@
+id: terraform.gcp.security.gcp-build-workers-private.gcp-build-workers-private
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "google_cloudbuild_worker_pool" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"google_cloudbuild_worker_pool\" \"...\" {\n...\n\
+    worker_config {\n  ...\n  no_external_ip = true\n  ...\n}\n...\n}\n"
+message: "Ensure Cloud build workers are private\t"
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-build-workers-private.gcp-build-workers-private
+  shortlink: https://sg.run/Jzyj
+  semgrep.dev:
+    rule:
+      r_id: 32302
+      rv_id: 110970
+      rule_id: 8GU3Rx
+      version_id: xyTKpjv
+      url: https://semgrep.dev/playground/r/xyTKpjv/terraform.gcp.security.gcp-build-workers-private.gcp-build-workers-private
+      origin: community
+languages:
+- hcl
+severity: WARNING

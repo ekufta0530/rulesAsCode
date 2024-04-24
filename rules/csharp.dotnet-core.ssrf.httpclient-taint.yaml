@@ -1,0 +1,232 @@
+id: csharp.dotnet-core.ssrf.httpclient-taint.httpclient-taint
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::sink::http-request
+  - web::source::header::ASP.NET
+  - web::source::http-body::ASP.NET
+  - web::source::http-params::ASP.NET
+  - web::source::url-path-params::ASP.NET
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - .NET
+  - api
+  - csharp
+  - dotnet
+  - http
+  - httpclient
+  - mvc
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/csharp.dotnet-core.ssrf.httpclient-taint.httpclient-taint
+  shortlink: https://sg.run/BZqW
+  semgrep.dev:
+    rule:
+      r_id: 72351
+      rv_id: 229198
+      rule_id: nJURQ9
+      version_id: O9TkwEk
+      url: https://semgrep.dev/playground/r/O9TkwEk/csharp.dotnet-core.ssrf.httpclient-taint.httpclient-taint
+      origin: pro_rules
+languages:
+- csharp
+mode: taint
+options:
+  interfile: true
+pattern-sources:
+- label: REQ
+  pattern-either:
+  - patterns:
+    - pattern-inside: 'using Microsoft.AspNetCore.Mvc;
+
+        ...
+
+        '
+    - pattern: "public $TYPE $NAME(..., $X $VAR,...) {\n  ...\n}\n"
+    - pattern-not: "[NonAction]\npublic $TYPE $NAME(..., $X $VAR,...) {\n  ...\n}\n"
+    - pattern-not: "public $TYPE $NAME(..., [FromServices] $X $VAR, ...){\n  ...\n\
+        }\n"
+    - focus-metavariable: $VAR
+    - metavariable-pattern:
+        metavariable: $X
+        patterns:
+        - pattern-not-regex: (int|long|float|double|bool|Guid)
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'class $CN : Controller {...}
+
+              '
+          - pattern-inside: 'class $CN : ControllerBase {...}
+
+              '
+        - pattern-not-inside: '[NonController]
+
+            class $CN : $T {...}
+
+            '
+      - patterns:
+        - pattern-inside: class $CN {...}
+        - pattern-not-inside: '[NonController]
+
+            class $CN {...}
+
+            '
+        - metavariable-regex:
+            metavariable: $CN
+            regex: .*Controller
+      - pattern-inside: '[Controller]
+
+          class $CN {...}
+
+          '
+      - pattern-inside: '[ApiController]
+
+          class $CN {...}
+
+          '
+  - patterns:
+    - pattern-inside: 'using Microsoft.AspNetCore.Mvc;
+
+        ...
+
+        '
+    - focus-metavariable: $VAR
+    - pattern-either:
+      - pattern-inside: $TYPE $NAME(..., [FromBody] $T $VAR, ...) { ... }
+      - pattern-inside: $TYPE $NAME(..., [FromForm] $T $VAR, ...) { ... }
+      - pattern-inside: $TYPE $NAME(..., [FromHeader] $T $VAR, ...) { ... }
+      - pattern-inside: $TYPE $NAME(..., [FromQuery] $T $VAR, ...) { ... }
+      - pattern-inside: $TYPE $NAME(..., [FromRoute] $T $VAR, ...) { ... }
+      - pattern-inside: (..., [FromBody] $T $VAR, ...) => { ... }
+      - pattern-inside: (..., [FromForm] $T $VAR, ...) => { ... }
+      - pattern-inside: (..., [FromHeader] $T $VAR, ...) => { ... }
+      - pattern-inside: (..., [FromQuery] $T $VAR, ...) => { ... }
+      - pattern-inside: (..., [FromRoute] $T $VAR, ...) => { ... }
+  - patterns:
+    - pattern-either:
+      - pattern: HttpContext.Request.Query
+      - pattern: HttpContext.Request.QueryString
+      - pattern: HttpContext.Request.Headers
+      - pattern: HttpContext.Request.RouteValues
+      - pattern: HttpContext.Request.Body
+      - pattern: HttpContext.Request.BodyReader
+      - pattern: HttpContext.Request.Form
+      - pattern: $X.HttpContext.Request.Query
+      - pattern: $X.HttpContext.Request.QueryString
+      - pattern: $X.HttpContext.Request.Headers
+      - pattern: $X.HttpContext.Request.RouteValues
+      - pattern: $X.HttpContext.Request.Body
+      - pattern: $X.HttpContext.Request.BodyReader
+      - pattern: $X.HttpContext.Request.Form
+      - pattern: (HttpContext $C).Request.Query
+      - pattern: (HttpContext $C).Request.QueryString
+      - pattern: (HttpContext $C).Request.Headers
+      - pattern: (HttpContext $C).Request.RouteValues
+      - pattern: (HttpContext $C).Request.Body
+      - pattern: (HttpContext $C).Request.BodyReader
+      - pattern: (HttpContext $C).Request.Form
+      - pattern: (HttpRequest $R).Query
+      - pattern: (HttpRequest $R).QueryString
+      - pattern: (HttpRequest $R).Headers
+      - pattern: (HttpRequest $R).RouteValues
+      - pattern: (HttpRequest $R).Body
+      - pattern: (HttpRequest $R).BodyReader
+      - pattern: (HttpRequest $R).Form
+- label: NOT_HTTP
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: $F + $X
+    - pattern: $"...{$X}..."
+    - pattern: String.Format(..., $X, ...)
+    - pattern: string.Format(..., $X, ...)
+  - pattern-not: $X + $F
+  - pattern-not: '"http://" + $X
+
+      '
+  - pattern-not: '"https://" + $X
+
+      '
+  - pattern-not: '"//" + $X
+
+      '
+  - pattern-not: $"{$X}..."
+  - pattern-not: $"http://{$X}..."
+  - pattern-not: $"https://{$X}..."
+  - pattern-not: $"//{$X}..."
+  requires: REQ
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+      - patterns:
+        - pattern-either:
+          - pattern: $TO.Append(..., $FROM,...)
+          - pattern: $TO.AppendLine(..., $FROM,...)
+          - pattern: $TO.AppendFormat(..., $FROM,...)
+          - pattern: $TO.AppendJoin(..., $FROM,...)
+          - pattern: $TO.Replace(..., $FROM,...)
+          - pattern: $TO.Insert(..., $FROM,...)
+        - pattern-either:
+          - pattern-inside: 'var $TO = new StringBuilder(...);
+
+              ...
+
+              '
+          - pattern-inside: '$TO = new StringBuilder(...);
+
+              ...
+
+              '
+  to: $TO
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $URL
+  - pattern-inside: 'using System.Net.Http;
+
+      ...
+
+      '
+  - pattern-either:
+    - pattern: (HttpClient $C).GetAsync($URL, ...)
+    - pattern: (HttpClient $C).GetByteArrayAsync($URL, ...)
+    - pattern: (HttpClient $C).GetStreamAsync($URL, ...)
+    - pattern: (HttpClient $C).GetStringAsync($URL, ...)
+    - pattern: (HttpClient $C).PatchAsync($URL, ...)
+    - pattern: (HttpClient $C).PostAsync($URL, ...)
+    - pattern: (HttpClient $C).PutAsync($URL, ...)
+    - pattern: new Uri($URL, ...)
+    - pattern: new HttpRequestMessage($X, $URL, ...)
+  requires: REQ and not NOT_HTTP

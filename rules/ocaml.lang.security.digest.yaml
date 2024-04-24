@@ -1,0 +1,38 @@
+id: ocaml.lang.security.digest.ocamllint-digest
+pattern-either:
+- pattern: Digest.string
+- pattern: Digest.bytes
+- pattern: Digest.substring
+- pattern: Digest.subbytes
+- pattern: Digest.channel
+- pattern: Digest.file
+message: Digest uses MD5 and should not be used for security purposes. Consider using
+  SHA256 instead.
+languages:
+- ocaml
+severity: WARNING
+metadata:
+  category: security
+  references:
+  - https://v2.ocaml.org/api/Digest.html
+  technology:
+  - ocaml
+  cwe: 'CWE-328: Use of Weak Hash (4.12)'
+  confidence: LOW
+  likelihood: MEDIUM
+  impact: MEDIUM
+  subcategory:
+  - audit
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ocaml.lang.security.digest.ocamllint-digest
+  shortlink: https://sg.run/kxXxA
+  semgrep.dev:
+    rule:
+      r_id: 92972
+      rv_id: 230008
+      rule_id: WAUWoWz
+      version_id: vdT1eQ3
+      url: https://semgrep.dev/playground/r/vdT1eQ3/ocaml.lang.security.digest.ocamllint-digest
+      origin: community

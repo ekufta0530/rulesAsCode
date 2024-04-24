@@ -1,0 +1,25 @@
+id: python.lang.maintainability.return.return-not-in-function
+patterns:
+- pattern-not-inside: "def $F(...):\n    ...\n# TODO: first pattern should just automatically\
+    \ include this one\n"
+- pattern-not-inside: "def $F(...) ->  $Y:\n    ...\n"
+- pattern: return ...
+message: '`return` only makes sense inside a function'
+languages:
+- python
+severity: WARNING
+metadata:
+  category: maintainability
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.maintainability.return.return-not-in-function
+  shortlink: https://sg.run/oxG9
+  semgrep.dev:
+    rule:
+      r_id: 9616
+      rv_id: 110355
+      rule_id: 10UKxW
+      version_id: jQTgyk6
+      url: https://semgrep.dev/playground/r/jQTgyk6/python.lang.maintainability.return.return-not-in-function
+      origin: community

@@ -1,0 +1,45 @@
+id: scala.lang.security.audit.rsa-padding-set.rsa-padding-set
+metadata:
+  cwe:
+  - 'CWE-780: Use of RSA Algorithm without OAEP'
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  category: security
+  technology:
+  - scala
+  - cryptography
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  resources:
+  - https://blog.codacy.com/9-scala-security-issues/
+  confidence: HIGH
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: MEDIUM
+  impact: MEDIUM
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/scala.lang.security.audit.rsa-padding-set.rsa-padding-set
+  shortlink: https://sg.run/GO5p
+  semgrep.dev:
+    rule:
+      r_id: 15192
+      rv_id: 110632
+      rule_id: 3qUj1Q
+      version_id: LjTqArR
+      url: https://semgrep.dev/playground/r/LjTqArR/scala.lang.security.audit.rsa-padding-set.rsa-padding-set
+      origin: community
+message: Usage of RSA without OAEP (Optimal Asymmetric Encryption Padding) may weaken
+  encryption. This could lead to sensitive data exposure. Instead, use RSA with `OAEPWithMD5AndMGF1Padding`
+  instead.
+severity: WARNING
+languages:
+- scala
+patterns:
+- pattern: '$VAR = $CIPHER.getInstance($MODE)
+
+    '
+- metavariable-regex:
+    metavariable: $MODE
+    regex: .*RSA/.*/NoPadding.*

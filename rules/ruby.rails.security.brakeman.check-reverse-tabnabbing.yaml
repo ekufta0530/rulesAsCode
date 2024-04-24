@@ -1,0 +1,88 @@
+id: ruby.rails.security.brakeman.check-reverse-tabnabbing.check-reverse-tabnabbing
+mode: search
+paths:
+  include:
+  - '*.erb'
+patterns:
+- pattern: '_blank
+
+    '
+- pattern-inside: 'target: ...
+
+    '
+- pattern-not-inside: '<%= ... rel: ''noopener noreferrer'' ...%>
+
+    '
+- pattern-either:
+  - patterns:
+    - pattern-inside: '<%= $...INLINERUBYDO do -%>
+
+        ...
+
+        <% end %>
+
+        '
+    - metavariable-pattern:
+        metavariable: $...INLINERUBYDO
+        language: ruby
+        patterns:
+        - pattern: 'link_to ...
+
+            '
+        - pattern-not: 'link_to "...", "...", ...
+
+            '
+  - patterns:
+    - pattern-not-inside: '<%= ... do - %>
+
+        '
+    - pattern-inside: '<%= $...INLINERUBY %>
+
+        '
+    - metavariable-pattern:
+        metavariable: $...INLINERUBY
+        language: ruby
+        patterns:
+        - pattern: 'link_to ...
+
+            '
+        - pattern-not: 'link_to ''...'', ''...'', ...
+
+            '
+        - pattern-not: 'link_to ''...'', target: ...
+
+            '
+message: Setting an anchor target of `_blank` without the `noopener` or `noreferrer`
+  attribute allows reverse tabnabbing on Internet Explorer, Opera, and Android Webview.
+languages:
+- generic
+severity: WARNING
+metadata:
+  source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_reverse_tabnabbing.rb
+  category: security
+  cwe:
+  - 'CWE-1022: Use of Web Link to Untrusted Target with window.opener Access'
+  technology:
+  - ruby
+  - rails
+  references:
+  - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#browser_compatibility
+  - https://github.com/presidentbeef/brakeman/blob/3f5d5d5/test/apps/rails5/app/views/users/show.html.erb
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/ruby.rails.security.brakeman.check-reverse-tabnabbing.check-reverse-tabnabbing
+  shortlink: https://sg.run/r30j
+  semgrep.dev:
+    rule:
+      r_id: 22069
+      rv_id: 110601
+      rule_id: DbUNX4
+      version_id: DkT6YWJ
+      url: https://semgrep.dev/playground/r/DkT6YWJ/ruby.rails.security.brakeman.check-reverse-tabnabbing.check-reverse-tabnabbing
+      origin: community

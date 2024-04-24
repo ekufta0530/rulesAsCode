@@ -1,0 +1,40 @@
+id: ruby.rails.performance.ruby-rails-performance-indexes-are-really-beneficial.ruby-rails-performance-indexes-are-beneficial
+patterns:
+- pattern-not-inside: 'add_column $TABLE, $COLUMN, $TYPE, ...
+
+    ...
+
+    add_index $TABLE, $COLUMN, ...
+
+    '
+- pattern: 'add_column $TABLE, $COLUMN, $TYPE, ...
+
+    '
+- metavariable-regex:
+    metavariable: $COLUMN
+    regex: (.*_id$)
+- metavariable-regex:
+    metavariable: $TYPE
+    regex: :integer|:bigint
+message: The $COLUMN column appears to be a foreign key. Would it benefit from an
+  index? Having an index can improve performance.
+languages:
+- ruby
+severity: INFO
+metadata:
+  category: performance
+  technology:
+  - rails
+  references:
+  - https://archive.is/i7SLO
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ruby.rails.performance.ruby-rails-performance-indexes-are-really-beneficial.ruby-rails-performance-indexes-are-beneficial
+  shortlink: https://sg.run/Y505
+  semgrep.dev:
+    rule:
+      r_id: 50758
+      rv_id: 110548
+      rule_id: lBUAyA
+      version_id: qkT2BjK
+      url: https://semgrep.dev/playground/r/qkT2BjK/ruby.rails.performance.ruby-rails-performance-indexes-are-really-beneficial.ruby-rails-performance-indexes-are-beneficial
+      origin: community

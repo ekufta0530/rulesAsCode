@@ -1,0 +1,71 @@
+id: javascript.express.security.audit.express-detect-notevil-usage.express-detect-notevil-usage
+message: Detected usage of the `notevil` package, which is unmaintained and has vulnerabilities.
+  Using any sort of `eval()` functionality can be very dangerous, but if you must,
+  the `eval` package is an up to date alternative. Be sure that only trusted input
+  reaches an `eval()` function.
+metadata:
+  category: security
+  references:
+  - https://github.com/mmckegg/notevil
+  cwe:
+  - 'CWE-1104: Use of Unmaintained Third Party Components'
+  owasp:
+  - A06:2021 - Vulnerable and Outdated Components
+  technology:
+  - javascript
+  - typescript
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/javascript.express.security.audit.express-detect-notevil-usage.express-detect-notevil-usage
+  shortlink: https://sg.run/W70E
+  semgrep.dev:
+    rule:
+      r_id: 22553
+      rv_id: 109840
+      rule_id: OrUX9K
+      version_id: K3Tvj1g
+      url: https://semgrep.dev/playground/r/K3Tvj1g/javascript.express.security.audit.express-detect-notevil-usage.express-detect-notevil-usage
+      origin: community
+languages:
+- javascript
+- typescript
+severity: WARNING
+patterns:
+- pattern-either:
+  - pattern-inside: 'import $EVAL from ''notevil''
+
+      ...
+
+      '
+  - pattern-inside: 'import {$EVAL} from ''notevil''
+
+      ...
+
+      '
+  - pattern-inside: '$EVAL = require(''notevil'')
+
+      ...
+
+      '
+- pattern-either:
+  - patterns:
+    - pattern: $EVAL(...)
+    - pattern-not: $EVAL('...')
+  - patterns:
+    - pattern-either:
+      - pattern: $VM.runInContext("$CMD", ...)
+      - pattern: $VM.runInNewContext("$CMD", ...)
+      - pattern: $VM.runInThisContext("$CMD", ...)
+      - pattern: $VM.compileFunction("$CMD", ...)
+    - metavariable-pattern:
+        patterns:
+        - pattern: $EVAL(...)
+        - pattern-not: $EVAL('...')
+        metavariable: $CMD
+        language: typescript

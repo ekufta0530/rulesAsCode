@@ -1,0 +1,79 @@
+id: trailofbits.javascript.apollo-graphql.v3-cors.v3-bad-cors
+languages:
+- js
+- ts
+message: The Apollo GraphQL server is setup with a CORS policy that reflects any origin,
+  or with a regex that has known flaws.
+severity: ERROR
+metadata:
+  category: security
+  cwe: 'CWE-942: Permissive Cross-domain Policy with Untrusted Domains'
+  subcategory:
+  - vuln
+  confidence: MEDIUM
+  likelihood: HIGH
+  impact: HIGH
+  technology:
+  - graphql
+  - apollo-graphql-server
+  description: Bad CORS policy
+  references:
+  - https://www.apollographql.com/docs/apollo-server/v3/security/cors#configuring-cors-options-for-apollo-server
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/trailofbits.javascript.apollo-graphql.v3-cors.v3-bad-cors
+  shortlink: https://sg.run/Zo3x
+  semgrep.dev:
+    rule:
+      r_id: 60579
+      rv_id: 95099
+      rule_id: EwUZNW
+      version_id: o5Tgzzd
+      url: https://semgrep.dev/playground/r/o5Tgzzd/trailofbits.javascript.apollo-graphql.v3-cors.v3-bad-cors
+      origin: community
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-inside: '{ origin: $BAD_CORS_ORIGIN }
+
+      '
+  - metavariable-pattern:
+      metavariable: $BAD_CORS_ORIGIN
+      pattern-either:
+      - pattern: 'true
+
+          '
+      - patterns:
+        - pattern-either:
+          - pattern: '$CORS_SINGLE_ORIGIN
+
+              '
+          - pattern: '[..., $CORS_SINGLE_ORIGIN, ...]
+
+              '
+        - metavariable-pattern:
+            metavariable: $CORS_SINGLE_ORIGIN
+            pattern-either:
+            - pattern-regex: ^/.*[^\\]\..*/$
+            - pattern-regex: ^/.*[^$]/$
+            - pattern: '''null''
+
+                '
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$X = require(''apollo-server'');
+
+        ...
+
+        '
+    - pattern-inside: 'import ''apollo-server'';
+
+        ...
+
+        '
+  - pattern: 'new ApolloServer({..., cors: $CORS_ORIGIN, ...})
+
+      '
+  - focus-metavariable: $CORS_ORIGIN

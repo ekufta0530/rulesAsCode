@@ -1,0 +1,21 @@
+id: c.lang.correctness.goto-fail.double_goto
+pattern: "if ($COND)\n  goto $FAIL;\n  goto $FAIL;\n"
+message: The second goto statement will always be executed.
+languages:
+- c
+severity: WARNING
+metadata:
+  category: correctness
+  technology:
+  - c
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/c.lang.correctness.goto-fail.double_goto
+  shortlink: https://sg.run/webN
+  semgrep.dev:
+    rule:
+      r_id: 8829
+      rv_id: 109002
+      rule_id: 3qUPKn
+      version_id: rxTyL4A
+      url: https://semgrep.dev/playground/r/rxTyL4A/c.lang.correctness.goto-fail.double_goto
+      origin: community

@@ -1,0 +1,56 @@
+id: python.cryptography.cryptography-dsa.cryptography-dsa
+message: DSA is a legacy algorithm and should generally be avoided in favor of choices
+  like EdDSA using curve25519 or ECDSA.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  functional-categories:
+  - crypto::search::asymmetric-algorithm::cryptography
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  - A03:2017 - Sensitive Data Exposure
+  references:
+  - https://cryptography.io/en/latest/hazmat/primitives/asymmetric/dsa/
+  - https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  - https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/04-Testing_for_Weak_Encryption
+  - https://words.filippo.io/dispatches/dsa/
+  technology:
+  - crypto
+  - cryptography
+  - cryptography.hazmat
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/python.cryptography.cryptography-dsa.cryptography-dsa
+  shortlink: https://sg.run/0oZyk
+  semgrep.dev:
+    rule:
+      r_id: 116498
+      rv_id: 731964
+      rule_id: JDUNnL0
+      version_id: 2KTLoQN
+      url: https://semgrep.dev/playground/r/2KTLoQN/python.cryptography.cryptography-dsa.cryptography-dsa
+      origin: pro_rules
+languages:
+- python
+fix: $KEY = cryptography.hazmat.primitives.asymmetric.ed25519.Ed25519PrivateKey.generate()
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-inside: '$PARAMS = cryptography.hazmat.primitives.asymmetric.dsa.generate_parameters(...)
+
+        ...
+
+        '
+    - pattern: $KEY = $PARAMS.generate_private_key()
+  - pattern: $KEY = cryptography.hazmat.primitives.asymmetric.dsa.generate_private_key(...)

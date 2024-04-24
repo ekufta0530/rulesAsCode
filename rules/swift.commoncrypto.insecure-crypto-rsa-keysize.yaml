@@ -1,0 +1,53 @@
+id: swift.commoncrypto.insecure-crypto-rsa-keysize.insecure-crypto-rsa-keysize
+message: RSA key generation was identified where the key size was less than the industry
+  standard recommendation of 2048 bits minimum. Use a key strength of at least 2048
+  bit, or stronger where appropriate.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  functional-categories:
+  - crypto::search::key-length::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-3: The app uses cryptographic primitives that are appropriate for
+    the particular use-case, configured with parameters that adhere to industry best
+    practices.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-rsa-keysize.insecure-crypto-rsa-keysize
+  shortlink: https://sg.run/6G96
+  semgrep.dev:
+    rule:
+      r_id: 59715
+      rv_id: 111998
+      rule_id: r6Udew
+      version_id: GxTv8RB
+      url: https://semgrep.dev/playground/r/GxTv8RB/swift.commoncrypto.insecure-crypto-rsa-keysize.insecure-crypto-rsa-keysize
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern: 'CCRSACryptorGeneratePair($SIZE, ...)
+
+    '
+- focus-metavariable: $SIZE
+- metavariable-comparison:
+    metavariable: $SIZE
+    comparison: $SIZE < 2048

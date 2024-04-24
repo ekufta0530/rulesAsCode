@@ -1,0 +1,37 @@
+id: terraform.aws.security.aws-ebs-unencrypted.aws-ebs-unencrypted
+patterns:
+- pattern: "resource \"aws_ebs_encryption_by_default\" $ANYTHING {\n  ...\n  enabled\
+    \ = false\n  ...\n}\n"
+message: The AWS EBS is unencrypted. The AWS EBS encryption protects data in the EBS.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  technology:
+  - aws
+  - terraform
+  category: security
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-ebs-unencrypted.aws-ebs-unencrypted
+  shortlink: https://sg.run/Dy5Y
+  semgrep.dev:
+    rule:
+      r_id: 17352
+      rv_id: 110743
+      rule_id: 7KUW7K
+      version_id: RGTDRq5
+      url: https://semgrep.dev/playground/r/RGTDRq5/terraform.aws.security.aws-ebs-unencrypted.aws-ebs-unencrypted
+      origin: community

@@ -1,0 +1,25 @@
+id: terraform.aws.best-practice.aws-rds-multiaz-not-enabled.aws-rds-multiaz-not-enabled
+patterns:
+- pattern: "resource \"aws_db_instance\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_db_instance\" $ANYTHING {\n  ...\n  multi_az\
+    \ = true\n  ...\n}\n"
+message: The AWS RDS is not configured to use multi-az. Consider using it if possible.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - aws
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.aws.best-practice.aws-rds-multiaz-not-enabled.aws-rds-multiaz-not-enabled
+  shortlink: https://sg.run/d1wZ
+  semgrep.dev:
+    rule:
+      r_id: 17334
+      rv_id: 110708
+      rule_id: X5UgP3
+      version_id: YDTpnAR
+      url: https://semgrep.dev/playground/r/YDTpnAR/terraform.aws.best-practice.aws-rds-multiaz-not-enabled.aws-rds-multiaz-not-enabled
+      origin: community

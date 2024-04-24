@@ -1,0 +1,42 @@
+id: terraform.azure.security.storage.storage-enforce-https.storage-enforce-https
+message: Detected a Storage that was not configured to deny action by default. Add
+  `enable_https_traffic_only = true` in your resource block.
+patterns:
+- pattern-not-inside: "resource \"azurerm_storage_account\" \"...\" {\n...\n  enable_https_traffic_only\
+    \ = true\n...\n}\n"
+- pattern-inside: "resource \"azurerm_storage_account\" \"...\" {\n...\n  enable_https_traffic_only\
+    \ = false\n...\n}\n"
+metadata:
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account#enable_https_traffic_only
+  - https://docs.microsoft.com/en-us/azure/storage/common/storage-require-secure-transfer
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/terraform.azure.security.storage.storage-enforce-https.storage-enforce-https
+  shortlink: https://sg.run/0y9v
+  semgrep.dev:
+    rule:
+      r_id: 15110
+      rv_id: 110935
+      rule_id: pKUpDA
+      version_id: LjTqAAX
+      url: https://semgrep.dev/playground/r/LjTqAAX/terraform.azure.security.storage.storage-enforce-https.storage-enforce-https
+      origin: community
+languages:
+- hcl
+severity: WARNING

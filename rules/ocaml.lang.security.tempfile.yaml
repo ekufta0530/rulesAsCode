@@ -1,0 +1,32 @@
+id: ocaml.lang.security.tempfile.ocamllint-tempfile
+pattern: Filename.temp_file
+message: Filename.temp_file might lead to race conditions, since the file could be
+  altered or replaced by a symlink before being opened.
+languages:
+- ocaml
+severity: WARNING
+metadata:
+  category: security
+  references:
+  - https://v2.ocaml.org/api/Filename.html
+  technology:
+  - ocaml
+  cwe: 'CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition'
+  confidence: LOW
+  likelihood: MEDIUM
+  impact: MEDIUM
+  subcategory:
+  - audit
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ocaml.lang.security.tempfile.ocamllint-tempfile
+  shortlink: https://sg.run/v8z80
+  semgrep.dev:
+    rule:
+      r_id: 92977
+      rv_id: 230013
+      rule_id: YGUpRpr
+      version_id: 7ZTD0Rq
+      url: https://semgrep.dev/playground/r/7ZTD0Rq/ocaml.lang.security.tempfile.ocamllint-tempfile
+      origin: community

@@ -1,0 +1,21 @@
+id: python.click.best-practice.echo-style.use-click-secho
+pattern: click.echo(click.style($X, ...))
+message: Use `click.secho($X)` instead. It combines click.echo() and click.style().
+languages:
+- python
+severity: ERROR
+metadata:
+  category: best-practice
+  technology:
+  - click
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.click.best-practice.echo-style.use-click-secho
+  shortlink: https://sg.run/8ywN
+  semgrep.dev:
+    rule:
+      r_id: 9440
+      rv_id: 110145
+      rule_id: GdU7AO
+      version_id: l4T4v76
+      url: https://semgrep.dev/playground/r/l4T4v76/python.click.best-practice.echo-style.use-click-secho
+      origin: community

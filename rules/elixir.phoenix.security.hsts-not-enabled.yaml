@@ -1,0 +1,48 @@
+id: elixir.phoenix.security.hsts-not-enabled.hsts-not-enabled
+message: The app does not contain production configurations to enabled HTTP Strict
+  Transport Security (HSTS).
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
+  technology:
+  - phoenix
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/elixir.phoenix.security.hsts-not-enabled.hsts-not-enabled
+  shortlink: https://sg.run/10BRQ
+  semgrep.dev:
+    rule:
+      r_id: 114622
+      rv_id: 257012
+      rule_id: PeUJzxD
+      version_id: bZTKAjz
+      url: https://semgrep.dev/playground/r/bZTKAjz/elixir.phoenix.security.hsts-not-enabled.hsts-not-enabled
+      origin: pro_rules
+languages:
+- elixir
+min-version: 1.55.2
+paths:
+  include:
+  - config/prod.exs
+patterns:
+- pattern: 'config ..., $ENDPOINT, ...
+
+    '
+- pattern-not: 'config ..., $ENDPOINT, ..., force_ssl: $VALUE, ...
+
+    '
+- metavariable-regex:
+    metavariable: $ENDPOINT
+    regex: ^[A-Za-z_]+\.Endpoint$

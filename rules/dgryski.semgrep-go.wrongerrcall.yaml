@@ -1,0 +1,21 @@
+id: dgryski.semgrep-go.wrongerrcall.maybe-wrong-err
+patterns:
+- pattern-either:
+  - pattern: "if $F.Err() != nil {\n        return ..., <... err ...>\n}\n"
+  - pattern: "if $F.Err() != nil {\n        return <... err ...>\n}\n"
+message: maybe returning wrong error
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.wrongerrcall.maybe-wrong-err
+  shortlink: https://sg.run/6npW
+  semgrep.dev:
+    rule:
+      r_id: 8715
+      rv_id: 12006
+      rule_id: x8Un1A
+      version_id: JdTQ6W
+      url: https://semgrep.dev/playground/r/JdTQ6W/dgryski.semgrep-go.wrongerrcall.maybe-wrong-err
+      origin: community

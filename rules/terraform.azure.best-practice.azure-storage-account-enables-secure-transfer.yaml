@@ -1,0 +1,34 @@
+id: terraform.azure.best-practice.azure-storage-account-enables-secure-transfer.azure-storage-account-enables-secure-transfer
+message: Ensure that storage account enables secure transfer
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_storage_account" "..." {
+
+    ...
+
+    enable_https_traffic_only = false
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-storage-account-enables-secure-transfer.azure-storage-account-enables-secure-transfer
+  shortlink: https://sg.run/DdYY
+  semgrep.dev:
+    rule:
+      r_id: 23952
+      rv_id: 110856
+      rule_id: oqUlLL
+      version_id: zyTKDle
+      url: https://semgrep.dev/playground/r/zyTKDle/terraform.azure.best-practice.azure-storage-account-enables-secure-transfer.azure-storage-account-enables-secure-transfer
+      origin: community
+languages:
+- hcl
+severity: WARNING

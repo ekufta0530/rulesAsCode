@@ -1,0 +1,40 @@
+id: solidity.security.redacted-cartel-custom-approval-bug.redacted-cartel-custom-approval-bug
+message: transferFrom() can steal allowance of other accounts
+metadata:
+  category: security
+  technology:
+  - solidity
+  cwe: 'CWE-688: Function Call With Incorrect Variable or Reference as Argument'
+  confidence: HIGH
+  likelihood: HIGH
+  impact: HIGH
+  subcategory:
+  - vuln
+  references:
+  - https://medium.com/immunefi/redacted-cartel-custom-approval-logic-bugfix-review-9b2d039ca2c5
+  - https://etherscan.io/address/0x186E55C0BebD2f69348d94C4A27556d93C5Bd36C
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/solidity.security.redacted-cartel-custom-approval-bug.redacted-cartel-custom-approval-bug
+  shortlink: https://sg.run/XDzj
+  semgrep.dev:
+    rule:
+      r_id: 67664
+      rv_id: 110692
+      rule_id: DbU0Qb
+      version_id: K3TvG71
+      url: https://semgrep.dev/playground/r/K3TvG71/solidity.security.redacted-cartel-custom-approval-bug.redacted-cartel-custom-approval-bug
+      origin: community
+patterns:
+- pattern-inside: 'function transferFrom(...) {
+
+    ...
+
+    }
+
+    '
+- pattern: _approve(..., allowance(sender, recipient).sub(amount, ...), ...);
+languages:
+- solidity
+severity: ERROR

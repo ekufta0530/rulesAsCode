@@ -1,0 +1,31 @@
+id: yaml.semgrep.interfile-true-under-metadata-and-no-options.interfile-true-under-metadata-and-no-options
+message: '`interfile: true` should be under the `options` field, not the `metadata`
+  field.'
+languages:
+- yaml
+severity: WARNING
+patterns:
+- pattern: "rules:\n  - id: $ID\n    ...\n    $METADATA:\n      ...\n      $INTERFILE:\
+    \ true\n      ...\n    ...\n"
+- pattern-not-inside: "rules:\n  - id: $ID\n    ...\n    options:\n      ...\n   \
+    \ ...\n"
+- metavariable-regex:
+    metavariable: $INTERFILE
+    regex: interfile
+- metavariable-regex:
+    metavariable: $METADATA
+    regex: metadata
+- focus-metavariable: $METADATA
+fix: "options:\n  interfile: true\nmetadata\n"
+metadata:
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.interfile-true-under-metadata-and-no-options.interfile-true-under-metadata-and-no-options
+  shortlink: https://sg.run/8E1Q
+  semgrep.dev:
+    rule:
+      r_id: 70984
+      rv_id: 255680
+      rule_id: L1UgOQ
+      version_id: BjTDWx9
+      url: https://semgrep.dev/playground/r/BjTDWx9/yaml.semgrep.interfile-true-under-metadata-and-no-options.interfile-true-under-metadata-and-no-options
+      origin: community

@@ -1,0 +1,65 @@
+id: python.cryptography.cryptography-insecure-random.cryptography-insecure-random
+message: "When generating random data for use in cryptographic operations, such as\
+  \ an initialization vector, you do not want to use the standard random module APIs.\
+  \ This is because they do not provide a cryptographically secure random number generator,\
+  \ which can result in major security issues depending on the algorithms in use.\
+  \ Therefore, it is our recommendation to always use your operating system\u2019\
+  s provided random number generator, which is available as os.urandom()."
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  functional-categories:
+  - crypto::search::randomness::cryptography
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  - A03:2017 - Sensitive Data Exposure
+  references:
+  - https://cryptography.io/en/latest/random-numbers/#random-number-generation
+  - https://docs.python.org/3/library/secrets.html
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  technology:
+  - crypto
+  - cryptography
+  - cryptography.hazmat
+  - random
+  - secrets
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/python.cryptography.cryptography-insecure-random.cryptography-insecure-random
+  shortlink: https://sg.run/Kx1XP
+  semgrep.dev:
+    rule:
+      r_id: 116499
+      rv_id: 731965
+      rule_id: 5rUd7LZ
+      version_id: X0Tg0wX
+      url: https://semgrep.dev/playground/r/X0Tg0wX/python.cryptography.cryptography-insecure-random.cryptography-insecure-random
+      origin: pro_rules
+languages:
+- python
+mode: taint
+fix: os.urandom(16)
+options:
+  symbolic_propagation: true
+  taint_match_on: source
+pattern-sources:
+- pattern-either:
+  - pattern: os.random(...)
+  - pattern: b"..."
+  - pattern: bytes.from_hex("...")
+  - pattern: bytearray.from_hex("...")
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: cryptography.hazmat.primitives.ciphers.modes.CTR($NONCE)
+    - pattern: cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20($KEY, $NONCE)
+    - pattern: $AES.encrypt($NONCE, $DATA, $AAD)
+  - focus-metavariable: $NONCE

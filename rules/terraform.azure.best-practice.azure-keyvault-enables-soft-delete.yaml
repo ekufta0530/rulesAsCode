@@ -1,0 +1,34 @@
+id: terraform.azure.best-practice.azure-keyvault-enables-soft-delete.azure-keyvault-enables-soft-delete
+message: Ensure that key vault enables soft delete
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_key_vault" "..." {
+
+    ...
+
+    soft_delete_enabled = false
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-keyvault-enables-soft-delete.azure-keyvault-enables-soft-delete
+  shortlink: https://sg.run/rDon
+  semgrep.dev:
+    rule:
+      r_id: 23925
+      rv_id: 110829
+      rule_id: JDUpk9
+      version_id: d6Trv6W
+      url: https://semgrep.dev/playground/r/d6Trv6W/terraform.azure.best-practice.azure-keyvault-enables-soft-delete.azure-keyvault-enables-soft-delete
+      origin: community
+languages:
+- hcl
+severity: WARNING

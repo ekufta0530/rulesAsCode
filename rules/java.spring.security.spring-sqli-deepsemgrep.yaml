@@ -1,0 +1,155 @@
+id: java.spring.security.spring-sqli-deepsemgrep.spring-sqli-deepsemgrep
+message: Untrusted input might be used to build a database query, which can lead to
+  a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions. To build SQL
+  queries safely in Java, it is possible to adopt prepared statements by using the
+  `java.sql.PreparedStatement` class with bind variables.
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::sink::sql-or-nosql-query::SpringData
+  - web::source::cookie::Spring
+  - web::source::header::Spring
+  - web::source::http-body::Spring
+  - web::source::http-params::Spring
+  - web::source::url-path-params::Spring
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - Spring
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/java.spring.security.spring-sqli-deepsemgrep.spring-sqli-deepsemgrep
+  shortlink: https://sg.run/QR1q
+  semgrep.dev:
+    rule:
+      r_id: 40142
+      rv_id: 735041
+      rule_id: JDUZ8z
+      version_id: 1QT5RB0
+      url: https://semgrep.dev/playground/r/1QT5RB0/java.spring.security.spring-sqli-deepsemgrep.spring-sqli-deepsemgrep
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: $RET $METHOD(..., @$REQ(...) $TYPE $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., @$REQ $TYPE $SOURCE, ...) {...}
+  - metavariable-regex:
+      metavariable: $REQ
+      regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute|MatrixVariable|RequestPart|RequestAttribute)
+  - focus-metavariable: $SOURCE
+- patterns:
+  - pattern-either:
+    - pattern-inside: '@$MAPPING(...)
+
+        $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+
+        '
+    - pattern-inside: '@$MAPPING
+
+        $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+
+        '
+  - pattern-either:
+    - pattern: $RET $METHOD(..., String $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., org.springframework.http.HttpEntity<$X> $SOURCE,
+        ...) {...}
+    - pattern: $RET $METHOD(..., java.io.InputStream $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., java.io.Reader $SOURCE, ...) {...}
+  - metavariable-regex:
+      metavariable: $MAPPING
+      regex: (ResponseBody|RequestMapping|PatchMapping|GetMapping|DeleteMapping|PutMapping|PostMapping|HttpExchange|GetExchange|PostExchange|PutExchange|PatchExchange|DeleteExchange|ResponseStatus)
+  - focus-metavariable: $SOURCE
+- patterns:
+  - pattern-either:
+    - pattern: (org.springframework.web.context.request.WebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.NativeWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.FacesWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.ServletWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.servlet.handler.DispatcherServletWebRequest
+        $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.async.AsyncWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.async.StandardServletAsyncWebRequest
+        $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getHeader|getHeaderNames|getHeaderValues|getParameter|getParameterMap|getParameterNames|getParameterValues|getAttribute|getAttributeNames)
+- patterns:
+  - pattern-either:
+    - pattern: (org.springframework.http.HttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.client.ClientHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.ServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.ServletServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.multipart.support.RequestPartServletServerHttpRequest
+        $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.reactive.ServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.reactive.ServerHttpRequestDecorator
+        $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getPath|getQueryParams|getBody|getURI|getHeaders|getCookies)
+- patterns:
+  - pattern-either:
+    - pattern: (javax.servlet.ServletRequest $REQ).$METHOD(...)
+    - pattern: (javax.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+    - pattern: (jakarta.servlet.ServletRequest $REQ).$METHOD(...)
+    - pattern: (jakarta.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $A
+  - pattern-either:
+    - pattern: new PreparedStatementCreatorFactory($A,...)
+    - pattern: (JdbcTemplate $T).$M($A,...)
+    - pattern: (JdbcTemplate $T).batchUpdate(...,$A,...)
+    - pattern: NamedParameterBatchUpdateUtils.$M($A,...)
+    - pattern: BatchUpdateUtils.$M($A,...)
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)
+- patterns:
+  - focus-metavariable: $INPUT
+  - pattern: new $TYPE(...,$INPUT,...)
+  - pattern-not: new PreparedStatementCreatorFactory(...)

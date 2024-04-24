@@ -1,0 +1,27 @@
+id: python.lang.maintainability.is-function-without-parentheses.is-function-without-parentheses
+languages:
+- python
+message: Is "$FUNC" a function or an attribute? If it is a function, you may have
+  meant $X.$FUNC() because $X.$FUNC is always true.
+patterns:
+- pattern: $X.$FUNC
+- pattern-not-inside: $X.$FUNC(...)
+- metavariable-regex:
+    metavariable: $FUNC
+    regex: is_.*
+severity: WARNING
+metadata:
+  category: maintainability
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.maintainability.is-function-without-parentheses.is-function-without-parentheses
+  shortlink: https://sg.run/oYR7
+  semgrep.dev:
+    rule:
+      r_id: 14116
+      rv_id: 110353
+      rule_id: d8UeAx
+      version_id: 2KTz3lz
+      url: https://semgrep.dev/playground/r/2KTz3lz/python.lang.maintainability.is-function-without-parentheses.is-function-without-parentheses
+      origin: community

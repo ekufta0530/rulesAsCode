@@ -1,0 +1,62 @@
+id: swift.sql.swift-sql-request.swift-sql-in-request
+message: It was observed that the application seemingly sends SQL to the server in
+  network requests. This is effectively SQL injection, allowing an attacker to modify
+  the SQL statements being executed by the database server. This can allow for the
+  accessing of, deletion of, altering of, and addition of data to the database.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-807: Reliance on Untrusted Inputs in a Security Decision'
+  masvs:
+  - 'MASVS-CODE-4: The app validates and sanitizes all untrusted inputs'
+  owasp:
+  - A04:2021 - Insecure Design
+  references:
+  - https://mas.owasp.org/MASVS/controls/MASVS-PLATFORM-2/
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.sql.swift-sql-request.swift-sql-in-request
+  shortlink: https://sg.run/Jk8P
+  semgrep.dev:
+    rule:
+      r_id: 66502
+      rv_id: 112035
+      rule_id: PeUrzb
+      version_id: kbTdLXY
+      url: https://semgrep.dev/playground/r/kbTdLXY/swift.sql.swift-sql-request.swift-sql-in-request
+      origin: pro_rules
+languages:
+- swift
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: '"$STR"
+
+      '
+  - metavariable-regex:
+      metavariable: $STR
+      regex: .*\b(?i)(select|delete|insert|create|update|alter|drop)\b.*
+pattern-sinks:
+- pattern-either:
+  - pattern: '(URLRequest: $R).httpBody = $X
+
+      '
+  - pattern: '(NSURLRequest: $R).httpBody = $X
+
+      '
+  - pattern: '(NSMutableURLRequest: $R).httpBody = $X
+
+      '
+  - pattern: '(URL: $U)(string: $X)
+
+      '

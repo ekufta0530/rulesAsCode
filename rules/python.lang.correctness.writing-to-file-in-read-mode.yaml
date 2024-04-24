@@ -1,0 +1,36 @@
+id: python.lang.correctness.writing-to-file-in-read-mode.writing-to-file-in-read-mode
+message: The file object '$FD' was opened in read mode, but is being written to. This
+  will cause a runtime error.
+patterns:
+- pattern-either:
+  - pattern-inside: '$FD = open($NAME, "r", ...)
+
+      ...
+
+      '
+  - pattern-inside: '$FD = open($NAME, "rb", ...)
+
+      ...
+
+      '
+  - pattern-inside: "with open($NAME, \"r\", ...) as $FD:\n  ...\n"
+  - pattern-inside: "with open($NAME, \"rb\", ...) as $FD:\n  ...\n"
+- pattern: $FD.write(...)
+severity: ERROR
+languages:
+- python
+metadata:
+  category: correctness
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.correctness.writing-to-file-in-read-mode.writing-to-file-in-read-mode
+  shortlink: https://sg.run/RozO
+  semgrep.dev:
+    rule:
+      r_id: 9605
+      rv_id: 110351
+      rule_id: KxUbyG
+      version_id: zyTK8PP
+      url: https://semgrep.dev/playground/r/zyTK8PP/python.lang.correctness.writing-to-file-in-read-mode.writing-to-file-in-read-mode
+      origin: community

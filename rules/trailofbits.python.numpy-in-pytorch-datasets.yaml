@@ -1,0 +1,37 @@
+id: trailofbits.python.numpy-in-pytorch-datasets.numpy-in-pytorch-datasets
+message: Using the NumPy RNG inside of a PyTorch dataset can lead to a number of issues
+  with loading data, including identical augmentations. Instead, use the random number
+  generators built into Python and PyTorch
+languages:
+- python
+severity: WARNING
+metadata:
+  category: security
+  cwe: 'CWE-330: Use of Insufficiently Random Values'
+  subcategory:
+  - audit
+  confidence: HIGH
+  likelihood: MEDIUM
+  impact: LOW
+  technology:
+  - pytorch
+  - numpy
+  description: Calls to the `NumPy` RNG inside of a `Torch` dataset
+  references:
+  - https://tanelp.github.io/posts/a-bug-that-plagues-thousands-of-open-source-ml-projects
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/trailofbits.python.numpy-in-pytorch-datasets.numpy-in-pytorch-datasets
+  shortlink: https://sg.run/dnR6
+  semgrep.dev:
+    rule:
+      r_id: 44134
+      rv_id: 250822
+      rule_id: KxURLn
+      version_id: gET6q8p
+      url: https://semgrep.dev/playground/r/gET6q8p/trailofbits.python.numpy-in-pytorch-datasets.numpy-in-pytorch-datasets
+      origin: community
+patterns:
+- pattern: "class $X(torch.utils.data.Dataset):\n  ...\n  def __getitem__(...):\n\
+    \    ...\n    numpy.random.randint(...)\n    ...\n"

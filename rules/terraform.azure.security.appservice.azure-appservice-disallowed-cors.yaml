@@ -1,0 +1,46 @@
+id: terraform.azure.security.appservice.azure-appservice-disallowed-cors.azure-appservice-disallowed-cors
+patterns:
+- pattern: '["*"]
+
+    '
+- pattern-inside: allowed_origins = ...
+- pattern-inside: '$RESOURCE "azurerm_app_service" "..." {
+
+    ...
+
+    }
+
+    '
+message: Ensure that CORS disallows every resource to access app services
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  cwe:
+  - 'CWE-942: Permissive Cross-domain Policy with Untrusted Domains'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/terraform.azure.security.appservice.azure-appservice-disallowed-cors.azure-appservice-disallowed-cors
+  shortlink: https://sg.run/2ne0
+  semgrep.dev:
+    rule:
+      r_id: 23963
+      rv_id: 110873
+      rule_id: NbUd6K
+      version_id: d6TrvPW
+      url: https://semgrep.dev/playground/r/d6TrvPW/terraform.azure.security.appservice.azure-appservice-disallowed-cors.azure-appservice-disallowed-cors
+      origin: community

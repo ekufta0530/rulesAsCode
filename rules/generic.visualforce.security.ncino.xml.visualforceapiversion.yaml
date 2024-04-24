@@ -1,0 +1,48 @@
+id: generic.visualforce.security.ncino.xml.visualforceapiversion.visualforce-page-api-version
+languages:
+- generic
+severity: WARNING
+message: Visualforce Pages must use API version 55 or higher for required use of the
+  cspHeader attribute set to true.
+metadata:
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_pages.htm
+  category: security
+  subcategory:
+  - vuln
+  technology:
+  - salesforce
+  - visualforce
+  cwe2022-top25: true
+  cwe2021-top25: true
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/generic.visualforce.security.ncino.xml.visualforceapiversion.visualforce-page-api-version
+  shortlink: https://sg.run/rWr6
+  semgrep.dev:
+    rule:
+      r_id: 72425
+      rv_id: 109572
+      rule_id: WAUwJW
+      version_id: JdTNpYp
+      url: https://semgrep.dev/playground/r/JdTNpYp/generic.visualforce.security.ncino.xml.visualforceapiversion.visualforce-page-api-version
+      origin: community
+patterns:
+- pattern-inside: <apiVersion.../apiVersion>
+- pattern-either:
+  - pattern-regex: '[>][0-9].[0-9][<]'
+  - pattern-regex: '[>][1-4][0-9].[0-9][<]'
+  - pattern-regex: '[>][5][0-4].[0-9][<]'
+paths:
+  include:
+  - '*.page-meta.xml'

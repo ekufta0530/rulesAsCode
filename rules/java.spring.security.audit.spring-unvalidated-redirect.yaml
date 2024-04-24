@@ -1,0 +1,43 @@
+id: java.spring.security.audit.spring-unvalidated-redirect.spring-unvalidated-redirect
+message: Application redirects a user to a destination URL specified by a user supplied
+  parameter that is not validated.
+metadata:
+  cwe:
+  - 'CWE-601: URL Redirection to Untrusted Site (''Open Redirect'')'
+  owasp:
+  - A01:2021 - Broken Access Control
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#UNVALIDATED_REDIRECT
+  category: security
+  technology:
+  - spring
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Open Redirect
+  source: https://semgrep.dev/r/java.spring.security.audit.spring-unvalidated-redirect.spring-unvalidated-redirect
+  shortlink: https://sg.run/9oXz
+  semgrep.dev:
+    rule:
+      r_id: 9223
+      rv_id: 109778
+      rule_id: v8Un7w
+      version_id: A8T95DY
+      url: https://semgrep.dev/playground/r/A8T95DY/java.spring.security.audit.spring-unvalidated-redirect.spring-unvalidated-redirect
+      origin: community
+severity: WARNING
+languages:
+- java
+pattern-either:
+- pattern: "$X $METHOD(...,String $URL,...) {\n  return \"redirect:\" + $URL;\n}\n"
+- pattern: "$X $METHOD(...,String $URL,...) {\n  ...\n  String $REDIR = \"redirect:\"\
+    \ + $URL;\n  ...\n  return $REDIR;\n  ...\n}\n"
+- pattern: "$X $METHOD(...,String $URL,...) {\n  ...\n  new ModelAndView(\"redirect:\"\
+    \ + $URL);\n  ...\n}\n"
+- pattern: "$X $METHOD(...,String $URL,...) {\n  ...\n  String $REDIR = \"redirect:\"\
+    \ + $URL;\n  ...\n  new ModelAndView($REDIR);\n  ...\n}"

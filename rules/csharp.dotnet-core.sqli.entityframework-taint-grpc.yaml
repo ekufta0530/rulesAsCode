@@ -1,0 +1,148 @@
+id: csharp.dotnet-core.sqli.entityframework-taint-grpc.entityframework-taint-grpc
+message: Untrusted input might be used to build a database query, which can lead to
+  a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions.
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::sink::sql-or-nosql-query::EntityFramework
+  - net::source::remote-procedure-call::gRPC
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - .NET
+  - csharp
+  - dotnet
+  - ef
+  - entity
+  - entity framework
+  - grpc
+  - sql
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/csharp.dotnet-core.sqli.entityframework-taint-grpc.entityframework-taint-grpc
+  shortlink: https://sg.run/GGP2
+  semgrep.dev:
+    rule:
+      r_id: 71148
+      rv_id: 229187
+      rule_id: PeU3P5
+      version_id: X0TODYK
+      url: https://semgrep.dev/playground/r/X0TODYK/csharp.dotnet-core.sqli.entityframework-taint-grpc.entityframework-taint-grpc
+      origin: pro_rules
+languages:
+- csharp
+mode: taint
+options:
+  interfile: true
+pattern-sources:
+- patterns:
+  - pattern-inside: 'using Grpc.Core;
+
+      ...
+
+      '
+  - focus-metavariable: $REQ
+  - pattern-either:
+    - pattern-inside: "public $TYPE $NAME($T $REQ, ServerCallContext $CTX) {\n  ...\n\
+        }\n"
+    - pattern-inside: "public $TYPE $NAME($T $REQ, $ST $STREAM, ServerCallContext\
+        \ $CTX) {\n  ...\n}\n"
+- patterns:
+  - pattern-inside: 'using Grpc.Core;
+
+      ...
+
+      '
+  - pattern-either:
+    - pattern: (ServerCallContext $CTX).RequestHeaders
+    - pattern: (ServerCallContext $CTX). ... .Request.Query
+    - pattern: (ServerCallContext $CTX). ... .Request.QueryString
+    - pattern: (ServerCallContext $CTX). ... .Request.Headers
+    - pattern: (ServerCallContext $CTX). ... .Request.RouteValues
+    - pattern: (ServerCallContext $CTX). ... .Request.Body
+    - pattern: (ServerCallContext $CTX). ... .Request.BodyReader
+    - pattern: (ServerCallContext $CTX). ... .Request.Form
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+      - patterns:
+        - pattern-either:
+          - pattern: $TO.Append(..., $FROM,...)
+          - pattern: $TO.AppendLine(..., $FROM,...)
+          - pattern: $TO.AppendFormat(..., $FROM,...)
+          - pattern: $TO.AppendJoin(..., $FROM,...)
+          - pattern: $TO.Replace(..., $FROM,...)
+          - pattern: $TO.Insert(..., $FROM,...)
+        - pattern-either:
+          - pattern-inside: 'var $TO = new StringBuilder(...);
+
+              ...
+
+              '
+          - pattern-inside: '$TO = new StringBuilder(...);
+
+              ...
+
+              '
+  to: $TO
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $QUERY
+  - pattern: $X.FromSqlRaw($QUERY, ...)
+pattern-sanitizers:
+- patterns:
+  - pattern: Convert.$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (ToBase64CharArray|ToBase64String|ToBoolean|ToDateTime|ToDecimal|ToDouble|ToInt16|ToInt32|ToInt64|ToSByte|ToSingle|ToUInt16|ToUInt32|ToUInt64)
+- patterns:
+  - pattern-either:
+    - pattern: $INT.Parse(...)
+    - pattern: $INT.TryParse(...)
+    - pattern: $INT.TryParseExact(...)
+  - metavariable-regex:
+      metavariable: $INT
+      regex: (Int32|Int128|Int16|Int64|IntPtr|Boolean|Decimal|Double|Guid|DateTime|Single|SByte|UInt128|UInt16|UInt32|UInt64|UIntPtr)
+- patterns:
+  - pattern-either:
+    - pattern: (int $NUM)
+    - pattern: (long $NUM)
+    - pattern: (float $NUM)
+    - pattern: (double $NUM)
+    - pattern: (bool $NUM)
+    - pattern: (Guid $NUM)
+    - pattern: var $X = (int) ...;
+    - pattern: var $X = (long) ...;
+    - pattern: var $X = (float) ...;
+    - pattern: var $X = (double) ...;
+    - pattern: var $X = (bool) ...;
+    - pattern: var $X = (Guid) ...;

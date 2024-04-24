@@ -1,0 +1,187 @@
+id: java.micronaut.ssrf.httpclient-taint-concat-msg.httpclient-taint-concat-msg
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::sink::http-request::HttpClient
+  - pubsub::source::message::Micronaut
+  - web::sink::http-request::HttpClient
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - Kafka
+  - Micronaut
+  - RabbitMQ
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/java.micronaut.ssrf.httpclient-taint-concat-msg.httpclient-taint-concat-msg
+  shortlink: https://sg.run/DbKKG
+  semgrep.dev:
+    rule:
+      r_id: 114908
+      rv_id: 735001
+      rule_id: kxUdDDv
+      version_id: bZTz7nD
+      url: https://semgrep.dev/playground/r/bZTz7nD/java.micronaut.ssrf.httpclient-taint-concat-msg.httpclient-taint-concat-msg
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- label: REQ
+  patterns:
+  - focus-metavariable: $INPUT
+  - pattern: '@io.micronaut.configuration.kafka.annotation.Topic(...)
+
+      $TYPE $NAME(..., $I $INPUT, ...) {...}
+
+      '
+  - pattern-inside: '@io.micronaut.configuration.kafka.annotation.KafkaListener(...)
+
+      class $CL {...}
+
+      '
+- label: REQ
+  patterns:
+  - focus-metavariable: $INPUT
+  - pattern: '@io.micronaut.rabbitmq.annotation.Queue(...)
+
+      $TYPE $NAME(..., $I $INPUT, ...) {...}
+
+      '
+  - pattern-inside: '@io.micronaut.rabbitmq.annotation.RabbitListener(...)
+
+      class $CL {...}
+
+      '
+- label: NOT_CONCAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: $F + $X
+    - pattern: String.format(..., $X, ...)
+    - pattern: MessageFormat.format(..., $X, ...)
+  - pattern-not: $X + $F
+  - pattern-not: '"https://" + $X
+
+      '
+  - pattern-not: '"http://" + $X
+
+      '
+  - pattern-not: '"ws://" + $X
+
+      '
+  - pattern-not: '"wss://" + $X
+
+      '
+  - pattern-not: '"//" + $X
+
+      '
+  requires: REQ
+- label: HTTP_FORMAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: MessageFormat.format("$REGEX", $X,...)
+    - pattern: String.format("$REGEX", $X,...)
+  - metavariable-regex:
+      metavariable: $REGEX
+      regex: ^(http://|https://|//|ws://|wss://)%s.*
+  requires: REQ
+- label: STRING_CONCAT
+  patterns:
+  - pattern-either:
+    - pattern: '"...${$X}..."
+
+        '
+    - pattern: $F + $X
+    - pattern: '"...".formatted(...)
+
+        '
+    - pattern: String.format(...)
+    - pattern: MessageFormat.format(...)
+  requires: REQ
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: (io.micronaut.http.client.HttpClient $C). ... .retrieve($URI, ...)
+    - pattern: (io.micronaut.http.client.HttpClient $C). ... .exchange($URI, ...)
+    - pattern: (io.micronaut.http.client.netty.DefaultHttpClient $C). ... .retrieve($URI,
+        ...)
+    - pattern: (io.micronaut.http.client.netty.DefaultHttpClient $C). ... .exchange($URI,
+        ...)
+    - pattern: (io.micronaut.http.client.StreamingHttpClient $C). ... .retrieve($URI,
+        ...)
+    - pattern: (io.micronaut.http.client.StreamingHttpClient $C). ... .exchange($URI,
+        ...)
+    - pattern: new io.micronaut.http.client.netty.DefaultHttpClient($URI)
+    - pattern: new io.micronaut.http.client.netty.DefaultHttpClient($URI, $X)
+    - pattern: new io.micronaut.http.client.netty.DefaultHttpClient($URI, $X, $Y)
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)
+- patterns:
+  - focus-metavariable: $X
+  - pattern: io.micronaut.http.HttpRequest.$METHOD($URL, ..., $X, ...)
+- patterns:
+  - pattern: io.micronaut.http.uri.UriBuilder. ... .$FUNC(...)
+  - metavariable-pattern:
+      metavariable: $FUNC
+      patterns:
+      - pattern-either:
+        - pattern: path
+        - pattern: expand
+        - pattern: queryParam
+- patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: java.net.http.HttpRequest. ... .$FUNC(..., $X, ...)
+    - pattern: (java.net.http.HttpRequest.Builder $B). ... .$FUNC(..., $X, ...)
+  - metavariable-pattern:
+      metavariable: $FUNC
+      patterns:
+      - pattern-not-regex: ^(newBuilder|uri)$
+- patterns:
+  - focus-metavariable: $PARAM
+  - pattern: $URLBUILDER. ... .addQueryParameter(..., $PARAM). ...

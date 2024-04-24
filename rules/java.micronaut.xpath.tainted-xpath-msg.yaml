@@ -1,0 +1,95 @@
+id: java.micronaut.xpath.tainted-xpath-msg.tainted-xpath-msg
+message: XPath queries are constructed dynamically on user-controlled input. This
+  could lead to XPath injection if variables passed into the evaluate or compile commands
+  are not properly sanitized. Xpath injection could lead to unauthorized access to
+  sensitive information in XML documents. Thoroughly sanitize user input or use parameterized
+  XPath queries if you can.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-643: Improper Neutralization of Data within XPath Expressions (''XPath Injection'')'
+  functional-categories:
+  - pubsub::source::message::Micronaut
+  - xml::sink::xpath::javax.xml
+  owasp:
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - Kafka
+  - Micronaut
+  - RabbitMQ
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - XPath Injection
+  source: https://semgrep.dev/r/java.micronaut.xpath.tainted-xpath-msg.tainted-xpath-msg
+  shortlink: https://sg.run/Gd6DB
+  semgrep.dev:
+    rule:
+      r_id: 125204
+      rv_id: 735017
+      rule_id: 10UOXBW
+      version_id: QkTnY5J
+      url: https://semgrep.dev/playground/r/QkTnY5J/java.micronaut.xpath.tainted-xpath-msg.tainted-xpath-msg
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- patterns:
+  - focus-metavariable: $INPUT
+  - pattern: '@io.micronaut.configuration.kafka.annotation.Topic(...)
+
+      $TYPE $NAME(..., $I $INPUT, ...) {...}
+
+      '
+  - pattern-inside: '@io.micronaut.configuration.kafka.annotation.KafkaListener(...)
+
+      class $CL {...}
+
+      '
+- patterns:
+  - focus-metavariable: $INPUT
+  - pattern: '@io.micronaut.rabbitmq.annotation.Queue(...)
+
+      $TYPE $NAME(..., $I $INPUT, ...) {...}
+
+      '
+  - pattern-inside: '@io.micronaut.rabbitmq.annotation.RabbitListener(...)
+
+      class $CL {...}
+
+      '
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $EXPR
+  - pattern-either:
+    - pattern: (javax.xml.xpath.XPath $XP).evaluate($EXPR, ...)
+    - pattern: (javax.xml.xpath.XPath $XP).evaluateExpression($EXPR, ...)
+    - pattern: (javax.xml.xpath.XPath $XP).compile($EXPR, ...)
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)

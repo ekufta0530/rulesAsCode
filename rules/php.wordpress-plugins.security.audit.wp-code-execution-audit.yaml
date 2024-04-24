@@ -1,0 +1,43 @@
+id: php.wordpress-plugins.security.audit.wp-code-execution-audit.wp-code-execution-audit
+patterns:
+- pattern-either:
+  - pattern: eval(...)
+  - pattern: assert(...)
+  - pattern: call_user_func(...)
+message: These functions can lead to code injection if the data inside them is user-controlled.
+  Don't use the input directly or validate the data properly before passing it to
+  these functions.
+paths:
+  include:
+  - wp-content/plugins/**/*.php
+languages:
+- php
+severity: WARNING
+metadata:
+  category: security
+  confidence: LOW
+  likelihood: LOW
+  impact: HIGH
+  subcategory:
+  - audit
+  technology:
+  - Wordpress Plugins
+  references:
+  - https://github.com/wpscanteam/wpscan/wiki/WordPress-Plugin-Security-Testing-Cheat-Sheet#php-code-execution
+  owasp:
+  - A03:2021 - Injection
+  cwe:
+  - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Code Injection
+  source: https://semgrep.dev/r/php.wordpress-plugins.security.audit.wp-code-execution-audit.wp-code-execution-audit
+  shortlink: https://sg.run/WKD2
+  semgrep.dev:
+    rule:
+      r_id: 39197
+      rv_id: 110078
+      rule_id: 0oU6pX
+      version_id: 5PTdAzD
+      url: https://semgrep.dev/playground/r/5PTdAzD/php.wordpress-plugins.security.audit.wp-code-execution-audit.wp-code-execution-audit
+      origin: community

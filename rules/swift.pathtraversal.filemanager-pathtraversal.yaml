@@ -1,0 +1,68 @@
+id: swift.pathtraversal.filemanager-pathtraversal.swift-path-traversal
+message: Path traversal may allow malicious actors to access file content not intended
+  to be exposed to them. For example a user may be able to access sensitive secrets
+  stored within app files (e.g. UserDefaults/Plists/.etc.). Alternatively, users with
+  access to a victim's phone may be able to obtain senstivie data persisted by the
+  application.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-35: Path Traversal'
+  functional-categories:
+  - mobile::source::user-input-fields::lang
+  - mobile::sink::file-access::lang
+  masvs:
+  - 'MASVS-CODE-4: The app validates and sanitizes all untrusted inputs.'
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://developer.apple.com/library/archive/documentation/Security/Conceptual/SecureCodingGuide/Articles/ValidatingInput.html
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.pathtraversal.filemanager-pathtraversal.swift-path-traversal
+  shortlink: https://sg.run/4A09
+  semgrep.dev:
+    rule:
+      r_id: 66500
+      rv_id: 112033
+      rule_id: 3qUAR2
+      version_id: bZTb9vB
+      url: https://semgrep.dev/playground/r/bZTb9vB/swift.pathtraversal.filemanager-pathtraversal.swift-path-traversal
+      origin: pro_rules
+languages:
+- swift
+mode: taint
+options:
+  symbolic_propagation: true
+pattern-sources:
+- pattern-either:
+  - pattern: 'String(contentsOf: (URL: $U), ...)
+
+      '
+  - pattern: '(TextField: $T).text()
+
+      '
+  - pattern: '$PATH.text()
+
+      '
+pattern-sinks:
+- patterns:
+  - pattern: '(FileManager: $X).default.contents(atPath: $VALUE)
+
+      '
+  - focus-metavariable: $VALUE
+pattern-sanitizers:
+- by-side-effect: true
+  patterns:
+  - pattern: "$FP = FilePath(<... $PATH ...>)\n...\nif ($FP. ... .starts(...)) {\n\
+      \    ...\n    fm.default.contents(atPath: $PATH)\n    ...\n}\n"

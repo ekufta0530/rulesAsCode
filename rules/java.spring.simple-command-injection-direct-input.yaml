@@ -1,0 +1,62 @@
+id: java.spring.simple-command-injection-direct-input.simple-command-injection-direct-input
+message: 'Untrusted input might be injected into a command executed by the application,
+  which can lead to a command injection vulnerability. An attacker can execute arbitrary
+  commands, potentially gaining complete control of the system. To prevent this vulnerability,
+  avoid executing OS commands with user input. If this is unavoidable, validate and
+  sanitize the input, and use safe methods for executing the commands. For more information,
+  see: [Java command injection prevention](https://semgrep.dev/docs/cheat-sheets/java-command-injection/)'
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+    Command Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - os::sink::os-command-or-thread
+  - web::source::cookie::Spring
+  - web::source::header::Spring
+  - web::source::http-body::Spring
+  - web::source::http-params::Spring
+  - web::source::url-path-params::Spring
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - spring
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Command Injection
+  source: https://semgrep.dev/r/java.spring.simple-command-injection-direct-input.simple-command-injection-direct-input
+  shortlink: https://sg.run/dXkE
+  semgrep.dev:
+    rule:
+      r_id: 67734
+      rv_id: 229264
+      rule_id: j2UXOJ
+      version_id: WrTOBJ5
+      url: https://semgrep.dev/playground/r/WrTOBJ5/java.spring.simple-command-injection-direct-input.simple-command-injection-direct-input
+      origin: pro_rules
+languages:
+- java
+patterns:
+- pattern-either:
+  - pattern-inside: "$METHODNAME(..., @$REQ(...) $TYPE $SOURCE, ...) {\n  ...\n}\n"
+  - pattern-inside: "$METHODNAME(..., @$REQ $TYPE $SOURCE, ...) {\n  ...\n}\n"
+- metavariable-regex:
+    metavariable: $TYPE
+    regex: ^(?!(Integer|Long|Float|Double|Char|Boolean|int|long|float|double|char|boolean))
+- metavariable-regex:
+    metavariable: $REQ
+    regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+- pattern: Runtime.getRuntime().exec($SOURCE)

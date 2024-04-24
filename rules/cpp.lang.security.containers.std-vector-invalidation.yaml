@@ -1,0 +1,87 @@
+id: cpp.lang.security.containers.std-vector-invalidation.std-vector-invalidation
+message: Modifying an `std::vector` while iterating over it could cause the container
+  to reallocate, triggering memory corruption.
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - EXP54-CPP
+  - L1
+  - L2
+  - MEM30-C
+  cwe:
+  - 'CWE-416: Use After Free'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - memory::sink::buffer-overflow
+  references:
+  - https://wiki.sei.cmu.edu/confluence/display/c/MEM30-C.+Do+not+access+freed+memory
+  - https://wiki.sei.cmu.edu/confluence/display/cplusplus/EXP54-CPP.+Do+not+access+an+object+outside+of+its+lifetime
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Memory Issues
+  source: https://semgrep.dev/r/cpp.lang.security.containers.std-vector-invalidation.std-vector-invalidation
+  shortlink: https://sg.run/KxLed
+  semgrep.dev:
+    rule:
+      r_id: 114755
+      rv_id: 257366
+      rule_id: X5UQ4xw
+      version_id: X0TwWPA
+      url: https://semgrep.dev/playground/r/X0TwWPA/cpp.lang.security.containers.std-vector-invalidation.std-vector-invalidation
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+patterns:
+- patterns:
+  - pattern-either:
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.begin(); $IT\
+        \ != $CONTAINER.end(); ++$IT) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.begin(); $IT\
+        \ != $CONTAINER.end(); $IT++) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.rbegin(); $IT\
+        \ != $CONTAINER.rend(); ++$IT) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.rbegin(); $IT\
+        \ != $CONTAINER.rend(); $IT++) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.begin(), $IT_END\
+        \ = $CONTAINER.end(); $IT != $IT_END; ++$IT) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.begin(), $IT_END\
+        \ = $CONTAINER.end(); $IT != $IT_END; $IT++) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.rbegin(), $IT_END\
+        \ = $CONTAINER.rend(); $IT != $IT_END; ++$IT) {\n  ...\n}\n"
+    - pattern-inside: "for(std::vector<$TY>::$IT_TYPE $IT = $CONTAINER.rbegin(), $IT_END\
+        \ = $CONTAINER.rend(); $IT != $IT_END; $IT++) {\n  ...\n}\n"
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: $CONTAINER.erase($IT);
+        - pattern-not: $IT = $CONTAINER.erase($IT);
+      - pattern-either:
+        - pattern: $CONTAINER.assign(...)
+        - pattern: $CONTAINER.clear(...)
+        - pattern: $CONTAINER.emplace_back(...)
+        - pattern: $CONTAINER.insert(...)
+        - pattern: $CONTAINER.resize(...)
+        - pattern: $CONTAINER.push_back(...)
+        - pattern: $CONTAINER.reserve(...)
+        - pattern: $CONTAINER.shrink_to_fit(...)
+        - pattern: $CONTAINER.resize(...)
+        - pattern: $CONTAINER.pop_back(...)
+    - pattern-not-inside: "for(...) {\n  ...\n  break;\n}\n"
+    - pattern-not-inside: "for(...) {\n  ...\n  continue;\n}\n"
+    - pattern-not-inside: "for(...) {\n  ...\n  goto $LABEL;\n}\n"
+    - pattern-not-inside: "for(...) {\n  ...\n  return;\n}\n"
+    - pattern-not-inside: "for(...) {\n  ...\n  return $RET;\n}\n"

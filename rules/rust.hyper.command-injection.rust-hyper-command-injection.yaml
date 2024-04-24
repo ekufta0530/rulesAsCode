@@ -1,0 +1,127 @@
+id: rust.hyper.command-injection.rust-hyper-command-injection.rust-hyper-command-injection
+message: Untrusted input might be injected into a command executed by the application,
+  which can lead to a command injection vulnerability. An attacker can execute arbitrary
+  commands, potentially gaining complete control of the system. To prevent this vulnerability,
+  avoid executing OS commands with user input. If this is unavoidable, validate and
+  sanitize the input, and use safe methods for executing the commands.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+    Command Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - os::sink::os-command-or-thread::std::process
+  - web::source::header::hyper
+  - web::source::http-body::hyper
+  - web::source::http-params::hyper
+  - web::source::url-path-params::hyper
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - hyper
+  - rust
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Command Injection
+  source: https://semgrep.dev/r/rust.hyper.command-injection.rust-hyper-command-injection.rust-hyper-command-injection
+  shortlink: https://sg.run/4759
+  semgrep.dev:
+    rule:
+      r_id: 63200
+      rv_id: 251680
+      rule_id: eqUJl4
+      version_id: 5PTk5JJ
+      url: https://semgrep.dev/playground/r/5PTk5JJ/rust.hyper.command-injection.rust-hyper-command-injection.rust-hyper-command-injection
+      origin: pro_rules
+languages:
+- rust
+mode: taint
+options:
+  symbolic_propagation: true
+pattern-sources:
+- label: REQUEST
+  patterns:
+  - pattern: $REQ
+  - pattern-either:
+    - pattern-inside: "fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Incoming>,\
+        \ ...) {\n  ...\n}\n"
+    - pattern-inside: "fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Body>, ...)\
+        \ {\n  ...\n}\n"
+    - pattern-inside: "fn $FN_NAME(..., $REQ: hyper::Request<hyper::Body>, ...) {\n\
+        \  ...\n}\n"
+- label: USER_INPUT
+  patterns:
+  - pattern-either:
+    - pattern: $R.body()
+    - pattern: $R.body_mut()
+    - pattern: $R.into_body()
+    - pattern: $R.headers
+    - pattern: $R.headers_mut()
+    - pattern: $R.query()
+    - pattern: $R.path()
+    - pattern: $R.path_and_query()
+    - pattern: $R.collect()
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - pattern: $TO.push_str($FROM)
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $TO.$FUNC(..., $FROM)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(insert_str|replace_range)$
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $FROM.$FUNC(&$TO)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: $TO = $FROM.into()
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: $TO = std::from_utf8($FROM)
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: "let $TO = if let $SOME = $FROM {\n  ...\n} else {\n  ...\n};\n"
+  to: $TO
+pattern-sinks:
+- patterns:
+  - pattern: std::process::Command::new($CMDINPUT)
+  - focus-metavariable: $CMDINPUT
+  requires: REQUEST and USER_INPUT
+- patterns:
+  - pattern-either:
+    - pattern: std::process::Command::new("$SHELL"). ... .arg("-c"). ... .arg($CMDINPUT)
+    - pattern: std::process::Command::new("$SHELL"). ... .args([..., "-c", ..., $CMDINPUT,
+        ...])
+    - patterns:
+      - pattern-inside: $COMMAND = std::process::Command::new("$SHELL"); ...
+      - pattern-inside: $COMMAND.arg("-c"); ...
+      - pattern: $COMMAND.arg("$CMDINPUT")
+  - metavariable-regex:
+      metavariable: $SHELL
+      regex: ^(.*\/)?(sh|bash|ksh|csh|tcsh|zsh)$
+  - focus-metavariable: $CMDINPUT
+  requires: REQUEST and USER_INPUT

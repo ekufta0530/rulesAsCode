@@ -1,0 +1,54 @@
+id: php.lang.security.search-cookie-secure-false-ini-config.search-cookie-secure-false-ini-config
+message: Secure cookie flag is explicitly disabled. This will cause cookies to be
+  transmitted over unencrypted HTTP connections which can allow theft of confidential
+  user data such as session tokens.
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+  functional-categories:
+  - web::search::cookie-config:lang
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://www.php.net/manual/en/function.setcookie.php
+  - https://www.php.net/manual/en/function.session-set-cookie-params.php
+  - https://www.php.net/manual/en/configuration.file.php
+  technology:
+  - php
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/php.lang.security.search-cookie-secure-false-ini-config.search-cookie-secure-false-ini-config
+  shortlink: https://sg.run/JRDW
+  semgrep.dev:
+    rule:
+      r_id: 27190
+      rv_id: 111767
+      rule_id: 10UyOx
+      version_id: 2KTz39P
+      url: https://semgrep.dev/playground/r/2KTz39P/php.lang.security.search-cookie-secure-false-ini-config.search-cookie-secure-false-ini-config
+      origin: pro_rules
+languages:
+- generic
+paths:
+  include:
+  - '*.php.ini'
+  - php-*.ini
+patterns:
+- pattern-either:
+  - pattern: 'session.cookie_secure = ''''
+
+      '
+  - pattern: 'session.cookie_secure = 0
+
+      '
+  - pattern: 'session.cookie_secure = false
+
+      '

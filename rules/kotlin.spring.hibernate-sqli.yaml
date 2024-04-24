@@ -1,0 +1,312 @@
+id: kotlin.spring.hibernate-sqli.hibernate-sqli
+message: 'Untrusted input might be used to build a database query, which can lead
+  to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions. When building
+  SQL queries in Kotlin, it is possible to adopt prepared statements using the `connection.PreparedStatement`
+  class with parameterized queries. For more information, see: [Prepared statements
+  in Kotlin](https://developer.android.com/reference/kotlin/java/sql/PreparedStatement).'
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::sink::sql-or-nosql-query::hibernate
+  - web::source::cookie::SpringBoot
+  - web::source::header::SpringBoot
+  - web::source::http-body::SpringBoot
+  - web::source::http-params::SpringBoot
+  - web::source::url-path-params::SpringBoot
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - hibernate
+  - kotlin
+  - orm
+  - spring
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/kotlin.spring.hibernate-sqli.hibernate-sqli
+  shortlink: https://sg.run/r1wR
+  semgrep.dev:
+    rule:
+      r_id: 56869
+      rv_id: 731946
+      rule_id: BYU5yQ
+      version_id: YDTAK6Q
+      url: https://semgrep.dev/playground/r/YDTAK6Q/kotlin.spring.hibernate-sqli.hibernate-sqli
+      origin: pro_rules
+languages:
+- kotlin
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: '($REQ: ServletRequest)
+
+        '
+    - pattern: '($REQ: HttpServletRequest)
+
+        '
+    - pattern: '($REQ: WebRequest)
+
+        '
+    - pattern: '($REQ: ServletWebRequest)
+
+        '
+    - pattern: '($REQ: FacesWebRequest)
+
+        '
+    - pattern: '($REQ: NativeWebRequest)
+
+        '
+    - patterns:
+      - pattern-either:
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+      - metavariable-regex:
+          metavariable: $TYPE
+          regex: ^(?!(Int|Long|Float|Double|Short|Byte|Char|UByte|UInt|ULong|UShort|Boolean))
+      - metavariable-regex:
+          metavariable: $REQ
+          regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+      - focus-metavariable: $SOURCE
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $SQL
+  - pattern-either:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import javax.*
+
+              ...
+
+              '
+          - pattern-inside: 'import javax.persistence
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($EM: persistence.EntityManager).createQuery($SQL,...)
+
+              '
+          - pattern: '($EM: persistence.EntityManager).createSQLQuery($SQL,...)
+
+              '
+          - pattern: '($EM: persistence.EntityManager).createNativeQuery($SQL,...)
+
+              '
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import javax.persistence.*
+
+              ...
+
+              '
+          - pattern-inside: 'import javax.persistence.EntityManager
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($EM: EntityManager).createQuery($SQL,...)
+
+              '
+          - pattern: '($EM: EntityManager).createSQLQuery($SQL,...)
+
+              '
+          - pattern: '($EM: EntityManager).createNativeQuery($SQL,...)
+
+              '
+    - patterns:
+      - pattern-either:
+        - pattern-inside: '$EM = $EMF.createEntityManager(...)
+
+            ...
+
+            '
+        - pattern-inside: "class $CL(...) {\n  ...\n  val $EM = $EMF.createEntityManager(...)\n\
+            \  ...\n}\n"
+      - pattern-either:
+        - pattern: $EM.createQuery($SQL,...)
+        - pattern: $EM.createSQLQuery($SQL,...)
+        - pattern: $EM.createNativeQuery($SQL,...)
+    - pattern: $EMF.createEntityManager(...).createQuery($SQL,...)
+    - pattern: $EMF.createEntityManager(...).createSQLQuery($SQL,...)
+    - pattern: $EMF.createEntityManager(...).createNativeQuery($SQL,...)
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import javax.*
+
+              ...
+
+              '
+          - pattern-inside: 'import javax.persistence
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($EMF: persistence.EntityManagerFactory). ... .createQuery($SQL,...)
+
+              '
+          - pattern: '($EMF: persistence.EntityManagerFactory). ... .createSQLQuery($SQL,...)
+
+              '
+          - pattern: '($EMF: persistence.EntityManagerFactory). ... .createNativeQuery($SQL,...)
+
+              '
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import javax.persistence.*
+
+              ...
+
+              '
+          - pattern-inside: 'import javax.persistence.EntityManagerFactory
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($EMF: EntityManagerFactory). ... .createQuery($SQL,...)
+
+              '
+          - pattern: '($EMF: EntityManagerFactory). ... .createSQLQuery($SQL,...)
+
+              '
+          - pattern: '($EMF: EntityManagerFactory). ... .createNativeQuery($SQL,...)
+
+              '
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.hibernate
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($S: hibernate.Session).createQuery($SQL,...)
+
+              '
+          - pattern: '($S: hibernate.Session).createSQLQuery($SQL,...)
+
+              '
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.hibernate.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.hibernate.Session
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($S: Session).createQuery($SQL,...)
+
+              '
+          - pattern: '($S: Session).createSQLQuery($SQL,...)
+
+              '
+    - patterns:
+      - pattern-either:
+        - pattern-inside: '$S = $SF.openSession(...)
+
+            ...
+
+            '
+        - pattern-inside: "class $CL(...) {\n  ...\n  val $S = $SF.openSession(...)\n\
+            \  ...\n}\n"
+      - pattern-either:
+        - pattern: $S.createQuery($SQL,...)
+        - pattern: $S.createSQLQuery($SQL,...)
+    - pattern: $SF.openSession(...). ... .createQuery($SQL,...)
+    - pattern: $SF.openSession(...). ... .createSQLQuery($SQL,...)
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.hibernate
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($SF: hibernate.SessionFactory). ... .createQuery($SQL,...)
+
+              '
+          - pattern: '($SF: hibernate.SessionFactory). ... .createSQLQuery($SQL,...)
+
+              '
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.hibernate.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.hibernate.SessionFactory
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: '($SF: SessionFactory). ... .createQuery($SQL,...)
+
+              '
+          - pattern: '($SF: SessionFactory). ... .createSQLQuery($SQL,...)
+
+              '
+    - pattern: Restrictions.sqlRestriction($SQL,...)
+pattern-sanitizers:
+- patterns:
+  - pattern: $X.$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (equals|toInt|toLong|toFloat|toDouble|toShort|toByte|toUByte|toUInt|toULong|toUShort)
+- pattern: '($X: boolean)
+
+    '

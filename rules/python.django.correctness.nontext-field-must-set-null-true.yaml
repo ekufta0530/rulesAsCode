@@ -1,0 +1,39 @@
+id: python.django.correctness.nontext-field-must-set-null-true.nontext-field-must-set-null-true
+patterns:
+- pattern-inside: "class $M(...):\n  ...\n"
+- pattern-not: $F = django.db.models.CharField(...)
+- pattern-not: $F = django.db.models.TextField(...)
+- pattern-not: $F = django.db.models.SlugField(...)
+- pattern-not: $F = django.db.models.EmailField(...)
+- pattern-not: $F = django.db.models.FileField(...)
+- pattern-not: $F = django.db.models.ImageField(...)
+- pattern-not: $F = django.db.models.URLField(...)
+- pattern-not: $F = django.db.models.UUIDField(...)
+- pattern-not: $F = django.db.models.ManyToManyField(...)
+- pattern-not: $F = django.db.models.NullBooleanField(...)
+- pattern-not: $F = django.contrib.gis.db.models.$MODEL(...)
+- pattern-not: $F = phonenumber_field.modelfields.PhoneNumberField(...)
+- pattern-not: $F = ckeditor.fields.RichTextField(...)
+- pattern-not: $F = $X(..., null=True, blank=True, ...)
+- pattern: $F = $X(..., blank=True, ...)
+message: null=True should be set if blank=True is set on non-text fields.
+languages:
+- python
+severity: ERROR
+metadata:
+  category: correctness
+  references:
+  - https://docs.djangoproject.com/en/4.0/ref/models/fields/#null
+  technology:
+  - django
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.django.correctness.nontext-field-must-set-null-true.nontext-field-must-set-null-true
+  shortlink: https://sg.run/ox40
+  semgrep.dev:
+    rule:
+      r_id: 9460
+      rv_id: 110169
+      rule_id: yyUnJk
+      version_id: ExTjNJw
+      url: https://semgrep.dev/playground/r/ExTjNJw/python.django.correctness.nontext-field-must-set-null-true.nontext-field-must-set-null-true
+      origin: community

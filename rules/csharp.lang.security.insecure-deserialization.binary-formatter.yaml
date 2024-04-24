@@ -1,0 +1,48 @@
+id: csharp.lang.security.insecure-deserialization.binary-formatter.insecure-binaryformatter-deserialization
+severity: WARNING
+languages:
+- C#
+metadata:
+  cwe:
+  - 'CWE-502: Deserialization of Untrusted Data'
+  owasp:
+  - A08:2017 - Insecure Deserialization
+  - A08:2021 - Software and Data Integrity Failures
+  references:
+  - https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+  category: security
+  technology:
+  - .net
+  confidence: HIGH
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/csharp.lang.security.insecure-deserialization.binary-formatter.insecure-binaryformatter-deserialization
+  shortlink: https://sg.run/ZeXW
+  semgrep.dev:
+    rule:
+      r_id: 11135
+      rv_id: 109200
+      rule_id: bwUOjK
+      version_id: jQTgYD5
+      url: https://semgrep.dev/playground/r/jQTgYD5/csharp.lang.security.insecure-deserialization.binary-formatter.insecure-binaryformatter-deserialization
+      origin: community
+message: The BinaryFormatter type is dangerous and is not recommended for data processing.
+  Applications should stop using BinaryFormatter as soon as possible, even if they
+  believe the data they're processing to be trustworthy. BinaryFormatter is insecure
+  and can't be made secure
+patterns:
+- pattern-inside: 'using System.Runtime.Serialization.Formatters.Binary;
+
+    ...
+
+    '
+- pattern: 'new BinaryFormatter();
+
+    '

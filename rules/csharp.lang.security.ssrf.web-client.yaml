@@ -1,0 +1,145 @@
+id: csharp.lang.security.ssrf.web-client.ssrf
+severity: ERROR
+languages:
+- csharp
+metadata:
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+  category: security
+  technology:
+  - .net
+  confidence: LOW
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/csharp.lang.security.ssrf.web-client.ssrf
+  shortlink: https://sg.run/JxqP
+  semgrep.dev:
+    rule:
+      r_id: 13702
+      rv_id: 109218
+      rule_id: yyUPBe
+      version_id: LjTqQBz
+      url: https://semgrep.dev/playground/r/LjTqQBz/csharp.lang.security.ssrf.web-client.ssrf
+      origin: community
+message: SSRF is an attack vector that abuses an application to interact with the
+  internal/external network or the machine itself.
+patterns:
+- pattern-inside: 'using System.Net;
+
+    ...
+
+    '
+- pattern-either:
+  - pattern: '$T $F(..., $X, ...)
+
+      {
+
+      ...
+
+      WebClient $Y = new WebClient();
+
+      ...
+
+      ... $Y.OpenRead(<... $X ...>);
+
+      }
+
+      '
+  - pattern: '$T $F(..., $X, ...)
+
+      {
+
+      ...
+
+      $A $B = <... $X ...>;
+
+      ...
+
+      WebClient $Y = new WebClient();
+
+      ...
+
+      ... $Y.OpenRead($B);
+
+      }
+
+      '
+  - pattern: '$T $F(..., $X, ...)
+
+      {
+
+      ...
+
+      WebClient $Y = new WebClient();
+
+      ...
+
+      ... $Y.OpenReadAsync(<... $X ...>, ...);
+
+      }
+
+      '
+  - pattern: '$T $F(..., $X, ...)
+
+      {
+
+      ...
+
+      $A $B = <... $X ...>;
+
+      ...
+
+      WebClient $Y = new WebClient();
+
+      ...
+
+      ... $Y.OpenReadAsync($B, ...);
+
+      }
+
+      '
+  - pattern: '$T $F(..., $X, ...)
+
+      {
+
+      ...
+
+      WebClient $Y = new WebClient();
+
+      ...
+
+      ... $Y.DownloadString(<... $X ...>);
+
+      }
+
+      '
+  - pattern: '$T $F(..., $X, ...)
+
+      {
+
+      ...
+
+      $A $B = <... $X ...>;
+
+      ...
+
+      WebClient $Y = new WebClient();
+
+      ...
+
+      ... $Y.DownloadString($B);
+
+      }
+
+      '

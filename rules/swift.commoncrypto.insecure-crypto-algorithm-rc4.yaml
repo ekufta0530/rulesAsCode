@@ -1,0 +1,67 @@
+id: swift.commoncrypto.insecure-crypto-algorithm-rc4.insecure-crypto-algorithm-rc4
+message: The use of the insecure RC4 stream cipher encryption algorithm was identified.
+  RC4 is deprecated and considered insecure. The application should leverage more
+  suitable algorithms such as AES in GCM mode, or ChaChaPoly.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  functional-categories:
+  - crypto::search::symmetric-algorithm::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-4: The app does not use cryptographic protocols or algorithms that
+    are widely considered deprecated for security purposes.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-algorithm-rc4.insecure-crypto-algorithm-rc4
+  shortlink: https://sg.run/KrBd
+  semgrep.dev:
+    rule:
+      r_id: 59711
+      rv_id: 111994
+      rule_id: j2Ud26
+      version_id: 44TR6dE
+      url: https://semgrep.dev/playground/r/44TR6dE/swift.commoncrypto.insecure-crypto-algorithm-rc4.insecure-crypto-algorithm-rc4
+      origin: pro_rules
+languages:
+- swift
+mode: taint
+options:
+  symbolic_propagation: true
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: 'CCAlgorithm(kCCAlgorithmRC4)
+
+        '
+    - pattern: 'CCAlgorithm(4)
+
+        '
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: 'CCCrypt($A, $ALG, ...)
+
+        '
+    - pattern: 'CCCryptorCreate($A, $ALG, ...)
+
+        '
+    - pattern: 'CCCryptorCreateFromData($A, $ALG, ...)
+
+        '
+  - focus-metavariable: $ALG

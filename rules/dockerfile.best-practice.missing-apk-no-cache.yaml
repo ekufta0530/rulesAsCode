@@ -1,0 +1,32 @@
+id: dockerfile.best-practice.missing-apk-no-cache.missing-apk-no-cache
+patterns:
+- pattern: 'RUN apk $COMMAND ...
+
+    '
+- pattern-not-inside: 'RUN apk ... --no-cache ...
+
+    '
+languages:
+- dockerfile
+message: This apk command is missing '--no-cache'. This forces apk to use a package
+  index instead of a local package cache, removing the need for '--update' and the
+  deletion of '/var/cache/apk/*'. Add '--no-cache' to your apk command.
+severity: INFO
+metadata:
+  source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3019
+  references:
+  - https://github.com/hadolint/hadolint/wiki/DL3019
+  category: best-practice
+  technology:
+  - dockerfile
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/dockerfile.best-practice.missing-apk-no-cache.missing-apk-no-cache
+  shortlink: https://sg.run/Njv7
+  semgrep.dev:
+    rule:
+      r_id: 20127
+      rv_id: 675961
+      rule_id: wdUkNy
+      version_id: NdTN1Yw
+      url: https://semgrep.dev/playground/r/NdTN1Yw/dockerfile.best-practice.missing-apk-no-cache.missing-apk-no-cache
+      origin: community

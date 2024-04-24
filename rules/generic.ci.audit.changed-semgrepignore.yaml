@@ -1,0 +1,36 @@
+id: generic.ci.audit.changed-semgrepignore.changed-semgrepignore
+paths:
+  include:
+  - .semgrepignore
+patterns:
+- pattern-regex: '^(.*)$
+
+    '
+- pattern-not-regex: '^\n.*$
+
+    '
+- pattern-not-regex: '^#.*$
+
+    '
+message: '`$1` has been added to the .semgrepignore list of ignored paths. Someone
+  from app-sec may want to audit these changes.'
+languages:
+- generic
+severity: WARNING
+metadata:
+  technology:
+  - semgrep
+  references:
+  - https://semgrep.dev/docs/ignoring-files-folders-code/
+  category: best-practice
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/generic.ci.audit.changed-semgrepignore.changed-semgrepignore
+  shortlink: https://sg.run/rywn
+  semgrep.dev:
+    rule:
+      r_id: 16225
+      rv_id: 109324
+      rule_id: 10U5Eq
+      version_id: 44TRlYB
+      url: https://semgrep.dev/playground/r/44TRlYB/generic.ci.audit.changed-semgrepignore.changed-semgrepignore
+      origin: community

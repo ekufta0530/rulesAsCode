@@ -1,0 +1,66 @@
+id: python.lang.security.audit.insecure-transport.requests.request-session-http-in-with-context.request-session-http-in-with-context
+options:
+  symbolic_propagation: true
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: '"$URL"
+
+      '
+  - metavariable-pattern:
+      metavariable: $URL
+      language: regex
+      patterns:
+      - pattern-regex: http://
+      - pattern-not-regex: .*://localhost
+      - pattern-not-regex: .*://127\.0\.0\.1
+pattern-sinks:
+- patterns:
+  - pattern-inside: "with requests.Session(...) as $SESSION:\n  ...\n"
+  - pattern-either:
+    - pattern: $SESSION.$W($SINK, ...)
+    - pattern: $SESSION.request($METHOD, $SINK, ...)
+  - focus-metavariable: $SINK
+fix-regex:
+  regex: '[Hh][Tt][Tt][Pp]://'
+  replacement: https://
+  count: 1
+message: Detected a request using 'http://'. This request will be unencrypted. Use
+  'https://' instead.
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  asvs:
+    section: V9 Communications Verification Requirements
+    control_id: 9.2.1 Weak TLS
+    control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x17-V9-Communications.md#v92-server-communications-security-requirements
+    version: '4'
+  category: security
+  technology:
+  - requests
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/python.lang.security.audit.insecure-transport.requests.request-session-http-in-with-context.request-session-http-in-with-context
+  shortlink: https://sg.run/Bk5W
+  semgrep.dev:
+    rule:
+      r_id: 9651
+      rv_id: 110394
+      rule_id: lBU9BZ
+      version_id: 5PTdeJ5
+      url: https://semgrep.dev/playground/r/5PTdeJ5/python.lang.security.audit.insecure-transport.requests.request-session-http-in-with-context.request-session-http-in-with-context
+      origin: community
+languages:
+- python
+severity: INFO

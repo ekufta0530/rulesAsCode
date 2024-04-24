@@ -1,0 +1,166 @@
+id: java.spring.security.kryo-deserialization-deepsemgrep.kryo-deserialization-deepsemgrep
+message: 'The application may convert user-controlled data into an object, which can
+  lead to an insecure deserialization vulnerability. An attacker can create a malicious
+  serialized object, pass it to the application, and take advantage of the deserialization
+  process to perform Denial-of-service (DoS), Remote code execution (RCE), or bypass
+  access control measures. To prevent this vulnerability, leverage data formats such
+  as JSON or XML as safer alternatives. If you need to deserialize user input in a
+  specific format, consider digitally signing the data before serialization to prevent
+  tampering. For more information, see: [Deserialization prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+  We do not recommend deserializing untrusted data with the `Kryo` unless you explicitly
+  define permissions for types that are allowed to be deserialized by `Kryo`.'
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-502: Deserialization of Untrusted Data'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - deserialization::sink::load-object::kryo
+  - web::source::cookie::Spring
+  - web::source::header::Spring
+  - web::source::http-body::Spring
+  - web::source::http-params::Spring
+  - web::source::url-path-params::Spring
+  owasp:
+  - A08:2017 - Insecure Deserialization
+  - A08:2021 - Software and Data Integrity Failures
+  references:
+  - https://github.com/EsotericSoftware/kryo
+  - https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures
+  technology:
+  - Spring
+  - java
+  - kryo
+  - xml
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/java.spring.security.kryo-deserialization-deepsemgrep.kryo-deserialization-deepsemgrep
+  shortlink: https://sg.run/038k
+  semgrep.dev:
+    rule:
+      r_id: 44910
+      rv_id: 735039
+      rule_id: 9AU8Zr
+      version_id: X0TgjEl
+      url: https://semgrep.dev/playground/r/X0TgjEl/java.spring.security.kryo-deserialization-deepsemgrep.kryo-deserialization-deepsemgrep
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: $RET $METHOD(..., @$REQ(...) $TYPE $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., @$REQ $TYPE $SOURCE, ...) {...}
+  - metavariable-regex:
+      metavariable: $REQ
+      regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute|MatrixVariable|RequestPart|RequestAttribute)
+  - focus-metavariable: $SOURCE
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern-inside: '@$MAPPING(...)
+
+        $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+
+        '
+    - pattern-inside: '@$MAPPING
+
+        $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+
+        '
+  - pattern-either:
+    - pattern: $RET $METHOD(..., String $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., org.springframework.http.HttpEntity<$X> $SOURCE,
+        ...) {...}
+    - pattern: $RET $METHOD(..., java.io.InputStream $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., java.io.Reader $SOURCE, ...) {...}
+  - metavariable-regex:
+      metavariable: $MAPPING
+      regex: (ResponseBody|RequestMapping|PatchMapping|GetMapping|DeleteMapping|PutMapping|PostMapping|HttpExchange|GetExchange|PostExchange|PutExchange|PatchExchange|DeleteExchange|ResponseStatus)
+  - focus-metavariable: $SOURCE
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: (org.springframework.web.context.request.WebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.NativeWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.FacesWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.ServletWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.servlet.handler.DispatcherServletWebRequest
+        $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.async.AsyncWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.async.StandardServletAsyncWebRequest
+        $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getHeader|getHeaderNames|getHeaderValues|getParameter|getParameterMap|getParameterNames|getParameterValues|getAttribute|getAttributeNames)
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: (org.springframework.http.HttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.client.ClientHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.ServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.ServletServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.multipart.support.RequestPartServletServerHttpRequest
+        $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.reactive.ServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.reactive.ServerHttpRequestDecorator
+        $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getPath|getQueryParams|getBody|getURI|getHeaders|getCookies)
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: (javax.servlet.ServletRequest $REQ).$METHOD(...)
+    - pattern: (javax.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+    - pattern: (jakarta.servlet.ServletRequest $REQ).$METHOD(...)
+    - pattern: (jakarta.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)
+- by-side-effect: true
+  label: REG_FALSE
+  patterns:
+  - focus-metavariable: $K
+  - pattern-either:
+    - pattern: (Kryo $K).setRegistrationRequired(false)
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: (Kryo $K).readObject(...)
+    - pattern: (Kryo $K).readObjectOrNull(...)
+  requires: REQ and REG_FALSE
+- patterns:
+  - pattern-either:
+    - pattern: (Kryo $K).readClassAndObject(...)
+  requires: REQ
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)

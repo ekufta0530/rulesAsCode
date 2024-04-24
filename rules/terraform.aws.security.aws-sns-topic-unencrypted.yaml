@@ -1,0 +1,41 @@
+id: terraform.aws.security.aws-sns-topic-unencrypted.aws-sns-topic-unencrypted
+patterns:
+- pattern: "resource \"aws_sns_topic\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_sns_topic\" $ANYTHING {\n  ...\n  kms_master_key_id\
+    \ = ...\n  ...\n}\n"
+message: The AWS SNS topic is unencrypted. The SNS topic messages could be read if
+  compromised. The AWS KMS encryption key protects topic contents. To create your
+  own, create a aws_kms_key resource or use the ARN string of a key in your account.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A04:2021 - Insecure Design
+  cwe:
+  - 'CWE-311: Missing Encryption of Sensitive Data'
+  references:
+  - https://owasp.org/Top10/A04_2021-Insecure_Design
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-sns-topic-unencrypted.aws-sns-topic-unencrypted
+  shortlink: https://sg.run/b06p
+  semgrep.dev:
+    rule:
+      r_id: 47070
+      rv_id: 110791
+      rule_id: ReUWRG
+      version_id: WrTW3dr
+      url: https://semgrep.dev/playground/r/WrTW3dr/terraform.aws.security.aws-sns-topic-unencrypted.aws-sns-topic-unencrypted
+      origin: community

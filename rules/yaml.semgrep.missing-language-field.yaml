@@ -1,0 +1,40 @@
+id: yaml.semgrep.missing-language-field.missing-language-field
+message: Please include a 'languages' field for your rule $RULEID!
+languages:
+- yaml
+pattern-either:
+- patterns:
+  - pattern-inside: 'rules: [..., $RULE, ...]'
+  - pattern: 'id: $RULEID'
+  - pattern-not-inside: "- ...\n  languages: ...\n"
+  - pattern-not-inside: "- ...\n  mode: join\n"
+- patterns:
+  - pattern-inside: 'rules: [ ..., $OUTER_RULE, ...]
+
+      '
+  - pattern-inside: $OUTER_RULE
+  - pattern-inside: "id: $OUTER_RULEID\nmode: join\njoin:\n  rules: [ ..., $INNER_RULE,\
+      \ ...]\n  ...\n...\n"
+  - pattern-inside: $INNER_RULE
+  - pattern-not-inside: "- languages: ...\n  ...\n"
+  - pattern: 'id: $RULEID
+
+      '
+severity: WARNING
+metadata:
+  references:
+  - https://semgrep.dev/docs/writing-rules/rule-syntax/#required
+  category: correctness
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.missing-language-field.missing-language-field
+  shortlink: https://sg.run/Zeox
+  semgrep.dev:
+    rule:
+      r_id: 11079
+      rv_id: 111179
+      rule_id: NbUA4R
+      version_id: ExTjA6W
+      url: https://semgrep.dev/playground/r/ExTjA6W/yaml.semgrep.missing-language-field.missing-language-field
+      origin: community

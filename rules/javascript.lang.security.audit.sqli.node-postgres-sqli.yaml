@@ -1,0 +1,63 @@
+id: javascript.lang.security.audit.sqli.node-postgres-sqli.node-postgres-sqli
+message: 'Detected string concatenation with a non-literal variable in a node-postgres
+  JS SQL statement. This could lead to SQL injection if the variable is user-controlled
+  and not properly sanitized. In order to prevent SQL injection, use parameterized
+  queries or prepared statements instead. You can use parameterized statements like
+  so: `client.query(''SELECT $1 from table'', [userinput])`'
+metadata:
+  owasp:
+  - A08:2021 - Software and Data Integrity Failures
+  cwe:
+  - 'CWE-915: Improperly Controlled Modification of Dynamically-Determined Object
+    Attributes'
+  references:
+  - https://node-postgres.com/features/queries
+  category: security
+  technology:
+  - node-postgres
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mass Assignment
+  source: https://semgrep.dev/r/javascript.lang.security.audit.sqli.node-postgres-sqli.node-postgres-sqli
+  shortlink: https://sg.run/0n3v
+  semgrep.dev:
+    rule:
+      r_id: 10710
+      rv_id: 109930
+      rule_id: ReUPN9
+      version_id: 44TRlP8
+      url: https://semgrep.dev/playground/r/44TRlP8/javascript.lang.security.audit.sqli.node-postgres-sqli.node-postgres-sqli
+      origin: community
+languages:
+- javascript
+- typescript
+severity: WARNING
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-inside: "function ... (...,$FUNC,...) {\n  ...\n}\n"
+  - focus-metavariable: $FUNC
+  - pattern-not-inside: '$F. ... .$SOURCE(...)
+
+      '
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: "const { $CLIENT } = require('pg')\n ...\n"
+    - pattern-inside: "var { $CLIENT } = require('pg')\n ...\n"
+    - pattern-inside: "let { $CLIENT } = require('pg')\n ...\n"
+  - pattern-either:
+    - pattern-inside: '$DB = new $CLIENT(...)
+
+        ...
+
+        '
+    - pattern-inside: "$NEWPOOL = new $CLIENT(...)\n...\n$NEWPOOL.connect((..., $DB,\
+        \ ...) => {\n    ...\n})\n"
+  - pattern: $DB.query($QUERY,...)
+  - focus-metavariable: $QUERY

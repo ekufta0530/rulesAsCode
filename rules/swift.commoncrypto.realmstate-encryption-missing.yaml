@@ -1,0 +1,85 @@
+id: swift.commoncrypto.realmstate-encryption-missing.swift-hardcoded-realm-without-encryption
+message: The application was observed to utilize Realm for data storage, but was not
+  observed to set an encryption key. When no encryption key is set in the configuration,
+  no encryption is used. To protect user and application data, the application should
+  specify an encryption key, which is randomly generated per user, per client.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-311: Missing Encryption of Sensitive Data'
+  functional-categories:
+  - mobile::search::storage::CommonCrypto
+  masvs:
+  - 'MASVS-STORAGE-1: The app securely stores sensitive data'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A04:2021 - Insecure Design
+  references:
+  - https://ali-akhtar.medium.com/realm-custom-configuration-and-encryption-realmswift-part-3-f991f090ae22
+  - https://mas.owasp.org/MASVS/controls/MASVS-STORAGE-1/
+  - https://mas.owasp.org/MASVS/controls/MASVS-CRYPTO-1/
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.commoncrypto.realmstate-encryption-missing.swift-hardcoded-realm-without-encryption
+  shortlink: https://sg.run/Jk8j
+  semgrep.dev:
+    rule:
+      r_id: 66490
+      rv_id: 112006
+      rule_id: v8UzXj
+      version_id: qkT2ByP
+      url: https://semgrep.dev/playground/r/qkT2ByP/swift.commoncrypto.realmstate-encryption-missing.swift-hardcoded-realm-without-encryption
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-inside: '$CONFIG = Realm.Configuration(...)
+
+        ...
+
+        '
+    - pattern-not-inside: '$CONFIG = Realm.Configuration(...,encryptionKey: $KEY,...)
+
+        ...
+
+        '
+    - pattern-not-inside: '$CONFIG = Realm.Configuration(...)
+
+        ...
+
+        $CONFIG.encryptionKey = ...
+
+        ...
+
+        '
+    - pattern: 'Realm(configuration: $CONFIG)
+
+        '
+  - patterns:
+    - pattern-inside: '$CONFIG = Realm.Configuration(...)
+
+        ...
+
+        '
+    - pattern-inside: '$CONFIG.encryptionKey = nil
+
+        ...
+
+        '
+    - pattern: 'Realm(configuration: $CONFIG)
+
+        '

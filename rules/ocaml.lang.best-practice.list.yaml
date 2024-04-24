@@ -1,0 +1,27 @@
+id: ocaml.lang.best-practice.list.list-find-outside-try
+patterns:
+- pattern: 'List.find ...
+
+    '
+- pattern-not-inside: 'try ... with ... -> ...
+
+    '
+message: You should not use List.find outside of a try, or you should use List.find_opt
+languages:
+- ocaml
+severity: WARNING
+metadata:
+  category: best-practice
+  technology:
+  - ocaml
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ocaml.lang.best-practice.list.list-find-outside-try
+  shortlink: https://sg.run/N4KN
+  semgrep.dev:
+    rule:
+      r_id: 9371
+      rv_id: 110009
+      rule_id: nJUzLq
+      version_id: 1QTOYpP
+      url: https://semgrep.dev/playground/r/1QTOYpP/ocaml.lang.best-practice.list.list-find-outside-try
+      origin: community

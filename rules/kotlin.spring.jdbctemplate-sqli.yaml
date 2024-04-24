@@ -1,0 +1,128 @@
+id: kotlin.spring.jdbctemplate-sqli.jdbctemplate-sqli
+message: 'Untrusted input might be used to build a database query, which can lead
+  to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions. When building
+  SQL queries in Kotlin, it is possible to adopt prepared statements using the `connection.PreparedStatement`
+  class with parameterized queries. For more information, see: [Prepared statements
+  in Kotlin](https://developer.android.com/reference/kotlin/java/sql/PreparedStatement).'
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::sink::sql-or-nosql-query::SpringData
+  - web::source::cookie::SpringBoot
+  - web::source::header::SpringBoot
+  - web::source::http-body::SpringBoot
+  - web::source::http-params::SpringBoot
+  - web::source::url-path-params::SpringBoot
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - jdbc
+  - kotlin
+  - spring
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/kotlin.spring.jdbctemplate-sqli.jdbctemplate-sqli
+  shortlink: https://sg.run/bALE
+  semgrep.dev:
+    rule:
+      r_id: 56870
+      rv_id: 731947
+      rule_id: DbUJwL
+      version_id: JdT6Y3L
+      url: https://semgrep.dev/playground/r/JdT6Y3L/kotlin.spring.jdbctemplate-sqli.jdbctemplate-sqli
+      origin: pro_rules
+languages:
+- kotlin
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: '($REQ: ServletRequest)
+
+        '
+    - pattern: '($REQ: HttpServletRequest)
+
+        '
+    - pattern: '($REQ: WebRequest)
+
+        '
+    - pattern: '($REQ: ServletWebRequest)
+
+        '
+    - pattern: '($REQ: FacesWebRequest)
+
+        '
+    - pattern: '($REQ: NativeWebRequest)
+
+        '
+    - patterns:
+      - pattern-either:
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+      - metavariable-regex:
+          metavariable: $TYPE
+          regex: ^(?!(Int|Long|Float|Double|Short|Byte|Char|UByte|UInt|ULong|UShort|Boolean))
+      - metavariable-regex:
+          metavariable: $REQ
+          regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+      - focus-metavariable: $SOURCE
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: '($DB: JdbcTemplate).$METHOD($SQL,...)
+
+        '
+    - patterns:
+      - pattern-either:
+        - pattern-inside: '$DB = JdbcTemplate(...)
+
+            ...
+
+            '
+        - pattern-inside: "class $CL(...) {\n    ...\n    val $DB = JdbcTemplate(...)\n\
+            \    ...\n}\n"
+      - pattern: $DB.$METHOD($SQL, ...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: ^(batchUpdate|execute|query|queryForList|queryForMap|queryForObject|queryForRowSet|queryForStream|update)$
+  - focus-metavariable: $SQL
+pattern-sanitizers:
+- patterns:
+  - pattern: $X.$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (equals|toInt|toLong|toFloat|toDouble|toShort|toByte|toUByte|toUInt|toULong|toUShort)
+- pattern: '($X: boolean)
+
+    '

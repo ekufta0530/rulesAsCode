@@ -1,0 +1,42 @@
+id: ruby.rails.security.brakeman.check-permit-attributes-high.check-permit-attributes-high
+patterns:
+- pattern: $P.permit($ATTRIBUTE)
+- metavariable-regex:
+    metavariable: $ATTRIBUTE
+    regex: .*(admin|account_id).*
+message: Calling `permit` on security-critical properties like `$ATTRIBUTE` may leave
+  your application vulnerable to mass assignment.
+languages:
+- ruby
+severity: ERROR
+metadata:
+  source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_permit_attributes.rb
+  category: security
+  cwe:
+  - 'CWE-915: Improperly Controlled Modification of Dynamically-Determined Object
+    Attributes'
+  owasp:
+  - A08:2021 - Software and Data Integrity Failures
+  technology:
+  - ruby
+  - rails
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mass Assignment
+  source: https://semgrep.dev/r/ruby.rails.security.brakeman.check-permit-attributes-high.check-permit-attributes-high
+  shortlink: https://sg.run/4k0Z
+  semgrep.dev:
+    rule:
+      r_id: 20044
+      rv_id: 110594
+      rule_id: 5rUNql
+      version_id: YDTpnrx
+      url: https://semgrep.dev/playground/r/YDTpnrx/ruby.rails.security.brakeman.check-permit-attributes-high.check-permit-attributes-high
+      origin: community

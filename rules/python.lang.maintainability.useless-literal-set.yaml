@@ -1,0 +1,27 @@
+id: python.lang.maintainability.useless-literal-set.useless-literal-set
+patterns:
+- pattern: 'set(..., ($X, $A), ..., ($X, $B), ...)
+
+    '
+- focus-metavariable: $X
+message: '`$X` is uselessly assigned twice inside the creation of the set'
+languages:
+- python
+severity: ERROR
+metadata:
+  category: maintainability
+  references:
+  - https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.maintainability.useless-literal-set.useless-literal-set
+  shortlink: https://sg.run/A9n8
+  semgrep.dev:
+    rule:
+      r_id: 26094
+      rv_id: 110360
+      rule_id: EwUAdR
+      version_id: bZTb9Az
+      url: https://semgrep.dev/playground/r/bZTb9Az/python.lang.maintainability.useless-literal-set.useless-literal-set
+      origin: community

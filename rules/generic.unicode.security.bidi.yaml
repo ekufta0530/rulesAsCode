@@ -1,0 +1,67 @@
+id: generic.unicode.security.bidi.contains-bidirectional-characters
+patterns:
+- pattern-either:
+  - pattern-regex: "\u202A"
+  - pattern-regex: "\u202B"
+  - pattern-regex: "\u202D"
+  - pattern-regex: "\u202E"
+  - pattern-regex: "\u2066"
+  - pattern-regex: "\u2067"
+  - pattern-regex: "\u2068"
+  - pattern-regex: "\u202C"
+  - pattern-regex: "\u2069"
+message: This code contains bidirectional (bidi) characters. While this is useful
+  for support of right-to-left languages such as Arabic or Hebrew, it can also be
+  used to trick language parsers into executing code in a manner that is different
+  from how it is displayed in code editing and review tools. If this is not what you
+  were expecting, please review this code in an editor that can reveal hidden Unicode
+  characters.
+metadata:
+  cwe:
+  - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+  category: security
+  technology:
+  - unicode
+  references:
+  - https://trojansource.codes/
+  confidence: LOW
+  owasp:
+  - A03:2021 - Injection
+  cwe2022-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Code Injection
+  source: https://semgrep.dev/r/generic.unicode.security.bidi.contains-bidirectional-characters
+  shortlink: https://sg.run/nK4r
+  semgrep.dev:
+    rule:
+      r_id: 14880
+      rv_id: 109568
+      rule_id: d8UeX4
+      version_id: QkTW0jn
+      url: https://semgrep.dev/playground/r/QkTW0jn/generic.unicode.security.bidi.contains-bidirectional-characters
+      origin: community
+languages:
+- bash
+- c
+- csharp
+- go
+- java
+- javascript
+- json
+- kotlin
+- lua
+- ocaml
+- php
+- python
+- ruby
+- rust
+- scala
+- sh
+- typescript
+- yaml
+severity: WARNING

@@ -1,0 +1,296 @@
+id: java.spring.security.tainted-ssrf-spring-add.tainted-ssrf-spring-add
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::sink::http-request::ApacheHttpClient
+  - net::sink::http-request::HttpClient
+  - net::sink::http-request::Jsoup
+  - net::sink::http-request::OkHttp
+  - net::sink::http-request::RestTemplate
+  - net::sink::http-request::URL
+  - net::sink::http-request::WebClient
+  - web::sink::http-request::ApacheHttpClient
+  - web::sink::http-request::HttpClient
+  - web::sink::http-request::Jsoup
+  - web::sink::http-request::OkHttp
+  - web::sink::http-request::RestTemplate
+  - web::sink::http-request::URL
+  - web::sink::http-request::WebClient
+  - web::source::cookie::Spring
+  - web::source::header::Spring
+  - web::source::http-body::Spring
+  - web::source::http-params::Spring
+  - web::source::url-path-params::Spring
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - Spring
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/java.spring.security.tainted-ssrf-spring-add.tainted-ssrf-spring-add
+  shortlink: https://sg.run/dnYZ
+  semgrep.dev:
+    rule:
+      r_id: 43778
+      rv_id: 735045
+      rule_id: JDU4Yg
+      version_id: bZTz7rD
+      url: https://semgrep.dev/playground/r/bZTz7rD/java.spring.security.tainted-ssrf-spring-add.tainted-ssrf-spring-add
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: $RET $METHOD(..., @$REQ(...) $TYPE $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., @$REQ $TYPE $SOURCE, ...) {...}
+  - metavariable-regex:
+      metavariable: $REQ
+      regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute|MatrixVariable|RequestPart|RequestAttribute)
+  - focus-metavariable: $SOURCE
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern-inside: '@$MAPPING(...)
+
+        $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+
+        '
+    - pattern-inside: '@$MAPPING
+
+        $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+
+        '
+  - pattern-either:
+    - pattern: $RET $METHOD(..., String $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., org.springframework.http.HttpEntity<$X> $SOURCE,
+        ...) {...}
+    - pattern: $RET $METHOD(..., java.io.InputStream $SOURCE, ...) {...}
+    - pattern: $RET $METHOD(..., java.io.Reader $SOURCE, ...) {...}
+  - metavariable-regex:
+      metavariable: $MAPPING
+      regex: (ResponseBody|RequestMapping|PatchMapping|GetMapping|DeleteMapping|PutMapping|PostMapping|HttpExchange|GetExchange|PostExchange|PutExchange|PatchExchange|DeleteExchange|ResponseStatus)
+  - focus-metavariable: $SOURCE
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: (org.springframework.web.context.request.WebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.NativeWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.FacesWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.ServletWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.servlet.handler.DispatcherServletWebRequest
+        $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.async.AsyncWebRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.context.request.async.StandardServletAsyncWebRequest
+        $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getHeader|getHeaderNames|getHeaderValues|getParameter|getParameterMap|getParameterNames|getParameterValues|getAttribute|getAttributeNames)
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: (org.springframework.http.HttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.client.ClientHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.ServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.ServletServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.web.multipart.support.RequestPartServletServerHttpRequest
+        $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.reactive.ServerHttpRequest $REQ).$METHOD(...)
+    - pattern: (org.springframework.http.server.reactive.ServerHttpRequestDecorator
+        $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getPath|getQueryParams|getBody|getURI|getHeaders|getCookies)
+- label: REQ
+  patterns:
+  - pattern-either:
+    - pattern: (javax.servlet.ServletRequest $REQ).$METHOD(...)
+    - pattern: (javax.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+    - pattern: (jakarta.servlet.ServletRequest $REQ).$METHOD(...)
+    - pattern: (jakarta.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)
+- label: NOT_CONCAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: $F + $X
+    - pattern: String.format(..., $X, ...)
+    - pattern: MessageFormat.format(..., $X, ...)
+  - pattern-not: $X + $F
+  - pattern-not: '"https://" + $X
+
+      '
+  - pattern-not: '"http://" + $X
+
+      '
+  - pattern-not: '"ws://" + $X
+
+      '
+  - pattern-not: '"wss://" + $X
+
+      '
+  - pattern-not: '"//" + $X
+
+      '
+  requires: REQ
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: (java.net.http.HttpClient $CL). ... .send($URI, ...)
+    - pattern: (java.net.http.HttpClient $CL). ... .sendAsync($URI, ...)
+    - pattern: java.net.http.HttpClient. ... .send($URI, ...)
+    - pattern: java.net.http.HttpClient. ... .sendAsync($URI, ...)
+  requires: REQ and not NOT_CONCAT
+- patterns:
+  - pattern: (java.net.URL $URL).$FUNC(...)
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ^(openConnection|openStream|getContent)$
+  requires: REQ and not NOT_CONCAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: (org.springframework.web.client.RestTemplate $REST). ... .$RESTFUNC($URI,
+        ...)
+    - pattern: new org.springframework.web.client.RestTemplate(...). ... .$RESTFUNC($URI,
+        ...)
+  - metavariable-regex:
+      metavariable: $RESTFUNC
+      regex: ^(exchange|doExecute|execute|getForEntity|getForObject|patchForObject|postForEntity|postForLocation|postForObject|put)$
+  requires: REQ and not NOT_CONCAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: org.springframework.web.reactive.function.client.WebClient. ... .$URIFUNC($URI)
+    - pattern: (org.springframework.web.reactive.function.client.WebClient $CLIENT).
+        ... .$URIFUNC($URI)
+  - pattern-either:
+    - pattern-inside: org.springframework.web.reactive.function.client.WebClient.
+        ... .retrieve(...)
+    - pattern-inside: (org.springframework.web.reactive.function.client.WebClient
+        $CLIENT). ... .retrieve(...)
+  - metavariable-regex:
+      metavariable: $URIFUNC
+      regex: ^(uri|baseUrl|create)$
+  requires: REQ and not NOT_CONCAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: new okhttp3.Request.Builder(). ... .url($URI)
+  - pattern-either:
+    - pattern-inside: '...
+
+        $CLIENT.newCall(...).execute(...);
+
+        '
+    - pattern-inside: '$CALL = $CLIENT.newCall(...);
+
+        ...
+
+        $CALL.execute(...);
+
+        '
+  requires: REQ and not NOT_CONCAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: org.jsoup.Jsoup.connect($URI)
+  - pattern-either:
+    - pattern-inside: $JSOUP.execute(...)
+    - pattern-inside: $JSOUP.get(...)
+    - pattern-inside: $JSOUP.post(...)
+  requires: REQ and not NOT_CONCAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: org.apache.http.HttpRequest. ... .newBuilder($URI)
+    - pattern: org.apache.http.HttpRequest. ... .uri($URI)
+    - patterns:
+      - pattern: new org.apache.http.client.methods.$METHOD($URI, ...)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(HttpGet|HttpPost|HttpDelete|HttpDelete|HttpOptions|HttpPatch|HttpPut|HttpHead)$
+  - pattern-either:
+    - pattern-inside: '...
+
+        $CLIENT.send(...);
+
+        '
+    - pattern-inside: '...
+
+        $CLIENT.execute(...);
+
+        '
+  requires: REQ and not NOT_CONCAT
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)
+- patterns:
+  - focus-metavariable: $X
+  - pattern: io.micronaut.http.HttpRequest.$METHOD($URL, ..., $X, ...)
+- patterns:
+  - pattern: io.micronaut.http.uri.UriBuilder. ... .$FUNC(...)
+  - metavariable-pattern:
+      metavariable: $FUNC
+      patterns:
+      - pattern-either:
+        - pattern: path
+        - pattern: expand
+        - pattern: queryParam
+- patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: java.net.http.HttpRequest. ... .$FUNC(..., $X, ...)
+    - pattern: (java.net.http.HttpRequest.Builder $B). ... .$FUNC(..., $X, ...)
+  - metavariable-pattern:
+      metavariable: $FUNC
+      patterns:
+      - pattern-not-regex: ^(newBuilder|uri)$
+- patterns:
+  - focus-metavariable: $PARAM
+  - pattern: $URLBUILDER. ... .addQueryParameter(..., $PARAM). ...

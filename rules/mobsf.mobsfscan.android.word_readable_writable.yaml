@@ -1,0 +1,28 @@
+id: mobsf.mobsfscan.android.word_readable_writable.world_writeable
+patterns:
+- pattern-either:
+  - pattern: 'Context.MODE_WORLD_WRITEABLE
+
+      '
+message: The file is World Readable and Writable. Any App can read/write to the file.
+languages:
+- java
+severity: WARNING
+metadata:
+  cwe: cwe-276
+  owasp-mobile: m2
+  masvs: storage-2
+  reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05d-Testing-Data-Storage.md#testing-local-storage-for-sensitive-data-mstg-storage-1-and-mstg-storage-2
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/mobsf.mobsfscan.android.word_readable_writable.world_writeable
+  shortlink: https://sg.run/jGlY
+  semgrep.dev:
+    rule:
+      r_id: 43721
+      rv_id: 78325
+      rule_id: JDU4Ab
+      version_id: DkTOeW
+      url: https://semgrep.dev/playground/r/DkTOeW/mobsf.mobsfscan.android.word_readable_writable.world_writeable
+      origin: community

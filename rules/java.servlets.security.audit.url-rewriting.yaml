@@ -1,0 +1,60 @@
+id: java.servlets.security.audit.url-rewriting.url-rewriting
+message: URL rewriting has significant security risks. Since session ID appears in
+  the URL, it may be easily seen by third parties.
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+  cwe2021-top25: true
+  functional-categories:
+  - web::sink::redirect::Servlet
+  - web::sink::session-properties::Servlet
+  - web::sink::http-request::Servlet
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/
+  - https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+  - https://portal.securecodewarrior.com/#/learning-resources/application_security_weaknesses~2Fweb~2Fauth~2Fsession~2Fexposedtokens
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#URL_REWRITING
+  technology:
+  - java
+  - servlets
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/java.servlets.security.audit.url-rewriting.url-rewriting
+  shortlink: https://sg.run/bPwE
+  semgrep.dev:
+    rule:
+      r_id: 27170
+      rv_id: 111585
+      rule_id: JDUzN4
+      version_id: LjTqAnq
+      url: https://semgrep.dev/playground/r/LjTqAnq/java.servlets.security.audit.url-rewriting.url-rewriting
+      origin: pro_rules
+languages:
+- java
+mode: taint
+pattern-sources:
+- pattern: (HttpServletResponse $RES)
+pattern-sinks:
+- pattern-either:
+  - pattern: '$RES.encodeURL(...);
+
+      '
+  - pattern: '$RES.encodeUrl(...);
+
+      '
+  - pattern: '$RES.encodeRedirectURL(...);
+
+      '
+  - pattern: '$RES.encodeRedirectUrl(...);
+
+      '

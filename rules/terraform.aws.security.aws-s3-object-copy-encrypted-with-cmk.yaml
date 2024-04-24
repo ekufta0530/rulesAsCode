@@ -1,0 +1,39 @@
+id: terraform.aws.security.aws-s3-object-copy-encrypted-with-cmk.aws-s3-object-copy-encrypted-with-cmk
+patterns:
+- pattern: "resource \"aws_s3_object_copy\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_s3_object_copy\" $ANYTHING {\n  ...\n  kms_key_id\
+    \ = ...\n  ...\n}\n"
+message: Ensure S3 object copies are encrypted at rest using KMS CMKs. CMKs gives
+  you control over the encryption key in terms of access and rotation.
+metadata:
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-s3-object-copy-encrypted-with-cmk.aws-s3-object-copy-encrypted-with-cmk
+  shortlink: https://sg.run/d1ZZ
+  semgrep.dev:
+    rule:
+      r_id: 17378
+      rv_id: 110788
+      rule_id: BYUzYY
+      version_id: A8T9X36
+      url: https://semgrep.dev/playground/r/A8T9X36/terraform.aws.security.aws-s3-object-copy-encrypted-with-cmk.aws-s3-object-copy-encrypted-with-cmk
+      origin: community
+languages:
+- hcl
+severity: WARNING

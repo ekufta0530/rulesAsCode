@@ -1,0 +1,24 @@
+id: python.lang.best-practice.hardcoded-tmp-path.hardcoded-tmp-path
+pattern: open("=~/^\/tmp.*/", ...)
+message: Detected hardcoded temp directory. Consider using 'tempfile.TemporaryFile'
+  instead.
+metadata:
+  references:
+  - https://docs.python.org/3/library/tempfile.html#tempfile.TemporaryFile
+  category: best-practice
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.best-practice.hardcoded-tmp-path.hardcoded-tmp-path
+  shortlink: https://sg.run/zv0W
+  semgrep.dev:
+    rule:
+      r_id: 9561
+      rv_id: 110293
+      rule_id: yyUnXZ
+      version_id: 5PTdA5j
+      url: https://semgrep.dev/playground/r/5PTdA5j/python.lang.best-practice.hardcoded-tmp-path.hardcoded-tmp-path
+      origin: community
+severity: WARNING
+languages:
+- python

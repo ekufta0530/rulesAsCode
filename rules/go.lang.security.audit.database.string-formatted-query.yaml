@@ -1,0 +1,94 @@
+id: go.lang.security.audit.database.string-formatted-query.string-formatted-query
+languages:
+- go
+message: String-formatted SQL query detected. This could lead to SQL injection if
+  the string is not sanitized properly. Audit this call to ensure the SQL is not manipulable
+  by external data.
+severity: WARNING
+metadata:
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  source-rule-url: https://github.com/securego/gosec
+  category: security
+  technology:
+  - go
+  confidence: LOW
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/go.lang.security.audit.database.string-formatted-query.string-formatted-query
+  shortlink: https://sg.run/ydEr
+  semgrep.dev:
+    rule:
+      r_id: 9124
+      rv_id: 258604
+      rule_id: ZqU5bD
+      version_id: JdT3NAn
+      url: https://semgrep.dev/playground/r/JdT3NAn/go.lang.security.audit.database.string-formatted-query.string-formatted-query
+      origin: community
+patterns:
+- metavariable-regex:
+    metavariable: $OBJ
+    regex: (?i).*(db|database)
+- pattern-not-inside: '$VAR = "..." + "..."
+
+    ...
+
+    $OBJ.$SINK(..., $VAR, ...)
+
+    '
+- pattern-not: $OBJ.Exec("...")
+- pattern-not: $OBJ.ExecContext($CTX, "...")
+- pattern-not: $OBJ.Query("...")
+- pattern-not: $OBJ.QueryContext($CTX, "...")
+- pattern-not: $OBJ.QueryRow("...")
+- pattern-not: $OBJ.QueryRow($CTX, "...")
+- pattern-not: $OBJ.QueryRowContext($CTX, "...")
+- pattern-either:
+  - pattern: $OBJ.Exec($X + ...)
+  - pattern: $OBJ.ExecContext($CTX, $X + ...)
+  - pattern: $OBJ.Query($X + ...)
+  - pattern: $OBJ.QueryContext($CTX, $X + ...)
+  - pattern: $OBJ.QueryRow($X + ...)
+  - pattern: $OBJ.QueryRow($CTX, $X + ...)
+  - pattern: $OBJ.QueryRowContext($CTX, $X + ...)
+  - pattern: $OBJ.Exec(fmt.$P("...", ...))
+  - pattern: $OBJ.ExecContext($CTX, fmt.$P("...", ...))
+  - pattern: $OBJ.Query(fmt.$P("...", ...))
+  - pattern: $OBJ.QueryContext($CTX, fmt.$P("...", ...))
+  - pattern: $OBJ.QueryRow(fmt.$P("...", ...))
+  - pattern: $OBJ.QueryRow($CTX, fmt.$U("...", ...))
+  - pattern: $OBJ.QueryRowContext($CTX, fmt.$P("...", ...))
+  - patterns:
+    - pattern-either:
+      - pattern: $QUERY = fmt.Fprintf($F, "$SQLSTR", ...)
+      - pattern: $QUERY = fmt.Sprintf("$SQLSTR", ...)
+      - pattern: $QUERY = fmt.Printf("$SQLSTR", ...)
+      - pattern: $QUERY = $X + ...
+    - pattern-either:
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.Query($QUERY, ...)\n\
+          \    ...\n}\n"
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.ExecContext($CTX, $QUERY,\
+          \ ...)\n    ...\n}\n"
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.Exec($QUERY, ...)\n\
+          \    ...\n}\n"
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.QueryRow($CTX, $QUERY)\n\
+          \    ...\n}\n"
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.QueryRow($QUERY)\n \
+          \   ...\n}\n"
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.QueryContext($CTX, $QUERY)\n\
+          \    ...\n}\n"
+      - pattern-inside: "func $FUNC(...) {\n    ...\n    $OBJ.QueryRowContext($CTX,\
+          \ $QUERY, ...)\n    ...\n}\n"

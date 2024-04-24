@@ -1,0 +1,50 @@
+id: elixir.lang.security.unsafe-atom-interpolation.unsafe-atom-interpolation
+message: 'Atom values are appended to a global table but never removed. If input is
+  user-controlled, dynamic instantiations such as `:erlang.binary_to_atom` can lead
+  to possible memory leaks. Instead, use `:erlang.binary_to_existing_atom` or use
+  the `String.to_existing_atom` function for untrusted user input. '
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-400: Uncontrolled Resource Consumption'
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://erlef.github.io/security-wg/secure_coding_and_deployment_hardening/atom_exhaustion.html
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+  technology:
+  - elixir
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Denial-of-Service (DoS)
+  source: https://semgrep.dev/r/elixir.lang.security.unsafe-atom-interpolation.unsafe-atom-interpolation
+  shortlink: https://sg.run/YGLrQ
+  semgrep.dev:
+    rule:
+      r_id: 114614
+      rv_id: 257004
+      rule_id: EwUjoqG
+      version_id: pZT6P7P
+      url: https://semgrep.dev/playground/r/pZT6P7P/elixir.lang.security.unsafe-atom-interpolation.unsafe-atom-interpolation
+      origin: pro_rules
+languages:
+- elixir
+fix: binary_to_existing_atom
+min-version: 1.55.2
+patterns:
+- pattern: ':erlang.$FUNC($ARG, ...)
+
+    '
+- pattern-not: ':erlang.$FUNC("...", ...)
+
+    '
+- metavariable-regex:
+    metavariable: $FUNC
+    regex: binary_to_atom
+- focus-metavariable: $FUNC

@@ -1,0 +1,65 @@
+id: javascript.superagent.hardcoded-basic-token.hardcoded-basic-token
+message: A secret is hard-coded in the application. Secrets stored in source code,
+  such as credentials, identifiers, and other types of sensitive data, can be leaked
+  and used by internal or external malicious actors. Use environment variables to
+  securely provide credentials and other secrets or retrieve them from a secure vault
+  or Hardware Security Module (HSM).
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: HIGH
+  interfile: true
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-798: Use of Hard-coded Credentials'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  owasp:
+  - A07:2021 - Identification and Authentication Failures
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
+  technology:
+  - secrets
+  - sql
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Hard-coded Secrets
+  source: https://semgrep.dev/r/javascript.superagent.hardcoded-basic-token.hardcoded-basic-token
+  shortlink: https://sg.run/rp3R
+  semgrep.dev:
+    rule:
+      r_id: 39225
+      rv_id: 111702
+      rule_id: 7KUYr5
+      version_id: K3TvGEE
+      url: https://semgrep.dev/playground/r/K3TvGEE/javascript.superagent.hardcoded-basic-token.hardcoded-basic-token
+      origin: pro_rules
+languages:
+- js
+- ts
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: '''$BASIC''
+
+        '
+  - metavariable-pattern:
+      metavariable: $BASIC
+      language: generic
+      patterns:
+      - pattern: Basic $TOKEN
+      - metavariable-regex:
+          metavariable: $TOKEN
+          regex: (?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?
+      - metavariable-analysis:
+          analyzer: entropy
+          metavariable: $TOKEN
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: "$VALUE. ... .set('Authorization', $BEARER)           \n"
+  - focus-metavariable: $BEARER

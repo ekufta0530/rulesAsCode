@@ -1,0 +1,56 @@
+id: terraform.aws.security.aws-network-acl-allows-all-ports.aws-network-acl-allows-all-ports
+patterns:
+- pattern-either:
+  - pattern: "resource \"aws_network_acl_rule\" $ANYTHING {\n  ...\n  protocol = $PROTOCOL\n\
+      \  rule_action = \"allow\"\n  ...\n}\n"
+  - patterns:
+    - pattern-inside: "resource \"$NETWORK_ACL\" $ANYTHING {\n  ...\n}\n"
+    - pattern-either:
+      - pattern: "ingress {\n  ...\n  protocol = $PROTOCOL\n  action = \"allow\"\n\
+          \  ...\n}\n"
+      - pattern: "egress {\n  ...\n  protocol = $PROTOCOL\n  action = \"allow\"\n\
+          \  ...\n}\n"
+    - metavariable-regex:
+        metavariable: $NETWORK_ACL
+        regex: ^(aws_network_acl|aws_default_network_acl)$
+- metavariable-regex:
+    metavariable: $PROTOCOL
+    regex: \A("all"|"-1"|-1)\Z
+message: Ingress and/or egress is allowed for all ports in the network ACL rule. Ensure
+  access to specific required ports is allowed, and nothing else.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control/
+  - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl
+  - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule
+  - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl
+  - https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html
+  subcategory:
+  - audit
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.aws.security.aws-network-acl-allows-all-ports.aws-network-acl-allows-all-ports
+  shortlink: https://sg.run/2wAB
+  semgrep.dev:
+    rule:
+      r_id: 50763
+      rv_id: 110780
+      rule_id: pKU4XE
+      version_id: QkTWwkx
+      url: https://semgrep.dev/playground/r/QkTWwkx/terraform.aws.security.aws-network-acl-allows-all-ports.aws-network-acl-allows-all-ports
+      origin: community

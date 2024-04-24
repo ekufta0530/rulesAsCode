@@ -1,0 +1,22 @@
+id: dgryski.semgrep-go.contexttodo.context-todo
+patterns:
+- pattern-either:
+  - pattern: 'context.TODO()
+
+      '
+message: Consider to use well-defined context
+languages:
+- go
+severity: WARNING
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.contexttodo.context-todo
+  shortlink: https://sg.run/PJNN
+  semgrep.dev:
+    rule:
+      r_id: 8689
+      rv_id: 11976
+      rule_id: GdU744
+      version_id: o5Tr22
+      url: https://semgrep.dev/playground/r/o5Tr22/dgryski.semgrep-go.contexttodo.context-todo
+      origin: community

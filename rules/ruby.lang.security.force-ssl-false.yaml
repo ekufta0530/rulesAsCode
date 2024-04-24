@@ -1,0 +1,40 @@
+id: ruby.lang.security.force-ssl-false.force-ssl-false
+message: Checks for configuration setting of force_ssl to false. Force_ssl forces
+  usage of HTTPS, which could lead to network interception of unencrypted application
+  traffic. To fix, set config.force_ssl = true.
+metadata:
+  cwe:
+  - 'CWE-311: Missing Encryption of Sensitive Data'
+  references:
+  - https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_force_ssl.rb
+  category: security
+  technology:
+  - ruby
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A04:2021 - Insecure Design
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/ruby.lang.security.force-ssl-false.force-ssl-false
+  shortlink: https://sg.run/YgkW
+  semgrep.dev:
+    rule:
+      r_id: 9714
+      rv_id: 110524
+      rule_id: 2ZU4lx
+      version_id: e1T03L6
+      url: https://semgrep.dev/playground/r/e1T03L6/ruby.lang.security.force-ssl-false.force-ssl-false
+      origin: community
+languages:
+- ruby
+severity: WARNING
+pattern: config.force_ssl = false
+fix-regex:
+  regex: =\s*false
+  replacement: = true

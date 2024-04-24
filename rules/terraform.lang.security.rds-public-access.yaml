@@ -1,0 +1,39 @@
+id: terraform.lang.security.rds-public-access.rds-public-access
+patterns:
+- pattern: publicly_accessible = true
+- pattern-inside: "resource \"aws_db_instance\" \"...\" {\n  ...\n}\n"
+languages:
+- hcl
+severity: WARNING
+message: RDS instance accessible from the Internet detected.
+metadata:
+  references:
+  - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#publicly_accessible
+  - https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Hiding
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.lang.security.rds-public-access.rds-public-access
+  shortlink: https://sg.run/Oye2
+  semgrep.dev:
+    rule:
+      r_id: 15831
+      rv_id: 111063
+      rule_id: eqUrzK
+      version_id: 1QTO7Ed
+      url: https://semgrep.dev/playground/r/1QTO7Ed/terraform.lang.security.rds-public-access.rds-public-access
+      origin: community

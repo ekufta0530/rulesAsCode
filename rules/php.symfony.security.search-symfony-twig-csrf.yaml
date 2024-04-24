@@ -1,0 +1,101 @@
+id: php.symfony.security.search-symfony-twig-csrf.search-symfony-twig-csrf
+message: 'The application does not appear to verify inbound requests which can lead
+  to a Cross-site request forgery (CSRF) vulnerability. If the application uses cookie-based
+  authentication, an attacker can trick users into sending authenticated HTTP requests
+  without their knowledge from any arbitrary domain they visit. To prevent this vulnerability
+  start by identifying if the framework or library leveraged has built-in features
+  or offers plugins for CSRF protection. CSRF tokens should be unique and securely
+  random. The `Synchronizer Token` or `Double Submit Cookie` patterns with defense-in-depth
+  mechanisms such as the `sameSite` cookie flag can help prevent CSRF. For more information,
+  see: [Cross-site request forgery prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)'
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::search::csrf-config::symfony
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://symfony.com/doc/current/security/csrf.html
+  technology:
+  - php
+  - symfony
+  - twig
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/php.symfony.security.search-symfony-twig-csrf.search-symfony-twig-csrf
+  shortlink: https://sg.run/Ap8p
+  semgrep.dev:
+    rule:
+      r_id: 27206
+      rv_id: 111798
+      rule_id: 7KUEDE
+      version_id: A8T9Xw4
+      url: https://semgrep.dev/playground/r/A8T9Xw4/php.symfony.security.search-symfony-twig-csrf.search-symfony-twig-csrf
+      origin: pro_rules
+languages:
+- generic
+mode: search
+patterns:
+- pattern: '{{ $FORM_METHOD(...) }}
+
+    '
+- metavariable-regex:
+    metavariable: $FORM_METHOD
+    regex: form_\w+
+- pattern-either:
+  - patterns:
+    - focus-metavariable: $...FORM
+    - pattern-inside: "<form ... action=$...FORM ...>\n    ...\n</form>\n"
+    - pattern-not-inside: '<form ... >
+
+        ...
+
+        {{ form_rest(...) }}
+
+        ...
+
+        </form>
+
+        '
+    - pattern-not-inside: '<form ... >
+
+        ...
+
+        <input type="hidden" ... value="{{ csrf_token(...) }}">
+
+        ...
+
+        </form>
+
+        '
+  - patterns:
+    - focus-metavariable: $FORM
+    - pattern-inside: '{{ form_start($FORM) }}
+
+        ...
+
+        {{ form_end($FORM) }}
+
+        '
+    - pattern-not-inside: '{{ form_start($FORM) }}
+
+        ...
+
+        {{ form_rest(...) }}
+
+        ...
+
+        {{ form_end($FORM) }}
+
+        '

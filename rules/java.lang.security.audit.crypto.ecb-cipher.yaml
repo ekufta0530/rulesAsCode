@@ -1,0 +1,46 @@
+id: java.lang.security.audit.crypto.ecb-cipher.ecb-cipher
+metadata:
+  functional-categories:
+  - crypto::search::mode::javax.crypto
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#ECB_MODE
+  category: security
+  technology:
+  - java
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/java.lang.security.audit.crypto.ecb-cipher.ecb-cipher
+  shortlink: https://sg.run/Ro9K
+  semgrep.dev:
+    rule:
+      r_id: 9193
+      rv_id: 109692
+      rule_id: 5rUOb6
+      version_id: DkT6nJd
+      url: https://semgrep.dev/playground/r/DkT6nJd/java.lang.security.audit.crypto.ecb-cipher.ecb-cipher
+      origin: community
+message: Cipher in ECB mode is detected. ECB mode produces the same output for the
+  same input each time which allows an attacker to intercept and replay the data.
+  Further, ECB mode does not provide any integrity checking. See https://find-sec-bugs.github.io/bugs.htm#CIPHER_INTEGRITY.
+severity: WARNING
+languages:
+- java
+patterns:
+- pattern: 'Cipher $VAR = $CIPHER.getInstance($MODE);
+
+    '
+- metavariable-regex:
+    metavariable: $MODE
+    regex: .*ECB.*

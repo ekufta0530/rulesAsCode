@@ -1,0 +1,34 @@
+id: terraform.azure.best-practice.azure-vmscale-sets-auto-os-image-patching-enabled.azure-vmscale-sets-auto-os-image-patching-enabled
+message: Ensure that automatic OS image patching is enabled for Virtual Machine Scale
+  Sets
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_virtual_machine_scale_set" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"azurerm_virtual_machine_scale_set\" \"...\" {\n\
+    ...\nautomatic_os_upgrade = true\nos_profile_windows_config {\n  ...\n  enable_automatic_upgrades\
+    \ = true\n  ...\n}\n...\n}\n"
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-vmscale-sets-auto-os-image-patching-enabled.azure-vmscale-sets-auto-os-image-patching-enabled
+  shortlink: https://sg.run/02Zv
+  semgrep.dev:
+    rule:
+      r_id: 23954
+      rv_id: 110858
+      rule_id: pKUy2A
+      version_id: 2KTz3YX
+      url: https://semgrep.dev/playground/r/2KTz3YX/terraform.azure.best-practice.azure-vmscale-sets-auto-os-image-patching-enabled.azure-vmscale-sets-auto-os-image-patching-enabled
+      origin: community
+languages:
+- hcl
+severity: WARNING

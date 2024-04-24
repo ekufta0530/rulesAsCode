@@ -1,0 +1,25 @@
+id: dockerfile.best-practice.avoid-latest-version.avoid-latest-version
+message: Images should be tagged with an explicit version to produce deterministic
+  container images. The 'latest' tag may change the base container without warning.
+severity: WARNING
+languages:
+- dockerfile
+metadata:
+  source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3007
+  references:
+  - https://github.com/hadolint/hadolint/wiki/DL3007
+  category: best-practice
+  technology:
+  - dockerfile
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/dockerfile.best-practice.avoid-latest-version.avoid-latest-version
+  shortlink: https://sg.run/1kXD
+  semgrep.dev:
+    rule:
+      r_id: 20122
+      rv_id: 109229
+      rule_id: yyUDGx
+      version_id: A8T95py
+      url: https://semgrep.dev/playground/r/A8T95py/dockerfile.best-practice.avoid-latest-version.avoid-latest-version
+      origin: community
+pattern: FROM $FROM:latest

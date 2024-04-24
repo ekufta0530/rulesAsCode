@@ -1,0 +1,55 @@
+id: ajinabraham.njsscan.ssrf.ssrf_wkhtmltoimage.wkhtmltoimage_ssrf
+patterns:
+- pattern-inside: 'require(''wkhtmltoimage'')
+
+    ...
+
+    '
+- pattern-either:
+  - pattern-inside: function ($REQ, $RES, ...) {...}
+  - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+  - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+- pattern-either:
+  - pattern: '$INP = <... $REQ.$VAR ...>;
+
+      ...
+
+      $PKG.generate(<... $INP ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$VAR.$FOO ...>;
+
+      ...
+
+      $PKG.generate(<... $INP ...>, ...)
+
+      '
+  - pattern: '$PKG.generate(<... $REQ.$VAR ...>, ...)
+
+      '
+  - pattern: '$PKG.generate(<... $REQ.$VAR.$FOO ...>, ...)
+
+      '
+message: User controlled URL reached to `wkhtmltoimage` can result in Server Side
+  Request Forgery (SSRF).
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a1
+  cwe: cwe-918
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.ssrf.ssrf_wkhtmltoimage.wkhtmltoimage_ssrf
+  shortlink: https://sg.run/G3E2
+  semgrep.dev:
+    rule:
+      r_id: 43692
+      rv_id: 78296
+      rule_id: zdU9vq
+      version_id: 9lTjXn
+      url: https://semgrep.dev/playground/r/9lTjXn/ajinabraham.njsscan.ssrf.ssrf_wkhtmltoimage.wkhtmltoimage_ssrf
+      origin: community

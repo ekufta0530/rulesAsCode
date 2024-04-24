@@ -1,0 +1,90 @@
+id: swift.lang.xml.should-resolve-xxe.swift-xxe-prevention
+message: Usage of Apple's native XML Parser was observed where the parser is explicitly
+  instructed to resolve external entities. This can lead to XXE attacks if untrusted
+  input is parsed. Consider disabling this functionality where feasible.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-611: Improper Restriction of XML External Entity Reference'
+  functional-categories:
+  - xml::sink::xml-parser::lang
+  masvs:
+  - 'MASVS-CODE-4: The app validates and sanitizes all untrusted inputs.'
+  owasp:
+  - A04:2017 - XML External Entities (XXE)
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://developer.apple.com/library/archive/documentation/Security/Conceptual/SecureCodingGuide/Articles/ValidatingInput.html
+  - https://mas.owasp.org/MASVS/controls/MASVS-CODE-4/
+  - https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/swift.lang.xml.should-resolve-xxe.swift-xxe-prevention
+  shortlink: https://sg.run/KwLL
+  semgrep.dev:
+    rule:
+      r_id: 66499
+      rv_id: 112032
+      rule_id: QrUrXX
+      version_id: rxTy432
+      url: https://semgrep.dev/playground/r/rxTy432/swift.lang.xml.should-resolve-xxe.swift-xxe-prevention
+      origin: pro_rules
+languages:
+- swift
+patterns:
+- pattern: '$P = XMLParser(...)
+
+    ...
+
+    '
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$P.shouldResolveExternalEntities = $FALSE
+
+          ...
+
+          $P.shouldResolveExternalEntities = $TRUE
+
+          '
+      - pattern-not-inside: '...
+
+          $P.shouldResolveExternalEntities = $TRUE
+
+          ...
+
+          $P.shouldResolveExternalEntities= $FALSE
+
+          '
+      - pattern: '$P.shouldResolveExternalEntities = true
+
+          '
+      - metavariable-regex:
+          metavariable: $TRUE
+          regex: ^(true)$
+      - metavariable-regex:
+          metavariable: $TRUE
+          regex: (.*(?!true))
+    - patterns:
+      - pattern: '$P.shouldResolveExternalEntities = true
+
+          '
+      - pattern-not-inside: '...
+
+          $P.shouldResolveExternalEntities = ...
+
+          ...
+
+          $P.shouldResolveExternalEntities = ...
+
+          '

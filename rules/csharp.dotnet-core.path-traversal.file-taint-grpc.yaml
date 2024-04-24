@@ -1,0 +1,179 @@
+id: csharp.dotnet-core.path-traversal.file-taint-grpc.file-taint-grpc
+message: The application builds a file path from potentially untrusted data, which
+  can lead to a path traversal vulnerability. An attacker can manipulate the path
+  which the application uses to access files. If the application does not validate
+  user input and sanitize file paths, sensitive files such as configuration or user
+  data can be accessed, potentially creating or overwriting files. To prevent this
+  vulnerability, validate and sanitize any input that is used to create references
+  to file paths. Also, enforce strict file access controls. For example, choose privileges
+  allowing public-facing applications to access only the required files.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path Traversal'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - file::sink::file-access::file
+  - net::source::remote-procedure-call::gRPC
+  owasp:
+  - A01:2021 - Broken Access Control
+  - A05:2017 - Broken Access Control
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  - https://owasp.org/www-community/attacks/Path_Traversal
+  - https://portswigger.net/web-security/file-path-traversal
+  technology:
+  - .NET
+  - csharp
+  - dotnet
+  - file
+  - grpc
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Path Traversal
+  source: https://semgrep.dev/r/csharp.dotnet-core.path-traversal.file-taint-grpc.file-taint-grpc
+  shortlink: https://sg.run/zzP1
+  semgrep.dev:
+    rule:
+      r_id: 72917
+      rv_id: 731849
+      rule_id: WAUw9d
+      version_id: RGTqZOb
+      url: https://semgrep.dev/playground/r/RGTqZOb/csharp.dotnet-core.path-traversal.file-taint-grpc.file-taint-grpc
+      origin: pro_rules
+languages:
+- csharp
+mode: taint
+options:
+  interfile: true
+pattern-sources:
+- label: REQ
+  patterns:
+  - pattern-inside: 'using Grpc.Core;
+
+      ...
+
+      '
+  - focus-metavariable: $REQ
+  - pattern-either:
+    - pattern-inside: "public $TYPE $NAME($T $REQ, ServerCallContext $CTX) {\n  ...\n\
+        }\n"
+    - pattern-inside: "public $TYPE $NAME($T $REQ, $ST $STREAM, ServerCallContext\
+        \ $CTX) {\n  ...\n}\n"
+- label: COMBINE
+  patterns:
+  - focus-metavariable: $A
+  - pattern-either:
+    - pattern: Path.Combine(...,$A,...)
+  requires: REQ
+- label: CONCAT
+  patterns:
+  - pattern-either:
+    - pattern: '"..." + ...
+
+        '
+    - pattern: '... + "..."'
+    - pattern: $"..."
+    - pattern: String.Format(...)
+    - pattern: string.Format(...)
+    - pattern: String.Concat(...)
+    - pattern: string.Concat(...)
+    - pattern: String.Concat<$T>(...)
+    - pattern: string.Concat<$T>(...)
+    - pattern: String.Join(...)
+    - pattern: string.Join(...)
+    - pattern: String.Join<$T>(...)
+    - pattern: string.Join<$T>(...)
+    - pattern: new String(...)
+    - pattern: new string(...)
+    - pattern: new StringBuilder(...)
+    - pattern: (StringBuilder $S).Append(...)
+    - pattern: (StringBuilder $S).AppendLine(...)
+    - pattern: (StringBuilder $S).AppendFormat(...)
+    - pattern: (StringBuilder $S).AppendJoin(...)
+    - pattern: (StringBuilder $S).Replace(...)
+    - pattern: (StringBuilder $S).Insert(...)
+    - patterns:
+      - pattern-either:
+        - pattern: $S.Append(...)
+        - pattern: $S.AppendLine(...)
+        - pattern: $S.AppendFormat(...)
+        - pattern: $S.AppendJoin(...)
+        - pattern: $S.Replace(...)
+        - pattern: $S.Insert(...)
+      - pattern-either:
+        - pattern-inside: 'var $S = new StringBuilder(...);
+
+            ...
+
+            '
+        - pattern-inside: '$S = new StringBuilder(...);
+
+            ...
+
+            '
+  requires: REQ
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+      - patterns:
+        - pattern-either:
+          - pattern: $TO.Append(..., $FROM,...)
+          - pattern: $TO.AppendLine(..., $FROM,...)
+          - pattern: $TO.AppendFormat(..., $FROM,...)
+          - pattern: $TO.AppendJoin(..., $FROM,...)
+          - pattern: $TO.Replace(..., $FROM,...)
+          - pattern: $TO.Insert(..., $FROM,...)
+        - pattern-either:
+          - pattern-inside: 'var $TO = new StringBuilder(...);
+
+              ...
+
+              '
+          - pattern-inside: '$TO = new StringBuilder(...);
+
+              ...
+
+              '
+  to: $TO
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $PATH
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - pattern: File.$METHOD($PATH,...)
+        - pattern: System.IO.File.$METHOD($PATH,...)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: (?i)^(read|write|open|create)
+    - pattern: new FileStream($PATH, ...)
+  requires: COMBINE or CONCAT
+pattern-sanitizers:
+- patterns:
+  - pattern: Path.$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (GetFileName|GetExtension)
+- patterns:
+  - pattern: $X
+  - pattern-inside: "if(<... Path.$METHOD($X) ...>){\n  ...\n}\n...\n"
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (GetFileName|GetExtension)

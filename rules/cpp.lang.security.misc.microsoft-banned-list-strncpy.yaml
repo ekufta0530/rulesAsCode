@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-strncpy.microsoft-banned-list-strncpy
+message: 'strncpy is a banned function: limited error detection. Alternatives are
+  strncpy_s, StringCbCopyN, StringCbCopyNEx, StringCchCopyN, StringCchCopyNEx, strlcpy'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-strncpy.microsoft-banned-list-strncpy
+  shortlink: https://sg.run/0oABB
+  semgrep.dev:
+    rule:
+      r_id: 114854
+      rv_id: 257465
+      rule_id: pKU1n00
+      version_id: pZT6P9q
+      url: https://semgrep.dev/playground/r/pZT6P9q/cpp.lang.security.misc.microsoft-banned-list-strncpy.microsoft-banned-list-strncpy
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: strncpy(...)

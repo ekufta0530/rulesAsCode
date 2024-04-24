@@ -1,0 +1,28 @@
+id: python.lang.correctness.useless-comparison.no-strings-as-booleans
+message: Using strings as booleans in Python has unexpected results. `"one" and "two"`
+  will return "two". `"one" or "two"` will return "one". In Python, strings are truthy,
+  and strings with a non-zero length evaluate to True.
+languages:
+- python
+severity: ERROR
+pattern-either:
+- pattern: "if <... \"...\" and ... ...>:\n    ...\n"
+- pattern: "if <... \"...\" or ... ...>:\n    ...\n"
+- patterns:
+  - pattern-not: "if $X in \"...\":\n  ...\n"
+  - pattern: "if \"...\":\n    ...\n"
+metadata:
+  category: correctness
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.correctness.useless-comparison.no-strings-as-booleans
+  shortlink: https://sg.run/5QxA
+  semgrep.dev:
+    rule:
+      r_id: 9603
+      rv_id: 110349
+      rule_id: WAUoxE
+      version_id: 6xTvJpe
+      url: https://semgrep.dev/playground/r/6xTvJpe/python.lang.correctness.useless-comparison.no-strings-as-booleans
+      origin: community

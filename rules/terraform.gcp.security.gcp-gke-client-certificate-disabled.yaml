@@ -1,0 +1,48 @@
+id: terraform.gcp.security.gcp-gke-client-certificate-disabled.gcp-gke-client-certificate-disabled
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "google_container_cluster" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"google_container_cluster\" \"...\" {\n...\nmaster_auth\
+    \ {\n  ...\n  client_certificate_config {\n    ...\n    issue_client_certificate\
+    \ = false\n    ...\n  }\n  ...\n}\n...\n}\n"
+message: Ensure client certificate authentication to Kubernetes Engine Clusters is
+  disabled
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-gke-client-certificate-disabled.gcp-gke-client-certificate-disabled
+  shortlink: https://sg.run/eYY8
+  semgrep.dev:
+    rule:
+      r_id: 33676
+      rv_id: 111003
+      rule_id: 4bU55b
+      version_id: A8T9Xgl
+      url: https://semgrep.dev/playground/r/A8T9Xgl/terraform.gcp.security.gcp-gke-client-certificate-disabled.gcp-gke-client-certificate-disabled
+      origin: community
+languages:
+- hcl
+severity: WARNING

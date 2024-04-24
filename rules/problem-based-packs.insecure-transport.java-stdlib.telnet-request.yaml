@@ -1,0 +1,40 @@
+id: problem-based-packs.insecure-transport.java-stdlib.telnet-request.telnet-request
+message: Checks for attempts to connect through telnet. This is insecure as the telnet
+  protocol supports no encryption, and data passes through unencrypted.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+  owasp: A03:2017 - Sensitive Data Exposure
+  references:
+  - https://commons.apache.org/proper/commons-net/javadocs/api-3.6/org/apache/commons/net/telnet/TelnetClient.html
+  subcategory:
+  - vuln
+  technology:
+  - java
+  vulnerability: Insecure Transport
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/problem-based-packs.insecure-transport.java-stdlib.telnet-request.telnet-request
+  shortlink: https://sg.run/XBQB
+  semgrep.dev:
+    rule:
+      r_id: 9420
+      rv_id: 110108
+      rule_id: kxUkXk
+      version_id: X0TQx9J
+      url: https://semgrep.dev/playground/r/X0TQx9J/problem-based-packs.insecure-transport.java-stdlib.telnet-request.telnet-request
+      origin: community
+languages:
+- java
+pattern: '$TELNETCLIENT = new TelnetClient(...);
+
+  ...
+
+  $TELNETCLIENT.connect(...);
+
+  '

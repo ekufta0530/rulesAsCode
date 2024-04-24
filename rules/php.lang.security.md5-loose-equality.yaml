@@ -1,0 +1,41 @@
+id: php.lang.security.md5-loose-equality.md5-loose-equality
+patterns:
+- pattern-either:
+  - pattern: $X == $FUNC(...)
+  - pattern: $FUNC(...) == $X
+  - pattern: $FUNC(...) == $FUNC(...)
+- metavariable-regex:
+    metavariable: $FUNC
+    regex: md5|md5_file
+message: Make sure comparisons involving md5 values are strict (use `===` not `==`)
+  to avoid type juggling issues
+metadata:
+  cwe:
+  - 'CWE-697: Incorrect Comparison'
+  references:
+  - https://www.php.net/manual/en/types.comparisons.php
+  - https://www.whitehatsec.com/blog/magic-hashes/
+  category: security
+  technology:
+  - php
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/php.lang.security.md5-loose-equality.md5-loose-equality
+  shortlink: https://sg.run/Do4G
+  semgrep.dev:
+    rule:
+      r_id: 9396
+      rv_id: 110049
+      rule_id: GdU7RO
+      version_id: pZT1yYG
+      url: https://semgrep.dev/playground/r/pZT1yYG/php.lang.security.md5-loose-equality.md5-loose-equality
+      origin: community
+languages:
+- php
+severity: ERROR

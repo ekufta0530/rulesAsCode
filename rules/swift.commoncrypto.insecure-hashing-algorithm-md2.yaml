@@ -1,0 +1,48 @@
+id: swift.commoncrypto.insecure-hashing-algorithm-md2.insecure-hashing-algorithm-md2
+message: The use of the MD2 hashing algorithm was identified which is considered insecure.
+  MD2 is not collision resistant and is therefore not suitable for cryptographic or
+  secure use-cases. Use stronger algorithms such as SHA256, SHA512, or adaptive hashing
+  algorithms such as argon2 or bcrypt.
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  functional-categories:
+  - crypto::search::hash-algorithm::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-4: The app does not use cryptographic protocols or algorithms that
+    are widely considered deprecated for security purposes.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.commoncrypto.insecure-hashing-algorithm-md2.insecure-hashing-algorithm-md2
+  shortlink: https://sg.run/oPAN
+  semgrep.dev:
+    rule:
+      r_id: 59716
+      rv_id: 111999
+      rule_id: bwUpdz
+      version_id: RGTDRlr
+      url: https://semgrep.dev/playground/r/RGTDRlr/swift.commoncrypto.insecure-hashing-algorithm-md2.insecure-hashing-algorithm-md2
+      origin: pro_rules
+languages:
+- swift
+pattern-either:
+- pattern: CC_MD2(...)
+- pattern: CC_MD2_Init(...)
+- pattern: CC_MD2_Update(...)
+- pattern: CC_MD2_Finally(...)

@@ -1,0 +1,48 @@
+id: csharp.dotnet.security.audit.razor-use-of-htmlstring.razor-use-of-htmlstring
+message: ASP.NET Core MVC provides an HtmlString class which isn't automatically encoded
+  upon output. This should never be used in combination with untrusted input as this
+  will expose an XSS vulnerability.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  cwe:
+  - 'CWE-116: Improper Encoding or Escaping of Output'
+  owasp:
+  - A03:2021 - Injection
+  references:
+  - https://cwe.mitre.org/data/definitions/116.html
+  - https://owasp.org/Top10/A03_2021-Injection/
+  - https://docs.microsoft.com/en-us/aspnet/core/security/cross-site-scripting?view=aspnetcore-6.0#html-encoding-using-razor
+  subcategory:
+  - audit
+  technology:
+  - .net
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Encoding
+  source: https://semgrep.dev/r/csharp.dotnet.security.audit.razor-use-of-htmlstring.razor-use-of-htmlstring
+  shortlink: https://sg.run/E8GN
+  semgrep.dev:
+    rule:
+      r_id: 27037
+      rv_id: 109178
+      rule_id: NbUoO5
+      version_id: qkT2xLR
+      url: https://semgrep.dev/playground/r/qkT2xLR/csharp.dotnet.security.audit.razor-use-of-htmlstring.razor-use-of-htmlstring
+      origin: community
+languages:
+- generic
+paths:
+  include:
+  - '*.cshtml'
+patterns:
+- pattern-either:
+  - pattern: new ...HtmlString(...)
+  - pattern: '@(new ...HtmlString(...))'
+- pattern-not-inside: '@(new ...HtmlString(...HtmlEncode(...)))'
+- pattern-not-inside: '@(new ...HtmlString(...Encode(...)))'
+- pattern-not-inside: new ...HtmlString(...HtmlEncode(...))
+- pattern-not-inside: new ...HtmlString(...Encode(...))

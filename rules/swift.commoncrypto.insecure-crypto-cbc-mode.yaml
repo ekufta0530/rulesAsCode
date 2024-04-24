@@ -1,0 +1,64 @@
+id: swift.commoncrypto.insecure-crypto-cbc-mode.insecure-crypto-cbc-mode
+message: Symmetric cryptographic operations were identified that use Cipher Block
+  Chaining (CBC) mode. AES in CBC mode provides unauthenticated cryptographic encryption.
+  CBC is also malleable, meaning that an attacker can influence the decrypted plaintext
+  by modifying bits of the ciphertext (bit flipping attacks). Consider using an authenticated
+  encryption mechanism, such as AES-GCM or ChaChaPoly. If CBC mode is **required**,
+  consider augmenting the encryption with authentication by signing the ciphertexts
+  with a Message Authentication Code (e.g. HMAC).
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  functional-categories:
+  - crypto::search::mode::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-3: The app uses cryptographic primitives that are appropriate for
+    the particular use-case, configured with parameters that adhere to industry best
+    practices.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  - https://zhangzeyu2001.medium.com/attacking-cbc-mode-bit-flipping-7e0a1c185511
+  - https://arxumpathsecurity.com/blog/2019/10/16/cbc-mode-is-malleable-dont-trust-it-for-authentication
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-cbc-mode.insecure-crypto-cbc-mode
+  shortlink: https://sg.run/q5Dx
+  semgrep.dev:
+    rule:
+      r_id: 59712
+      rv_id: 111995
+      rule_id: 10U6vK
+      version_id: PkTJdyz
+      url: https://semgrep.dev/playground/r/PkTJdyz/swift.commoncrypto.insecure-crypto-cbc-mode.insecure-crypto-cbc-mode
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern: '$FUNC($A, CCAlgorithm($ALG), CCOptions($OPTS), ...)
+
+    '
+- metavariable-pattern:
+    metavariable: $OPTS
+    patterns:
+    - pattern-not-regex: .*kCCOptionECBMode.*
+- metavariable-pattern:
+    metavariable: $FUNC
+    patterns:
+    - pattern-regex: ^CCCrypt$|^CCCryptorCreate$|^CCCryptorCreateFromData$
+- focus-metavariable: $FUNC

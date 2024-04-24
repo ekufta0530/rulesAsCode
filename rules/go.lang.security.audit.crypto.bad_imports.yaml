@@ -1,0 +1,47 @@
+id: go.lang.security.audit.crypto.bad_imports.insecure-module-used
+message: The package `net/http/cgi` is on the import blocklist.  The package is vulnerable
+  to httpoxy attacks (CVE-2015-5386). It is recommended to use `net/http` or a web
+  framework to build a web application instead.
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  source-rule-url: https://github.com/securego/gosec
+  references:
+  - https://godoc.org/golang.org/x/crypto/sha3
+  category: security
+  technology:
+  - go
+  confidence: MEDIUM
+  subcategory:
+  - audit
+  likelihood: MEDIUM
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/go.lang.security.audit.crypto.bad_imports.insecure-module-used
+  shortlink: https://sg.run/l2gj
+  semgrep.dev:
+    rule:
+      r_id: 9113
+      rv_id: 109596
+      rule_id: yyUnov
+      version_id: l4T4vAR
+      url: https://semgrep.dev/playground/r/l4T4vAR/go.lang.security.audit.crypto.bad_imports.insecure-module-used
+      origin: community
+languages:
+- go
+severity: WARNING
+pattern-either:
+- patterns:
+  - pattern-inside: 'import "net/http/cgi"
+
+      ...
+
+      '
+  - pattern: 'cgi.$FUNC(...)
+
+      '

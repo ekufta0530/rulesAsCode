@@ -1,0 +1,40 @@
+id: terraform.gcp.security.gcp-compute-os-login.gcp-compute-os-login
+patterns:
+- pattern: resource
+- pattern-inside: "resource \"google_compute_instance\" \"...\" {\n...\nmetadata =\
+    \ {\n    enable-oslogin = false\n}\n...\n}\n"
+message: "Ensure that no instance in the project overrides the project setting for\
+  \ enabling OSLogin (OSLogin needs to be enabled in project metadata for all instances)\t"
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-compute-os-login.gcp-compute-os-login
+  shortlink: https://sg.run/lbdG
+  semgrep.dev:
+    rule:
+      r_id: 32313
+      rv_id: 110981
+      rule_id: BYUyqJ
+      version_id: gET3OBO
+      url: https://semgrep.dev/playground/r/gET3OBO/terraform.gcp.security.gcp-compute-os-login.gcp-compute-os-login
+      origin: community
+languages:
+- hcl
+severity: WARNING

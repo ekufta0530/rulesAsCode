@@ -1,0 +1,45 @@
+id: python.pycryptodome.security.insufficient-rsa-key-size.insufficient-rsa-key-size
+patterns:
+- pattern-either:
+  - pattern: Crypto.PublicKey.RSA.generate(..., bits=$SIZE, ...)
+  - pattern: Crypto.PublicKey.RSA.generate($SIZE, ...)
+  - pattern: Cryptodome.PublicKey.RSA.generate(..., bits=$SIZE, ...)
+  - pattern: Cryptodome.PublicKey.RSA.generate($SIZE, ...)
+- metavariable-comparison:
+    metavariable: $SIZE
+    comparison: $SIZE < 2048
+message: Detected an insufficient key size for RSA. NIST recommends a key size of
+  2048 or higher.
+metadata:
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  source-rule-url: https://github.com/PyCQA/bandit/blob/b1411bfb43795d3ffd268bef17a839dee954c2b1/bandit/plugins/weak_cryptographic_key.py
+  references:
+  - https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57Pt3r1.pdf
+  category: security
+  technology:
+  - pycryptodome
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/python.pycryptodome.security.insufficient-rsa-key-size.insufficient-rsa-key-size
+  shortlink: https://sg.run/PprY
+  semgrep.dev:
+    rule:
+      r_id: 9689
+      rv_id: 110466
+      rule_id: BYUBWe
+      version_id: O9TNdk2
+      url: https://semgrep.dev/playground/r/O9TNdk2/python.pycryptodome.security.insufficient-rsa-key-size.insufficient-rsa-key-size
+      origin: community
+languages:
+- python
+severity: WARNING

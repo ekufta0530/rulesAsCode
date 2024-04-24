@@ -1,0 +1,49 @@
+id: javascript.playwright.security.audit.playwright-evaluate-arg-injection.playwright-evaluate-arg-injection
+message: If unverified user data can reach the `evaluate` method it can result in
+  Server-Side Request Forgery vulnerabilities
+metadata:
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  category: security
+  technology:
+  - playwright
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/javascript.playwright.security.audit.playwright-evaluate-arg-injection.playwright-evaluate-arg-injection
+  shortlink: https://sg.run/ndgr
+  semgrep.dev:
+    rule:
+      r_id: 9336
+      rv_id: 109959
+      rule_id: PeUZ30
+      version_id: w8T9nbz
+      url: https://semgrep.dev/playground/r/w8T9nbz/javascript.playwright.security.audit.playwright-evaluate-arg-injection.playwright-evaluate-arg-injection
+      origin: community
+languages:
+- javascript
+- typescript
+severity: WARNING
+patterns:
+- pattern-inside: 'require(''playwright'');
+
+    ...
+
+    '
+- pattern-either:
+  - pattern-inside: function $FUNC (...,$INPUT,...) {...}
+  - pattern-inside: function (...,$INPUT,...) {...}
+- pattern-either:
+  - pattern: $PAGE.evaluate($CODE,...,<... $INPUT ...>,...)
+  - pattern: $PAGE.evaluateHandle($CODE,...,<... $INPUT ...>,...)

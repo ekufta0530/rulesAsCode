@@ -1,0 +1,85 @@
+id: ajinabraham.njsscan.headers.header_cookie.cookie_session_no_maxage
+patterns:
+- pattern-either:
+  - pattern-inside: '$SESSION = require(''cookie-session'')
+
+      ...
+
+      '
+  - pattern-inside: '$SESSION = require(''express-session'')
+
+      ...
+
+      '
+- pattern: $SESSION(...)
+- pattern-not-inside: $SESSION(<... {cookie:{maxAge:...}} ...>,...)
+- pattern-not-inside: '$OPTS = <... {cookie:{maxAge:...}} ...>;
+
+    ...
+
+    $SESSION($OPTS,...)
+
+    '
+- pattern-not-inside: '$OPTS = ...;
+
+    ...
+
+    $COOKIE = <... {maxAge:...} ...>;
+
+    ...
+
+    $SESSION($OPTS,...)
+
+    '
+- pattern-not-inside: '$OPTS = ...;
+
+    ...
+
+    $OPTS.cookie = <... {maxAge:...} ...>;
+
+    ...
+
+    $SESSION($OPTS,...)
+
+    '
+- pattern-not-inside: '$OPTS = ...;
+
+    ...
+
+    $COOKIE.maxAge = ...;
+
+    ...
+
+    $SESSION($OPTS,...)
+
+    '
+- pattern-not-inside: '$OPTS = ...;
+
+    ...
+
+    $OPTS.cookie.maxAge = ...;
+
+    ...
+
+    $SESSION($OPTS,...)'
+message: 'Session middleware settings: `maxAge` not set. Use it to set expiration
+  date for cookies.'
+severity: INFO
+languages:
+- javascript
+metadata:
+  cwe: cwe-613
+  owasp-web: a2
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.headers.header_cookie.cookie_session_no_maxage
+  shortlink: https://sg.run/NXYz
+  semgrep.dev:
+    rule:
+      r_id: 43671
+      rv_id: 78275
+      rule_id: 8GU0oP
+      version_id: JdTJK7
+      url: https://semgrep.dev/playground/r/JdTJK7/ajinabraham.njsscan.headers.header_cookie.cookie_session_no_maxage
+      origin: community

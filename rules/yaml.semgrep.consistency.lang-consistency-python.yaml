@@ -1,0 +1,28 @@
+fix: python
+id: yaml.semgrep.consistency.lang-consistency-python.lang-consistency-python
+languages:
+- yaml
+message: Found '$X' in language config which diverges from semgrep.dev normalization.
+  Please use 'python' instead.
+metadata:
+  category: correctness
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.consistency.lang-consistency-python.lang-consistency-python
+  shortlink: https://sg.run/A572
+  semgrep.dev:
+    rule:
+      r_id: 18294
+      rv_id: 111153
+      rule_id: YGUlO0
+      version_id: K3TvG3r
+      url: https://semgrep.dev/playground/r/K3TvG3r/yaml.semgrep.consistency.lang-consistency-python.lang-consistency-python
+      origin: community
+patterns:
+- pattern: $X
+- pattern-inside: 'languages: ...'
+- metavariable-regex:
+    metavariable: $X
+    regex: ^(py)$
+severity: WARNING

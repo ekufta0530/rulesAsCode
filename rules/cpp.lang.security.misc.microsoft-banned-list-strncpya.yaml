@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-strncpya.microsoft-banned-list-strncpya
+message: 'StrNCpyA is a banned function: does not null-terminate. Alternatives are
+  StringCbCopy, StringCbCopyEx, StringCchCopy, StringCchCopyEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-strncpya.microsoft-banned-list-strncpya
+  shortlink: https://sg.run/KxLAL
+  semgrep.dev:
+    rule:
+      r_id: 114855
+      rv_id: 257466
+      rule_id: 2ZUzpvp
+      version_id: 2KTQlWX
+      url: https://semgrep.dev/playground/r/2KTQlWX/cpp.lang.security.misc.microsoft-banned-list-strncpya.microsoft-banned-list-strncpya
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: StrNCpyA(...)

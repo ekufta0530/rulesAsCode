@@ -1,0 +1,41 @@
+id: go.lang.security.audit.crypto.ssl.ssl-v3-is-insecure
+message: SSLv3 is insecure because it has known vulnerabilities. Starting with go1.14,
+  SSLv3 will be removed. Instead, use 'tls.VersionTLS13'.
+metadata:
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  source-rule-url: https://github.com/securego/gosec/blob/master/rules/tls_config.go
+  references:
+  - https://golang.org/doc/go1.14#crypto/tls
+  - https://www.us-cert.gov/ncas/alerts/TA14-290A
+  category: security
+  technology:
+  - go
+  confidence: HIGH
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/go.lang.security.audit.crypto.ssl.ssl-v3-is-insecure
+  shortlink: https://sg.run/zvE1
+  semgrep.dev:
+    rule:
+      r_id: 9117
+      rv_id: 109600
+      rule_id: kxUkJ2
+      version_id: zyTK80x
+      url: https://semgrep.dev/playground/r/zyTK80x/go.lang.security.audit.crypto.ssl.ssl-v3-is-insecure
+      origin: community
+languages:
+- go
+severity: WARNING
+fix-regex:
+  regex: VersionSSL30
+  replacement: VersionTLS13
+pattern: 'tls.Config{..., MinVersion: $TLS.VersionSSL30, ...}'

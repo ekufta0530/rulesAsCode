@@ -1,0 +1,52 @@
+id: python.cryptography.security.insufficient-ec-key-size.insufficient-ec-key-size
+patterns:
+- pattern-inside: cryptography.hazmat.primitives.asymmetric.ec.generate_private_key(...)
+- pattern: cryptography.hazmat.primitives.asymmetric.ec.$SIZE
+- metavariable-pattern:
+    metavariable: $SIZE
+    pattern-either:
+    - pattern: SECP192R1
+    - pattern: SECT163K1
+    - pattern: SECT163R2
+- focus-metavariable: $SIZE
+fix: 'SECP256R1
+
+  '
+message: Detected an insufficient curve size for EC. NIST recommends a key size of
+  224 or higher. For example, use 'ec.SECP256R1'.
+metadata:
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  source-rule-url: https://github.com/PyCQA/bandit/blob/b1411bfb43795d3ffd268bef17a839dee954c2b1/bandit/plugins/weak_cryptographic_key.py
+  references:
+  - https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57Pt3r1.pdf
+  - https://cryptography.io/en/latest/hazmat/primitives/asymmetric/ec/#elliptic-curves
+  category: security
+  technology:
+  - cryptography
+  subcategory:
+  - audit
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  functional-categories:
+  - crypto::search::key-length::cryptography
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/python.cryptography.security.insufficient-ec-key-size.insufficient-ec-key-size
+  shortlink: https://sg.run/GeQq
+  semgrep.dev:
+    rule:
+      r_id: 9448
+      rv_id: 251691
+      rule_id: qNUjZ3
+      version_id: YDTNPqv
+      url: https://semgrep.dev/playground/r/YDTNPqv/python.cryptography.security.insufficient-ec-key-size.insufficient-ec-key-size
+      origin: community
+languages:
+- python
+severity: WARNING

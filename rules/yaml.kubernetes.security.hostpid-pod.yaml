@@ -1,0 +1,40 @@
+id: yaml.kubernetes.security.hostpid-pod.hostpid-pod
+patterns:
+- pattern-inside: "spec:\n  ...\n"
+- pattern: 'hostPID: true
+
+    '
+message: Pod is sharing the host process ID namespace. When paired with ptrace this
+  can be used to escalate privileges outside of the container. Remove the 'hostPID'
+  key to disable this functionality.
+metadata:
+  cwe:
+  - 'CWE-269: Improper Privilege Management'
+  references:
+  - https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces
+  category: security
+  technology:
+  - kubernetes
+  owasp:
+  - A04:2021 - Insecure Design
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/yaml.kubernetes.security.hostpid-pod.hostpid-pod
+  shortlink: https://sg.run/708R
+  semgrep.dev:
+    rule:
+      r_id: 10238
+      rv_id: 111132
+      rule_id: 7KUeo0
+      version_id: d6Trv7J
+      url: https://semgrep.dev/playground/r/d6Trv7J/yaml.kubernetes.security.hostpid-pod.hostpid-pod
+      origin: community
+languages:
+- yaml
+severity: WARNING

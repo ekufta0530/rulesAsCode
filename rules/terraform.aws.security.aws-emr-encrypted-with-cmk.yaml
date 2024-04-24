@@ -1,0 +1,46 @@
+id: terraform.aws.security.aws-emr-encrypted-with-cmk.aws-emr-encrypted-with-cmk
+patterns:
+- pattern-inside: "resource \"aws_emr_security_configuration\" $ANYTHING {\n  ...\n\
+    }\n"
+- pattern: configuration = "$STATEMENT"
+- metavariable-pattern:
+    metavariable: $STATEMENT
+    language: json
+    patterns:
+    - pattern-not-inside: '"AwsKmsKey": ...
+
+        '
+message: Ensure EMR is encrypted at rest using KMS CMKs. CMKs gives you control over
+  the encryption key in terms of access and rotation.
+metadata:
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-emr-encrypted-with-cmk.aws-emr-encrypted-with-cmk
+  shortlink: https://sg.run/6gOo
+  semgrep.dev:
+    rule:
+      r_id: 17359
+      rv_id: 110760
+      rule_id: PeU0L7
+      version_id: 1QTO7PY
+      url: https://semgrep.dev/playground/r/1QTO7PY/terraform.aws.security.aws-emr-encrypted-with-cmk.aws-emr-encrypted-with-cmk
+      origin: community
+languages:
+- hcl
+severity: WARNING

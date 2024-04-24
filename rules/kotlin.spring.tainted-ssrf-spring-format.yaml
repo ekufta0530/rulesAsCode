@@ -1,0 +1,179 @@
+id: kotlin.spring.tainted-ssrf-spring-format.tainted-ssrf-spring-format
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::sink::http-request
+  - net::sink::http-request::SpringBoot
+  - net::sink::http-request::commons-httpclient
+  - net::sink::http-request::jsoup
+  - net::sink::http-request::okhttp
+  - web::source::cookie::SpringBoot
+  - web::source::header::SpringBoot
+  - web::source::http-body::SpringBoot
+  - web::source::http-params::SpringBoot
+  - web::source::url-path-params::SpringBoot
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - kotlin
+  - spring
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/kotlin.spring.tainted-ssrf-spring-format.tainted-ssrf-spring-format
+  shortlink: https://sg.run/yKn7
+  semgrep.dev:
+    rule:
+      r_id: 59568
+      rv_id: 731954
+      rule_id: nJUXgL
+      version_id: WrTNAlq
+      url: https://semgrep.dev/playground/r/WrTNAlq/kotlin.spring.tainted-ssrf-spring-format.tainted-ssrf-spring-format
+      origin: pro_rules
+languages:
+- kotlin
+mode: taint
+pattern-sources:
+- label: USER_INPUT
+  patterns:
+  - pattern-either:
+    - pattern: '($REQ: ServletRequest)
+
+        '
+    - pattern: '($REQ: HttpServletRequest)
+
+        '
+    - pattern: '($REQ: WebRequest)
+
+        '
+    - pattern: '($REQ: ServletWebRequest)
+
+        '
+    - pattern: '($REQ: FacesWebRequest)
+
+        '
+    - pattern: '($REQ: NativeWebRequest)
+
+        '
+    - patterns:
+      - pattern-either:
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+      - metavariable-regex:
+          metavariable: $TYPE
+          regex: ^(?!(Int|Long|Float|Double|Short|Byte|Char|UByte|UInt|ULong|UShort|Boolean))
+      - metavariable-regex:
+          metavariable: $REQ
+          regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+      - focus-metavariable: $SOURCE
+- label: FORMAT
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: String.format("$REGEX", $X,...)
+      - metavariable-regex:
+          metavariable: $REGEX
+          regex: ^(http://|https://|//)%s.*
+    - patterns:
+      - pattern: '"...".format($X,...)
+
+          '
+      - pattern: $REGEX.format($X,...)
+      - metavariable-regex:
+          metavariable: $REGEX
+          regex: ^"(http://|https://|//)%s.*
+  - focus-metavariable: $X
+  requires: USER_INPUT
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: HttpRequest. ... .newBuilder($URL)
+    - pattern: HttpRequest. ... .uri($URL)
+    - pattern: HttpGet($URL)
+    - pattern: HttpHead($URL)
+    - pattern: HttpOptions($URL)
+    - pattern: HttpPatch($URL)
+    - pattern: HttpPost($URL)
+    - pattern: HttpPut($URL)
+    - pattern: HttpDelete($URL)
+    - pattern: Jsoup.connect($URL)
+    - pattern: Request.Builder(). ... .url($URL)
+    - patterns:
+      - pattern-either:
+        - pattern: '($REST: RestTemplate).$RESTFUNC($URL, ...)
+
+            '
+        - pattern: RestTemplate(...).$RESTFUNC($URL, ...)
+        - patterns:
+          - pattern: $REST.$RESTFUNC($URL, ...)
+          - pattern-inside: '$REST = RestTemplate(...)
+
+              ...
+
+              '
+      - metavariable-regex:
+          metavariable: $RESTFUNC
+          regex: ^(exchange|doExecute|execute|getForEntity|getForObject|patchForObject|postForEntity|postForLocation|postForObject|put)$
+    - patterns:
+      - pattern-either:
+        - pattern: WebClient. ... .$URIFUNC($URL). ... .retrieve(...)
+        - pattern: '($CLIENT: WebClient). ... .$URIFUNC($URL). ... .retrieve(...)
+
+            '
+        - patterns:
+          - pattern: $CLIENT. ... .$URIFUNC($URL). ... .retrieve(...)
+          - pattern-inside: '$CLIENT = WebClient(...)
+
+              ...
+
+              '
+      - metavariable-regex:
+          metavariable: $URIFUNC
+          regex: ^(uri|baseUrl|create)$
+    - patterns:
+      - pattern-either:
+        - pattern: URL($URL, ...).$FUNC(...)
+        - pattern: '$NEW = URL($URL, ...)
+
+            ...
+
+            $NEW.$FUNC(...)
+
+            '
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(openConnection|openStream)$
+  - focus-metavariable: $URL
+  requires: FORMAT

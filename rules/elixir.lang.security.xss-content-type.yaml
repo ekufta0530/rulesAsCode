@@ -1,0 +1,49 @@
+id: elixir.lang.security.xss-content-type.xss-content-type
+message: 'The application is dynamically setting the Content-Type of a connection
+  response. If an attacker is able to set arbitrary content types for an HTTP response
+  containing user input, the attacker is likely to be able to leverage this for cross-site
+  scripting (XSS). '
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation'
+  owasp:
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection/
+  technology:
+  - phoenix
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/elixir.lang.security.xss-content-type.xss-content-type
+  shortlink: https://sg.run/oqZNn
+  semgrep.dev:
+    rule:
+      r_id: 114616
+      rv_id: 257006
+      rule_id: L1UqGP1
+      version_id: X0TwW6O
+      url: https://semgrep.dev/playground/r/X0TwW6O/elixir.lang.security.xss-content-type.xss-content-type
+      origin: pro_rules
+languages:
+- elixir
+min-version: 1.55.2
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern: put_resp_content_type(..., $ARG)
+    - pattern-not: put_resp_content_type(..., "...")
+  - patterns:
+    - pattern: $MODULE.put_resp_content_type(..., $ARG)
+    - pattern-not: $MODULE.put_resp_content_type(..., "...")
+    - metavariable-regex:
+        metavariable: $MODULE
+        regex: ^(Plug\.Conn|Conn)$
+- focus-metavariable: $ARG

@@ -1,0 +1,102 @@
+id: ajinabraham.njsscan.database.nosql_injection.node_nosqli_js_injection
+patterns:
+- pattern-either:
+  - pattern: '$OBJ.$FUNC({$where: <... $REQ.$FOO.$BAR ...>}, ...)
+
+      '
+  - pattern: '$OBJ.$FUNC({$where: <... $REQ.$QUERY ...>}, ...)
+
+      '
+  - pattern: '$NSQL = <... $REQ.$QUERY.$...>;
+
+      ...
+
+      $OBJ.$FUNC({$where: <... $NSQL ...>}, ...)
+
+      '
+  - pattern: '$NSQL = <... $REQ.$QUERY ...>;
+
+      ...
+
+      $OBJ.$FUNC({$where: <... $NSQL ...>}, ...)
+
+      '
+  - pattern: '$INP = $REQ.$FOO.$BAR;
+
+      ...
+
+      $QRY = {$where: <... $INP ...>};
+
+      ...
+
+      $OBJ.$FUNC(<... $QRY ...>, ...)
+
+      '
+  - pattern: '$INP = $REQ.$FOO;
+
+      ...
+
+      $QRY = {$where: <... $INP ...>};
+
+      ...
+
+      $OBJ.$FUNC(<... $QRY ...>, ...)
+
+      '
+  - pattern: '$QRY["$where"] = <... $REQ.$FOO ...>;
+
+      ...
+
+      $OBJ.$FUNC(<... $QRY ...>, ...)
+
+      '
+  - pattern: '$QRY["$where"] = <... $REQ.$FOO.$BAR ...>;
+
+      ...
+
+      $OBJ.$FUNC(<... $QRY ...>, ...)
+
+      '
+  - pattern: '$INP = $REQ.$FOO;
+
+      ...
+
+      $QRY["$where"] = <... $INP ...>;
+
+      ...
+
+      $OBJ.$FUNC(<... $QRY ...>, ...)
+
+      '
+  - pattern: '$INP = $REQ.$FOO.$BAR;
+
+      ...
+
+      $QRY["$where"] = <... $INP ...>;
+
+      ...
+
+      $OBJ.$FUNC(<... $QRY ...>, ...)
+
+      '
+message: Untrusted user input in MongoDB $where operator can result in NoSQL JavaScript
+  Injection.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a1
+  cwe: cwe-943
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.database.nosql_injection.node_nosqli_js_injection
+  shortlink: https://sg.run/KzYX
+  semgrep.dev:
+    rule:
+      r_id: 43611
+      rv_id: 78229
+      rule_id: EwUbyK
+      version_id: l4TLo5
+      url: https://semgrep.dev/playground/r/l4TLo5/ajinabraham.njsscan.database.nosql_injection.node_nosqli_js_injection
+      origin: community

@@ -1,0 +1,33 @@
+id: bash.lang.correctness.unquoted-expansion.unquoted-command-substitution-in-command
+languages:
+- bash
+severity: INFO
+message: The result of command substitution $(...) or `...`, if unquoted, is split
+  on whitespace or other separators specified by the IFS variable. You should surround
+  it with double quotes to avoid splitting the result.
+metadata:
+  category: correctness
+  technology:
+  - bash
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/bash.lang.correctness.unquoted-expansion.unquoted-command-substitution-in-command
+  shortlink: https://sg.run/gYK5
+  semgrep.dev:
+    rule:
+      r_id: 14841
+      rv_id: 727929
+      rule_id: DbU1JY
+      version_id: yeTAYwr
+      url: https://semgrep.dev/playground/r/yeTAYwr/bash.lang.correctness.unquoted-expansion.unquoted-command-substitution-in-command
+      origin: community
+patterns:
+- pattern-either:
+  - pattern: '... $(...) ...
+
+      '
+  - pattern: '... ...$(...)... ...
+
+      '
+- pattern-regex: '.*(\$\([^\(]|`).+([^\)]\)|`).*
+
+    '

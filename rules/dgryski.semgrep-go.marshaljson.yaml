@@ -1,0 +1,24 @@
+id: dgryski.semgrep-go.marshaljson.unmarshal-json-misspell
+pattern-either:
+- patterns:
+  - pattern-regex: (?i)func \((.+)\) unmarshal[l]?json\((.*)\)
+  - pattern-not-regex: func \(.+\) UnmarshalJSON\(
+fix: func ($1) UnmarshalJSON($2)
+message: 'Misspelling of UnmarshalJSON.
+
+  '
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.marshaljson.unmarshal-json-misspell
+  shortlink: https://sg.run/kDj2
+  semgrep.dev:
+    rule:
+      r_id: 20528
+      rv_id: 33807
+      rule_id: bwULgW
+      version_id: O9TEZ8
+      url: https://semgrep.dev/playground/r/O9TEZ8/dgryski.semgrep-go.marshaljson.unmarshal-json-misspell
+      origin: community

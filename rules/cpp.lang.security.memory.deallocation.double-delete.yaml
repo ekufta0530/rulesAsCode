@@ -1,0 +1,79 @@
+id: cpp.lang.security.memory.deallocation.double-delete.double-delete
+message: '`$SINK_VAR` has previously been deleted which will trigger a double-free
+  vulnerability. This may lead to memory corruption.'
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - L1
+  - MEM50-CPP
+  cwe:
+  - 'CWE-415: Double Free'
+  references:
+  - https://wiki.sei.cmu.edu/confluence/display/cplusplus/MEM50-CPP.+Do+not+access+freed+memory
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Memory Issues
+  source: https://semgrep.dev/r/cpp.lang.security.memory.deallocation.double-delete.double-delete
+  shortlink: https://sg.run/NbLo7
+  semgrep.dev:
+    rule:
+      r_id: 114771
+      rv_id: 348150
+      rule_id: nJUx9P0
+      version_id: RGTgQLd
+      url: https://semgrep.dev/playground/r/RGTgQLd/cpp.lang.security.memory.deallocation.double-delete.double-delete
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+  taint_only_propagate_through_assignments: true
+pattern-sources:
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: delete $LOCAL_VAR
+    - pattern: delete[] $LOCAL_VAR
+  - patterns:
+    - pattern-either:
+      - pattern-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  $LOCAL_VAR_TYPE $LOCAL_VAR\
+          \ = ...;\n  ...\n}\n"
+      - pattern-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  $LOCAL_VAR_TYPE $LOCAL_VAR;\n\
+          \  ...\n}\n"
+      - pattern-inside: "$RETURN_TYPE $FUNC(..., $LOCAL_VAR_TYPE $LOCAL_VAR, ...)\
+          \ {\n  ...\n}\n"
+    - pattern-not-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  static $LOCAL_VAR_TYPE\
+        \ $LOCAL_VAR = ...;\n  ...\n}\n"
+    - pattern-not-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  static $LOCAL_VAR_TYPE\
+        \ $LOCAL_VAR;\n  ...\n}\n"
+  - focus-metavariable: $LOCAL_VAR
+  - pattern-not-inside: '[...](...) { ... }'
+  - pattern-not-inside: '[...](...) -> $LAMBDA_RETURN_TYPE { ... }'
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: delete $SINK_VAR
+    - pattern: delete[] $SINK_VAR
+  - focus-metavariable: $SINK_VAR
+pattern-sanitizers:
+- by-side-effect: true
+  patterns:
+  - pattern: $FUNC(..., &$VAR, ...)
+  - focus-metavariable: $VAR
+- by-side-effect: true
+  patterns:
+  - pattern: $VAR[$INDEX]
+  - focus-metavariable: $VAR

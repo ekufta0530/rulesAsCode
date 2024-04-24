@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-strcatchainw.microsoft-banned-list-strcatchainw
+message: 'StrCatChainW is a banned function: no null-termination. Alternatives are
+  StringCbCatEx, StringCbCatNEx, StringCchCatEx, StringCchCatNEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-strcatchainw.microsoft-banned-list-strcatchainw
+  shortlink: https://sg.run/8GYLq
+  semgrep.dev:
+    rule:
+      r_id: 114840
+      rv_id: 257451
+      rule_id: GdUvqkL
+      version_id: GxTxL9r
+      url: https://semgrep.dev/playground/r/GxTxL9r/cpp.lang.security.misc.microsoft-banned-list-strcatchainw.microsoft-banned-list-strcatchainw
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: StrCatChainW(...)

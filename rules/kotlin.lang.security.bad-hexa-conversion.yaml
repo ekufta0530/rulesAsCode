@@ -1,0 +1,37 @@
+id: kotlin.lang.security.bad-hexa-conversion.bad-hexa-conversion
+metadata:
+  cwe:
+  - 'CWE-704: Incorrect Type Conversion or Cast'
+  owasp: A03:2017 - Sensitive Data Exposure
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#BAD_HEXA_CONVERSION
+  category: security
+  technology:
+  - kotlin
+  references:
+  - https://cwe.mitre.org/data/definitions/704.html
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/kotlin.lang.security.bad-hexa-conversion.bad-hexa-conversion
+  shortlink: https://sg.run/b25p
+  semgrep.dev:
+    rule:
+      r_id: 15126
+      rv_id: 109991
+      rule_id: d8UegG
+      version_id: GxTv6XX
+      url: https://semgrep.dev/playground/r/GxTv6XX/kotlin.lang.security.bad-hexa-conversion.bad-hexa-conversion
+      origin: community
+message: '''Integer.toHexString()'' strips leading zeroes from each byte if read byte-by-byte.
+  This mistake weakens the hash value computed since it introduces more collisions.
+  Use ''String.format("%02X", ...)'' instead.'
+severity: WARNING
+languages:
+- kt
+pattern: "fun $METHOD(...) {\n  ...\n  val $MD: MessageDigest = ...\n  ...\n  $MD.digest(...)\n\
+  \  ...\n  Integer.toHexString(...)\n}"

@@ -1,0 +1,77 @@
+id: cpp.lang.correctness.sizeof-pointer-type.sizeof-pointer-type
+message: Using `sizeof(...)` on a pointer type is error prone and can lead to memory
+  corruption if the incorrect size is used to allocate memory. An explicit length
+  should be used instead of using `sizeof(...)`.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - ARR01-C
+  - C
+  - C++
+  - L1
+  cwe:
+  - 'CWE-467: Use of sizeof() on a Pointer Type'
+  references:
+  - https://wiki.sei.cmu.edu/confluence/display/c/ARR01-C.+Do+not+apply+the+sizeof+operator+to+a+pointer+when+taking+the+size+of+an+array
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/cpp.lang.correctness.sizeof-pointer-type.sizeof-pointer-type
+  shortlink: https://sg.run/WAvRA
+  semgrep.dev:
+    rule:
+      r_id: 114753
+      rv_id: 257641
+      rule_id: pKU1ny1
+      version_id: RGTQDQB
+      url: https://semgrep.dev/playground/r/RGTQDQB/cpp.lang.correctness.sizeof-pointer-type.sizeof-pointer-type
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern-either:
+- patterns:
+  - pattern-inside: "$TY $FUN(..., $PTR_TY *$PTR_PARAM, ...) {\n  ...\n}\n"
+  - pattern-not-inside: "$TY $FUN(..., $PTR_TY **$PTR_PARAM, ...) {\n  ...\n}\n"
+  - pattern-either:
+    - pattern: sizeof($PTR_PARAM)
+    - pattern: sizeof($PTR_PARAM + (...))
+    - pattern: sizeof((...) + $PTR_PARAM)
+- patterns:
+  - pattern-inside: "$TY $FUN(...) {\n  ...\n  $PTR_TY *$PTR_PARAM;\n  ...\n}\n"
+  - pattern-not-inside: "$TY $FUN(...) {\n  ...\n  $PTR_TY **$PTR_PARAM;\n  ...\n\
+      }\n"
+  - pattern-either:
+    - pattern: sizeof($PTR_PARAM)
+    - pattern: sizeof($PTR_PARAM + (...))
+    - pattern: sizeof((...) + $PTR_PARAM)
+- patterns:
+  - pattern-inside: "$TY $FUN(...) {\n  ...\n  $PTR_TY *$PTR_PARAM = ...;\n  ...\n\
+      }\n"
+  - pattern-not-inside: "$TY $FUN(...) {\n  ...\n  $PTR_TY **$PTR_PARAM = ...;\n \
+      \ ...\n}\n"
+  - pattern-either:
+    - pattern: sizeof($PTR_PARAM)
+    - pattern: sizeof($PTR_PARAM + (...))
+    - pattern: sizeof((...) + $PTR_PARAM)
+- patterns:
+  - pattern-inside: "$TY $FUN(..., $ARR_TY $ARR_PARAM[$SIZE], ...) {\n  ...\n}\n"
+  - pattern-either:
+    - pattern: sizeof($ARR_PARAM)
+    - pattern: sizeof($ARR_PARAM + (...))
+    - pattern: sizeof((...) + $ARR_PARAM)
+- patterns:
+  - pattern-inside: "$TY $FUN(..., $ARR_TY $ARR_PARAM[], ...) {\n  ...\n}\n"
+  - pattern-either:
+    - pattern: sizeof($ARR_PARAM)
+    - pattern: sizeof($ARR_PARAM + (...))
+    - pattern: sizeof((...) + $ARR_PARAM)

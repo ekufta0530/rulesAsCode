@@ -1,0 +1,52 @@
+id: swift.commoncrypto.insecure-hashing-algorithm-md5.insecure-hashing-algorithm-md5
+message: 'The use of the MD5 hashing algorithm was identified which is considered
+  insecure. MD5 is not collision resistant and is therefore not suitable for cryptographic
+  or secure use-cases. Use stronger algorithms such as SHA256, SHA512, or adaptive
+  hashing algorithms such as argon2 or bcrypt. **Note**: MD5 is still considered acceptable
+  when used for Message Authentication Purposes, e.g. with HMAC although better and
+  stronger algorithms should be strongly considered.'
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  functional-categories:
+  - crypto::search::hash-algorithm::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-4: The app does not use cryptographic protocols or algorithms that
+    are widely considered deprecated for security purposes.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.commoncrypto.insecure-hashing-algorithm-md5.insecure-hashing-algorithm-md5
+  shortlink: https://sg.run/pJBN
+  semgrep.dev:
+    rule:
+      r_id: 59718
+      rv_id: 112001
+      rule_id: kxUNbO
+      version_id: BjTXpAQ
+      url: https://semgrep.dev/playground/r/BjTXpAQ/swift.commoncrypto.insecure-hashing-algorithm-md5.insecure-hashing-algorithm-md5
+      origin: pro_rules
+languages:
+- swift
+patterns:
+- pattern-either:
+  - pattern: CC_MD5(...)
+  - pattern: CC_MD5_Init(...)
+  - pattern: CC_MD5_Update(...)
+  - pattern: CC_MD5_Finally(...)
+  - pattern: Insecure.MD5.$A(...)

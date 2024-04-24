@@ -1,0 +1,24 @@
+id: ocaml.lang.best-practice.bool.ocamllint-bool-false
+pattern-either:
+- pattern: $X = false
+- pattern: $X == false
+- pattern: $X <> true
+message: Comparison to boolean. Just use `not $X`
+languages:
+- ocaml
+severity: WARNING
+metadata:
+  category: best-practice
+  technology:
+  - ocaml
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ocaml.lang.best-practice.bool.ocamllint-bool-false
+  shortlink: https://sg.run/9oEy
+  semgrep.dev:
+    rule:
+      r_id: 9367
+      rv_id: 110004
+      rule_id: eqU8jW
+      version_id: zyTK82k
+      url: https://semgrep.dev/playground/r/zyTK82k/ocaml.lang.best-practice.bool.ocamllint-bool-false
+      origin: community

@@ -1,0 +1,50 @@
+id: terraform.azure.best-practice.azure-defenderon-storage.azure-defenderon-storage
+message: Ensure that Azure Defender is set to On for Storage
+patterns:
+- pattern: resource
+- pattern-not-inside: 'resource "azurerm_security_center_subscription_pricing" "..."
+    {
+
+    ...
+
+    tier = "Standard"
+
+    resource_type = "StorageAccounts"
+
+    ...
+
+    }
+
+    '
+- pattern-inside: 'resource "azurerm_security_center_subscription_pricing" "..." {
+
+    ...
+
+    tier = "Free"
+
+    resource_type = "StorageAccounts"
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-defenderon-storage.azure-defenderon-storage
+  shortlink: https://sg.run/pAwg
+  semgrep.dev:
+    rule:
+      r_id: 23918
+      rv_id: 110822
+      rule_id: L1UQGo
+      version_id: NdT3oeP
+      url: https://semgrep.dev/playground/r/NdT3oeP/terraform.azure.best-practice.azure-defenderon-storage.azure-defenderon-storage
+      origin: community
+languages:
+- hcl
+severity: WARNING

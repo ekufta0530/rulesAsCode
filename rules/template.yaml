@@ -1,0 +1,18 @@
+id: template.eqeq-is-bad
+pattern: $X == $X
+message: $X == $X is a useless equality check
+languages:
+- python
+severity: ERROR
+metadata:
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/template.eqeq-is-bad
+  shortlink: https://sg.run/q3gz
+  semgrep.dev:
+    rule:
+      r_id: 43756
+      rv_id: 110703
+      rule_id: yyUzWd
+      version_id: WrTW3yr
+      url: https://semgrep.dev/playground/r/WrTW3yr/template.eqeq-is-bad
+      origin: community

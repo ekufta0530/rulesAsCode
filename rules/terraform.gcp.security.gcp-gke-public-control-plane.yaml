@@ -1,0 +1,46 @@
+id: terraform.gcp.security.gcp-gke-public-control-plane.gcp-gke-public-control-plane
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "google_container_cluster" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"google_container_cluster\" \"...\" {\n...\nmaster_authorized_networks_config\
+    \ {\n  ...\n  cidr_blocks {\n        ...\n  }\n  ...\n}\n...\n}\n"
+message: Ensure GKE Control Plane is not public
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-gke-public-control-plane.gcp-gke-public-control-plane
+  shortlink: https://sg.run/Pvvz
+  semgrep.dev:
+    rule:
+      r_id: 33689
+      rv_id: 111016
+      rule_id: lBUoob
+      version_id: 2KTz3pb
+      url: https://semgrep.dev/playground/r/2KTz3pb/terraform.gcp.security.gcp-gke-public-control-plane.gcp-gke-public-control-plane
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,45 @@
+id: go.lang.correctness.permissions.file_permission.incorrect-default-permission
+message: Detected file permissions that are set to more than `0600` (user/owner can
+  read and write). Setting file permissions to higher than `0600` is most likely unnecessary
+  and violates the principle of least privilege. Instead, set permissions to be `0600`
+  or less for os.Chmod, os.Mkdir, os.OpenFile, os.MkdirAll, and ioutil.WriteFile
+metadata:
+  cwe: 'CWE-276: Incorrect Default Permissions'
+  source_rule_url: https://github.com/securego/gosec
+  category: correctness
+  references:
+  - https://github.com/securego/gosec/blob/master/rules/fileperms.go
+  technology:
+  - go
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/go.lang.correctness.permissions.file_permission.incorrect-default-permission
+  shortlink: https://sg.run/PJdq
+  semgrep.dev:
+    rule:
+      r_id: 9101
+      rv_id: 109590
+      rule_id: qNUj6y
+      version_id: BjTXrnq
+      url: https://semgrep.dev/playground/r/BjTXrnq/go.lang.correctness.permissions.file_permission.incorrect-default-permission
+      origin: community
+severity: WARNING
+languages:
+- go
+patterns:
+- pattern-either:
+  - pattern: os.Chmod($NAME, $PERM)
+  - pattern: os.Mkdir($NAME, $PERM)
+  - pattern: os.OpenFile($NAME, $FLAG, $PERM)
+  - pattern: os.MkdirAll($NAME, $PERM)
+  - pattern: ioutil.WriteFile($NAME, $DATA, $PERM)
+- metavariable-comparison:
+    metavariable: $PERM
+    comparison: $PERM > 0o600
+    base: 8
+- focus-metavariable:
+  - $PERM
+fix: '0600
+
+  '

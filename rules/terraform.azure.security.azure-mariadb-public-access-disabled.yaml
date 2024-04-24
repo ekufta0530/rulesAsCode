@@ -1,0 +1,55 @@
+id: terraform.azure.security.azure-mariadb-public-access-disabled.azure-mariadb-public-access-disabled
+message: Ensure public network access enabled is set to False for MariaDB servers
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_mariadb_server" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: 'resource "azurerm_mariadb_server" "..." {
+
+    ...
+
+    public_network_access_enabled = false
+
+    ...
+
+    }
+
+    '
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.azure.security.azure-mariadb-public-access-disabled.azure-mariadb-public-access-disabled
+  shortlink: https://sg.run/R4vO
+  semgrep.dev:
+    rule:
+      r_id: 23993
+      rv_id: 110903
+      rule_id: lBUvo6
+      version_id: BjTXpr4
+      url: https://semgrep.dev/playground/r/BjTXpr4/terraform.azure.security.azure-mariadb-public-access-disabled.azure-mariadb-public-access-disabled
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,39 @@
+id: terraform.aws.security.aws-elasticsearch-insecure-tls-version.aws-elasticsearch-insecure-tls-version
+pattern: "resource \"aws_elasticsearch_domain\" $ANYTHING {\n  ...\n  domain_endpoint_options\
+  \ {\n    ...\n    enforce_https = true\n    tls_security_policy = \"Policy-Min-TLS-1-0-2019-07\"\
+  \n    ...\n  }\n  ...\n}\n"
+message: Detected an AWS Elasticsearch domain using an insecure version of TLS. To
+  fix this, set "tls_security_policy" equal to "Policy-Min-TLS-1-2-2019-07".
+languages:
+- terraform
+severity: WARNING
+metadata:
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  category: security
+  technology:
+  - aws
+  - terraform
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-elasticsearch-insecure-tls-version.aws-elasticsearch-insecure-tls-version
+  shortlink: https://sg.run/PYlq
+  semgrep.dev:
+    rule:
+      r_id: 19045
+      rv_id: 110757
+      rule_id: YGUle7
+      version_id: 2KTz377
+      url: https://semgrep.dev/playground/r/2KTz377/terraform.aws.security.aws-elasticsearch-insecure-tls-version.aws-elasticsearch-insecure-tls-version
+      origin: community

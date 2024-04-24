@@ -1,0 +1,67 @@
+id: solidity.security.sense-missing-oracle-access-control.sense-missing-oracle-access-control
+message: Oracle update is not restricted in $F()
+metadata:
+  category: security
+  technology:
+  - solidity
+  cwe: 'CWE-284: Improper Access Control'
+  confidence: MEDIUM
+  likelihood: HIGH
+  impact: HIGH
+  subcategory:
+  - vuln
+  author: https://twitter.com/ArbazKiraak
+  references:
+  - https://medium.com/immunefi/sense-finance-access-control-issue-bugfix-review-32e0c806b1a0
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/solidity.security.sense-missing-oracle-access-control.sense-missing-oracle-access-control
+  shortlink: https://sg.run/1521
+  semgrep.dev:
+    rule:
+      r_id: 67666
+      rv_id: 110694
+      rule_id: 0oUbvd
+      version_id: l4T468O
+      url: https://semgrep.dev/playground/r/l4T468O/solidity.security.sense-missing-oracle-access-control.sense-missing-oracle-access-control
+      origin: community
+patterns:
+- pattern-either:
+  - pattern-inside: "function $F(...,$D $REQUEST,...) external {\n    ...\n}\n"
+  - pattern-inside: "function $F(...,$D $REQUEST,...) public {\n    ...\n}\n"
+- pattern-not-inside: "function $F(...,$D $REQUEST,...) external onlyVault(...) {\n\
+    \    ...\n}\n"
+- patterns:
+  - pattern: _updateOracle($LASTBLOCK,...,...)
+  - pattern-not-inside: '...
+
+      if (msg.sender == $BALANCER) { ... }
+
+      ...
+
+      '
+  - pattern-not-inside: '...
+
+      require(msg.sender == address($BALANCER),...);
+
+      ...
+
+      '
+  - pattern-not-inside: '...
+
+      if (_msgSender() == $BALANCER) { ... }
+
+      ...
+
+      '
+  - pattern-not-inside: '...
+
+      require(_msgSender() == address($BALANCER),...);
+
+      ...
+
+      '
+languages:
+- solidity
+severity: ERROR

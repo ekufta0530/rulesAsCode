@@ -1,0 +1,40 @@
+id: terraform.aws.security.aws-db-instance-no-logging.aws-db-instance-no-logging
+patterns:
+- pattern: "resource \"aws_db_instance\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_db_instance\" $ANYTHING {\n  ...\n  enabled_cloudwatch_logs_exports\
+    \ = [$SOMETHING, ...]\n  ...\n}\n"
+message: Database instance has no logging. Missing logs can cause missing important
+  event information.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A04:2021 - Insecure Design
+  cwe:
+  - 'CWE-311: Missing Encryption of Sensitive Data'
+  technology:
+  - aws
+  - terraform
+  category: security
+  references:
+  - https://owasp.org/Top10/A04_2021-Insecure_Design
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: LOW
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-db-instance-no-logging.aws-db-instance-no-logging
+  shortlink: https://sg.run/GyAp
+  semgrep.dev:
+    rule:
+      r_id: 17348
+      rv_id: 110736
+      rule_id: d8U4RA
+      version_id: QkTWwnx
+      url: https://semgrep.dev/playground/r/QkTWwnx/terraform.aws.security.aws-db-instance-no-logging.aws-db-instance-no-logging
+      origin: community

@@ -1,0 +1,51 @@
+id: java.lang.security.xmlinputfactory-external-entities-enabled.xmlinputfactory-external-entities-enabled
+severity: ERROR
+metadata:
+  cwe:
+  - 'CWE-611: Improper Restriction of XML External Entity Reference'
+  owasp:
+  - A04:2017 - XML External Entities (XXE)
+  - A05:2021 - Security Misconfiguration
+  asvs:
+    section: V5 Validation, Sanitization and Encoding
+    control_id: 5.5.2 Insecue XML Deserialization
+    control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x13-V5-Validation-Sanitization-Encoding.md#v55-deserialization-prevention
+    version: '4'
+  references:
+  - https://semgrep.dev/blog/2022/xml-security-in-java
+  - https://semgrep.dev/docs/cheat-sheets/java-xxe/
+  - https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
+  category: security
+  technology:
+  - java
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/java.lang.security.xmlinputfactory-external-entities-enabled.xmlinputfactory-external-entities-enabled
+  shortlink: https://sg.run/2x75
+  semgrep.dev:
+    rule:
+      r_id: 9163
+      rv_id: 734232
+      rule_id: x8Unkq
+      version_id: jQTQ4zv
+      url: https://semgrep.dev/playground/r/jQTQ4zv/java.lang.security.xmlinputfactory-external-entities-enabled.xmlinputfactory-external-entities-enabled
+      origin: community
+message: XML external entities are enabled for this XMLInputFactory. This is vulnerable
+  to XML external entity attacks. Disable external entities by setting "javax.xml.stream.isSupportingExternalEntities"
+  to false.
+patterns:
+- pattern-either:
+  - pattern: (javax.xml.stream.XMLInputFactory $XMLFACTORY).setProperty("javax.xml.stream.isSupportingExternalEntities",
+      true);
+  - pattern: (javax.xml.stream.XMLInputFactory $XMLFACTORY).setProperty(javax.xml.stream.XMLInputFactory.SUPPORT_DTD,
+      true);
+languages:
+- java

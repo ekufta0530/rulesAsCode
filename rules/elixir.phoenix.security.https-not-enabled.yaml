@@ -1,0 +1,55 @@
+id: elixir.phoenix.security.https-not-enabled.https-not-enabled
+message: The app does not contain configurations for enabled HTTPS in a non-development
+  environment. This can lead to sensitive data being transmitted in cleartext, which
+  can be intercepted by an attacker. To prevent this vulnerability, enable HTTPS in
+  non-development environments.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
+  technology:
+  - phoenix
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/elixir.phoenix.security.https-not-enabled.https-not-enabled
+  shortlink: https://sg.run/9A4LR
+  semgrep.dev:
+    rule:
+      r_id: 114623
+      rv_id: 257013
+      rule_id: JDUNkl3
+      version_id: NdT9DwB
+      url: https://semgrep.dev/playground/r/NdT9DwB/elixir.phoenix.security.https-not-enabled.https-not-enabled
+      origin: pro_rules
+languages:
+- elixir
+min-version: 1.55.2
+paths:
+  exclude:
+  - config/test.exs
+  - config/dev.exs
+  - config/dev.secret.exs
+  - config/test.secret.exs
+  include:
+  - config/*
+patterns:
+- pattern: 'config ..., $ENDPOINT, ..., http: $VALUES, ...
+
+    '
+- pattern-not: 'config ..., $ENDPOINT, ..., https: $OTHER_VALUES, ...
+
+    '
+- metavariable-regex:
+    metavariable: $ENDPOINT
+    regex: ^[A-Za-z_]+\.Endpoint$

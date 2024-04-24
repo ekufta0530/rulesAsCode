@@ -1,0 +1,34 @@
+id: solidity.performance.use-prefix-increment-not-postfix.use-prefix-increment-not-postfix
+message: Consider using the prefix increment expression whenever the return value
+  is not needed. The prefix increment expression is cheaper in terms of gas.
+metadata:
+  references:
+  - https://github.com/byterocket/c4-common-issues/blob/main/0-Gas-Optimizations.md/#g012---use-prefix-increment-instead-of-postfix-increment-if-possible
+  category: performance
+  technology:
+  - solidity
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/solidity.performance.use-prefix-increment-not-postfix.use-prefix-increment-not-postfix
+  shortlink: https://sg.run/nxLr
+  semgrep.dev:
+    rule:
+      r_id: 67636
+      rv_id: 110663
+      rule_id: yyU1XA
+      version_id: bZTb98K
+      url: https://semgrep.dev/playground/r/bZTb98K/solidity.performance.use-prefix-increment-not-postfix.use-prefix-increment-not-postfix
+      origin: community
+patterns:
+- pattern: $VAR++
+- pattern-not-inside: '$B = ...
+
+    '
+- pattern-not-inside: "if (<... $VAR++ ...>) {\n  ... \n}\n"
+- pattern-not-inside: require (<... $VAR++ ...>)
+- pattern-not-inside: "while (<... $VAR++ ...>) {\n  ...\n}\n"
+- pattern-not-inside: 'return ...;
+
+    '
+languages:
+- solidity
+severity: INFO

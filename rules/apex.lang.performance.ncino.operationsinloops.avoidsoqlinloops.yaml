@@ -1,0 +1,34 @@
+id: apex.lang.performance.ncino.operationsinloops.avoidsoqlinloops.avoid-soql-in-loops
+min-version: 1.44.0
+severity: ERROR
+languages:
+- generic
+metadata:
+  category: performance
+  references:
+  - https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_gov_limits.htm
+  technology:
+  - salesforce
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/apex.lang.performance.ncino.operationsinloops.avoidsoqlinloops.avoid-soql-in-loops
+  shortlink: https://sg.run/W24y
+  semgrep.dev:
+    rule:
+      r_id: 72409
+      rv_id: 108981
+      rule_id: AbU208
+      version_id: GxTv66R
+      url: https://semgrep.dev/playground/r/GxTv66R/apex.lang.performance.ncino.operationsinloops.avoidsoqlinloops.avoid-soql-in-loops
+      origin: community
+message: Database class methods, DML operations, SOQL queries, SOSL queries, Approval
+  class methods, Email sending, async scheduling or queueing within loops can cause
+  governor limit exceptions. Instead, try to batch up the data into a list and invoke
+  the operation once on that list of data outside the loop.
+patterns:
+- pattern-either:
+  - pattern-inside: "for (...) {\n  ...\n}\n"
+  - pattern-inside: "while (...) {\n  ...\n}\n"
+  - pattern-inside: "do {\n  ...\n} while (...);\n"
+- pattern: '$OBJECTS = [...SELECT...FROM...];
+
+    '

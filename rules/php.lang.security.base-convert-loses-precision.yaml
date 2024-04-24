@@ -1,0 +1,63 @@
+id: php.lang.security.base-convert-loses-precision.base-convert-loses-precision
+message: The function base_convert uses 64-bit numbers internally, and does not correctly
+  convert large numbers. It is not suitable for random tokens such as those used for
+  session tokens or CSRF tokens.
+metadata:
+  references:
+  - https://www.php.net/base_convert
+  - https://www.sjoerdlangkemper.nl/2017/03/15/dont-use-base-convert-on-random-tokens/
+  category: security
+  technology:
+  - php
+  cwe:
+  - 'CWE-190: Integer Overflow or Wraparound'
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/php.lang.security.base-convert-loses-precision.base-convert-loses-precision
+  shortlink: https://sg.run/kxpGo
+  semgrep.dev:
+    rule:
+      r_id: 115928
+      rv_id: 348110
+      rule_id: 7KUgBAk
+      version_id: 1QTKbNw
+      url: https://semgrep.dev/playground/r/1QTKbNw/php.lang.security.base-convert-loses-precision.base-convert-loses-precision
+      origin: community
+languages:
+- php
+severity: WARNING
+mode: taint
+pattern-sources:
+- pattern: hash(...)
+- pattern: hash_hmac(...)
+- pattern: sha1(...)
+- pattern: md5(...)
+- patterns:
+  - pattern: random_bytes($N)
+  - metavariable-comparison:
+      metavariable: $N
+      comparison: $N > 7
+- patterns:
+  - pattern: openssl_random_pseudo_bytes($N)
+  - metavariable-comparison:
+      metavariable: $N
+      comparison: $N > 7
+- patterns:
+  - pattern: $OBJ->get_random_bytes($N)
+  - metavariable-comparison:
+      metavariable: $N
+      comparison: $N > 7
+pattern-sinks:
+- pattern: base_convert(...)
+pattern-sanitizers:
+- patterns:
+  - pattern: substr(..., $LENGTH)
+  - metavariable-comparison:
+      metavariable: $LENGTH
+      comparison: $LENGTH <= 7

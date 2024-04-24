@@ -1,0 +1,65 @@
+id: swift.insecure-communication.ats.ats-pfs.ATS-disables-PFS
+message: The application's App Transport Security (ATS) configuration disables Perfect
+  Forward Secrecy (PFS) for one or more domains. PFS is a cryptographic technique
+  to ensure the confidentiality of prior communications, even if the long-term secret
+  keys are compromised in the future.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+  masvs:
+  - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+    best practices.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+  - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-pfs.ATS-disables-PFS
+  shortlink: https://sg.run/LJYG
+  semgrep.dev:
+    rule:
+      r_id: 60539
+      rv_id: 112019
+      rule_id: gxUKew
+      version_id: qkT2Byk
+      url: https://semgrep.dev/playground/r/qkT2Byk/swift.insecure-communication.ats.ats-pfs.ATS-disables-PFS
+      origin: pro_rules
+languages:
+- xml
+options:
+  symbolic_propagation: true
+paths:
+  include:
+  - Info.plist
+patterns:
+- pattern: '<dict>
+
+    ...
+
+    <key>$KEY</key>
+
+    <false/>
+
+    ...
+
+    </dict>
+
+    '
+- metavariable-comparison:
+    metavariable: $KEY
+    comparison: str($KEY) == "NSExceptionRequiresForwardSecrecy"
+- focus-metavariable: $KEY

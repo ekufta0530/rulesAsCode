@@ -1,0 +1,30 @@
+id: ajinabraham.njsscan.eval.eval_grpc_deserialize.grpc_insecure_connection
+patterns:
+- pattern-inside: 'require(''grpc'')
+
+    ...
+
+    '
+- pattern: $CREDENTIALS.createInsecure()
+message: Found an insecure gRPC connection. This creates a connection without encryption
+  to a gRPC client/server. A malicious attacker could  tamper with the gRPC message,
+  which could compromise the machine.
+metadata:
+  owasp-web: a8
+  cwe: cwe-502
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.eval.eval_grpc_deserialize.grpc_insecure_connection
+  shortlink: https://sg.run/wzQP
+  semgrep.dev:
+    rule:
+      r_id: 43629
+      rv_id: 78247
+      rule_id: KxURAB
+      version_id: O9TPB8
+      url: https://semgrep.dev/playground/r/O9TPB8/ajinabraham.njsscan.eval.eval_grpc_deserialize.grpc_insecure_connection
+      origin: community
+severity: ERROR
+languages:
+- javascript

@@ -1,0 +1,47 @@
+id: go.jwt-go.security.audit.jwt-parse-unverified.jwt-go-parse-unverified
+message: Detected the decoding of a JWT token without a verify step. Don't use `ParseUnverified`
+  unless you know what you're doing This method parses the token but doesn't validate
+  the signature. It's only ever useful in cases where you know the signature is valid
+  (because it has been checked previously in the stack) and you want to extract values
+  from it.
+metadata:
+  cwe:
+  - 'CWE-345: Insufficient Verification of Data Authenticity'
+  owasp:
+  - A08:2021 - Software and Data Integrity Failures
+  source-rule-url: https://semgrep.dev/blog/2020/hardcoded-secrets-unverified-tokens-and-other-common-jwt-mistakes/
+  category: security
+  technology:
+  - jwt
+  confidence: MEDIUM
+  references:
+  - https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authentication
+  source: https://semgrep.dev/r/go.jwt-go.security.audit.jwt-parse-unverified.jwt-go-parse-unverified
+  shortlink: https://sg.run/Av66
+  semgrep.dev:
+    rule:
+      r_id: 9094
+      rv_id: 109582
+      rule_id: ReUgJJ
+      version_id: qkT2xPr
+      url: https://semgrep.dev/playground/r/qkT2xPr/go.jwt-go.security.audit.jwt-parse-unverified.jwt-go-parse-unverified
+      origin: community
+languages:
+- go
+severity: WARNING
+patterns:
+- pattern-inside: 'import "github.com/dgrijalva/jwt-go"
+
+    ...
+
+    '
+- pattern: '$JWT.ParseUnverified(...)
+
+    '

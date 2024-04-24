@@ -1,0 +1,53 @@
+id: problem-based-packs.insecure-transport.java-stdlib.ftp-request.ftp-request
+message: Checks for outgoing connections to ftp servers. FTP does not encrypt traffic,
+  possibly leading to PII being sent plaintext over the network.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+  owasp: A03:2017 - Sensitive Data Exposure
+  references:
+  - https://www.codejava.net/java-se/ftp/connect-and-login-to-a-ftp-server
+  - https://commons.apache.org/proper/commons-net/apidocs/org/apache/commons/net/ftp/FTPClient.html
+  subcategory:
+  - vuln
+  technology:
+  - java
+  vulnerability: Insecure Transport
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/problem-based-packs.insecure-transport.java-stdlib.ftp-request.ftp-request
+  shortlink: https://sg.run/6n91
+  semgrep.dev:
+    rule:
+      r_id: 9415
+      rv_id: 110102
+      rule_id: 9AU1wD
+      version_id: YDTp2yZ
+      url: https://semgrep.dev/playground/r/YDTp2yZ/problem-based-packs.insecure-transport.java-stdlib.ftp-request.ftp-request
+      origin: community
+languages:
+- java
+fix-regex:
+  regex: '[fF][tT][pP]://'
+  replacement: sftp://
+  count: 1
+pattern-either:
+- pattern: 'FTPClient $FTPCLIENT = new FTPClient();
+
+    ...
+
+    $FTPCLIENT.connect(...);
+
+    '
+- pattern: 'URL $URL = new URL("=~/^[fF][tT][pP]://.*/");
+
+    ...
+
+    URLConnection $CONN = $URL.openConnection(...);
+
+    '

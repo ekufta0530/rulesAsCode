@@ -1,0 +1,26 @@
+id: terraform.gcp.best-practice.gcp-postgresql-log-lock-waits.gcp-postgresql-log-lock-waits
+patterns:
+- pattern: resource
+- pattern-inside: "resource \"google_sql_database_instance\" \"...\" {\n  ...\n  database_flags\
+    \ {\n    ...\n    name  = \"log_lock_waits\"\n    value = \"off\"\n    ...\n \
+    \ }\n  ...\n}\n"
+message: Ensure PostgreSQL database 'log_lock_waits' flag is set to 'on'
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - gcp
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-postgresql-log-lock-waits.gcp-postgresql-log-lock-waits
+  shortlink: https://sg.run/YJZy
+  semgrep.dev:
+    rule:
+      r_id: 33658
+      rv_id: 110957
+      rule_id: bwUQEk
+      version_id: zyTKDD7
+      url: https://semgrep.dev/playground/r/zyTKDD7/terraform.gcp.best-practice.gcp-postgresql-log-lock-waits.gcp-postgresql-log-lock-waits
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,23 @@
+id: java.lang.correctness.assignment-comparison.assignment-comparison
+message: The value of `$X` is being ignored and will be used in the conditional test
+languages:
+- java
+severity: ERROR
+pattern-either:
+- pattern: if ($X=true) { ... }
+- pattern: if ($X=false) { ... }
+metadata:
+  category: correctness
+  technology:
+  - java
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/java.lang.correctness.assignment-comparison.assignment-comparison
+  shortlink: https://sg.run/Klod
+  semgrep.dev:
+    rule:
+      r_id: 9155
+      rv_id: 109676
+      rule_id: 10UK1b
+      version_id: RGTDk88
+      url: https://semgrep.dev/playground/r/RGTDk88/java.lang.correctness.assignment-comparison.assignment-comparison
+      origin: community

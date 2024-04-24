@@ -1,0 +1,41 @@
+id: terraform.azure.best-practice.azure-securitycenter-contact-emails.azure-securitycenter-contact-emails
+message: Ensure that Security contact emails is set
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_security_center_contact" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: 'resource "azurerm_security_center_contact" "..." {
+
+    ...
+
+    email = "..."
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-securitycenter-contact-emails.azure-securitycenter-contact-emails
+  shortlink: https://sg.run/PywY
+  semgrep.dev:
+    rule:
+      r_id: 23945
+      rv_id: 110849
+      rule_id: WAUQ7d
+      version_id: 0bTLe1e
+      url: https://semgrep.dev/playground/r/0bTLe1e/terraform.azure.best-practice.azure-securitycenter-contact-emails.azure-securitycenter-contact-emails
+      origin: community
+languages:
+- hcl
+severity: WARNING

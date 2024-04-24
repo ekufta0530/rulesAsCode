@@ -1,0 +1,49 @@
+id: trailofbits.yaml.ansible.get-url-unencrypted-url.get-url-unencrypted-url
+message: Found file download with unencrypted URL (e.g. HTTP, FTP, etc.)
+languages:
+- yaml
+severity: WARNING
+metadata:
+  category: security
+  cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+  subcategory:
+  - audit
+  technology:
+  - ansible
+  confidence: HIGH
+  likelihood: HIGH
+  impact: HIGH
+  references:
+  - https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html#parameter-url
+  - https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_get_url_module.html#parameter-url
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/trailofbits.yaml.ansible.get-url-unencrypted-url.get-url-unencrypted-url
+  shortlink: https://sg.run/x8LKj
+  semgrep.dev:
+    rule:
+      r_id: 113230
+      rv_id: 253301
+      rule_id: 0oULKQq
+      version_id: DkTq8bj
+      url: https://semgrep.dev/playground/r/DkTq8bj/trailofbits.yaml.ansible.get-url-unencrypted-url.get-url-unencrypted-url
+      origin: community
+patterns:
+- pattern-inside: "$GETURL:\n  ...\n"
+- pattern-not-inside: "$GETURL:\n  ...\n  checksum: ...\n  ...\n"
+- metavariable-pattern:
+    metavariable: $GETURL
+    pattern-either:
+    - pattern: get_url
+    - pattern: win_get_url
+    - pattern: ansible.builtin.get_url
+    - pattern: ansible.windows.win_get_url
+- pattern: '$KEY: ''$VALUE'''
+- metavariable-pattern:
+    metavariable: $KEY
+    pattern-either:
+    - pattern: url
+- metavariable-regex:
+    metavariable: $VALUE
+    regex: (?i)^(http|ftp)://.*

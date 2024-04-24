@@ -1,0 +1,70 @@
+id: solidity.security.uniswap-callback-not-protected.uniswap-callback-not-protected
+message: Uniswap callback is not protected
+metadata:
+  category: security
+  technology:
+  - solidity
+  cwe: 'CWE-284: Improper Access Control'
+  confidence: LOW
+  likelihood: MEDIUM
+  impact: HIGH
+  subcategory:
+  - vuln
+  references:
+  - https://docs.uniswap.org/contracts/v3/guides/flash-integrations/flash-callback
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/solidity.security.uniswap-callback-not-protected.uniswap-callback-not-protected
+  shortlink: https://sg.run/r4JJ
+  semgrep.dev:
+    rule:
+      r_id: 67669
+      rv_id: 110697
+      rule_id: lBUO55
+      version_id: 5PTdeLz
+      url: https://semgrep.dev/playground/r/5PTdeLz/solidity.security.uniswap-callback-not-protected.uniswap-callback-not-protected
+      origin: community
+patterns:
+- pattern: 'function $CALLBACK(...) { ... }
+
+    '
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    $VALIDATION.verifyCallback(...);\n\
+    \    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    $CHECK(msg.sender == $U.$PAIR(...),\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    $CHECK(_msgSender() == $U.$PAIR(...),\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    require(msg.sender == $POOL,\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    require(_msgSender() == $POOL,\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    require($POOL == msg.sender,\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    require($POOL == _msgSender(),\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    if (msg.sender != $POOL) {\n\
+    \      ...\n    }\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    if (_msgSender() != $POOL)\
+    \ {\n      ...\n    }\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    if (msg.sender == $POOL) {\n\
+    \      ...\n    }\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    if (_msgSender() == $POOL)\
+    \ {\n      ...\n    }\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    if(!$POOLS[msg.sender]) {\n\
+    \      ...\n    }\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    if(!$POOLS[_msgSender()])\
+    \ {\n      ...\n    }\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    _verifyCallback(...);\n  \
+    \  ...\n}\n"
+- pattern-not: "function $CALLBACK(...) isCallback {\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    require($POOLS[msg.sender],\
+    \ ...);\n    ...\n}\n"
+- pattern-not: "function $CALLBACK(...) {\n    ...\n    require($POOLS[_msgSender()],\
+    \ ...);\n    ...\n}\n"
+- metavariable-regex:
+    metavariable: $CALLBACK
+    regex: (uniswapV2Call|uniswapV3SwapCallback|uniswapV3FlashCallback|uniswapV3MintCallback)
+languages:
+- solidity
+severity: WARNING

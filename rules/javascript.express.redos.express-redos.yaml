@@ -1,0 +1,87 @@
+id: javascript.express.redos.express-redos.redos
+message: The regular expression identified appears vulnerable to Regular Expression
+  Denial of Service (ReDoS) through catastrophic backtracking. If the input is attacker
+  controllable, this vulnerability can lead to systems being non-responsive or may
+  crash due to ReDoS. Where possible, re-write the regex so as not to leverage backtracking
+  or use a library that offers default protection against ReDoS.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-1333: Inefficient Regular Expression Complexity'
+  functional-categories:
+  - regex::sink::regex
+  - web::source::cookie::express
+  - web::source::header::express
+  - web::source::http-body::express
+  - web::source::http-params::express
+  - web::source::url-path-params::express
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+  - https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
+  - https://www.regular-expressions.info/catastrophic.html
+  technology:
+  - express
+  - nodejs
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Denial-of-Service (DoS)
+  source: https://semgrep.dev/r/javascript.express.redos.express-redos.redos
+  shortlink: https://sg.run/2ZLz5
+  semgrep.dev:
+    rule:
+      r_id: 92719
+      rv_id: 229269
+      rule_id: JDUN3dD
+      version_id: YDTNW45
+      url: https://semgrep.dev/playground/r/YDTNW45/javascript.express.redos.express-redos.redos
+      origin: pro_rules
+languages:
+- javascript
+- typescript
+mode: taint
+options:
+  taint_assume_safe_booleans: true
+  taint_assume_safe_comparisons: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- label: EXPRESS
+  patterns:
+  - patterns:
+    - pattern-inside: function ... (...,$REQ, ...) {...}
+    - pattern-either:
+      - pattern: $REQ.query
+      - pattern: $REQ.body
+      - pattern: $REQ.params
+      - pattern: $REQ.cookies
+      - pattern: $REQ.headers
+- label: EXPRESS
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: function ... (...,$REQ, ...) {...}
+      - pattern-inside: '(...,{ $REQ }: $EXPRESS.Request,...) => {...}
+
+          '
+    - focus-metavariable: $REQ
+    - pattern-either:
+      - pattern: params
+      - pattern: query
+      - pattern: cookies
+      - pattern: headers
+      - pattern: body
+- label: REDOS
+  patterns:
+  - patterns:
+    - pattern: /$X/
+    - metavariable-analysis:
+        analyzer: redos
+        metavariable: $X
+pattern-sinks:
+- pattern: $X.test($Y)
+  requires: REDOS and EXPRESS

@@ -1,0 +1,38 @@
+id: php.lang.security.mcrypt-use.mcrypt-use
+patterns:
+- pattern: $FUNC(...);
+- metavariable-regex:
+    metavariable: $FUNC
+    regex: (mcrypt_|mdecrypt_).+
+message: Mcrypt functionality has been deprecated and/or removed in recent PHP versions.
+  Consider using Sodium or OpenSSL.
+metadata:
+  cwe:
+  - 'CWE-676: Use of Potentially Dangerous Function'
+  references:
+  - https://www.php.net/manual/en/intro.mcrypt.php
+  - https://github.com/FloeDesignTechnologies/phpcs-security-audit/blob/master/Security/Sniffs/BadFunctions/CryptoFunctionsSniff.php
+  category: security
+  technology:
+  - php
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/php.lang.security.mcrypt-use.mcrypt-use
+  shortlink: https://sg.run/BkZR
+  semgrep.dev:
+    rule:
+      r_id: 9395
+      rv_id: 110048
+      rule_id: 5rUOzK
+      version_id: zyTK8Zk
+      url: https://semgrep.dev/playground/r/zyTK8Zk/php.lang.security.mcrypt-use.mcrypt-use
+      origin: community
+languages:
+- php
+severity: ERROR

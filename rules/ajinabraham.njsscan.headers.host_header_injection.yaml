@@ -1,0 +1,90 @@
+id: ajinabraham.njsscan.headers.host_header_injection.host_header_injection
+patterns:
+- pattern-either:
+  - pattern-inside: function ($REQ, $RES, ...) {...}
+  - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+  - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+- pattern-either:
+  - pattern: '$X = <... "=~/.*http[s]*:///i" + $REQ.host ...>;
+
+      '
+  - pattern: '$X = <... "=~/.*http[s]*:///i" + $REQ["host"] ...>;
+
+      '
+  - pattern: '$X = <... "=~/.*http[s]*:///i" + $REQ("host") ...>;
+
+      '
+  - pattern: '$X = { $Y: <... "=~/.*http[s]*:///i" + $REQ.host ...>};
+
+      '
+  - pattern: '$X = { $Y: <... "=~/.*http[s]*:///i" + $REQ["host"] ...>};
+
+      '
+  - pattern: '$X = { $Y: <... "=~/.*http[s]*:///i" + $REQ("host") ...>};
+
+      '
+  - pattern: '$Z = $REQ.host;
+
+      ...
+
+      $X = <... "=~/.*http[s]*:///i" + $Z ...>;
+
+      '
+  - pattern: '$Z = $REQ["host"];
+
+      ...
+
+      $X = <... "=~/.*http[s]*:///i" + $Z ...>;
+
+      '
+  - pattern: '$Z = $REQ("host")
+
+      ...
+
+      $X = <... "=~/.*http[s]*:///i" + $Z ...>;
+
+      '
+  - pattern: '$Z = $REQ.host;
+
+      ...
+
+      $X = { $Y: <... "=~/.*http[s]*:///i" + $REQ.host ...>};
+
+      '
+  - pattern: '$Z = $REQ["host"];
+
+      ...
+
+      $X = { $Y: <... "=~/.*http[s]*:///i" + $Z ...>};
+
+      '
+  - pattern: '$Z = $REQ("host")
+
+      ...
+
+      $X = { $Y: <... "=~/.*http[s]*:///i" + $REQ("host") ...>};
+
+      '
+message: Using untrusted Host header for generating dynamic URLs can result in web
+  cache and or password reset poisoning.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a1
+  cwe: cwe-20
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.headers.host_header_injection.host_header_injection
+  shortlink: https://sg.run/dnqd
+  semgrep.dev:
+    rule:
+      r_id: 43678
+      rv_id: 78282
+      rule_id: 5rUxlW
+      version_id: WrTRjP
+      url: https://semgrep.dev/playground/r/WrTRjP/ajinabraham.njsscan.headers.host_header_injection.host_header_injection
+      origin: community

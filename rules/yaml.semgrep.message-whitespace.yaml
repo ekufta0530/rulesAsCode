@@ -1,0 +1,35 @@
+id: yaml.semgrep.message-whitespace.message-whitespace-check
+message: It looks like you have an additional space in your rule message, this can
+  look awkward in the finding output, please remove the additional whitespace!
+languages:
+- yaml
+severity: WARNING
+metadata:
+  references:
+  - https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository
+  category: correctness
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.message-whitespace.message-whitespace-check
+  shortlink: https://sg.run/5lqW
+  semgrep.dev:
+    rule:
+      r_id: 52891
+      rv_id: 111163
+      rule_id: r6UpAo
+      version_id: jQTgyJN
+      url: https://semgrep.dev/playground/r/jQTgyJN/yaml.semgrep.message-whitespace.message-whitespace-check
+      origin: community
+patterns:
+- pattern-inside: 'rules: ...
+
+    '
+- pattern: "message: >-\n  $VALUE\n"
+- focus-metavariable:
+  - $VALUE
+- pattern-regex: \w.*
+- pattern-regex: \s{2,}
+fix-regex:
+  regex: (?<=\S)\s(\s{1,})
+  replacement: ' '

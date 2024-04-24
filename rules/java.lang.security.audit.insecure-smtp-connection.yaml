@@ -1,0 +1,47 @@
+id: java.lang.security.audit.insecure-smtp-connection.insecure-smtp-connection
+metadata:
+  cwe:
+  - 'CWE-297: Improper Validation of Certificate with Host Mismatch'
+  owasp:
+  - A07:2021 - Identification and Authentication Failures
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#INSECURE_SMTP_SSL
+  category: security
+  technology:
+  - java
+  references:
+  - https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authentication
+  source: https://semgrep.dev/r/java.lang.security.audit.insecure-smtp-connection.insecure-smtp-connection
+  shortlink: https://sg.run/vzN4
+  semgrep.dev:
+    rule:
+      r_id: 9177
+      rv_id: 109717
+      rule_id: 4bUkrW
+      version_id: vdTYNgx
+      url: https://semgrep.dev/playground/r/vdTYNgx/java.lang.security.audit.insecure-smtp-connection.insecure-smtp-connection
+      origin: community
+message: Insecure SMTP connection detected. This connection will trust any SSL certificate.
+  Enable certificate verification by setting 'email.setSSLCheckServerIdentity(true)'.
+severity: WARNING
+patterns:
+- pattern-not-inside: '$EMAIL.setSSLCheckServerIdentity(true);
+
+    ...
+
+    '
+- pattern-inside: '$EMAIL = new SimpleEmail(...);
+
+    ...
+
+    '
+- pattern: $EMAIL.send(...);
+languages:
+- java

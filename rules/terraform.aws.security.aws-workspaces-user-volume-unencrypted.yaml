@@ -1,0 +1,40 @@
+id: terraform.aws.security.aws-workspaces-user-volume-unencrypted.aws-workspaces-user-volume-unencrypted
+patterns:
+- pattern: "resource \"aws_workspaces_workspace\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_workspaces_workspace\" $ANYTHING {\n  ...\n\
+    \  user_volume_encryption_enabled = true\n  ...\n}\n"
+message: The AWS Workspace user volume is unencrypted. The AWS KMS encryption key
+  protects user volume. To create your own, create a aws_kms_key resource or use the
+  ARN string of a key in your account.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  technology:
+  - aws
+  - terraform
+  category: security
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-workspaces-user-volume-unencrypted.aws-workspaces-user-volume-unencrypted
+  shortlink: https://sg.run/gXdJ
+  semgrep.dev:
+    rule:
+      r_id: 17385
+      rv_id: 110800
+      rule_id: YGUAXr
+      version_id: RGTDR2q
+      url: https://semgrep.dev/playground/r/RGTDR2q/terraform.aws.security.aws-workspaces-user-volume-unencrypted.aws-workspaces-user-volume-unencrypted
+      origin: community

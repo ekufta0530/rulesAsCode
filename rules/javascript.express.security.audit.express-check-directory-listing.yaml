@@ -1,0 +1,77 @@
+id: javascript.express.security.audit.express-check-directory-listing.express-check-directory-listing
+message: Directory listing/indexing is enabled, which may lead to disclosure of sensitive
+  directories and files. It is recommended to disable directory listing unless it
+  is a public resource. If you need directory listing, ensure that sensitive files
+  are inaccessible when querying the resource.
+options:
+  interfile: true
+metadata:
+  interfile: true
+  cwe:
+  - 'CWE-548: Exposure of Information Through Directory Listing'
+  owasp:
+  - A06:2017 - Security Misconfiguration
+  - A01:2021 - Broken Access Control
+  category: security
+  technology:
+  - express
+  references:
+  - https://www.npmjs.com/package/serve-index
+  - https://www.acunetix.com/blog/articles/directory-listing-information-disclosure/
+  subcategory:
+  - vuln
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/javascript.express.security.audit.express-check-directory-listing.express-check-directory-listing
+  shortlink: https://sg.run/DX2G
+  semgrep.dev:
+    rule:
+      r_id: 22552
+      rv_id: 109833
+      rule_id: x8UqEb
+      version_id: GxTv6pD
+      url: https://semgrep.dev/playground/r/GxTv6pD/javascript.express.security.audit.express-check-directory-listing.express-check-directory-listing
+      origin: community
+languages:
+- javascript
+- typescript
+severity: WARNING
+patterns:
+- pattern-either:
+  - pattern: '$APP.use(require(''serve-index'')(...))
+
+      '
+  - patterns:
+    - pattern-either:
+      - pattern-inside: '$SERVEINDEX = require(''serve-index'')
+
+          ...
+
+          '
+      - pattern-inside: 'import $SERVEINDEX from ''serve-index''
+
+          ...
+
+          '
+      - pattern-inside: 'import * as $SERVEINDEX from ''serve-index''
+
+          ...
+
+          '
+    - pattern-either:
+      - patterns:
+        - pattern-inside: '$VALUE = $SERVEINDEX(...)
+
+            ...
+
+            '
+        - pattern: '$VALUE(...)
+
+            '
+      - pattern: '$APP.use(..., $SERVEINDEX(...), ...)
+
+          '

@@ -1,0 +1,75 @@
+id: csharp.lang.security.sqli.csharp-sqli.csharp-sqli
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: '(string $X)
+
+      '
+  - pattern-not: '"..."
+
+      '
+pattern-propagators:
+- pattern: (StringBuilder $B).$ANY(...,(string $X),...)
+  from: $X
+  to: $B
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: 'new $PATTERN($CMD,...)
+
+          '
+      - focus-metavariable: $CMD
+    - pattern: '$CMD.$PATTERN = ...;
+
+        '
+  - metavariable-regex:
+      metavariable: $PATTERN
+      regex: ^(SqlCommand|CommandText|OleDbCommand|OdbcCommand|OracleCommand)$
+pattern-sanitizers:
+- pattern-either:
+  - pattern: '$CMD.Parameters.add(...)
+
+      '
+  - pattern: '$CMD.Parameters[$IDX] = ...
+
+      '
+  by-side-effect: true
+message: Detected a formatted string in a SQL statement. This could lead to SQL injection
+  if variables in the SQL statement are not properly sanitized. Use a prepared statements
+  instead. You can obtain a PreparedStatement using 'SqlCommand' and 'SqlParameter'.
+metadata:
+  category: security
+  technology:
+  - csharp
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  confidence: MEDIUM
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/csharp.lang.security.sqli.csharp-sqli.csharp-sqli
+  shortlink: https://sg.run/d2Xd
+  semgrep.dev:
+    rule:
+      r_id: 15078
+      rv_id: 113530
+      rule_id: x8UxeP
+      version_id: DkT6Rg2
+      url: https://semgrep.dev/playground/r/DkT6Rg2/csharp.lang.security.sqli.csharp-sqli.csharp-sqli
+      origin: community
+languages:
+- csharp
+severity: ERROR

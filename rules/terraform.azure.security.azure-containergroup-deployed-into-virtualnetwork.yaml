@@ -1,0 +1,41 @@
+id: terraform.azure.security.azure-containergroup-deployed-into-virtualnetwork.azure-containergroup-deployed-into-virtualnetwork
+message: Ensure that Azure Container group is deployed into virtual network
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_container_group\" \"...\" {\n...\ncontainer\
+    \ {\n  ...\n}\nnetwork_profile_id = \"...\"  \n...\n}\n"
+- pattern-inside: "resource \"azurerm_container_group\" \"...\" {\n...\ncontainer\
+    \ {\n  ...\n}\n...\n}\n"
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.azure.security.azure-containergroup-deployed-into-virtualnetwork.azure-containergroup-deployed-into-virtualnetwork
+  shortlink: https://sg.run/w2wY
+  semgrep.dev:
+    rule:
+      r_id: 23973
+      rv_id: 110883
+      rule_id: EwUNew
+      version_id: 44TR6lA
+      url: https://semgrep.dev/playground/r/44TR6lA/terraform.azure.security.azure-containergroup-deployed-into-virtualnetwork.azure-containergroup-deployed-into-virtualnetwork
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,51 @@
+id: javascript.angular.security.detect-third-party-angular-translate.detect-angular-translateprovider-translations-method
+message: The use of $translateProvider.translations method can be dangerous if user
+  input is provided to this API.
+metadata:
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  references:
+  - https://docs.angularjs.org/api/ng/service/$sce#trustAsUrl
+  - https://owasp.org/www-chapter-london/assets/slides/OWASPLondon20170727_AngularJS.pdf
+  category: security
+  technology:
+  - angular
+  - typescript
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/javascript.angular.security.detect-third-party-angular-translate.detect-angular-translateprovider-translations-method
+  shortlink: https://sg.run/ZvXp
+  semgrep.dev:
+    rule:
+      r_id: 9235
+      rv_id: 109798
+      rule_id: PeUZPg
+      version_id: l4T4vE1
+      url: https://semgrep.dev/playground/r/l4T4vE1/javascript.angular.security.detect-third-party-angular-translate.detect-angular-translateprovider-translations-method
+      origin: community
+languages:
+- javascript
+severity: WARNING
+patterns:
+- pattern: '$translateProvider.translations(...,$SOURCE);
+
+    '
+- pattern-inside: 'app.controller(..., function($scope,$sce){
+
+    ...
+
+    });
+
+    '

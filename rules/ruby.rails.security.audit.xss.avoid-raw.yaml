@@ -1,0 +1,42 @@
+id: ruby.rails.security.audit.xss.avoid-raw.avoid-raw
+metadata:
+  source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_cross_site_scripting.rb
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  references:
+  - https://api.rubyonrails.org/classes/ActionView/Helpers/OutputSafetyHelper.html#method-i-raw
+  - https://www.netsparker.com/blog/web-security/preventing-xss-ruby-on-rails-web-applications/
+  category: security
+  technology:
+  - rails
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/ruby.rails.security.audit.xss.avoid-raw.avoid-raw
+  shortlink: https://sg.run/nqJG
+  semgrep.dev:
+    rule:
+      r_id: 9736
+      rv_id: 110574
+      rule_id: gxUW3x
+      version_id: 7ZTgneD
+      url: https://semgrep.dev/playground/r/7ZTgneD/ruby.rails.security.audit.xss.avoid-raw.avoid-raw
+      origin: community
+message: '''raw()'' bypasses HTML escaping. If external data can reach here, this
+  exposes your application to cross-site scripting (XSS) attacks. If you must do this,
+  construct individual strings and mark them as safe for HTML rendering with `html_safe()`.'
+languages:
+- ruby
+severity: WARNING
+pattern: raw(...)

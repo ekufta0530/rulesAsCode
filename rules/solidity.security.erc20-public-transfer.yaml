@@ -1,0 +1,45 @@
+id: solidity.security.erc20-public-transfer.erc20-public-transfer
+message: Custom ERC20 implementation exposes _transfer() as public
+metadata:
+  category: security
+  technology:
+  - solidity
+  cwe: 'CWE-284: Improper Access Control'
+  confidence: LOW
+  likelihood: HIGH
+  impact: HIGH
+  subcategory:
+  - vuln
+  references:
+  - https://medium.com/@Knownsec_Blockchain_Lab/creat-future-was-tragically-transferred-coins-at-will-who-is-the-mastermind-behind-the-scenes-8ad42a7af814
+  - https://bscscan.com/address/0x8B7218CF6Ac641382D7C723dE8aA173e98a80196
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/solidity.security.erc20-public-transfer.erc20-public-transfer
+  shortlink: https://sg.run/A2ZB
+  semgrep.dev:
+    rule:
+      r_id: 67650
+      rv_id: 110678
+      rule_id: 7KU9Ow
+      version_id: gET3Og0
+      url: https://semgrep.dev/playground/r/gET3Og0/solidity.security.erc20-public-transfer.erc20-public-transfer
+      origin: community
+patterns:
+- pattern-either:
+  - pattern: 'function _transfer(...) public { ... }
+
+      '
+  - pattern: 'function _transfer(...) external { ... }
+
+      '
+- pattern-not: 'function _transfer(...) $M { ... }
+
+    '
+- pattern-not: 'function _transfer(...) $M(...) { ... }
+
+    '
+languages:
+- solidity
+severity: WARNING

@@ -1,0 +1,57 @@
+id: python.docker.security.audit.docker-arbitrary-container-run.docker-arbitrary-container-run
+patterns:
+- pattern-either:
+  - pattern-inside: '$CLIENT = docker.from_env()
+
+      ...
+
+      '
+  - pattern-inside: '$CLIENT = docker.DockerClient(...)
+
+      ...
+
+      '
+- pattern-either:
+  - pattern: '$CLIENT.containers.run(...)
+
+      '
+  - pattern: '$CLIENT.containers.create(...)
+
+      '
+- pattern-not: '$CLIENT.containers.run("...",...)
+
+    '
+- pattern-not: '$CLIENT.containers.create("...",...)
+
+    '
+message: If unverified user data can reach the `run` or `create` method it can result
+  in running arbitrary container.
+languages:
+- python
+severity: WARNING
+metadata:
+  cwe:
+  - 'CWE-250: Execution with Unnecessary Privileges'
+  category: security
+  technology:
+  - docker
+  references:
+  - https://cwe.mitre.org/data/definitions/250.html
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/python.docker.security.audit.docker-arbitrary-container-run.docker-arbitrary-container-run
+  shortlink: https://sg.run/pxEL
+  semgrep.dev:
+    rule:
+      r_id: 9518
+      rv_id: 110241
+      rule_id: r6Ur5A
+      version_id: DkT6nQ3
+      url: https://semgrep.dev/playground/r/DkT6nQ3/python.docker.security.audit.docker-arbitrary-container-run.docker-arbitrary-container-run
+      origin: community

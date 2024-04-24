@@ -1,0 +1,53 @@
+id: java.android.security.exported_activity.exported_activity
+patterns:
+- pattern-not-inside: <activity ... android:exported="false" ... />
+- pattern-inside: "<activity  ... /> \n"
+- pattern-either:
+  - pattern: '<activity ... android:exported="true" ... />
+
+      '
+  - pattern: '<activity ... <intent-filter> ... />
+
+      '
+message: The application exports an activity. Any application on the device can launch
+  the exported activity which may compromise the integrity of your application or
+  its data.  Ensure that any exported activities do not have privileged access to
+  your application's control plane.
+languages:
+- generic
+severity: WARNING
+paths:
+  exclude:
+  - sources/
+  - classes3.dex
+  - '*.so'
+  include:
+  - '*AndroidManifest.xml'
+metadata:
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-926: Improper Export of Android Application Components'
+  confidence: MEDIUM
+  likelihood: MEDIUM
+  impact: MEDIUM
+  owasp:
+  - A5:2021 Security Misconfiguration
+  technology:
+  - Android
+  references:
+  - https://cwe.mitre.org/data/definitions/926.html
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/java.android.security.exported_activity.exported_activity
+  shortlink: https://sg.run/eNGZ
+  semgrep.dev:
+    rule:
+      r_id: 60632
+      rv_id: 109664
+      rule_id: v8Ul0r
+      version_id: ExTjNle
+      url: https://semgrep.dev/playground/r/ExTjNle/java.android.security.exported_activity.exported_activity
+      origin: community

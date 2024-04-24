@@ -1,0 +1,41 @@
+id: yaml.semgrep.slow-pattern-single-metavariable.slow-pattern-single-metavariable
+languages:
+- yaml
+message: Using a single metavariable as a pattern drastically slows down the rule
+  performance because it will match every expression in a file. Instead, try to match
+  something specific such as a function name, or anchor on a statement that may occur
+  above or below the pattern. The more specific you can be, the faster the pattern
+  will run.
+patterns:
+- pattern-either:
+  - pattern-inside: 'pattern-inside: $PATTERN
+
+      '
+  - pattern-inside: 'pattern-not-inside: $PATTERN
+
+      '
+  - pattern-inside: 'pattern: $PATTERN
+
+      '
+  - pattern-inside: 'pattern-not: $PATTERN
+
+      '
+- metavariable-regex:
+    metavariable: $PATTERN
+    regex: \$[A-Z_]*
+severity: WARNING
+metadata:
+  category: performance
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.slow-pattern-single-metavariable.slow-pattern-single-metavariable
+  shortlink: https://sg.run/DJ1W
+  semgrep.dev:
+    rule:
+      r_id: 11208
+      rv_id: 111185
+      rule_id: KxU4q1
+      version_id: 3ZTkrbd
+      url: https://semgrep.dev/playground/r/3ZTkrbd/yaml.semgrep.slow-pattern-single-metavariable.slow-pattern-single-metavariable
+      origin: community

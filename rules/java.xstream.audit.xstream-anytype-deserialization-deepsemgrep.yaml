@@ -1,0 +1,70 @@
+id: java.xstream.audit.xstream-anytype-deserialization-deepsemgrep.xstream-anytype-deserialization-deepsemgrep
+message: 'The application may convert user-controlled data into an object, which can
+  lead to an insecure deserialization vulnerability. An attacker can create a malicious
+  serialized object, pass it to the application, and take advantage of the deserialization
+  process to perform Denial-of-service (DoS), Remote code execution (RCE), or bypass
+  access control measures. To prevent this vulnerability, leverage data formats such
+  as JSON or XML as safer alternatives. If you need to deserialize user input in a
+  specific format, consider digitally signing the data before serialization to prevent
+  tampering. For more information, see: [Deserialization prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+  We do not recommend deserializing untrusted data with the `XStream` unless you explicitly
+  define permissions for types that are allowed to be deserialized by `XStream`.'
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-502: Deserialization of Untrusted Data'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - deserialization::sink::load-object::xstream
+  owasp:
+  - A08:2017 - Insecure Deserialization
+  - A08:2021 - Software and Data Integrity Failures
+  references:
+  - https://x-stream.github.io/security.html
+  - https://www.owasp.org/index.php/Deserialization_of_untrusted_data
+  - https://www.oracle.com/java/technologies/javase/seccodeguide.html#8
+  technology:
+  - java
+  - xml
+  - xstream
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/java.xstream.audit.xstream-anytype-deserialization-deepsemgrep.xstream-anytype-deserialization-deepsemgrep
+  shortlink: https://sg.run/qQy1
+  semgrep.dev:
+    rule:
+      r_id: 44912
+      rv_id: 111653
+      rule_id: r6UB2Q
+      version_id: A8T9X81
+      url: https://semgrep.dev/playground/r/A8T9X81/java.xstream.audit.xstream-anytype-deserialization-deepsemgrep.xstream-anytype-deserialization-deepsemgrep
+      origin: pro_rules
+languages:
+- java
+mode: taint
+pattern-sources:
+- label: XSTREAM
+  pattern: '(XStream $X)
+
+    '
+- label: ANYTYPE
+  by-side-effect: true
+  patterns:
+  - pattern: '$X.addPermission(AnyTypePermission.ANY)
+
+      '
+  - focus-metavariable: $X
+pattern-sinks:
+- requires: XSTREAM and ANYTYPE
+  patterns:
+  - pattern: '(XStream $X).fromXML(...)
+
+      '

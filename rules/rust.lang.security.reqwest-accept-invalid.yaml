@@ -1,0 +1,33 @@
+id: rust.lang.security.reqwest-accept-invalid.reqwest-accept-invalid
+message: Dangerously accepting invalid TLS information
+pattern-either:
+- pattern: reqwest::Client::builder(). ... .danger_accept_invalid_hostnames(true)
+- pattern: reqwest::Client::builder(). ... .danger_accept_invalid_certs(true)
+metadata:
+  references:
+  - https://docs.rs/reqwest/latest/reqwest/struct.ClientBuilder.html#method.danger_accept_invalid_hostnames
+  - https://docs.rs/reqwest/latest/reqwest/struct.ClientBuilder.html#method.danger_accept_invalid_certs
+  technology:
+  - reqwest
+  category: security
+  cwe: 'CWE-295: Improper Certificate Validation'
+  confidence: HIGH
+  likelihood: LOW
+  impact: MEDIUM
+  subcategory: vuln
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authentication
+  source: https://semgrep.dev/r/rust.lang.security.reqwest-accept-invalid.reqwest-accept-invalid
+  shortlink: https://sg.run/DqrG
+  semgrep.dev:
+    rule:
+      r_id: 40108
+      rv_id: 110617
+      rule_id: qNUKDg
+      version_id: yeTRZyR
+      url: https://semgrep.dev/playground/r/yeTRZyR/rust.lang.security.reqwest-accept-invalid.reqwest-accept-invalid
+      origin: community
+languages:
+- rust
+severity: WARNING

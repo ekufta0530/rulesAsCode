@@ -1,0 +1,47 @@
+id: terraform.azure.security.azure-service-fabric-cluster-protection-level.azure-service-fabric-cluster-protection-level
+message: Ensure that Service Fabric use three levels of protection available
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_service_fabric_cluster" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"azurerm_service_fabric_cluster\" \"...\" {\n...\n\
+    fabric_settings {\n  name = \"Security\"\n  parameters = {\n    ...\n    name\
+    \ = \"ClusterProtectionLevel\"\n    value = \"EncryptAndSign\"\n    ...\n  }\n\
+    \  ...\n}\n...\n}\n"
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.azure.security.azure-service-fabric-cluster-protection-level.azure-service-fabric-cluster-protection-level
+  shortlink: https://sg.run/Dd62
+  semgrep.dev:
+    rule:
+      r_id: 24008
+      rv_id: 110918
+      rule_id: kxUx3E
+      version_id: 1QTO7Yl
+      url: https://semgrep.dev/playground/r/1QTO7Yl/terraform.azure.security.azure-service-fabric-cluster-protection-level.azure-service-fabric-cluster-protection-level
+      origin: community
+languages:
+- hcl
+severity: WARNING

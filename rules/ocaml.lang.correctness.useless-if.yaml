@@ -1,0 +1,21 @@
+id: ocaml.lang.correctness.useless-if.ocamllint-useless-if
+pattern: if $X then $E else $E
+message: Useless if. Both branches are equal.
+languages:
+- ocaml
+severity: ERROR
+metadata:
+  category: correctness
+  technology:
+  - ocaml
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ocaml.lang.correctness.useless-if.ocamllint-useless-if
+  shortlink: https://sg.run/8ReN
+  semgrep.dev:
+    rule:
+      r_id: 12784
+      rv_id: 110021
+      rule_id: 6JU6w7
+      version_id: d6TrAxn
+      url: https://semgrep.dev/playground/r/d6TrAxn/ocaml.lang.correctness.useless-if.ocamllint-useless-if
+      origin: community

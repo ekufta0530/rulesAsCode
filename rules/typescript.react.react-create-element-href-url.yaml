@@ -1,0 +1,250 @@
+id: typescript.react.react-create-element-href-url.react-create-element-href-url
+message: Untrusted input could be used to tamper with a web page rendering, which
+  can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+  when untrusted input executes malicious JavaScript code, leading to issues such
+  as account compromise and sensitive information leakage. To prevent this vulnerability,
+  validate URLs and their protocol before using them in your codebase.
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: HIGH
+  interfile: true
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::source::url-path-params::react
+  - web::sink::html-webpage::react
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://github.com/segmentio/ui-box/blob/master/src/utils/safeHref.ts
+  technology:
+  - react
+  - browser
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/typescript.react.react-create-element-href-url.react-create-element-href-url
+  shortlink: https://sg.run/oL59
+  semgrep.dev:
+    rule:
+      r_id: 27216
+      rv_id: 112055
+      rule_id: GdUkjO
+      version_id: GxTv8A1
+      url: https://semgrep.dev/playground/r/GxTv8A1/typescript.react.react-create-element-href-url.react-create-element-href-url
+      origin: pro_rules
+languages:
+- typescript
+- javascript
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: new URLSearchParams(useLocation().search).get('...')
+    - pattern: new URL(location.href).searchParams.get('...')
+    - pattern: new URL($WINDOW. ... .location.href).searchParams.get('...')
+    - pattern: new URLSearchParams(location.search).get("...")
+    - pattern: new URLSearchParams($WINDOW. ... .location.search).get("...")
+    - pattern: new URLSearchParams($WINDOW. ... .location.hash.substring(1)).get("...")
+    - pattern: new URLSearchParams(location.hash.substring(1)).get("...")
+    - pattern: new URLSearchParams($WINDOW. ... .location.hash.substring(1)).get("...")
+    - pattern: new URLSearchParams(location.hash.substr(1)).get("...")
+    - pattern: new URLSearchParams($WINDOW. ... .location.hash.substr(1)).get("...")
+    - pattern: new URLSearchParams(location.hash.slice(1)).get("...")
+    - pattern: new URLSearchParams($WINDOW. ... .location.hash.slice(1)).get("...")
+    - pattern: location.hash.split("...")[1]
+    - pattern: $WINDOW. ... .location.hash.split("...")[1]
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$VALUE = new URLSearchParams(useLocation().search)
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams(window.location.search)
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams($WINDOW. ... .location.search)
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams($WINDOW. ... .location.hash.substring(1))
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams(location.hash.substring(1))
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams(location.hash.substr(1))
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams(location.hash.slice(1))
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams($WINDOW. ... .location.hash.substring(1))
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams($WINDOW. ... .location.hash.substr(1))
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URLSearchParams($WINDOW. ... .location.hash.slice(1))
+
+        ...
+
+        '
+  - pattern: $VALUE.get('...')
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$VALUE = new URL(location.href)
+
+        ...
+
+        '
+    - pattern-inside: '$VALUE = new URL($WINDOW. ... .location.href)
+
+        ...
+
+        '
+  - pattern: $VALUE.searchParams.get('...')
+- patterns:
+  - pattern-either:
+    - pattern-inside: '[...,$VALUE,...] = useSearchParams()
+
+        ...
+
+        '
+  - pattern: $VALUE.get('...')
+- patterns:
+  - pattern: '[$QUERY,...] = useQueryParams(...)
+
+      '
+  - focus-metavariable: $QUERY
+- patterns:
+  - pattern: '$QUERY = useQueryParams(...)
+
+      '
+  - focus-metavariable: $QUERY
+  - pattern: $QUERY.get('...')
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'var { ...,$VALUE,... } = useLocation()
+
+        ...
+
+        '
+    - pattern-inside: 'const { ...,$VALUE,... } = useLocation()
+
+        ...
+
+        '
+    - pattern-inside: 'let { ...,$VALUE,... } = useLocation()
+
+        ...
+
+        '
+  - pattern-inside: '$ASSIGN = new URLSearchParams($VALUE)
+
+      ...
+
+      '
+  - pattern: $ASSIGN.get('...')
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$REACT.createElement("a",{...,href:$PROP,...},...)
+
+        '
+    - pattern-inside: '$REACT.createElement("a",{...,href:`${$PROP}`,...},...)
+
+        '
+  - pattern: $SINK + $ANYTHING
+  - focus-metavariable: $SINK
+  - metavariable-pattern:
+      patterns:
+      - pattern-not: '"..." + $SOURCE
+
+          '
+      - pattern-not: '`...${...}...`
+
+          '
+      metavariable: $SINK
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$REACT.createElement("a",{...,href:$PROP,...},...)
+
+        '
+    - pattern-inside: '$REACT.createElement("a",{...,href:`${$PROP}`,...},...)
+
+        '
+  - focus-metavariable: $PROP
+  - metavariable-pattern:
+      patterns:
+      - pattern-not: '$FOO + $VALUE
+
+          '
+      - pattern-not: '"..." + $VALUE
+
+          '
+      - pattern-not: '`...${...}...`
+
+          '
+      metavariable: $PROP
+pattern-sanitizers:
+- patterns:
+  - pattern-either:
+    - pattern: '$A ? $VAL1 : $VAL2
+
+        '
+    - pattern: '$A ? $VAL2 : $VAL1
+
+        '
+  - metavariable-pattern:
+      patterns:
+      - pattern-not: '"..."
+
+          '
+      - pattern-not: '"..." + $V
+
+          '
+      - pattern-not: '`...${...}...`
+
+          '
+      metavariable: $VAL1
+  - focus-metavariable: $VAL1
+- patterns:
+  - pattern: '`...`
+
+      '
+  - pattern-not: '`${$VALUE}...`
+
+      '
+- patterns:
+  - pattern: '"..." + $VALUE
+
+      '
+- patterns:
+  - pattern-inside: "if (<... $SOURCE.startsWith(\"$REGEX\") ...>) { \n    ... \n\
+      \ }\n"

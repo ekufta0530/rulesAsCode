@@ -1,0 +1,34 @@
+id: typescript.react.portability.i18next.useselect-label-not-i18n.useselect-label-not-i18n
+patterns:
+- pattern: useSelect($X1, $X2, '$LABEL', $X4)
+- metavariable-regex:
+    metavariable: $LABEL
+    regex: (.*[A-Za-z].*)
+- pattern-not: useSelect($X1, $X2, t('...'), $X4)
+message: React useSelect() label is not internationalized - '$LABEL'. You should support
+  different langauges in your website or app with internationalization. Instead, use
+  packages such as `i18next` to internationalize your elements.
+languages:
+- typescript
+- javascript
+severity: WARNING
+metadata:
+  category: portability
+  technology:
+  - react
+  - mui
+  - i18next
+  references:
+  - https://www.notion.so/hendyirawan/Internationalization-Localization-Policy-318c21674e5f44c48d6f136a6eb2e024
+  - https://react.i18next.com/
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/typescript.react.portability.i18next.useselect-label-not-i18n.useselect-label-not-i18n
+  shortlink: https://sg.run/oR37
+  semgrep.dev:
+    rule:
+      r_id: 24016
+      rv_id: 111089
+      rule_id: nJUPJL
+      version_id: GxTv8ld
+      url: https://semgrep.dev/playground/r/GxTv8ld/typescript.react.portability.i18next.useselect-label-not-i18n.useselect-label-not-i18n
+      origin: community

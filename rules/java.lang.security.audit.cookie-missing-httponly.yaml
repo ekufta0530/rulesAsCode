@@ -1,0 +1,49 @@
+id: java.lang.security.audit.cookie-missing-httponly.cookie-missing-httponly
+metadata:
+  cwe:
+  - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#HTTPONLY_COOKIE
+  asvs:
+    section: 'V3: Session Management Verification Requirements'
+    control_id: 3.4.2 Missing Cookie Attribute
+    control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x12-V3-Session-management.md#v34-cookie-based-session-management
+    version: '4'
+  category: security
+  technology:
+  - java
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/java.lang.security.audit.cookie-missing-httponly.cookie-missing-httponly
+  shortlink: https://sg.run/b7Be
+  semgrep.dev:
+    rule:
+      r_id: 9170
+      rv_id: 109686
+      rule_id: EwU2z6
+      version_id: JdTNpEW
+      url: https://semgrep.dev/playground/r/JdTNpEW/java.lang.security.audit.cookie-missing-httponly.cookie-missing-httponly
+      origin: community
+message: A cookie was detected without setting the 'HttpOnly' flag. The 'HttpOnly'
+  flag for cookies instructs the browser to forbid client-side scripts from reading
+  the cookie. Set the 'HttpOnly' flag by calling 'cookie.setHttpOnly(true);'
+severity: WARNING
+languages:
+- java
+patterns:
+- pattern-not-inside: $COOKIE.setValue(""); ...
+- pattern-either:
+  - pattern: $COOKIE.setHttpOnly(false);
+  - patterns:
+    - pattern-not-inside: $COOKIE.setHttpOnly(...); ...
+    - pattern-not-inside: $COOKIE = ResponseCookie.from(...). ...; ...
+    - pattern: $RESPONSE.addCookie($COOKIE);

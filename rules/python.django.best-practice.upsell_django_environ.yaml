@@ -1,0 +1,50 @@
+id: python.django.best-practice.upsell_django_environ.use-django-environ
+patterns:
+- pattern-not-inside: 'import environ
+
+    ...
+
+    '
+- pattern-either:
+  - pattern: 'import django
+
+      ...
+
+      import os
+
+      ...
+
+      $FOO = $M.environ[...]
+
+      '
+  - pattern: 'import os
+
+      ...
+
+      import django
+
+      ...
+
+      $FOO = $M.environ[...]
+
+      '
+message: You are using environment variables inside django app. Use `django-environ`
+  as it a better alternative for deployment.
+languages:
+- python
+severity: ERROR
+metadata:
+  category: best-practice
+  technology:
+  - django
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.django.best-practice.upsell_django_environ.use-django-environ
+  shortlink: https://sg.run/DoQP
+  semgrep.dev:
+    rule:
+      r_id: 9452
+      rv_id: 110161
+      rule_id: oqUeND
+      version_id: w8T9nZr
+      url: https://semgrep.dev/playground/r/w8T9nZr/python.django.best-practice.upsell_django_environ.use-django-environ
+      origin: community

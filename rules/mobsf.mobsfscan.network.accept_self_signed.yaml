@@ -1,0 +1,81 @@
+id: mobsf.mobsfscan.network.accept_self_signed.accept_self_signed_certificate
+patterns:
+- pattern-either:
+  - pattern: '$X.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
+
+      '
+  - pattern: '$X.setHostnameVerifier($Z.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+      '
+  - pattern: '$X.setHostnameVerifier(new AllowAllHostnameVerifier());
+
+      '
+  - pattern: '$X.setDefaultHostnameVerifier(new NullHostnameVerifier());
+
+      '
+  - pattern: '$X.setDefaultHostnameVerifier((HostnameVerifier) new NullHostnameVerifier());
+
+      '
+  - pattern: "$RET verify(..., SSLSession $X) {\n  ...\n  return true;\n}\n"
+  - pattern: '$Y = SSLContext.getInstance(...);
+
+      ...
+
+      $Y.init(null, ...);
+
+      '
+  - pattern: '$Y = $S.SSLContext.getInstance(...);
+
+      ...
+
+      $Y.init(null, ...);
+
+      '
+  - pattern: '$Z = new TLSClientParameters(...);
+
+      ...
+
+      $Z.setDisableCNCheck(true);
+
+      '
+  - pattern: "X509Certificate[] getAcceptedIssuers() { \n  ...\n  return new X509Certificate[]{};\n\
+      }\n"
+  - pattern: "X509Certificate[] getAcceptedIssuers() {\n  ...\n  return new java.security.cert.X509Certificate[]{};\n\
+      }\n"
+  - pattern: "X509Certificate[] getAcceptedIssuers() { \n  ...\n  $Y = new X509Certificate[]{};\n\
+      \  ...\n  return $Y;\n}\n"
+  - pattern: "X509Certificate[] getAcceptedIssuers() {\n  return new X509Certificate[0];\n\
+      }\n"
+  - pattern: "X509Certificate[] getAcceptedIssuers() {\n  ...\n  $X =  new X509Certificate[0];\n\
+      \  ...\n  return $X;\n}\n"
+  - pattern: "X509Certificate[] getAcceptedIssuers() {\n  return null;\n}\n"
+  - pattern: 'sslContext.init(null, ...);
+
+      '
+  - pattern: 'setSslSocketFactory(new NonValidatingSSLSocketFactory());
+
+      '
+message: Insecure Implementation of SSL. Trusting all the certificates or accepting
+  self signed certificates is a critical Security Hole. This application is vulnerable
+  to MITM attacks.
+languages:
+- java
+severity: ERROR
+metadata:
+  cwe: cwe-295
+  owasp-mobile: m3
+  masvs: network-3
+  reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05g-Testing-Network-Communication.md#testing-endpoint-identify-verification-mstg-network-3
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/mobsf.mobsfscan.network.accept_self_signed.accept_self_signed_certificate
+  shortlink: https://sg.run/JoZw
+  semgrep.dev:
+    rule:
+      r_id: 43746
+      rv_id: 78350
+      rule_id: YGUxKY
+      version_id: vdTZ3e
+      url: https://semgrep.dev/playground/r/vdTZ3e/mobsf.mobsfscan.network.accept_self_signed.accept_self_signed_certificate
+      origin: community

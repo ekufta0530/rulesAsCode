@@ -1,0 +1,55 @@
+id: terraform.azure.security.appservice.azure-appservice-https-only.azure-appservice-https-only
+message: Ensure web app redirects all HTTP traffic to HTTPS in Azure App Service Slot
+patterns:
+- pattern: resource
+- pattern-not-inside: 'resource "azurerm_app_service" "..." {
+
+    ...
+
+    https_only = true
+
+    ...
+
+    }
+
+    '
+- pattern-inside: 'resource "azurerm_app_service" "..." {
+
+    ...
+
+    }
+
+    '
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/terraform.azure.security.appservice.azure-appservice-https-only.azure-appservice-https-only
+  shortlink: https://sg.run/1g9w
+  semgrep.dev:
+    rule:
+      r_id: 23966
+      rv_id: 110876
+      rule_id: x8UZRP
+      version_id: ExTjAg9
+      url: https://semgrep.dev/playground/r/ExTjAg9/terraform.azure.security.appservice.azure-appservice-https-only.azure-appservice-https-only
+      origin: community
+languages:
+- hcl
+severity: WARNING

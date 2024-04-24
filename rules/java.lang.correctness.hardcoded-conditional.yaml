@@ -1,0 +1,30 @@
+id: java.lang.correctness.hardcoded-conditional.hardcoded-conditional
+patterns:
+- pattern-either:
+  - pattern: if (true) { ... }
+  - pattern: if (false) { ... }
+  - pattern: if ($VAR = true) { ... }
+  - pattern: if ($VAR = false) { ... }
+  - pattern: if ($EXPR && false) { ... }
+  - pattern: if (false && $EXPR) { ... }
+  - pattern: if ($EXPR || true) { ... }
+  - pattern: if (true || $EXPR) { ... }
+message: This if statement will always have the same behavior and is therefore unnecessary.
+languages:
+- java
+severity: ERROR
+metadata:
+  category: correctness
+  technology:
+  - java
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/java.lang.correctness.hardcoded-conditional.hardcoded-conditional
+  shortlink: https://sg.run/l2zj
+  semgrep.dev:
+    rule:
+      r_id: 9157
+      rv_id: 109678
+      rule_id: yyUnKv
+      version_id: BjTXrlq
+      url: https://semgrep.dev/playground/r/BjTXrlq/java.lang.correctness.hardcoded-conditional.hardcoded-conditional
+      origin: community

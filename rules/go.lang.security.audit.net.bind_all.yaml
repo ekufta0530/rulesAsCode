@@ -1,0 +1,42 @@
+id: go.lang.security.audit.net.bind_all.avoid-bind-to-all-interfaces
+message: Detected a network listener listening on 0.0.0.0 or an empty string. This
+  could unexpectedly expose the server publicly as it binds to all available interfaces.
+  Instead, specify another IP address that is not 0.0.0.0 nor the empty string.
+languages:
+- go
+severity: WARNING
+metadata:
+  cwe:
+  - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+  owasp:
+  - A01:2021 - Broken Access Control
+  source-rule-url: https://github.com/securego/gosec
+  category: security
+  technology:
+  - go
+  confidence: HIGH
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/go.lang.security.audit.net.bind_all.avoid-bind-to-all-interfaces
+  shortlink: https://sg.run/rdE0
+  semgrep.dev:
+    rule:
+      r_id: 9125
+      rv_id: 109613
+      rule_id: nJUz3J
+      version_id: xyTKZgN
+      url: https://semgrep.dev/playground/r/xyTKZgN/go.lang.security.audit.net.bind_all.avoid-bind-to-all-interfaces
+      origin: community
+pattern-either:
+- pattern: tls.Listen($NETWORK, "=~/^0.0.0.0:.*$/", ...)
+- pattern: net.Listen($NETWORK, "=~/^0.0.0.0:.*$/", ...)
+- pattern: tls.Listen($NETWORK, "=~/^:.*$/", ...)
+- pattern: net.Listen($NETWORK, "=~/^:.*$/", ...)

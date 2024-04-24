@@ -1,0 +1,43 @@
+id: terraform.azure.security.storage.storage-default-action-deny.storage-default-action-deny
+message: Detected a Storage that was not configured to deny action by default. Add
+  `default_action = "Deny"` in your resource block.
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_storage_account_network_rules\" \"...\"\
+    \ {\n...\n  default_action = \"Deny\"\n...\n}\n"
+- pattern-inside: "resource \"azurerm_storage_account_network_rules\" \"...\" {\n\
+    ...\n  default_action = \"Allow\"\n...\n}\n"
+metadata:
+  cwe:
+  - 'CWE-16: CWE CATEGORY: Configuration'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules#default_action
+  - https://docs.microsoft.com/en-us/azure/firewall/rule-processing
+  owasp:
+  - A06:2017 - Security Misconfiguration
+  - A05:2021 - Security Misconfiguration
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/terraform.azure.security.storage.storage-default-action-deny.storage-default-action-deny
+  shortlink: https://sg.run/WpN4
+  semgrep.dev:
+    rule:
+      r_id: 15109
+      rv_id: 110934
+      rule_id: zdUY3N
+      version_id: 7ZTgnnb
+      url: https://semgrep.dev/playground/r/7ZTgnnb/terraform.azure.security.storage.storage-default-action-deny.storage-default-action-deny
+      origin: community
+languages:
+- hcl
+severity: ERROR

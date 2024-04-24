@@ -1,0 +1,39 @@
+id: terraform.gcp.security.gcp-gke-ensure-integrity-monitoring.gcp-gke-ensure-integrity-monitoring
+patterns:
+- pattern-inside: "resource \"google_container_cluster\" $ANYTHING {\n  ...\n  node_config\
+    \ {\n    ...\n    shielded_instance_config {\n      enable_integrity_monitoring\
+    \ = false\n    }\n    ...\n  }     \n  ...\n}\n"
+message: Ensure Integrity Monitoring for Shielded GKE Nodes is Enabled
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  technology:
+  - terraform
+  - gcp
+  category: security
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-gke-ensure-integrity-monitoring.gcp-gke-ensure-integrity-monitoring
+  shortlink: https://sg.run/Z55w
+  semgrep.dev:
+    rule:
+      r_id: 33679
+      rv_id: 111006
+      rule_id: 5rUrr3
+      version_id: WrTW3q1
+      url: https://semgrep.dev/playground/r/WrTW3q1/terraform.gcp.security.gcp-gke-ensure-integrity-monitoring.gcp-gke-ensure-integrity-monitoring
+      origin: community

@@ -1,0 +1,69 @@
+id: swift.commoncrypto.insecure-crypto-keystorage.insecure-crypto-keystorage
+message: Key generation routines were identified where the resultant keys are not
+  stored protected by the Secure Enclave. On iOS/macOS systems, cryptographic keys
+  can be generated within the Secure Enclave - making them inaccessible to the rest
+  of the system. The keys can be used for operations (signing, decryption, etc) but
+  the private keys cannot be dumped or copied - even on rooted/jailbroken systems.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-922: Insecure Storage of Sensitive Information'
+  functional-categories:
+  - mobile::search::storage::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-2: The app uses proven implementations ofcryptographic primitives.'
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-keystorage.insecure-crypto-keystorage
+  shortlink: https://sg.run/YdjX
+  semgrep.dev:
+    rule:
+      r_id: 59714
+      rv_id: 111997
+      rule_id: yyUlry
+      version_id: 5PTdezr
+      url: https://semgrep.dev/playground/r/5PTdezr/swift.commoncrypto.insecure-crypto-keystorage.insecure-crypto-keystorage
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-inside: '$X = $ATTRIBS
+
+        ...
+
+        '
+    - metavariable-pattern:
+        metavariable: $ATTRIBS
+        patterns:
+        - pattern-not-regex: '.*kSecAttrTokenIDSecureEnclave.*
+
+            '
+    - pattern-either:
+      - pattern: SecKeyCreateRandomKey($X, ...)
+      - pattern: SecKeyGeneratePair($X, ...)
+    - focus-metavariable:
+      - $X
+  - pattern: 'CCRSACryptorGeneratePair(...)
+
+      '
+  - pattern: 'CCRSACryptorGeneratePair!(...)
+
+      '

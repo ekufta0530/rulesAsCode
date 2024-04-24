@@ -1,0 +1,40 @@
+id: terraform.aws.security.aws-fsx-lustre-filesystem-encrypted-with-cmk.aws-fsx-lustre-filesystem-encrypted-with-cmk
+patterns:
+- pattern: "resource \"aws_fsx_lustre_file_system\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_fsx_lustre_file_system\" $ANYTHING {\n  ...\n\
+    \  kms_key_id = ...\n  ...\n}\n"
+message: Ensure FSX Lustre file system is encrypted at rest using KMS CMKs. CMKs gives
+  you control over the encryption key in terms of access and rotation.
+metadata:
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A04:2021 - Insecure Design
+  cwe:
+  - 'CWE-311: Missing Encryption of Sensitive Data'
+  references:
+  - https://owasp.org/Top10/A04_2021-Insecure_Design
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-fsx-lustre-filesystem-encrypted-with-cmk.aws-fsx-lustre-filesystem-encrypted-with-cmk
+  shortlink: https://sg.run/zJ6G
+  semgrep.dev:
+    rule:
+      r_id: 17361
+      rv_id: 110762
+      rule_id: 5rUp50
+      version_id: yeTRZNx
+      url: https://semgrep.dev/playground/r/yeTRZNx/terraform.aws.security.aws-fsx-lustre-filesystem-encrypted-with-cmk.aws-fsx-lustre-filesystem-encrypted-with-cmk
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,52 @@
+id: terraform.aws.security.aws-ssm-document-logging-issues.aws-ssm-document-logging-issues
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-not-inside: "resource \"aws_ssm_document\" $ANYTHING {\n  ...\n  document_format\
+        \ = \"YAML\"\n  ...\n}\n"
+    - pattern: content = "$STATEMENT"
+    - metavariable-pattern:
+        metavariable: $STATEMENT
+        language: json
+        patterns:
+        - pattern-either:
+          - pattern: '"s3EncryptionEnabled": false'
+          - pattern: '"cloudWatchEncryptionEnabled": false'
+          - pattern: '{..., "cloudWatchLogGroupName": "", ..., "s3BucketName": "",
+              ...}'
+message: The AWS SSM logs are unencrypted or disabled. Please enable logs and use
+  AWS KMS encryption key to protect SSM logs. To create your own, create a aws_kms_key
+  resource or use the ARN string of a key in your account.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  technology:
+  - aws
+  - terraform
+  category: security
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-ssm-document-logging-issues.aws-ssm-document-logging-issues
+  shortlink: https://sg.run/EyWw
+  semgrep.dev:
+    rule:
+      r_id: 17381
+      rv_id: 110795
+      rule_id: 0oUrWL
+      version_id: l4T46Xr
+      url: https://semgrep.dev/playground/r/l4T46Xr/terraform.aws.security.aws-ssm-document-logging-issues.aws-ssm-document-logging-issues
+      origin: community

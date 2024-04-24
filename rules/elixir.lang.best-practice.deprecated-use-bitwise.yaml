@@ -1,0 +1,25 @@
+id: elixir.lang.best-practice.deprecated-use-bitwise.deprecated_use_bitwise
+message: The syntax `use Bitwise` is already deprecated. Please use `import Bitwise`
+  instead.
+severity: WARNING
+languages:
+- elixir
+pattern: use Bitwise
+fix: import Bitwise
+metadata:
+  references:
+  - https://github.com/elixir-lang/elixir/commit/f1b9d3e818e5bebd44540f87be85979f24b9abfc
+  category: best-practice
+  technology:
+  - elixir
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/elixir.lang.best-practice.deprecated-use-bitwise.deprecated_use_bitwise
+  shortlink: https://sg.run/bpOe
+  semgrep.dev:
+    rule:
+      r_id: 67426
+      rv_id: 109263
+      rule_id: oqUEDJ
+      version_id: 8KTQ9BK
+      url: https://semgrep.dev/playground/r/8KTQ9BK/elixir.lang.best-practice.deprecated-use-bitwise.deprecated_use_bitwise
+      origin: community

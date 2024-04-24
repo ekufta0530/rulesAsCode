@@ -1,0 +1,29 @@
+id: mobsf.mobsfscan.xxe.xmlfactory_external_entities_enabled.xmlinputfactory_xxe_enabled
+pattern: $XMLFACTORY.setProperty("javax.xml.stream.isSupportingExternalEntities",
+  true);
+message: 'XML external entities are enabled for this XMLInputFactory. This is vulnerable
+  to XML external entity attacks. Disable external entities by setting "javax.xml.stream.isSupportingExternalEntities"
+  to false.
+
+  '
+languages:
+- java
+severity: ERROR
+metadata:
+  cwe: cwe-611
+  owasp-mobile: m8
+  masvs: platform-2
+  reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x04h-Testing-Code-Quality.md#injection-flaws-mstg-arch-2-and-mstg-platform-2
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/mobsf.mobsfscan.xxe.xmlfactory_external_entities_enabled.xmlinputfactory_xxe_enabled
+  shortlink: https://sg.run/0qwv
+  semgrep.dev:
+    rule:
+      r_id: 43754
+      rv_id: 78358
+      rule_id: 10UnwQ
+      version_id: gETb5l
+      url: https://semgrep.dev/playground/r/gETb5l/mobsf.mobsfscan.xxe.xmlfactory_external_entities_enabled.xmlinputfactory_xxe_enabled
+      origin: community

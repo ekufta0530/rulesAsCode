@@ -1,0 +1,41 @@
+id: python.lang.security.use-defused-xml.use-defused-xml
+metadata:
+  owasp:
+  - A04:2017 - XML External Entities (XXE)
+  - A05:2021 - Security Misconfiguration
+  cwe:
+  - 'CWE-611: Improper Restriction of XML External Entity Reference'
+  references:
+  - https://docs.python.org/3/library/xml.html
+  - https://github.com/tiran/defusedxml
+  - https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+  category: security
+  technology:
+  - python
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/python.lang.security.use-defused-xml.use-defused-xml
+  shortlink: https://sg.run/kX47
+  semgrep.dev:
+    rule:
+      r_id: 9628
+      rv_id: 110453
+      rule_id: d8UjRx
+      version_id: pZT1LkL
+      url: https://semgrep.dev/playground/r/pZT1LkL/python.lang.security.use-defused-xml.use-defused-xml
+      origin: community
+message: The Python documentation recommends using `defusedxml` instead of `xml` because
+  the native Python `xml` library is vulnerable to XML External Entity (XXE) attacks.
+  These attacks can leak confidential data and "XML bombs" can cause denial of service.
+languages:
+- python
+severity: ERROR
+pattern: import xml

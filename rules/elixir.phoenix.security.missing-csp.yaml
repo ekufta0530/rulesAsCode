@@ -1,0 +1,50 @@
+id: elixir.phoenix.security.missing-csp.missing-csp
+message: Content-Security-Policy is an HTTP header that helps mitigate a number of
+  attacks, including Cross-Site Scripting. Missing Content-Security-Policy is flagged
+  by this rule when a pipeline implements the `:put_secure_browser_headers` plug,
+  but does not provide a Content-Security-Policy header in the custom headers map.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-693: Protection Mechanism Failure'
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+  technology:
+  - phoenix
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/elixir.phoenix.security.missing-csp.missing-csp
+  shortlink: https://sg.run/yyGXd
+  semgrep.dev:
+    rule:
+      r_id: 114624
+      rv_id: 257014
+      rule_id: 5rUdqyO
+      version_id: kbTjKnO
+      url: https://semgrep.dev/playground/r/kbTjKnO/elixir.phoenix.security.missing-csp.missing-csp
+      origin: pro_rules
+languages:
+- elixir
+min-version: 1.55.2
+patterns:
+- pattern-inside:
+    pattern-either:
+    - pattern: "defmodule $ROUTER do\n  ...\n  use ..., Phoenix.Router, ...\n  ...\n\
+        end\n"
+    - pattern: "defmodule $ROUTER do\n  ...\n  use ..., :router, ...\n  ...\nend\n"
+- pattern-either:
+  - pattern: "pipeline $BROWSER do\n  ...\n  plug :put_secure_browser_headers\n  ...\n\
+      end\n"
+  - pattern: "pipeline $BROWSER do\n  ...\n  plug :put_secure_browser_headers, $CSP\n\
+      \  ...\nend\n"
+- pattern-not: "pipeline $BROWSER do\n  ...\n  plug :put_secure_browser_headers, ...,\
+    \ %{..., \"content-security-policy\" => \"...\"}, ...\n  ...\nend\n"

@@ -1,0 +1,67 @@
+id: trailofbits.go.hanging-goroutine.hanging-goroutine
+message: Potential goroutine leak due to unbuffered channel send inside loop or unbuffered
+  channel receive in select block
+languages:
+- go
+severity: ERROR
+metadata:
+  category: security
+  cwe: 'CWE-833: Deadlock'
+  subcategory:
+  - vuln
+  confidence: MEDIUM
+  likelihood: MEDIUM
+  impact: LOW
+  technology:
+  - --no-technology--
+  description: Goroutine leaks
+  references:
+  - https://blog.trailofbits.com/2021/11/08/discovering-goroutine-leaks-with-semgrep
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/trailofbits.go.hanging-goroutine.hanging-goroutine
+  shortlink: https://sg.run/Dw8o
+  semgrep.dev:
+    rule:
+      r_id: 11752
+      rv_id: 95079
+      rule_id: EwUQp2
+      version_id: 8KTQEjp
+      url: https://semgrep.dev/playground/r/8KTQEjp/trailofbits.go.hanging-goroutine.hanging-goroutine
+      origin: community
+patterns:
+- pattern-either:
+  - pattern: "for ... {\n  ...\n  go func(...) {\n    ...\n    $CHANNEL <- $VAL\n\
+      \    ...\n  }(...)\n}\n...\n$Y = <- $CHANNEL\n...\n"
+  - pattern: "for ... {\n  ...\n  go func(...) {\n    ...\n    $CHANNEL <- $VAL\n\
+      \    ...\n  }(...)\n}\n...\n$Y := <- $CHANNEL\n...\n"
+  - pattern: "for ... {\n  ...\n  go func(...) {\n    ...\n    $CHANNEL <- $VAL\n\
+      \    ...\n  }(...)\n}\n...\nreturn <- $CHANNEL\n"
+  - pattern: "for ... {\n  ...\n  go func(...) {\n    ...\n    select {\n      case\
+      \ ...\n      case $CHANNEL <- $VAL: ...\n      case ...\n    }\n    ...\n  }(...)\n\
+      ...\n}\n...\nreturn <- $CHANNEL\n"
+  - pattern: "go func(...){\n  ...\n  $CHANNEL <- $X\n  ...\n}(...)\n...\nselect {\n\
+      case ...\ncase $Y = <- $CHANNEL: \n...\n}\n"
+  - pattern: "go func(...){\n  ...\n  $CHANNEL <- $X\n  ...\n}(...)\n...\nselect {\n\
+      case ...\ncase $Y := <- $CHANNEL: \n...\n}\n"
+  - pattern: "go func(...){\n  ...\n  $CHANNEL <- $X\n  ...\n}(...)\n...\nselect {\n\
+      case ...\ncase <- $CHANNEL: \n...\n}\n"
+  - pattern: "go func(...){\n  ...\n  $CHANNEL <- $X\n  ...\n}(...)\n...\nselect {\n\
+      case ...\ncase $Y <- $CHANNEL: \n...\n}\n"
+- pattern-not: "for ... {\n  ...\n  go func(...) {\n    ...\n    $CHANNEL <- $VAL\n\
+    \    ...\n  }(...)\n}\n...\n$Y = <- $CHANNEL\n...\n"
+- pattern-inside: '$CHANNEL := make(...)
+
+    ...
+
+    '
+- pattern-not-inside: "...\nselect {\ncase ...\ncase ...: \n  ...\n  ... =<- $CHANNEL\n\
+    \  ...\n}\n"
+- pattern-not-inside: "...\nselect {\ncase ...\ncase ...: \n  ...\n  <-$CHANNEL\n\
+    \  ...\n}\n"
+- pattern-not-inside: '$CHANNEL := make(..., $T)
+
+    ...
+
+    '

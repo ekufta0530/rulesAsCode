@@ -1,0 +1,199 @@
+id: php.laravel.security.laravel-raw-sql-injection.laravel-raw-sql-injection
+message: Untrusted input might be used to build a database query, which can lead to
+  a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions. To build SQL
+  queries safely in PHP, it is possible to adopt prepared statements by using `PDO`
+  with bind variables using `bindParam()`.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::source::cookie::lang
+  - web::source::http-params::lang
+  - web::source::http-body::lang
+  - web::source::header::lang
+  - web::source::url-path-params::lang
+  - web::source::form-data::lang
+  - web::source::cookie::laravel
+  - web::source::http-params::laravel
+  - web::source::http-body::laravel
+  - web::source::header::laravel
+  - web::source::url-path-params::laravel
+  - web::source::form-data::laravel
+  - db::sink::sql-or-nosql-query::laravel
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://laravel.com/docs/9.x/queries
+  technology:
+  - laravel
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/php.laravel.security.laravel-raw-sql-injection.laravel-raw-sql-injection
+  shortlink: https://sg.run/Go5z
+  semgrep.dev:
+    rule:
+      r_id: 36492
+      rv_id: 111793
+      rule_id: eqUqO4
+      version_id: PkTJdNP
+      url: https://semgrep.dev/playground/r/PkTJdNP/php.laravel.security.laravel-raw-sql-injection.laravel-raw-sql-injection
+      origin: pro_rules
+languages:
+- php
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: public function $CALL(..., $ARG, ...) {...}
+  - pattern-not: public function $CALL(..., $TYPE $ARG, ...) {...}
+  - focus-metavariable: $ARG
+  - pattern-inside: 'class $CLASS extends App\Http\Controllers\Controller {...}
+
+      '
+- patterns:
+  - pattern-either:
+    - pattern: 'Route::$METHOD($ROUTE, function(...,$ARG,...) { ... })
+
+        '
+    - pattern: 'Route::$METHOD($X, $ROUTE, function(...,$ARG,...) { ... })
+
+        '
+  - focus-metavariable: $ARG
+- patterns:
+  - pattern: function handle($REQ, Closure $NEXT) {...}
+  - focus-metavariable: $REQ
+- patterns:
+  - pattern: 'function $FN(..., Illuminate\Http\Request $REQ, ...) {...}
+
+      '
+  - focus-metavariable: $REQ
+- patterns:
+  - pattern-either:
+    - pattern: '$this->$PROPERTY
+
+        '
+    - pattern: '$this->$PROPERTY->$GET
+
+        '
+  - metavariable-pattern:
+      metavariable: $PROPERTY
+      patterns:
+      - pattern-either:
+        - pattern: query
+        - pattern: request
+        - pattern: headers
+        - pattern: cookies
+        - pattern: cookie
+        - pattern: files
+        - pattern: file
+        - pattern: allFiles
+        - pattern: input
+        - pattern: all
+        - pattern: post
+        - pattern: json
+  - pattern-either:
+    - pattern-inside: 'class $CL extends Illuminate\Http\Request {...}
+
+        '
+    - pattern-inside: 'class $CL extends Illuminate\Foundation\Http\FormRequest {...}
+
+        '
+- pattern: $_GET
+- pattern: $_POST
+- pattern: $_COOKIE
+- pattern: $_REQUEST
+- pattern: $_FILES
+- patterns:
+  - pattern: $_SERVER['$MEMBER']
+  - metavariable-regex:
+      metavariable: $MEMBER
+      regex: ^(HTTP_ACCEPT|HTTP_ACCEPT_CHARSET|HTTP_ACCEPT_ENCODING|HTTP_ACCEPT_LANGUAGE|HTTP_CONNECTION|HTTP_HOST|HTTP_REFERER|HTTP_USER_AGENT|PHP_AUTH_DIGEST|PHP_AUTH_USER|PHP_AUTH_PW|PATH_INFO|ORIG_PATH_INFO|QUERY_STRING|REQUEST_METHOD)$
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: 'use $APP\Models\$MODEL;
+
+          ...
+
+          '
+      - pattern: $MODEL->$METHOD($QUERY, ...)
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern-inside: '$CON = $DB->$SMTH(...);
+
+              ...
+
+              '
+          - pattern: $CON->$METHOD($QUERY,...)
+        - pattern: $DB->$METHOD($QUERY,...)
+      - metavariable-pattern:
+          metavariable: $DB
+          pattern: Illuminate\Support\Facades\DB
+  - focus-metavariable: $QUERY
+  - pattern-not-inside: '$QUERY = $REQ->validate(...);
+
+      ...
+
+      '
+  - pattern-not-inside: '$QUERY = [...];
+
+      ...
+
+      '
+  - metavariable-pattern:
+      metavariable: $QUERY
+      patterns:
+      - pattern-not: $REQ->validate(...)
+      - pattern-not: function (...) {...}
+      - pattern-not: '[...]
+
+          '
+  - metavariable-pattern:
+      metavariable: $METHOD
+      patterns:
+      - pattern-either:
+        - pattern: selectRaw
+        - pattern: fromRaw
+        - pattern: whereRaw
+        - pattern: orWhereRaw
+        - pattern: groupByRaw
+        - pattern: havingRaw
+        - pattern: orHavingRaw
+        - pattern: orderByRaw
+        - pattern: select
+        - pattern: insert
+        - pattern: statement
+        - pattern: unprepared
+        - pattern: affectingStatement
+        - pattern: delete
+        - pattern: update
+        - pattern: selectOne
+        - pattern: raw
+        - pattern: query
+        - pattern: scalar
+        - pattern: selectFromWriteConnection
+        - pattern: cursor
+        - pattern: run
+        - pattern: runQueryCallback
+pattern-sanitizers:
+- pattern: '$X ? $Y : $Z;
+
+    '

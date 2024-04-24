@@ -1,0 +1,191 @@
+id: go.gorilla.nosql.gorilla-mongo-nosqli-taint.gorilla-mongo-nosqli-taint
+message: Untrusted input might be used to build a database query, which can lead to
+  a NoSQL injection vulnerability. An attacker can execute malicious NoSQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. Make sure all user input is validated and sanitized,
+  and avoid using tainted user input to construct NoSQL statements if possible. Ideally,
+  avoid raw queries and instead use parameterized queries.
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-943: Improper Neutralization of Special Elements in Data Query Logic'
+  functional-categories:
+  - db::sink::sql-or-nosql-query::mongo
+  - db::source::sql-or-nosql-query::mongo
+  - net::source::network-connection::gorilla
+  - web::source::cookie::gorilla
+  - web::source::form-data::gorilla
+  owasp:
+  - A01:2017 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - github.com/gorilla/rpc/v2
+  - github.com/gorilla/schema
+  - github.com/gorilla/securecookie
+  - github.com/gorilla/sessions
+  - github.com/gorilla/websocket
+  - gorilla
+  - gorilla/rpc
+  - gorilla/schema
+  - gorilla/securecookie
+  - gorilla/sessions
+  - gorilla/websocket
+  - mongo
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/go.gorilla.nosql.gorilla-mongo-nosqli-taint.gorilla-mongo-nosqli-taint
+  shortlink: https://sg.run/9B7e
+  semgrep.dev:
+    rule:
+      r_id: 59523
+      rv_id: 731859
+      rule_id: ZqU0od
+      version_id: 6xTEwv1
+      url: https://semgrep.dev/playground/r/6xTEwv1/go.gorilla.nosql.gorilla-mongo-nosqli-taint.gorilla-mongo-nosqli-taint
+      origin: pro_rules
+languages:
+- go
+mode: taint
+pattern-sources:
+- label: USER_INPUT
+  patterns:
+  - pattern-inside: 'import "github.com/gorilla/schema"
+
+      ...
+
+      '
+  - pattern-inside: '$DECODER = schema.NewDecoder()
+
+      ...
+
+      '
+  - pattern-inside: '$DECODER.Decode(&$TO, ...)
+
+      ...
+
+      '
+  - pattern: $TO
+- label: USER_INPUT
+  patterns:
+  - pattern-inside: 'import "github.com/gorilla/securecookie"
+
+      ...
+
+      '
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$COOKIE = securecookie.New(...)
+
+          ...
+
+          '
+      - pattern-inside: '$COOKIE.Decode($NAME, $C, &$VALUE)
+
+          ...
+
+          '
+    - pattern-inside: 'securecookie.DecodeMulti($NAME, $C, &$VALUE, ...)
+
+        ...
+
+        '
+  - pattern: $VALUE
+- label: USER_INPUT
+  patterns:
+  - pattern-inside: 'import "github.com/gorilla/sessions"
+
+      ...
+
+      '
+  - pattern-inside: '$STORE = sessions.NewCookieStore(...)
+
+      ...
+
+      '
+  - pattern-inside: '$SESSION, ... = $STORE.Get(...)
+
+      ...
+
+      '
+  - pattern: $SESSION.Values
+- by-side-effect: true
+  label: USER_INPUT
+  patterns:
+  - pattern-inside: 'import "github.com/gorilla/websocket"
+
+      ...
+
+      '
+  - pattern-inside: '$UPGRADER = websocket.Upgrader{...}
+
+      ...
+
+      '
+  - pattern-inside: '$CONN, ... = $UPGRADER.Upgrade(...)
+
+      ...
+
+      '
+  - pattern-either:
+    - patterns:
+      - pattern: $TYPE, $BYTES, $ERR = $CONN.$FUNC()
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(ReadMessage|ReadJSON)$
+      - focus-metavariable: $BYTES
+    - patterns:
+      - pattern-inside: '$TYPE, $READER, $ERR = $CONN.NextReader()
+
+          ...
+
+          '
+      - pattern: $READER.Read($VAR)
+      - focus-metavariable: $VAR
+    - patterns:
+      - pattern: $TYPE, $READER, $ERR = $CONN.NextReader()
+      - focus-metavariable: $READER
+- label: MONGO_CONNECT
+  pattern: mongo.Connect(...)
+- label: MONGO_DB
+  pattern: $CLIENT.Database(...)
+  requires: MONGO_CONNECT
+- label: MONGO_COLL
+  pattern: $DB.Collection(...)
+  requires: MONGO_DB
+- label: MONGO_COLL
+  pattern-either:
+  - pattern: '($COLL : *mongo.Collection)
+
+      '
+  - pattern: '($COLL : mongo.Collection)
+
+      '
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $FROM.$FUNC(&$TO)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+  to: $TO
+pattern-sinks:
+- patterns:
+  - pattern-inside: 'import "go.mongodb.org/mongo-driver/mongo"
+
+      ...
+
+      '
+  - pattern: $COLL.$FUNC(...)
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ^(Aggregate|BulkWrite|CountDocuments|DeleteMany|DeleteOne|Disctinct|Drop|EstimatedDocumentCount|Find|FindOne|FindeOneAndDelete|FindOneAndReplace|FindOneAndUpdate|InsertMany|InsertOne|ReplaceOne|UpdateByID|UpdateMany|UpdateOne|Watch)$
+  requires: MONGO_COLL and USER_INPUT

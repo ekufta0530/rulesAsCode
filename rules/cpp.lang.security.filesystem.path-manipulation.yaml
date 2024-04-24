@@ -1,0 +1,262 @@
+id: cpp.lang.security.filesystem.path-manipulation.path-manipulation
+message: The application builds a file path from potentially untrusted data, which
+  can lead to a path traversal vulnerability. An attacker can manipulate the path
+  which the application uses to access files. If the application does not validate
+  user input and sanitize file paths, sensitive files such as configuration or user
+  data can be accessed, potentially creating or overwriting files. To prevent this
+  vulnerability, validate and sanitize any input that is used to create references
+  to file paths. Also, enforce strict file access controls. For example, choose privileges
+  allowing public-facing applications to access only the required files.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - FIO02-C
+  - L2
+  cwe:
+  - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path Traversal'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - file::sink::file-access
+  - os::source::console
+  - os::source::environment
+  - web::source::http-body
+  owasp:
+  - A01:2021 - Broken Access Control
+  - A05:2017 - Broken Access Control
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  - https://owasp.org/www-community/attacks/Path_Traversal
+  - https://portswigger.net/web-security/file-path-traversal
+  - https://wiki.sei.cmu.edu/confluence/display/c/FIO02-C.+Canonicalize+path+names+originating+from+tainted+sources
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Path Traversal
+  source: https://semgrep.dev/r/cpp.lang.security.filesystem.path-manipulation.path-manipulation
+  shortlink: https://sg.run/X5gAA
+  semgrep.dev:
+    rule:
+      r_id: 114764
+      rv_id: 731844
+      rule_id: wdU9pnn
+      version_id: l4TWAQR
+      url: https://semgrep.dev/playground/r/l4TWAQR/cpp.lang.security.filesystem.path-manipulation.path-manipulation
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+pattern-sources:
+- patterns:
+  - pattern: "int main(int $ARGC, $ARGV_TY $ARGV, $ENVP_TY $ENVP) {\n  ...\n}\n"
+  - focus-metavariable: $ENVP
+- patterns:
+  - pattern: "int main(int $ARGC, $ARGV_TY $ARGV, ...) {\n  ...\n}\n"
+  - focus-metavariable: $ARGV
+- pattern-either:
+  - pattern: getenv(...)
+  - pattern: std::getenv(...)
+  - pattern: readline()
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: gets($SRC)
+    - pattern: fread($SRC, ...)
+    - pattern: fgets($SRC, ...)
+    - pattern: getline($SRC, ...)
+    - pattern: getdelim($SRC, ...)
+    - pattern: read($S_OR_FP, $SRC, ...)
+    - pattern: msgrcv($QID, $SRC, ...)
+  - focus-metavariable: $SRC
+- pattern: gets(...)
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: $X.get($SRC, ...)
+    - pattern: $X.getline($SRC, ...)
+    - pattern: $X.read($SRC, ...)
+    - pattern: $X.readsome($SRC, ...)
+  - metavariable-type:
+      metavariable: $X
+      types:
+      - basic_ifstream<$TYPE>
+      - std::basic_ifstream<$TYPE>
+      - ifstream
+      - std::ifstream
+      - wifstream
+      - std::wifstream
+      - basic_ofstream<$TYPE>
+      - std::basic_ofstream<$TYPE>
+      - ofstream
+      - std::ofstream
+      - wofstream
+      - std::wofstream
+      - basic_fstream<$TYPE>
+      - std::basic_fstream<$TYPE>
+      - fstream
+      - std::fstream
+      - wfstream
+      - std::wfstream
+      - basic_filebuf<$TYPE>
+      - std::basic_filebuf<$TYPE>
+      - filebuf
+      - std::filebuf
+      - wfilebuf
+      - std::wfilebuf
+  - focus-metavariable: $SRC
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: recv($S, $SRC, ...)
+    - pattern: recvfrom($S, $SRC, ...)
+    - pattern: recvmsg($S, $SRC, ...)
+    - patterns:
+      - pattern: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $SRC)
+      - pattern-not: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $CURL)
+  - focus-metavariable: $SRC
+- pattern: mysql_fetch_row(...)
+- by-side-effect: only
+  patterns:
+  - pattern: mysql_fetch_row_nonblocking($RESULT, &$ROW)
+  - focus-metavariable: $ROW
+- patterns:
+  - pattern: $WT->body()
+  - metavariable-type:
+      metavariable: $WT
+      types:
+      - Wt::Http::Message*
+      - Http::Message*
+      - Wt::Mail::Message*
+      - Mail::Message*
+pattern-sinks:
+- patterns:
+  - pattern-inside: "$RET $FUNC(...) {\n  ...\n}\n"
+  - patterns:
+    - pattern-either:
+      - pattern: fopen($SRC, ...)
+      - pattern: freopen($SRC, ...)
+      - pattern: remove($SRC)
+      - pattern: rename($SRC, ...)
+      - pattern: rename(..., $SRC)
+      - pattern: access($SRC, ...)
+      - pattern: open($SRC, ...)
+      - pattern: stat($SRC, ...)
+      - pattern: lstat($SRC, ...)
+      - pattern: unlink($SRC, ...)
+      - pattern: mkdir($SRC, ...)
+      - pattern: rmdir($SRC, ...)
+      - pattern: chdir($SRC, ...)
+      - pattern: folly::readFile($SRC, ...)
+      - pattern: folly::writeFile($SRC, ...)
+      - pattern: folly::writeFileAtomic($SRC, ...)
+      - pattern: folly::writeFileAtomicNoThrow($SRC, ...)
+      - pattern: folly::File($SRC, ...)
+      - patterns:
+        - pattern: $FILE.open($SRC, ...)
+        - metavariable-type:
+            metavariable: $FILE
+            types:
+            - basic_ifstream<$TYPE>
+            - std::basic_ifstream<$TYPE>
+            - ifstream
+            - std::ifstream
+            - wifstream
+            - std::wifstream
+            - basic_ofstream<$TYPE>
+            - std::basic_ofstream<$TYPE>
+            - ofstream
+            - std::ofstream
+            - wofstream
+            - std::wofstream
+            - basic_fstream<$TYPE>
+            - std::basic_fstream<$TYPE>
+            - fstream
+            - std::fstream
+            - wfstream
+            - std::wfstream
+            - basic_filebuf<$TYPE>
+            - std::basic_filebuf<$TYPE>
+            - filebuf
+            - std::filebuf
+            - wfilebuf
+            - std::wfilebuf
+      - patterns:
+        - pattern: $VAR_TYPE $VAR{($SRC), ...};
+        - metavariable-type:
+            metavariable: $VAR
+            types:
+            - basic_ifstream<$TYPE>
+            - std::basic_ifstream<$TYPE>
+            - ifstream
+            - std::ifstream
+            - wifstream
+            - std::wifstream
+            - basic_ofstream<$TYPE>
+            - std::basic_ofstream<$TYPE>
+            - ofstream
+            - std::ofstream
+            - wofstream
+            - std::wofstream
+            - basic_fstream<$TYPE>
+            - std::basic_fstream<$TYPE>
+            - fstream
+            - std::fstream
+            - wfstream
+            - std::wfstream
+            - basic_filebuf<$TYPE>
+            - std::basic_filebuf<$TYPE>
+            - filebuf
+            - std::filebuf
+            - wfilebuf
+            - std::wfilebuf
+      - patterns:
+        - pattern-either:
+          - pattern: $BFS::exists($SRC)
+          - pattern: $BFS::is_directory($SRC)
+          - pattern: $BFS::is_regular_file($SRC)
+          - pattern: $BFS::is_empty($SRC)
+          - pattern: $BFS::file_size($SRC)
+          - pattern: $BFS::create_directory($SRC)
+          - pattern: $BFS::create_directories($SRC)
+          - pattern: $BFS::remove($SRC)
+          - pattern: $BFS::remove_all($SRC)
+          - pattern: $BFS::rename($SRC, ...)
+          - pattern: $BFS::rename(..., $SRC)
+          - pattern: $BFS::copy_file($SRC, ...)
+          - pattern: $BFS::copy_file(..., $SRC)
+          - pattern: $BFS::copy($SRC)
+          - pattern: $BFS::copy_directory($SRC)
+          - pattern: $BFS::resize_file($SRC)
+          - pattern: $BFS::last_write_time($SRC)
+          - pattern: $BFS::permissions($SRC)
+          - pattern: $BFS::symlink_status($SRC)
+          - pattern: $BFS::create_symlink($SRC)
+          - pattern: $BFS::create_hard_link($SRC)
+          - pattern: $BFS::current_path($SRC)
+          - pattern: $BFS::current_path($SRC)
+          - pattern: $BFS::canonical($SRC)
+          - pattern: $BFS::absolute($SRC)
+          - pattern: $BFS::read_symlink($SRC)
+          - pattern: $BFS::equivalent($SRC)
+          - pattern: $BFS::relative($SRC)
+          - pattern: $BFS::proximate($SRC)
+          - pattern: $BFS::space($SRC)
+          - pattern: $BFS::status($SRC)
+        - metavariable-regex:
+            metavariable: $BFS
+            regex: ^((boost::)?filesystem)$
+    - focus-metavariable: $SRC

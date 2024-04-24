@@ -1,0 +1,84 @@
+id: java.servlets.security.crlf-injection-logs.crlf-injection-logs
+message: When data from an untrusted source is put into a logger and not neutralized
+  correctly, an attacker could forge log entries or include malicious content.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-93: Improper Neutralization of CRLF Sequences (''CRLF Injection'')'
+  functional-categories:
+  - web::source::cookie::Servlet
+  - web::source::http-params::Servlet
+  - web::source::http-body::Servlet
+  - web::source::header::Servlet
+  - web::source::session-properties::Servlet
+  - web::source::url-path-params::Servlet
+  - web::source::form-data::Servlet
+  - log::sink::log::log4j
+  - log::sink::log::java.util
+  owasp:
+  - A03:2021 - Injection
+  references:
+  - https://cwe.mitre.org/data/definitions/117.html
+  - https://cwe.mitre.org/data/definitions/93.html
+  - https://owasp.org/www-community/attacks/Log_Injection
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#CRLF_INJECTION_LOGS
+  technology:
+  - java
+  - servlets
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/java.servlets.security.crlf-injection-logs.crlf-injection-logs
+  shortlink: https://sg.run/k0x2
+  semgrep.dev:
+    rule:
+      r_id: 27172
+      rv_id: 111589
+      rule_id: GdUkvO
+      version_id: 3ZTkrZB
+      url: https://semgrep.dev/playground/r/3ZTkrZB/java.servlets.security.crlf-injection-logs.crlf-injection-logs
+      origin: pro_rules
+languages:
+- java
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: "(javax.servlet.http.Cookie[] $COOKIES) = (HttpServletRequest\
+          \ $REQ).getCookies(...);\n...\nfor (javax.servlet.http.Cookie $COOKIE: $COOKIES)\
+          \ {\n  ...\n}\n"
+      - pattern: '$COOKIE.getValue(...)
+
+          '
+    - patterns:
+      - pattern-inside: '$TYPE[] $VALS = (HttpServletRequest $REQ).$GETFUNC(...);
+
+          ...
+
+          '
+      - pattern: '$PARAM = $VALS[$INDEX];
+
+          '
+      - metavariable-regex:
+          metavariable: $GETFUNC
+          regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)
+pattern-sinks:
+- pattern: '(Logger $LOG).$LEVEL(...);
+
+    '
+- pattern: '$LOG.log(...);
+
+    '
+pattern-sanitizers:
+- pattern: Jsoup.clean(...)
+- pattern: new Cleaner(...).clean(...)
+- pattern: '(Cleaner $CL).clean(...)
+
+    '

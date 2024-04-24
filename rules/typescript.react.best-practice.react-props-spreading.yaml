@@ -1,0 +1,30 @@
+id: typescript.react.best-practice.react-props-spreading.react-props-spreading
+patterns:
+- pattern: <$X {...$PROPS} />
+- focus-metavariable: $PROPS
+message: It's best practice to explicitly pass props to an HTML component rather than
+  use the spread operator. The spread operator risks passing invalid HTML props to
+  an HTML element, which can cause console warnings or worse, give malicious actors
+  a way to inject unexpected attributes.
+languages:
+- typescript
+- javascript
+severity: WARNING
+metadata:
+  source-rule-url: https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-props-no-spreading.md
+  references:
+  - https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-props-no-spreading.md
+  category: best-practice
+  technology:
+  - react
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/typescript.react.best-practice.react-props-spreading.react-props-spreading
+  shortlink: https://sg.run/XL5l
+  semgrep.dev:
+    rule:
+      r_id: 9764
+      rv_id: 111084
+      rule_id: r6Uky5
+      version_id: 3ZTkr2Z
+      url: https://semgrep.dev/playground/r/3ZTkr2Z/typescript.react.best-practice.react-props-spreading.react-props-spreading
+      origin: community

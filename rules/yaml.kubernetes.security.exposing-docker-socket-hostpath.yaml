@@ -1,0 +1,39 @@
+id: yaml.kubernetes.security.exposing-docker-socket-hostpath.exposing-docker-socket-hostpath
+patterns:
+- pattern-inside: "volumes:\n  ...\n"
+- pattern: "hostPath:\n  ...\n  path: /var/run/docker.sock\n"
+message: Exposing host's Docker socket to containers via a volume. The owner of this
+  socket is root. Giving someone access to it is equivalent to giving unrestricted
+  root access to your host. Remove 'docker.sock' from hostpath to prevent this.
+metadata:
+  cwe:
+  - 'CWE-250: Execution with Unnecessary Privileges'
+  references:
+  - https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
+  - https://kubernetes.io/docs/concepts/policy/pod-security-policy/#volumes-and-file-systems
+  - https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  - https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html#rule-1-do-not-expose-the-docker-daemon-socket-even-to-the-containers
+  category: security
+  technology:
+  - kubernetes
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: HIGH
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/yaml.kubernetes.security.exposing-docker-socket-hostpath.exposing-docker-socket-hostpath
+  shortlink: https://sg.run/v0pR
+  semgrep.dev:
+    rule:
+      r_id: 10133
+      rv_id: 111129
+      rule_id: d8Uz6v
+      version_id: O9TNdEz
+      url: https://semgrep.dev/playground/r/O9TNdEz/yaml.kubernetes.security.exposing-docker-socket-hostpath.exposing-docker-socket-hostpath
+      origin: community
+languages:
+- yaml
+severity: WARNING

@@ -1,0 +1,23 @@
+id: dgryski.semgrep-go.oddcompound.odd-compound-expression
+patterns:
+- pattern-either:
+  - pattern: $X += $X + $Y
+  - pattern: $X += $X - $Y
+  - pattern: $X -= $X + $Y
+  - pattern: $X -= $X - $Y
+message: Odd compound += or -= expression
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.oddcompound.odd-compound-expression
+  shortlink: https://sg.run/RoNY
+  semgrep.dev:
+    rule:
+      r_id: 8705
+      rv_id: 11993
+      rule_id: X5U8oq
+      version_id: vdTj4x
+      url: https://semgrep.dev/playground/r/vdTj4x/dgryski.semgrep-go.oddcompound.odd-compound-expression
+      origin: community

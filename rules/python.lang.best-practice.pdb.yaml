@@ -1,0 +1,23 @@
+id: python.lang.best-practice.pdb.python-debugger-found
+pattern-either:
+- pattern: import pdb
+- pattern: pdb.set_trace()
+message: Importing the python debugger; did you mean to leave this in?
+severity: WARNING
+languages:
+- python
+metadata:
+  category: best-practice
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.best-practice.pdb.python-debugger-found
+  shortlink: https://sg.run/b7NE
+  semgrep.dev:
+    rule:
+      r_id: 9570
+      rv_id: 110303
+      rule_id: v8Un2J
+      version_id: l4T4vP7
+      url: https://semgrep.dev/playground/r/l4T4vP7/python.lang.best-practice.pdb.python-debugger-found
+      origin: community

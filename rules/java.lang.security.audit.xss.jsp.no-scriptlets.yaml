@@ -1,0 +1,41 @@
+id: java.lang.security.audit.xss.jsp.no-scriptlets.no-scriptlets
+message: JSP scriptlet detected. Scriptlets are difficult to use securely and are
+  considered bad practice. See https://stackoverflow.com/a/3180202. Instead, consider
+  migrating to JSF or using the Expression Language '${...}' with the escapeXml function
+  in your JSP files.
+metadata:
+  owasp:
+  - A03:2021 - Injection
+  cwe:
+  - 'CWE-116: Improper Encoding or Escaping of Output'
+  references:
+  - https://stackoverflow.com/a/3180202
+  - https://stackoverflow.com/a/4948856
+  category: security
+  technology:
+  - jsp
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Encoding
+  source: https://semgrep.dev/r/java.lang.security.audit.xss.jsp.no-scriptlets.no-scriptlets
+  shortlink: https://sg.run/l2LG
+  semgrep.dev:
+    rule:
+      r_id: 9213
+      rv_id: 109746
+      rule_id: 9AU1Pq
+      version_id: pZT1yZb
+      url: https://semgrep.dev/playground/r/pZT1yZb/java.lang.security.audit.xss.jsp.no-scriptlets.no-scriptlets
+      origin: community
+pattern-regex: \<\%[^\@].*
+paths:
+  include:
+  - '*.jsp'
+languages:
+- regex
+severity: WARNING

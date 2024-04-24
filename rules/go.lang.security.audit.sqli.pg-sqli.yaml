@@ -1,0 +1,87 @@
+id: go.lang.security.audit.sqli.pg-sqli.pg-sqli
+languages:
+- go
+message: 'Detected string concatenation with a non-literal variable in a go-pg SQL
+  statement. This could lead to SQL injection if the variable is user-controlled and
+  not properly sanitized. In order to prevent SQL injection, use parameterized queries
+  instead of string concatenation. You can use parameterized queries like so: ''(SELECT
+  ? FROM table, data1)'''
+metadata:
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  references:
+  - https://pg.uptrace.dev/
+  - https://pkg.go.dev/github.com/go-pg/pg/v10
+  category: security
+  technology:
+  - go-pg
+  confidence: LOW
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/go.lang.security.audit.sqli.pg-sqli.pg-sqli
+  shortlink: https://sg.run/Al94
+  semgrep.dev:
+    rule:
+      r_id: 10294
+      rv_id: 109628
+      rule_id: AbUWXY
+      version_id: PkTJ1lw
+      url: https://semgrep.dev/playground/r/PkTJ1lw/go.lang.security.audit.sqli.pg-sqli.pg-sqli
+      origin: community
+severity: ERROR
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern: '$DB.$METHOD(...,$QUERY,...)
+
+        '
+    - pattern-either:
+      - pattern-inside: '$QUERY = $X + $Y
+
+          ...
+
+          '
+      - pattern-inside: '$QUERY += $X
+
+          ...
+
+          '
+      - pattern-inside: '$QUERY = fmt.Sprintf("...", $PARAM1, ...)
+
+          ...
+
+          '
+    - pattern-not-inside: '$QUERY += "..."
+
+        ...
+
+        '
+    - pattern-not-inside: '$QUERY = "..." + "..."
+
+        ...
+
+        '
+  - pattern: $DB.$METHOD(..., $X + $Y, ...)
+  - pattern: $DB.$METHOD(..., fmt.Sprintf("...", $PARAM1, ...), ...)
+- pattern-either:
+  - pattern-inside: '$DB = pg.Connect(...)
+
+      ...
+
+      '
+  - pattern-inside: "func $FUNCNAME(..., $DB *pg.DB, ...) {\n  ...\n}\n"
+- pattern-not: $DB.$METHOD(..., "..." + "...", ...)
+- metavariable-regex:
+    metavariable: $METHOD
+    regex: ^(Exec|ExecContext|ExecOne|ExecOneContext|Query|QueryOne|QueryContext|QueryOneContext)$

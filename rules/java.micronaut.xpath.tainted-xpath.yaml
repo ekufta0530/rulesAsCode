@@ -1,0 +1,107 @@
+id: java.micronaut.xpath.tainted-xpath.tainted-xpath
+message: XPath queries are constructed dynamically on user-controlled input. This
+  could lead to XPath injection if variables passed into the evaluate or compile commands
+  are not properly sanitized. Xpath injection could lead to unauthorized access to
+  sensitive information in XML documents. Thoroughly sanitize user input or use parameterized
+  XPath queries if you can.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-643: Improper Neutralization of Data within XPath Expressions (''XPath Injection'')'
+  functional-categories:
+  - web::source::cookie::Micronaut
+  - web::source::form-data::Micronaut
+  - web::source::header::Micronaut
+  - web::source::http-body::Micronaut
+  - web::source::http-params::Micronaut
+  - web::source::url-path-params::Micronaut
+  - xml::sink::xpath::javax.xml
+  owasp:
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - Micronaut
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - XPath Injection
+  source: https://semgrep.dev/r/java.micronaut.xpath.tainted-xpath.tainted-xpath
+  shortlink: https://sg.run/BY03b
+  semgrep.dev:
+    rule:
+      r_id: 125207
+      rv_id: 735020
+      rule_id: r6Uy8qp
+      version_id: PkT0lv5
+      url: https://semgrep.dev/playground/r/PkT0lv5/java.micronaut.xpath.tainted-xpath.tainted-xpath
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- patterns:
+  - pattern: '@io.micronaut.http.annotation.$METHOD(...)
+
+      $T $FUNC(..., $TYPE $SOURCE, ...) {...}
+
+      '
+  - focus-metavariable: $SOURCE
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (Delete|Get|Head|Options|Patch|Put|Post|Trace|CustomHttpMethod)
+  - metavariable-pattern:
+      metavariable: $TYPE
+      patterns:
+      - patterns:
+        - pattern-not-regex: ^Session$
+- patterns:
+  - pattern-either:
+    - pattern: (io.micronaut.http.HttpRequest<$ANY> $REQ).$PARAM(...)
+    - pattern: (io.micronaut.http.HttpRequest<?> $REQ).$PARAM(...)
+    - pattern: (io.micronaut.http.HttpRequest $REQ).$PARAM(...)
+  - metavariable-pattern:
+      metavariable: $PARAM
+      patterns:
+      - patterns:
+        - pattern-either:
+          - pattern: getCookies
+          - pattern: getLocale
+          - pattern: getParameters
+          - pattern: getPath
+          - pattern: getUri
+          - pattern: getBody
+          - pattern: getContentType
+          - pattern: getHeaders
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $EXPR
+  - pattern-either:
+    - pattern: (javax.xml.xpath.XPath $XP).evaluate($EXPR, ...)
+    - pattern: (javax.xml.xpath.XPath $XP).evaluateExpression($EXPR, ...)
+    - pattern: (javax.xml.xpath.XPath $XP).compile($EXPR, ...)
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)

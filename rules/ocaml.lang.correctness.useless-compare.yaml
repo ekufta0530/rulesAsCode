@@ -1,0 +1,26 @@
+id: ocaml.lang.correctness.useless-compare.useless-compare
+patterns:
+- pattern-either:
+  - pattern: compare $X $X
+  - pattern: $MODULE.compare $X $X
+message: This comparison is useless because the expressions being compared are identical.
+  This is expected to always return the same result, 0, unless your code is really
+  strange.
+languages:
+- ocaml
+severity: ERROR
+metadata:
+  category: correctness
+  technology:
+  - ocaml
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ocaml.lang.correctness.useless-compare.useless-compare
+  shortlink: https://sg.run/RyvO
+  semgrep.dev:
+    rule:
+      r_id: 16249
+      rv_id: 110019
+      rule_id: JDU6Gv
+      version_id: e1T01jG
+      url: https://semgrep.dev/playground/r/e1T01jG/ocaml.lang.correctness.useless-compare.useless-compare
+      origin: community

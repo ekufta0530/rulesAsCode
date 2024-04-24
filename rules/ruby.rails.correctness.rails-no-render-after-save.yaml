@@ -1,0 +1,42 @@
+id: ruby.rails.correctness.rails-no-render-after-save.rails-no-render-after-save
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: $T
+  - pattern-inside: '$T.save
+
+      ...
+
+      '
+pattern-sinks:
+- patterns:
+  - pattern-inside: 'render $T
+
+      '
+message: Found a call to `render $T` after calling `$T.save`. Do not call `render`
+  after calling `save` on an ActiveRecord object. Reloading the page will cause the
+  state-changing operation to be repeated which may cause undesirable side effects.
+  Use `redirect_to` instead.
+languages:
+- ruby
+severity: WARNING
+fix: redirect_to $T
+metadata:
+  references:
+  - https://guides.rubyonrails.org/getting_started.html#creating-a-new-article
+  category: correctness
+  technology:
+  - rails
+  - ruby
+  - activerecord
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ruby.rails.correctness.rails-no-render-after-save.rails-no-render-after-save
+  shortlink: https://sg.run/QJLx
+  semgrep.dev:
+    rule:
+      r_id: 20042
+      rv_id: 110547
+      rule_id: PeUjzK
+      version_id: K3TvGbQ
+      url: https://semgrep.dev/playground/r/K3TvGbQ/ruby.rails.correctness.rails-no-render-after-save.rails-no-render-after-save
+      origin: community

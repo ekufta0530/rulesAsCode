@@ -1,0 +1,127 @@
+id: swift.webview.webview-fileaccess.swift-webview-config-allows-file-access
+message: Webviews were observed that do not disable access to application files. If
+  the WebView does not require loading content from the local filesystem of the application,
+  this setting should be disabled.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-272: Least Privilege Violation'
+  functional-categories:
+  - mobile::search::privacy-controls-and-permissions::lang
+  masvs:
+  - 'MASVS-PLATFORM-2: The app uses WebViews securely'
+  references:
+  - https://mas.owasp.org/MASVS/controls/MASVS-PLATFORM-2/
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.webview.webview-fileaccess.swift-webview-config-allows-file-access
+  shortlink: https://sg.run/A2DB
+  semgrep.dev:
+    rule:
+      r_id: 66506
+      rv_id: 112039
+      rule_id: ReUGpd
+      version_id: e1T03ne
+      url: https://semgrep.dev/playground/r/e1T03ne/swift.webview.webview-fileaccess.swift-webview-config-allows-file-access
+      origin: pro_rules
+languages:
+- swift
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-inside: '(WKWebView: $W).configuration.preferences.setValue($FALSE,
+            forKey: "allowFileAccessFromFileURLs")
+
+            ...
+
+            (WKWebView: $W).configuration.preferences.setValue($TRUE, forKey: "allowFileAccessFromFileURLs")
+
+            '
+        - pattern-not-inside: '...
+
+            (WKWebView: $W).configuration.preferences.setValue($TRUE, forKey: "allowFileAccessFromFileURLs")
+
+            ...
+
+            (WKWebView: $W).configuration.preferences.setValue($FALSE, forKey: "allowFileAccessFromFileURLs")
+
+            '
+        - pattern: '(WKWebView: $W).configuration.preferences.setValue(true, forKey:
+            "allowFileAccessFromFileURLs")
+
+            '
+        - metavariable-regex:
+            metavariable: $TRUE
+            regex: ^(true)$
+        - metavariable-regex:
+            metavariable: $TRUE
+            regex: (.*(?!true))
+      - patterns:
+        - pattern: '(WKWebView: $W).configuration.preferences.setValue(true, forKey:
+            "allowFileAccessFromFileURLs")
+
+            '
+        - pattern-not-inside: '...
+
+            (WKWebView: $W).configuration.preferences.setValue(..., forKey: "allowFileAccessFromFileURLs")
+
+            ...
+
+            (WKWebView: $W).configuration.preferences.setValue(..., forKey: "allowFileAccessFromFileURLs")
+
+            '
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-inside: '(WKPreferences: $W).setValue($FALSE, forKey: "allowFileAccessFromFileURLs")
+
+            ...
+
+            (WKPreferences: $W).setValue($TRUE, forKey: "allowFileAccessFromFileURLs")
+
+            '
+        - pattern-not-inside: '...
+
+            (WKPreferences: $W).setValue($TRUE, forKey: "allowFileAccessFromFileURLs")
+
+            ...
+
+            (WKPreferences: $W).setValue($FALSE, forKey: "allowFileAccessFromFileURLs")
+
+            '
+        - pattern: '(WKPreferences: $W).setValue(true, forKey: "allowFileAccessFromFileURLs")
+
+            '
+        - metavariable-regex:
+            metavariable: $TRUE
+            regex: ^(true)$
+        - metavariable-regex:
+            metavariable: $TRUE
+            regex: (.*(?!true))
+      - patterns:
+        - pattern: '(WKPreferences: $W).setValue(true, forKey:
+
+            "allowFileAccessFromFileURLs")
+
+            '
+        - pattern-not-inside: '...
+
+            (WKPreferences: $W).setValue(..., forKey: "allowFileAccessFromFileURLs")
+
+            ...
+
+            (WKPreferences: $W).setValue(..., forKey: "allowFileAccessFromFileURLs")
+
+            '

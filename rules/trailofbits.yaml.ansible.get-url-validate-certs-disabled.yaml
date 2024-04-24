@@ -1,0 +1,50 @@
+id: trailofbits.yaml.ansible.get-url-validate-certs-disabled.get-url-validate-certs-disabled
+message: Found file download with SSL verification disabled
+languages:
+- yaml
+severity: WARNING
+metadata:
+  category: security
+  cwe: 'CWE-295: Improper Certificate Validation'
+  subcategory:
+  - audit
+  technology:
+  - ansible
+  confidence: HIGH
+  likelihood: HIGH
+  impact: HIGH
+  references:
+  - https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html#parameter-validate_certs
+  - https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_get_url_module.html#parameter-validate_certs
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - Improper Authentication
+  source: https://semgrep.dev/r/trailofbits.yaml.ansible.get-url-validate-certs-disabled.get-url-validate-certs-disabled
+  shortlink: https://sg.run/Or0N7
+  semgrep.dev:
+    rule:
+      r_id: 113231
+      rv_id: 253302
+      rule_id: KxUvKPQ
+      version_id: WrTOxK1
+      url: https://semgrep.dev/playground/r/WrTOxK1/trailofbits.yaml.ansible.get-url-validate-certs-disabled.get-url-validate-certs-disabled
+      origin: community
+patterns:
+- pattern-inside: "$GETURL:\n  ...\n  url: ...\n  ...\n"
+- pattern-not-inside: "$GETURL:\n  ...\n  checksum: ...\n  ...\n"
+- metavariable-pattern:
+    metavariable: $GETURL
+    pattern-either:
+    - pattern: get_url
+    - pattern: win_get_url
+    - pattern: ansible.builtin.get_url
+    - pattern: ansible.windows.win_get_url
+- pattern: '$KEY: $VALUE'
+- metavariable-pattern:
+    metavariable: $KEY
+    pattern-either:
+    - pattern: validate_certs
+- metavariable-pattern:
+    metavariable: $VALUE
+    pattern-either:
+    - pattern: 'false'

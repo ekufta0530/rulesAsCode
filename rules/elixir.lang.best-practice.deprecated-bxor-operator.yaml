@@ -1,0 +1,25 @@
+id: elixir.lang.best-practice.deprecated-bxor-operator.deprecated_bxor_operator
+message: The bitwise operator (`^^^`) is already deprecated. Please use `Bitwise.bxor($LEFT,
+  $RIGHT)` instead.
+severity: WARNING
+languages:
+- elixir
+pattern: $LEFT ^^^ $RIGHT
+fix: Bitwise.bxor($LEFT, $RIGHT)
+metadata:
+  references:
+  - https://github.com/elixir-lang/elixir/commit/c9a171da5b25e0eb5d1da3b04c622f8b79a8aff4
+  category: best-practice
+  technology:
+  - elixir
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/elixir.lang.best-practice.deprecated-bxor-operator.deprecated_bxor_operator
+  shortlink: https://sg.run/yB7r
+  semgrep.dev:
+    rule:
+      r_id: 67424
+      rv_id: 109261
+      rule_id: YGU0ew
+      version_id: 7ZTgoXx
+      url: https://semgrep.dev/playground/r/7ZTgoXx/elixir.lang.best-practice.deprecated-bxor-operator.deprecated_bxor_operator
+      origin: community

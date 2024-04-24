@@ -1,0 +1,48 @@
+id: python.lang.best-practice.logging-error-without-handling.logging-error-without-handling
+patterns:
+- pattern-inside: "try:\n  ...\nexcept ...:\n  ...\n...\n"
+- pattern-either:
+  - pattern: 'logger.$FUNC(...)
+
+      ...
+
+      raise
+
+      '
+  - pattern: 'logger.$FUNC(...)
+
+      ...
+
+      raise $EX
+
+      '
+  - pattern: 'logger.$FUNC(...)
+
+      ...
+
+      raise $EX from $EX2
+
+      '
+- metavariable-regex:
+    metavariable: $FUNC
+    regex: (error|exception)
+message: Errors should only be logged when handled. The code logs the error and propogates
+  the exception, consider reducing the level to warning or info.
+languages:
+- python
+severity: WARNING
+metadata:
+  category: best-practice
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.best-practice.logging-error-without-handling.logging-error-without-handling
+  shortlink: https://sg.run/jzwl
+  semgrep.dev:
+    rule:
+      r_id: 15821
+      rv_id: 110294
+      rule_id: 10U5dA
+      version_id: GxTv6wN
+      url: https://semgrep.dev/playground/r/GxTv6wN/python.lang.best-practice.logging-error-without-handling.logging-error-without-handling
+      origin: community

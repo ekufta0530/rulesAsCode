@@ -1,0 +1,51 @@
+id: terraform.azure.security.appservice.appservice-enable-https-only.appservice-enable-https-only
+message: By default, clients can connect to App Service by using both HTTP or HTTPS.
+  HTTP should be disabled enabling the HTTPS Only setting.
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_app_service\" \"...\" {\n...\n  https_only\
+    \ = true\n...\n}\n"
+- pattern-either:
+  - pattern-inside: 'resource "azurerm_app_service" "..." {
+
+      ...
+
+      }
+
+      '
+  - pattern-inside: "resource \"azurerm_app_service\" \"...\" {\n...\n  https_only\
+      \ = false\n...\n}\n"
+metadata:
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service#https_only
+  - https://docs.microsoft.com/en-us/azure/app-service/configure-ssl-bindings#enforce-https
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/terraform.azure.security.appservice.appservice-enable-https-only.appservice-enable-https-only
+  shortlink: https://sg.run/GOKp
+  semgrep.dev:
+    rule:
+      r_id: 15104
+      rv_id: 110867
+      rule_id: qNUXwx
+      version_id: kbTdLYJ
+      url: https://semgrep.dev/playground/r/kbTdLYJ/terraform.azure.security.appservice.appservice-enable-https-only.appservice-enable-https-only
+      origin: community
+languages:
+- hcl
+severity: ERROR

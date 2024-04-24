@@ -1,0 +1,59 @@
+id: php.symfony.security.audit.symfony-csrf-protection-disabled.symfony-csrf-protection-disabled
+patterns:
+- pattern-either:
+  - pattern: $X->createForm($TYPE, $TASK, [..., 'csrf_protection' => false, ...],
+      ...)
+  - pattern: $X->prependExtensionConfig('framework', [..., 'csrf_protection' => false,
+      ...], ...)
+  - pattern: $X->loadFromExtension('framework', [..., 'csrf_protection' => false,
+      ...], ...)
+  - pattern: $X->setDefaults([..., 'csrf_protection' => false, ...], ...)
+  - patterns:
+    - pattern-either:
+      - pattern: $X->createForm($TYPE, $TASK, [..., 'csrf_protection' => $VAL, ...],
+          ...)
+      - pattern: $X->prependExtensionConfig('framework', [..., 'csrf_protection' =>
+          $VAL, ...], ...)
+      - pattern: $X->loadFromExtension('framework', [..., 'csrf_protection' => $VAL,
+          ...], ...)
+      - pattern: $X->setDefaults([..., 'csrf_protection' => $VAL, ...], ...)
+    - pattern-inside: '$VAL = false;
+
+        ...
+
+        '
+message: CSRF protection is disabled for this configuration. This is a security risk.
+  Make sure that it is safe or consider setting `csrf_protection` property to `true`.
+metadata:
+  references:
+  - https://symfony.com/doc/current/security/csrf.html
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  owasp:
+  - A01:2021 - Broken Access Control
+  category: security
+  technology:
+  - symfony
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/php.symfony.security.audit.symfony-csrf-protection-disabled.symfony-csrf-protection-disabled
+  shortlink: https://sg.run/N1gz
+  semgrep.dev:
+    rule:
+      r_id: 13971
+      rv_id: 110073
+      rule_id: d8UeKO
+      version_id: QkTW0OD
+      url: https://semgrep.dev/playground/r/QkTW0OD/php.symfony.security.audit.symfony-csrf-protection-disabled.symfony-csrf-protection-disabled
+      origin: community
+languages:
+- php
+severity: WARNING

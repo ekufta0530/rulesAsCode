@@ -1,0 +1,24 @@
+id: yaml.gitlab.correctness.changes-with-when-never.changes-with-when-never
+pattern: "- changes:\n  - ...\n  when: never\n"
+message: 'This Gitlab CI YAML will never run on default branches due to a `changes`
+  rule with `when:never`. To fix this, make sure the triggering event is a push event.
+  You can do this with `if: ''$CI_PIPELINE_SOURCE == "push"''`. See https://docs.gitlab.com/ee/ci/yaml/index.html#ruleschanges'
+metadata:
+  category: correctness
+  technology:
+  - gitlab
+  - gitlab-ci
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.gitlab.correctness.changes-with-when-never.changes-with-when-never
+  shortlink: https://sg.run/Q9PQ
+  semgrep.dev:
+    rule:
+      r_id: 15086
+      rv_id: 111123
+      rule_id: 7KUv9A
+      version_id: rxTy4lB
+      url: https://semgrep.dev/playground/r/rxTy4lB/yaml.gitlab.correctness.changes-with-when-never.changes-with-when-never
+      origin: community
+languages:
+- yaml
+severity: WARNING

@@ -1,0 +1,29 @@
+id: c.lang.correctness.incorrect-use-ato-fn.incorrect-use-ato-fn
+pattern-either:
+- pattern: atoi(...)
+- pattern: atol(...)
+- pattern: atoll(...)
+message: Avoid the 'ato*()' family of functions. Their use can lead to undefined behavior,
+  integer overflows, and lack of appropriate error handling. Instead prefer the 'strtol*()'
+  family of functions.
+metadata:
+  references:
+  - https://stackoverflow.com/q/38393162
+  - https://stackoverflow.com/q/14176123
+  category: correctness
+  technology:
+  - c
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/c.lang.correctness.incorrect-use-ato-fn.incorrect-use-ato-fn
+  shortlink: https://sg.run/x1N0
+  semgrep.dev:
+    rule:
+      r_id: 8830
+      rv_id: 109003
+      rule_id: 4bUkN4
+      version_id: bZTb19Z
+      url: https://semgrep.dev/playground/r/bZTb19Z/c.lang.correctness.incorrect-use-ato-fn.incorrect-use-ato-fn
+      origin: community
+languages:
+- c
+severity: WARNING

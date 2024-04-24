@@ -1,0 +1,184 @@
+id: php.laravel.security.laravel-path-traversal.laravel-path-traversal
+message: The application builds a file path from potentially untrusted data, which
+  can lead to a path traversal vulnerability. An attacker can manipulate the file
+  path which the application uses to access files. If the application does not validate
+  user input and sanitize file paths, sensitive files such as configuration or user
+  data can be accessed, potentially creating or overwriting files. In PHP, this can
+  lead to both local file inclusion (LFI) or remote file inclusion (RFI) if user input
+  reaches this statement. To prevent this vulnerability, validate and sanitize any
+  input that is used to create references to file paths. Also, enforce strict file
+  access controls. For example, choose privileges allowing public-facing applications
+  to access only the required files.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path Traversal'')'
+  functional-categories:
+  - web::source::cookie::lang
+  - web::source::http-params::lang
+  - web::source::http-body::lang
+  - web::source::header::lang
+  - web::source::url-path-params::lang
+  - web::source::form-data::lang
+  - web::source::cookie::laravel
+  - web::source::http-params::laravel
+  - web::source::http-body::laravel
+  - web::source::header::laravel
+  - web::source::url-path-params::laravel
+  - web::source::form-data::laravel
+  - file::sink::file-access::laravel
+  - file::sink::file-access::lang
+  owasp:
+  - A06:2017 - Security Misconfiguration
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Laravel_Cheat_Sheet.md#path-traversal
+  technology:
+  - laravel
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Path Traversal
+  source: https://semgrep.dev/r/php.laravel.security.laravel-path-traversal.laravel-path-traversal
+  shortlink: https://sg.run/5v1K
+  semgrep.dev:
+    rule:
+      r_id: 36491
+      rv_id: 111792
+      rule_id: OrUBb8
+      version_id: 44TR6rr
+      url: https://semgrep.dev/playground/r/44TR6rr/php.laravel.security.laravel-path-traversal.laravel-path-traversal
+      origin: pro_rules
+languages:
+- php
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: public function $CALL(..., $ARG, ...) {...}
+  - pattern-not: public function $CALL(..., $TYPE $ARG, ...) {...}
+  - focus-metavariable: $ARG
+  - pattern-inside: 'class $CLASS extends App\Http\Controllers\Controller {...}
+
+      '
+- patterns:
+  - pattern-either:
+    - pattern: 'Route::$METHOD($ROUTE, function(...,$ARG,...) { ... })
+
+        '
+    - pattern: 'Route::$METHOD($X, $ROUTE, function(...,$ARG,...) { ... })
+
+        '
+  - focus-metavariable: $ARG
+- patterns:
+  - pattern: function handle($REQ, Closure $NEXT) {...}
+  - focus-metavariable: $REQ
+- patterns:
+  - pattern: 'function $FN(..., Illuminate\Http\Request $REQ, ...) {...}
+
+      '
+  - focus-metavariable: $REQ
+- patterns:
+  - pattern-either:
+    - pattern: '$this->$PROPERTY
+
+        '
+    - pattern: '$this->$PROPERTY->$GET
+
+        '
+  - metavariable-pattern:
+      metavariable: $PROPERTY
+      patterns:
+      - pattern-either:
+        - pattern: query
+        - pattern: request
+        - pattern: headers
+        - pattern: cookies
+        - pattern: cookie
+        - pattern: files
+        - pattern: file
+        - pattern: allFiles
+        - pattern: input
+        - pattern: all
+        - pattern: post
+        - pattern: json
+  - pattern-either:
+    - pattern-inside: 'class $CL extends Illuminate\Http\Request {...}
+
+        '
+    - pattern-inside: 'class $CL extends Illuminate\Foundation\Http\FormRequest {...}
+
+        '
+- pattern: $_GET
+- pattern: $_POST
+- pattern: $_COOKIE
+- pattern: $_REQUEST
+- pattern: $_FILES
+- patterns:
+  - pattern: $_SERVER['$MEMBER']
+  - metavariable-regex:
+      metavariable: $MEMBER
+      regex: ^(HTTP_ACCEPT|HTTP_ACCEPT_CHARSET|HTTP_ACCEPT_ENCODING|HTTP_ACCEPT_LANGUAGE|HTTP_CONNECTION|HTTP_HOST|HTTP_REFERER|HTTP_USER_AGENT|PHP_AUTH_DIGEST|PHP_AUTH_USER|PHP_AUTH_PW|PATH_INFO|ORIG_PATH_INFO|QUERY_STRING|REQUEST_METHOD)$
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'function $FN(..., Illuminate\Http\Request $REQ, ...) {...}
+
+        '
+    - pattern-inside: 'function handle($REQ, Closure $NEXT) {...}
+
+        '
+  - pattern-either:
+    - pattern: $REQ->file(...)->...->hashName($FILE,...)
+    - pattern: $REQ->file(...)->...->store($FILE,...)
+    - pattern: $REQ->file(...)->...->storePublicly($FILE,...)
+    - pattern: $REQ->file(...)->...->storePubliclyAs($FILE,...)
+    - pattern: $REQ->file(...)->...->storeAs($FILE,...)
+    - patterns:
+      - pattern-inside: '$X = $REQ->file(...);
+
+          ...
+
+          '
+      - pattern-either:
+        - pattern: $X->hashName($FILE,...)
+        - pattern: $X->store($FILE,...)
+        - pattern: $X->storePublicly($FILE,...)
+        - pattern: $X->storePubliclyAs($FILE,...)
+        - pattern: $X->storeAs($FILE,...)
+  - focus-metavariable: $FILE
+- patterns:
+  - pattern-either:
+    - pattern: response(...)->...->download($FILE,...)
+    - pattern: Illuminate\Routing\ResponseFactory->download($FILE,...)
+  - focus-metavariable: $FILE
+- patterns:
+  - pattern-either:
+    - pattern: include($FILE)
+    - pattern: include_once($FILE)
+    - pattern: parsekit_compile_file($FILE,...)
+    - pattern: php_check_syntax($FILE,...)
+    - pattern: require($FILE)
+    - pattern: require_once($FILE)
+    - pattern: runkit_import($FILE,...)
+    - pattern: set_include_path($FILE,...)
+    - pattern: virtual($FILE,...)
+  - focus-metavariable: $FILE
+pattern-sanitizers:
+- pattern: basename(...)
+- pattern: dirname(...)
+- pattern: pathinfo(...)
+- pattern: $APP\Models\$MODEL->$CALL(...)
+- pattern: $APP\Models\$MODEL->$FN(...)->...->$CALL(...)
+- pattern: $APP\Model\$MODEL->$CALL(...)
+- pattern: $APP\Model\$MODEL->$FN(...)->...->$CALL(...)
+- pattern: $APP\Models\$CN\$MODEL->$CALL(...)
+- pattern: $APP\Models\$CN\$MODEL->$FN(...)->...->$CALL(...)
+- pattern: $APP\Model\$CN\$MODEL->$CALL(...)
+- pattern: $APP\Model\$CN\$MODEL->$FN(...)->...->$CALL(...)
+- pattern: $X->where(...)
+- pattern: $X->find(...)

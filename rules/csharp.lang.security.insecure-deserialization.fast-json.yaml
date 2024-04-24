@@ -1,0 +1,44 @@
+id: csharp.lang.security.insecure-deserialization.fast-json.insecure-fastjson-deserialization
+severity: WARNING
+languages:
+- C#
+metadata:
+  cwe:
+  - 'CWE-502: Deserialization of Untrusted Data'
+  owasp:
+  - A08:2017 - Insecure Deserialization
+  - A08:2021 - Software and Data Integrity Failures
+  references:
+  - https://github.com/mgholam/fastJSON#security-warning-update
+  category: security
+  technology:
+  - .net
+  confidence: LOW
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/csharp.lang.security.insecure-deserialization.fast-json.insecure-fastjson-deserialization
+  shortlink: https://sg.run/nqnd
+  semgrep.dev:
+    rule:
+      r_id: 11136
+      rv_id: 109202
+      rule_id: NbUAwk
+      version_id: 9lTdWqB
+      url: https://semgrep.dev/playground/r/9lTdWqB/csharp.lang.security.insecure-deserialization.fast-json.insecure-fastjson-deserialization
+      origin: community
+message: $type extension has the potential to be unsafe, so use it with common sense
+  and known json sources and not public facing ones to be safe
+patterns:
+- pattern-inside: 'using fastJSON;
+
+    ...
+
+    '
+- pattern: "new JSONParameters\n{\n  BadListTypeChecking = false\n}\n"

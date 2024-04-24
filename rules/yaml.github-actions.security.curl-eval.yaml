@@ -1,0 +1,58 @@
+id: yaml.github-actions.security.curl-eval.curl-eval
+languages:
+- yaml
+message: Data is being eval'd from a `curl` command. An attacker with control of the
+  server in the `curl` command could inject malicious code into the `eval`, resulting
+  in a system comrpomise. Avoid eval'ing untrusted data if you can. If you must do
+  this, consider checking the SHA sum of the content returned by the server to verify
+  its integrity.
+metadata:
+  category: security
+  cwe:
+  - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+    Command Injection'')'
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#understanding-the-risk-of-script-injections
+  technology:
+  - github-actions
+  - bash
+  - curl
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Command Injection
+  source: https://semgrep.dev/r/yaml.github-actions.security.curl-eval.curl-eval
+  shortlink: https://sg.run/9r7r
+  semgrep.dev:
+    rule:
+      r_id: 14967
+      rv_id: 111116
+      rule_id: X5Udrd
+      version_id: pZT1Le2
+      url: https://semgrep.dev/playground/r/pZT1Le2/yaml.github-actions.security.curl-eval.curl-eval
+      origin: community
+patterns:
+- pattern-inside: 'steps: [...]'
+- pattern-inside: "- run: ...\n  ...\n"
+- pattern: 'run: $SHELL'
+- metavariable-pattern:
+    language: bash
+    metavariable: $SHELL
+    patterns:
+    - pattern: '$DATA=<... curl ...>
+
+        ...
+
+        eval <... $DATA ...>
+
+        '
+severity: ERROR

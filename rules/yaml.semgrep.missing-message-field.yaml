@@ -1,0 +1,29 @@
+id: yaml.semgrep.missing-message-field.missing-message-field
+message: This rule does not have a message. Semgrep requires that rules have a message.
+  Include a message to explain what the rule does. Consider writing a message that
+  explains why this is an issue and how to fix it.
+languages:
+- yaml
+patterns:
+- pattern-inside: 'rules: [..., $RULE, ...]'
+- pattern: 'id: $RULEID'
+- pattern-not-inside: "- ...\n  message: ...\n"
+- pattern-not-inside: "- ...\n  mode: extract\n"
+severity: WARNING
+metadata:
+  category: correctness
+  technology:
+  - semgrep
+  references:
+  - https://semgrep.dev/docs/writing-rules/rule-syntax/
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.missing-message-field.missing-message-field
+  shortlink: https://sg.run/nqEg
+  semgrep.dev:
+    rule:
+      r_id: 11080
+      rv_id: 111180
+      rule_id: kxURJG
+      version_id: 7ZTgnP3
+      url: https://semgrep.dev/playground/r/7ZTgnP3/yaml.semgrep.missing-message-field.missing-message-field
+      origin: community

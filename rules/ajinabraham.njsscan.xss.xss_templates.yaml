@@ -1,0 +1,23 @@
+id: ajinabraham.njsscan.xss.xss_templates.squirrelly_autoescape
+pattern: $X.autoEscaping(false)
+message: Handlebars SafeString will not escape the data passed through it. Untrusted
+  user input passing through SafeString can cause XSS.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a1
+  cwe: cwe-79
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.xss.xss_templates.squirrelly_autoescape
+  shortlink: https://sg.run/lA6y
+  semgrep.dev:
+    rule:
+      r_id: 43713
+      rv_id: 78317
+      rule_id: 7KUwq5
+      version_id: 44TXGo
+      url: https://semgrep.dev/playground/r/44TXGo/ajinabraham.njsscan.xss.xss_templates.squirrelly_autoescape
+      origin: community

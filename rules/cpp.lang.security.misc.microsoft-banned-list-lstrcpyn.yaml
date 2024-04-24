@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-lstrcpyn.microsoft-banned-list-lstrcpyn
+message: 'lstrcpyn is a banned function: limited error detection. Alternatives are
+  StringCbCopy, StringCbCopyEx, StringCchCopy, StringCchCopyEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-lstrcpyn.microsoft-banned-list-lstrcpyn
+  shortlink: https://sg.run/10BPx
+  semgrep.dev:
+    rule:
+      r_id: 114822
+      rv_id: 257433
+      rule_id: 3qUkRrz
+      version_id: 3ZTpYJ0
+      url: https://semgrep.dev/playground/r/3ZTpYJ0/cpp.lang.security.misc.microsoft-banned-list-lstrcpyn.microsoft-banned-list-lstrcpyn
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: lstrcpyn(...)

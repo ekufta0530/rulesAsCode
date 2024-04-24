@@ -1,0 +1,33 @@
+id: terraform.gcp.best-practice.gcp-dnssec-enabled.gcp-dnssec-enabled
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "google_dns_managed_zone" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"google_dns_managed_zone\" \"...\" {\n...\ndnssec_config\
+    \ {\n    state = on\n}\n...\n}\n"
+message: "Ensure that RSASHA1 is not used for the zone-signing and key-signing keys\
+  \ in Cloud DNS DNSSEC\t"
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - gcp
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-dnssec-enabled.gcp-dnssec-enabled
+  shortlink: https://sg.run/go10
+  semgrep.dev:
+    rule:
+      r_id: 33641
+      rv_id: 110940
+      rule_id: WAUG72
+      version_id: 44TR66b
+      url: https://semgrep.dev/playground/r/44TR66b/terraform.gcp.best-practice.gcp-dnssec-enabled.gcp-dnssec-enabled
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,228 @@
+id: cpp.libxml2.security.libxml2-expand-remote-dtd.libxml2-expand-remote-dtd
+message: The application is using an XML parser that has not been safely configured.
+  This might lead to XML External Entity (XXE) vulnerabilities when parsing user-controlled
+  input. An attacker can include document type definitions (DTDs) or XIncludes which
+  can interact with internal or external hosts. XXE can lead to other vulnerabilities,
+  such as Local File Inclusion (LFI), Remote Code Execution (RCE), and Server-side
+  request forgery (SSRF), depending on the application configuration. An attacker
+  can also use DTDs to expand recursively, leading to a Denial-of-Service (DoS) attack,
+  also known as a `Billion Laughs Attack`. If DTD is required for local files then
+  pass the `XML_PARSE_NONET` option which will disable network access.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - L1
+  - STR02-C
+  cwe:
+  - 'CWE-611: Improper Restriction of XML External Entity Reference'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - os::source::console
+  - os::source::environment
+  - web::source::http-body
+  - xml::sink::xml-parser
+  owasp:
+  - A04:2017 - XML External Entities (XXE)
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  - https://wiki.sei.cmu.edu/confluence/display/c/STR02-C.+Sanitize+data+passed+to+complex+subsystems
+  technology:
+  - cpp
+  - xml
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/cpp.libxml2.security.libxml2-expand-remote-dtd.libxml2-expand-remote-dtd
+  shortlink: https://sg.run/JD88P
+  semgrep.dev:
+    rule:
+      r_id: 114902
+      rv_id: 257513
+      rule_id: 10UO22Q
+      version_id: 1QTbO8A
+      url: https://semgrep.dev/playground/r/1QTbO8A/cpp.libxml2.security.libxml2-expand-remote-dtd.libxml2-expand-remote-dtd
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+pattern-sources:
+- label: USER_CONTROLLED
+  patterns:
+  - pattern: "int main(int $ARGC, $ARGV_TY $ARGV, $ENVP_TY $ENVP) {\n  ...\n}\n"
+  - focus-metavariable: $ENVP
+- label: USER_CONTROLLED
+  patterns:
+  - pattern: "int main(int $ARGC, $ARGV_TY $ARGV, ...) {\n  ...\n}\n"
+  - focus-metavariable: $ARGV
+- label: USER_CONTROLLED
+  pattern-either:
+  - pattern: getenv(...)
+  - pattern: std::getenv(...)
+  - pattern: readline()
+- by-side-effect: only
+  label: USER_CONTROLLED
+  patterns:
+  - pattern-either:
+    - pattern: gets($SRC)
+    - pattern: fread($SRC, ...)
+    - pattern: fgets($SRC, ...)
+    - pattern: getline($SRC, ...)
+    - pattern: getdelim($SRC, ...)
+    - pattern: read($S_OR_FP, $SRC, ...)
+    - pattern: msgrcv($QID, $SRC, ...)
+  - focus-metavariable: $SRC
+- label: USER_CONTROLLED
+  pattern: gets(...)
+- by-side-effect: only
+  label: USER_CONTROLLED
+  patterns:
+  - pattern-either:
+    - pattern: $X.get($SRC, ...)
+    - pattern: $X.getline($SRC, ...)
+    - pattern: $X.read($SRC, ...)
+    - pattern: $X.readsome($SRC, ...)
+  - metavariable-type:
+      metavariable: $X
+      types:
+      - basic_ifstream<$TYPE>
+      - std::basic_ifstream<$TYPE>
+      - ifstream
+      - std::ifstream
+      - wifstream
+      - std::wifstream
+      - basic_ofstream<$TYPE>
+      - std::basic_ofstream<$TYPE>
+      - ofstream
+      - std::ofstream
+      - wofstream
+      - std::wofstream
+      - basic_fstream<$TYPE>
+      - std::basic_fstream<$TYPE>
+      - fstream
+      - std::fstream
+      - wfstream
+      - std::wfstream
+      - basic_filebuf<$TYPE>
+      - std::basic_filebuf<$TYPE>
+      - filebuf
+      - std::filebuf
+      - wfilebuf
+      - std::wfilebuf
+  - focus-metavariable: $SRC
+- by-side-effect: only
+  label: USER_CONTROLLED
+  patterns:
+  - pattern-either:
+    - pattern: recv($S, $SRC, ...)
+    - pattern: recvfrom($S, $SRC, ...)
+    - pattern: recvmsg($S, $SRC, ...)
+    - patterns:
+      - pattern: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $SRC)
+      - pattern-not: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $CURL)
+  - focus-metavariable: $SRC
+- label: USER_CONTROLLED
+  pattern: mysql_fetch_row(...)
+- by-side-effect: only
+  label: USER_CONTROLLED
+  patterns:
+  - pattern: mysql_fetch_row_nonblocking($RESULT, &$ROW)
+  - focus-metavariable: $ROW
+- label: USER_CONTROLLED
+  patterns:
+  - pattern: $WT->body()
+  - metavariable-type:
+      metavariable: $WT
+      types:
+      - Wt::Http::Message*
+      - Http::Message*
+      - Wt::Mail::Message*
+      - Mail::Message*
+- by-side-effect: true
+  label: ENT_DISABLED
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: xmlSubstituteEntitiesDefault(0)
+      - patterns:
+        - pattern-either:
+          - pattern: xmlParseInNodeContext($CUR, $DATA, $DATALEN, $XML_OPTIONS, $LST)
+          - pattern: xmlReadDoc($CUR, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadFd($FD, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadFile($FILE, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadIO($IO_READ, $IO_CLOSE, $IO_CTX, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadMemory($BUF, $SIZE, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadDoc($CTX, $CUR, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadFd($CTX, $FD, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadFile($CTX, $FILE, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadIO($CTX, $IO_READ, $IO_CLOSE, $IO_CTX, $URL, $ENC,
+              $XML_OPTIONS)
+          - pattern: xmlCtxtReadMemory($CTX, $BUF, $SIZE, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtUseOptions($CTX, $XML_OPTIONS)
+        - metavariable-pattern:
+            metavariable: $XML_OPTIONS
+            patterns:
+            - pattern-either:
+              - patterns:
+                - pattern: '0'
+              - patterns:
+                - pattern-not: <... XML_PARSE_NOENT ...>
+- by-side-effect: true
+  label: DTD_DISABLED
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: xmlLoadExtDtdDefaultValue = 0
+      - patterns:
+        - pattern-either:
+          - pattern: xmlParseInNodeContext($CUR, $DATA, $DATALEN, $XML_OPTIONS, $LST)
+          - pattern: xmlReadDoc($CUR, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadFd($FD, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadFile($FILE, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadIO($IO_READ, $IO_CLOSE, $IO_CTX, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlReadMemory($BUF, $SIZE, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadDoc($CTX, $CUR, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadFd($CTX, $FD, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadFile($CTX, $FILE, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtReadIO($CTX, $IO_READ, $IO_CLOSE, $IO_CTX, $URL, $ENC,
+              $XML_OPTIONS)
+          - pattern: xmlCtxtReadMemory($CTX, $BUF, $SIZE, $URL, $ENC, $XML_OPTIONS)
+          - pattern: xmlCtxtUseOptions($CTX, $XML_OPTIONS)
+        - metavariable-pattern:
+            metavariable: $XML_OPTIONS
+            patterns:
+            - pattern-either:
+              - patterns:
+                - pattern: '0'
+              - patterns:
+                - pattern-not: <... XML_PARSE_DTDLOAD ...>
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: xmlParseInNodeContext($CUR, $SRC, $DATALEN, $XML_OPTIONS)
+    - pattern: xmlReadDoc($CUR, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlReadFd($FD, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlReadFile($SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlReadIO($IO_READ, $IO_CLOSE, $IO_CTX, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlReadMemory($SRC, $SIZE, $URL, $ENC, $XML_OPTIONS)
+    - pattern: xmlCtxtReadDoc($CTX, $CUR, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlCtxtReadFd($CTX, $FD, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlCtxtReadFile($CTX, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlCtxtReadIO($CTX, $IO_READ, $IO_CLOSE, $IO_CTX, $SRC, $ENC, $XML_OPTIONS)
+    - pattern: xmlCtxtReadMemory($CTX, $SRC, $SIZE, $URL, $ENC, $XML_OPTIONS)
+  - focus-metavariable: $SRC
+  requires: USER_CONTROLLED and not ENT_DISABLED and not DTD_DISABLED

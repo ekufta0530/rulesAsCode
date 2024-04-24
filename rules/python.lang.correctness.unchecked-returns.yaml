@@ -1,0 +1,33 @@
+id: python.lang.correctness.unchecked-returns.unchecked-subprocess-call
+patterns:
+- pattern: subprocess.$CALL(...)
+- pattern-not-inside: $S = subprocess.call(...)
+- pattern-not-inside: subprocess.call(...) == $X
+- pattern-not-inside: return subprocess.call(...)
+- metavariable-pattern:
+    metavariable: $CALL
+    pattern: call
+- focus-metavariable: $CALL
+fix: check_call
+message: This is not checking the return value of this subprocess call; if it fails
+  no exception will be raised. Consider subprocess.check_call() instead
+languages:
+- python
+severity: WARNING
+metadata:
+  references:
+  - https://docs.python.org/3/library/subprocess.html#subprocess.check_call
+  category: correctness
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.correctness.unchecked-returns.unchecked-subprocess-call
+  shortlink: https://sg.run/J9Ww
+  semgrep.dev:
+    rule:
+      r_id: 9602
+      rv_id: 110348
+      rule_id: DbUp82
+      version_id: YDTp2X3
+      url: https://semgrep.dev/playground/r/YDTp2X3/python.lang.correctness.unchecked-returns.unchecked-subprocess-call
+      origin: community

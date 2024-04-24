@@ -1,0 +1,52 @@
+id: trailofbits.python.pickles-in-numpy.pickles-in-numpy
+message: Functions reliant on pickle can result in arbitrary code execution.  Consider
+  using fickling or switching to a safer serialization method
+languages:
+- python
+severity: ERROR
+metadata:
+  category: security
+  cwe: 'CWE-502: Deserialization of Untrusted Data'
+  subcategory:
+  - vuln
+  confidence: MEDIUM
+  likelihood: MEDIUM
+  impact: HIGH
+  technology:
+  - numpy
+  description: Potential arbitrary code execution from `NumPy` functions reliant on
+    pickling
+  references:
+  - https://blog.trailofbits.com/2021/03/15/never-a-dill-moment-exploiting-machine-learning-pickle-files/
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/trailofbits.python.pickles-in-numpy.pickles-in-numpy
+  shortlink: https://sg.run/ryKe
+  semgrep.dev:
+    rule:
+      r_id: 17169
+      rv_id: 250823
+      rule_id: lBUWjy
+      version_id: QkT8J3R
+      url: https://semgrep.dev/playground/r/QkT8J3R/trailofbits.python.pickles-in-numpy.pickles-in-numpy
+      origin: community
+patterns:
+- pattern: numpy.load(..., allow_pickle=$VALUE, ...)
+- pattern-not: numpy.load("...", ...)
+- pattern-not: numpy.load(..., file="...", ...)
+- metavariable-pattern:
+    metavariable: $VALUE
+    patterns:
+    - pattern-not: 'False
+
+        '
+    - pattern-not: '[]
+
+        '
+    - pattern-not: 'None
+
+        '
+    - pattern-not: '""
+
+        '

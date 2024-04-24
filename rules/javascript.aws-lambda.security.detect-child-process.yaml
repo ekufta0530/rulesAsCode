@@ -1,0 +1,85 @@
+id: javascript.aws-lambda.security.detect-child-process.detect-child-process
+message: Allowing spawning arbitrary programs or running shell processes with arbitrary
+  arguments may end up in a command injection vulnerability. Try to avoid non-literal
+  values for the command string. If it is not possible, then do not let running arbitrary
+  commands, use a white list for inputs.
+metadata:
+  cwe:
+  - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+    Command Injection'')'
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  category: security
+  technology:
+  - javascript
+  - aws-lambda
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Command Injection
+  source: https://semgrep.dev/r/javascript.aws-lambda.security.detect-child-process.detect-child-process
+  shortlink: https://sg.run/Ggoq
+  semgrep.dev:
+    rule:
+      r_id: 18248
+      rv_id: 109802
+      rule_id: r6UDNQ
+      version_id: zyTK8z9
+      url: https://semgrep.dev/playground/r/zyTK8z9/javascript.aws-lambda.security.detect-child-process.detect-child-process
+      origin: community
+languages:
+- javascript
+- typescript
+severity: ERROR
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: $EVENT
+  - pattern-either:
+    - pattern-inside: "exports.handler = function ($EVENT, ...) {\n  ...\n}\n"
+    - pattern-inside: 'function $FUNC ($EVENT, ...) {...}
+
+        ...
+
+        exports.handler = $FUNC
+
+        '
+    - pattern-inside: '$FUNC = function ($EVENT, ...) {...}
+
+        ...
+
+        exports.handler = $FUNC
+
+        '
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $CMD
+  - pattern-either:
+    - pattern: exec($CMD,...)
+    - pattern: execSync($CMD,...)
+    - pattern: spawn($CMD,...)
+    - pattern: spawnSync($CMD,...)
+    - pattern: $CP.exec($CMD,...)
+    - pattern: $CP.execSync($CMD,...)
+    - pattern: $CP.spawn($CMD,...)
+    - pattern: $CP.spawnSync($CMD,...)
+  - pattern-either:
+    - pattern-inside: 'require(''child_process'')
+
+        ...
+
+        '
+    - pattern-inside: 'import ''child_process''
+
+        ...
+
+        '

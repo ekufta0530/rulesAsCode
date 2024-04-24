@@ -1,0 +1,37 @@
+id: cpp.lang.security.misc.microsoft-banned-list-vsprintf.microsoft-banned-list-vsprintf
+message: 'vsprintf is a banned function: limited error detection. Alternatives are
+  vsprintf_s, StringCbVPrintf, StringCbVPrintf_l, StringCbVPrintf_lEx, StringCbVPrintfEx,
+  StringCchVPrintf, StringCchVPrintf_l, StringCchVPrintf_lEx, StringCchVPrintfEx,
+  vasprintf'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-vsprintf.microsoft-banned-list-vsprintf
+  shortlink: https://sg.run/oqZL6
+  semgrep.dev:
+    rule:
+      r_id: 114860
+      rv_id: 257471
+      rule_id: yyUROxd
+      version_id: yeTBkw4
+      url: https://semgrep.dev/playground/r/yeTBkw4/cpp.lang.security.misc.microsoft-banned-list-vsprintf.microsoft-banned-list-vsprintf
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: vsprintf(...)

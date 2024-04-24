@@ -1,0 +1,38 @@
+id: ajinabraham.njsscan.xml.xxe_sax.xxe_sax
+pattern-either:
+- pattern: 'require(''sax'')
+
+    ...
+
+    $PARSER.ondoctype = ...;
+
+    '
+- pattern: 'require(''sax'')
+
+    ...
+
+    $PARSER.on(''doctype'',...)'
+severity: WARNING
+languages:
+- javascript
+message: Use of 'ondoctype' in 'sax' library detected. By default, 'sax' won't do
+  anything with custom DTD entity definitions. If you're implementing a custom DTD
+  entity definition, be sure not to introduce XML External Entity (XXE) vulnerabilities,
+  or be absolutely sure that external entities received from a trusted source while
+  processing XML.
+metadata:
+  owasp-web: a4
+  cwe: cwe-611
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.xml.xxe_sax.xxe_sax
+  shortlink: https://sg.run/ABOp
+  semgrep.dev:
+    rule:
+      r_id: 43706
+      rv_id: 78310
+      rule_id: OrUrKp
+      version_id: ExT9XD
+      url: https://semgrep.dev/playground/r/ExT9XD/ajinabraham.njsscan.xml.xxe_sax.xxe_sax
+      origin: community

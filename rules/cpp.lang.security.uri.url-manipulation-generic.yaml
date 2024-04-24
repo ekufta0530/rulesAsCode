@@ -1,0 +1,424 @@
+id: cpp.lang.security.uri.url-manipulation-generic.url-manipulation-generic
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - L1
+  - STR02-C
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - os::source::console
+  - os::source::environment
+  - web::sink::header
+  - web::sink::http-request
+  - web::source::http-body
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  - https://wiki.sei.cmu.edu/confluence/display/c/STR02-C.+Sanitize+data+passed+to+complex+subsystems
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/cpp.lang.security.uri.url-manipulation-generic.url-manipulation-generic
+  shortlink: https://sg.run/WAvvL
+  semgrep.dev:
+    rule:
+      r_id: 114897
+      rv_id: 257508
+      rule_id: zdUKLLD
+      version_id: zyTAKqe
+      url: https://semgrep.dev/playground/r/zyTAKqe/cpp.lang.security.uri.url-manipulation-generic.url-manipulation-generic
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+pattern-sources:
+- patterns:
+  - pattern: "int main(int $ARGC, $ARGV_TY $ARGV, $ENVP_TY $ENVP) {\n  ...\n}\n"
+  - focus-metavariable: $ENVP
+- patterns:
+  - pattern: "int main(int $ARGC, $ARGV_TY $ARGV, ...) {\n  ...\n}\n"
+  - focus-metavariable: $ARGV
+- pattern-either:
+  - pattern: getenv(...)
+  - pattern: std::getenv(...)
+  - pattern: readline()
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: gets($SRC)
+    - pattern: fread($SRC, ...)
+    - pattern: fgets($SRC, ...)
+    - pattern: getline($SRC, ...)
+    - pattern: getdelim($SRC, ...)
+    - pattern: read($S_OR_FP, $SRC, ...)
+    - pattern: msgrcv($QID, $SRC, ...)
+  - focus-metavariable: $SRC
+- pattern: gets(...)
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: $X.get($SRC, ...)
+    - pattern: $X.getline($SRC, ...)
+    - pattern: $X.read($SRC, ...)
+    - pattern: $X.readsome($SRC, ...)
+  - metavariable-type:
+      metavariable: $X
+      types:
+      - basic_ifstream<$TYPE>
+      - std::basic_ifstream<$TYPE>
+      - ifstream
+      - std::ifstream
+      - wifstream
+      - std::wifstream
+      - basic_ofstream<$TYPE>
+      - std::basic_ofstream<$TYPE>
+      - ofstream
+      - std::ofstream
+      - wofstream
+      - std::wofstream
+      - basic_fstream<$TYPE>
+      - std::basic_fstream<$TYPE>
+      - fstream
+      - std::fstream
+      - wfstream
+      - std::wfstream
+      - basic_filebuf<$TYPE>
+      - std::basic_filebuf<$TYPE>
+      - filebuf
+      - std::filebuf
+      - wfilebuf
+      - std::wfilebuf
+  - focus-metavariable: $SRC
+- by-side-effect: only
+  patterns:
+  - pattern-either:
+    - pattern: recv($S, $SRC, ...)
+    - pattern: recvfrom($S, $SRC, ...)
+    - pattern: recvmsg($S, $SRC, ...)
+    - patterns:
+      - pattern: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $SRC)
+      - pattern-not: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $CURL)
+  - focus-metavariable: $SRC
+- pattern: mysql_fetch_row(...)
+- by-side-effect: only
+  patterns:
+  - pattern: mysql_fetch_row_nonblocking($RESULT, &$ROW)
+  - focus-metavariable: $ROW
+- patterns:
+  - pattern: $WT->body()
+  - metavariable-type:
+      metavariable: $WT
+      types:
+      - Wt::Http::Message*
+      - Http::Message*
+      - Wt::Mail::Message*
+      - Mail::Message*
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - pattern-either:
+    - pattern: memccpy($TO, $FROM, ...)
+    - pattern: memcpy($TO, $FROM, ...)
+    - pattern: memcpy_s($TO, $TO_SIZE, $FROM, ...)
+    - pattern: memmove($TO, $FROM, ...)
+    - pattern: memmove_s($TO, $TO_SIZE, $FROM, ...)
+    - pattern: snprintf($TO, $SIZE, $FORMAT, ..., $FROM, ...)
+    - pattern: sprintf($TO, $FORMAT, ..., $FROM, ...)
+    - pattern: stpcpy($TO, $FROM)
+    - pattern: stpncpy($TO, $FROM, ...)
+    - pattern: strcat($TO, $FROM)
+    - pattern: strcpy($TO, $FROM)
+    - pattern: strcpy_s($TO, $SIZE, $FROM)
+    - pattern: strlcat($TO, $FROM, ...)
+    - pattern: strlcpy($TO, $FROM, ...)
+    - pattern: strncat($TO, $FROM, ...)
+    - pattern: strncpy($TO, $FROM, ...)
+    - pattern: strncpy_s($TO, $TO_SIZE, $FROM, ...)
+    - pattern: strxfrm($TO, $FROM, ...)
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $TO.append(..., $FROM, ...)
+      - pattern: $TO.append_range($FROM)
+      - pattern: $TO.assign($FROM, ...)
+      - pattern: $TO.assign_range($FROM)
+      - pattern: $TO.insert(..., $FROM, ...)
+      - pattern: $TO.insert_range($POSITION, $FROM)
+      - pattern: $TO.replace(..., $FROM, ...)
+      - pattern: $TO.replace_with_range($FIRST, $LAST, $FROM)
+      - pattern: $FROM.copy($TO, ...)
+    - metavariable-type:
+        metavariable: $TO
+        types:
+        - basic_string<$TYPE>
+        - std::basic_string<$TYPE>
+        - string
+        - std::string
+        - wstring
+        - std::wstring
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: $TO.open($FROM, ...)
+      - metavariable-type:
+          metavariable: $TO
+          types:
+          - basic_ifstream<$TYPE>
+          - std::basic_ifstream<$TYPE>
+          - ifstream
+          - std::ifstream
+          - wifstream
+          - std::wifstream
+          - basic_ofstream<$TYPE>
+          - std::basic_ofstream<$TYPE>
+          - ofstream
+          - std::ofstream
+          - wofstream
+          - std::wofstream
+          - basic_fstream<$TYPE>
+          - std::basic_fstream<$TYPE>
+          - fstream
+          - std::fstream
+          - wfstream
+          - std::wfstream
+          - basic_filebuf<$TYPE>
+          - std::basic_filebuf<$TYPE>
+          - filebuf
+          - std::filebuf
+          - wfilebuf
+          - std::wfilebuf
+    - patterns:
+      - pattern-either:
+        - pattern: $FROM.get($TO, ...)
+        - pattern: $FROM.getline($TO, ...)
+        - pattern: $FROM.read($TO, ...)
+        - pattern: $FROM.readsome($TO, ...)
+      - metavariable-type:
+          metavariable: $FROM
+          types:
+          - basic_ifstream<$TYPE>
+          - std::basic_ifstream<$TYPE>
+          - ifstream
+          - std::ifstream
+          - wifstream
+          - std::wifstream
+          - basic_ofstream<$TYPE>
+          - std::basic_ofstream<$TYPE>
+          - ofstream
+          - std::ofstream
+          - wofstream
+          - std::wofstream
+          - basic_fstream<$TYPE>
+          - std::basic_fstream<$TYPE>
+          - fstream
+          - std::fstream
+          - wfstream
+          - std::wfstream
+          - basic_filebuf<$TYPE>
+          - std::basic_filebuf<$TYPE>
+          - filebuf
+          - std::filebuf
+          - wfilebuf
+          - std::wfilebuf
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $FROM >> $TO
+      - pattern: $FROM >> $_1 >> $TO
+      - pattern: $FROM >> $_1 >> $_2 >> $TO
+      - pattern: $FROM >> $_1 >> $_2 >> $_3 >> $TO
+      - pattern: $FROM >> $_1 >> $_2 >> $_3 >> $_4 >> $TO
+    - metavariable-type:
+        metavariable: $FROM
+        types:
+        - basic_ifstream<$TYPE>
+        - std::basic_ifstream<$TYPE>
+        - ifstream
+        - std::ifstream
+        - wifstream
+        - std::wifstream
+        - basic_ofstream<$TYPE>
+        - std::basic_ofstream<$TYPE>
+        - ofstream
+        - std::ofstream
+        - wofstream
+        - std::wofstream
+        - basic_fstream<$TYPE>
+        - std::basic_fstream<$TYPE>
+        - fstream
+        - std::fstream
+        - wfstream
+        - std::wfstream
+        - basic_filebuf<$TYPE>
+        - std::basic_filebuf<$TYPE>
+        - filebuf
+        - std::filebuf
+        - wfilebuf
+        - std::wfilebuf
+        - basic_istringstream<$TYPE>
+        - std::basic_istringstream<$TYPE>
+        - istringstream
+        - std::istringstream
+        - wistringstream
+        - std::wistringstream
+        - basic_ostringstream<$TYPE>
+        - std::basic_ostringstream<$TYPE>
+        - ostringstream
+        - std::ostringstream
+        - wostringstream
+        - std::wostringstream
+        - basic_stringstream<$TYPE>
+        - std::basic_stringstream<$TYPE>
+        - stringstream
+        - std::stringstream
+        - wstringstream
+        - std::wstringstream
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $TO << $FROM
+      - pattern: $TO << $_1 << $FROM
+      - pattern: $TO << $_1 << $_2 << $FROM
+      - pattern: $TO << $_1 << $_2 << $_3 << $FROM
+      - pattern: $TO << $_1 << $_2 << $_3 << $_4 << $FROM
+    - metavariable-type:
+        metavariable: $TO
+        types:
+        - basic_ifstream<$TYPE>
+        - std::basic_ifstream<$TYPE>
+        - ifstream
+        - std::ifstream
+        - wifstream
+        - std::wifstream
+        - basic_ofstream<$TYPE>
+        - std::basic_ofstream<$TYPE>
+        - ofstream
+        - std::ofstream
+        - wofstream
+        - std::wofstream
+        - basic_fstream<$TYPE>
+        - std::basic_fstream<$TYPE>
+        - fstream
+        - std::fstream
+        - wfstream
+        - std::wfstream
+        - basic_filebuf<$TYPE>
+        - std::basic_filebuf<$TYPE>
+        - filebuf
+        - std::filebuf
+        - wfilebuf
+        - std::wfilebuf
+        - basic_istringstream<$TYPE>
+        - std::basic_istringstream<$TYPE>
+        - istringstream
+        - std::istringstream
+        - wistringstream
+        - std::wistringstream
+        - basic_ostringstream<$TYPE>
+        - std::basic_ostringstream<$TYPE>
+        - ostringstream
+        - std::ostringstream
+        - wostringstream
+        - std::wostringstream
+        - basic_stringstream<$TYPE>
+        - std::basic_stringstream<$TYPE>
+        - stringstream
+        - std::stringstream
+        - wstringstream
+        - std::wstringstream
+  to: $TO
+pattern-sinks:
+- patterns:
+  - pattern-inside: "$RET $FUNC(...) {\n  ...\n}\n"
+  - patterns:
+    - pattern-either:
+      - pattern: curl_easy_setopt($CURL, CURLOPT_URL, <... $SRC ...>)
+      - pattern: curl_easy_perform(<... $SRC ...>)
+      - pattern: cpr::Url{<... $SRC ...>}
+      - pattern: cpr::Url $LOCAL_VAR{<... $SRC ...>};
+      - pattern: cpr::Proxies{{"http", <... $SRC ...>}}
+      - pattern: cpr::Proxies{{"https", <... $SRC ...>}}
+      - pattern: Url{<... $SRC ...>}
+      - pattern: Url $LOCAL_VAR{<... $SRC ...>};
+      - pattern: Proxies{{"http", <... $SRC ...>}}
+      - pattern: Proxies{{"https", <... $SRC ...>}}
+      - pattern: cpr::Get{<... $SRC ...>}
+      - pattern: cpr::Post{<... $SRC ...>}
+      - pattern: cpr::Put{<... $SRC ...>}
+      - pattern: cpr::Delete{<... $SRC ...>}
+      - pattern: cpr::Patch{<... $SRC ...>}
+      - pattern: cpr::Head{<... $SRC ...>}
+      - pattern: cpr::OPTIONS{<... $SRC ...>}
+      - pattern: cpr::GetAsync{<... $SRC ...>}
+      - pattern: cpr::PostAsync{<... $SRC ...>}
+      - pattern: cpr::PutAsync{<... $SRC ...>}
+      - pattern: cpr::DeleteAsync{<... $SRC ...>}
+      - pattern: cpr::PatchAsync{<... $SRC ...>}
+      - pattern: cpr::HeadAsync{<... $SRC ...>}
+      - pattern: cpr::OptionsAsync{<... $SRC ...>}
+      - pattern: cpr::GetCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::PostCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::PutCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::DeleteCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::PatchCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::HeadCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::OptionsCallback{$LAMBDA, <... $SRC ...>}
+      - pattern: cpr::Download($STREAM, <... $SRC ...>)
+      - pattern: cpr::Resolve{<... $SRC ...>, ...}
+      - pattern: $SESSION.SetUrl(<... $SRC ...>)
+      - patterns:
+        - pattern: $REQUEST_TYPE $LOCAL_VAR(<... $SRC ...>);
+        - metavariable-pattern:
+            metavariable: $REQUEST_TYPE
+            patterns:
+            - pattern-either:
+              - pattern: httplib::Client
+              - pattern: httplib::SSLClient
+              - pattern: http::client::request
+              - pattern: client::request
+    - focus-metavariable: $SRC
+pattern-sanitizers:
+- patterns:
+  - pattern-either:
+    - pattern: curl_easy_escape($CURL, $SRC, ...)
+    - pattern: urlEncode($SRC)
+    - pattern: cpr::urlEncode($SRC)
+    - pattern: encode_query_param($SRC)
+    - pattern: encode_url($SRC)
+    - pattern: base64_encode($SRC)

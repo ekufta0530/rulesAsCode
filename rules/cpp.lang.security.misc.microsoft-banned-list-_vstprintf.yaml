@@ -1,0 +1,36 @@
+id: cpp.lang.security.misc.microsoft-banned-list-_vstprintf.microsoft-banned-list-_vstprintf
+message: '_vstprintf is a banned function: no maximum length. Alternatives are StringCbVPrintf,
+  StringCbVPrintf_l, StringCbVPrintf_lEx, StringCbVPrinfEx, StringCchVPrintf, StringCchVPrintf_l,
+  StringCchVPrintf_lEx, StringCchVPrintfEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_vstprintf.microsoft-banned-list-_vstprintf
+  shortlink: https://sg.run/0oA4B
+  semgrep.dev:
+    rule:
+      r_id: 114810
+      rv_id: 257421
+      rule_id: OrUN8dp
+      version_id: O9Tnj04
+      url: https://semgrep.dev/playground/r/O9Tnj04/cpp.lang.security.misc.microsoft-banned-list-_vstprintf.microsoft-banned-list-_vstprintf
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: _vstprintf(...)

@@ -1,0 +1,38 @@
+id: yaml.semgrep.metadata-likelihood-incorrect-value.metadata-likelihood-incorrect-value
+patterns:
+- pattern-inside: "rules: \n  ...\n"
+- pattern-inside: "metadata: \n  ...\n  category: security\n  ...\n"
+- pattern: 'likelihood: $VALUE
+
+    '
+- pattern-not: 'likelihood: LOW
+
+    '
+- pattern-not: 'likelihood: MEDIUM
+
+    '
+- pattern-not: 'likelihood: HIGH
+
+    '
+message: 'Semgrep rule likelihood: $VALUE detected, but the value must be LOW, MEDIUM,
+  or HIGH. For more information visit:  https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/'
+languages:
+- yaml
+severity: WARNING
+metadata:
+  references:
+  - https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/
+  category: correctness
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.metadata-likelihood-incorrect-value.metadata-likelihood-incorrect-value
+  shortlink: https://sg.run/01P5
+  semgrep.dev:
+    rule:
+      r_id: 39210
+      rv_id: 111172
+      rule_id: 9AUnyk
+      version_id: xyTKpwE
+      url: https://semgrep.dev/playground/r/xyTKpwE/yaml.semgrep.metadata-likelihood-incorrect-value.metadata-likelihood-incorrect-value
+      origin: community

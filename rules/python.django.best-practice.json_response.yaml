@@ -1,0 +1,29 @@
+id: python.django.best-practice.json_response.use-json-response
+patterns:
+- pattern-inside: "def $X(...):\n  ...\n"
+- pattern: '$Y = json.dumps(...)
+
+    ...
+
+    django.http.HttpResponse($Y, ...)
+
+    '
+message: Use JsonResponse instead
+languages:
+- python
+severity: ERROR
+metadata:
+  category: best-practice
+  technology:
+  - django
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.django.best-practice.json_response.use-json-response
+  shortlink: https://sg.run/BkQA
+  semgrep.dev:
+    rule:
+      r_id: 9451
+      rv_id: 110160
+      rule_id: 6JUjYX
+      version_id: kbTdxqE
+      url: https://semgrep.dev/playground/r/kbTdxqE/python.django.best-practice.json_response.use-json-response
+      origin: community

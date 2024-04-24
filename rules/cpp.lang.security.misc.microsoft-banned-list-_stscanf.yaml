@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-_stscanf.microsoft-banned-list-_stscanf
+message: '_stscanf is a banned function: no bounds checking. Alternatives are sscanf_s
+  (requires format string changes)'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_stscanf.microsoft-banned-list-_stscanf
+  shortlink: https://sg.run/WAvLA
+  semgrep.dev:
+    rule:
+      r_id: 114797
+      rv_id: 257408
+      rule_id: pKU1nL1
+      version_id: pZT6Plz
+      url: https://semgrep.dev/playground/r/pZT6Plz/cpp.lang.security.misc.microsoft-banned-list-_stscanf.microsoft-banned-list-_stscanf
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: _stscanf(...)

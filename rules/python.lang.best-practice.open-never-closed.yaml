@@ -1,0 +1,88 @@
+id: python.lang.best-practice.open-never-closed.open-never-closed
+patterns:
+- pattern-not-inside: '$F = open(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: '$F = io.open(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: '$F = tarfile.open(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: '$F = ZipFile.open(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: '$F = tempfile.TemporaryFile(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: '$F = tempfile.NamedTemporaryFile(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: '$F = tempfile.SpooledTemporaryFile(...)
+
+    ...
+
+    $F.close()
+
+    '
+- pattern-not-inside: "$F = open(...)\n...\ntry:\n    ...\nfinally:\n    $F.close()\n"
+- pattern-not-inside: "$F = io.open(...)\n...\ntry:\n    ...\nfinally:\n    $F.close()\n"
+- pattern-not-inside: "$F = tarfile.open(...)\n...\ntry:\n    ...\nfinally:\n    $F.close()\n"
+- pattern-not-inside: "$F = ZipFile.open(...)\n...\ntry:\n    ...\nfinally:\n    $F.close()\n"
+- pattern-not-inside: "$F = tempfile.TemporaryFile(...)\n...\ntry:\n    ...\nfinally:\n\
+    \    $F.close()\n"
+- pattern-not-inside: "$F = tempfile.NamedTemporaryFile(...)\n...\ntry:\n    ...\n\
+    finally:\n    $F.close()\n"
+- pattern-not-inside: "$F = tempfile.SpooledTemporaryFile(...)\n...\ntry:\n    ...\n\
+    finally:\n    $F.close()\n"
+- pattern-either:
+  - pattern: $F = open(...)
+  - pattern: $F = io.open(...)
+  - pattern: $F = tarfile.open(...)
+  - pattern: $F = ZipFile.open(...)
+  - pattern: $F = tempfile.TemporaryFile(...)
+  - pattern: $F = tempfile.NamedTemporaryFile(...)
+  - pattern: $F = tempfile.SpooledTemporaryFile(...)
+message: file object opened without corresponding close
+languages:
+- python
+severity: ERROR
+metadata:
+  category: best-practice
+  technology:
+  - python
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.lang.best-practice.open-never-closed.open-never-closed
+  shortlink: https://sg.run/9oN8
+  semgrep.dev:
+    rule:
+      r_id: 9567
+      rv_id: 110300
+      rule_id: x8Un4Q
+      version_id: 0bTLlOz
+      url: https://semgrep.dev/playground/r/0bTLlOz/python.lang.best-practice.open-never-closed.open-never-closed
+      origin: community

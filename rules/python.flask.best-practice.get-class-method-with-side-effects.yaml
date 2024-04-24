@@ -1,0 +1,27 @@
+id: python.flask.best-practice.get-class-method-with-side-effects.flask-class-method-get-side-effects
+patterns:
+- pattern-either:
+  - pattern: "def get(self,...):\n    ...\n    $METHOD(...)\n"
+  - pattern: "def get(self,...):\n    ...\n    $VAR = $METHOD(...)\n"
+- metavariable-regex:
+    metavariable: $METHOD
+    regex: (?i)(create|update|delete).*
+message: Flask class method GET with side effects
+severity: WARNING
+languages:
+- python
+metadata:
+  category: best-practice
+  technology:
+  - flask
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.flask.best-practice.get-class-method-with-side-effects.flask-class-method-get-side-effects
+  shortlink: https://sg.run/2x6D
+  semgrep.dev:
+    rule:
+      r_id: 9519
+      rv_id: 110242
+      rule_id: bwUwYZ
+      version_id: WrTWQbg
+      url: https://semgrep.dev/playground/r/WrTWQbg/python.flask.best-practice.get-class-method-with-side-effects.flask-class-method-get-side-effects
+      origin: community

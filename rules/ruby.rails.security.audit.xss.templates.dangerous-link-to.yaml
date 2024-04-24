@@ -1,0 +1,52 @@
+id: ruby.rails.security.audit.xss.templates.dangerous-link-to.dangerous-link-to
+message: 'Detected a template variable used in ''link_to''. This will generate dynamic
+  data in the ''href'' attribute. This allows a malicious actor to input the ''javascript:''
+  URI and is subject to cross- site scripting (XSS) attacks. If using a relative URL,
+  start with a literal forward slash and concatenate the URL, like this: ''link_to
+  "Here", "/"+@link''. You may also consider setting the Content Security Policy (CSP)
+  header.'
+metadata:
+  source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_link_to.rb
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Ruby_on_Rails_Cheat_Sheet.html#cross-site-scripting-xss
+  - https://brakemanscanner.org/docs/warning_types/link_to_href/
+  category: security
+  technology:
+  - rails
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/ruby.rails.security.audit.xss.templates.dangerous-link-to.dangerous-link-to
+  shortlink: https://sg.run/4ybg
+  semgrep.dev:
+    rule:
+      r_id: 9744
+      rv_id: 110584
+      rule_id: ReUPDw
+      version_id: GxTv806
+      url: https://semgrep.dev/playground/r/GxTv806/ruby.rails.security.audit.xss.templates.dangerous-link-to.dangerous-link-to
+      origin: community
+languages:
+- generic
+paths:
+  include:
+  - '*.erb'
+severity: WARNING
+patterns:
+- pattern-inside: <%= ... %>
+- pattern-not-inside: link_to ... "/" + ... @$VAR
+- pattern-not-inside: link_to ... '/' + ... @$VAR
+- pattern: link_to ... @$VAR

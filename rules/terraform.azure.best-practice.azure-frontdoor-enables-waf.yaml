@@ -1,0 +1,41 @@
+id: terraform.azure.best-practice.azure-frontdoor-enables-waf.azure-frontdoor-enables-waf
+message: Ensure that Azure Front Door enables WAF
+patterns:
+- pattern: resource
+- pattern-not-inside: 'resource "azurerm_frontdoor" "..." {
+
+    ...
+
+    web_application_firewall_policy_link_id = "..."
+
+    ...
+
+    }
+
+    '
+- pattern-inside: 'resource "azurerm_frontdoor" "..." {
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-frontdoor-enables-waf.azure-frontdoor-enables-waf
+  shortlink: https://sg.run/2nD0
+  semgrep.dev:
+    rule:
+      r_id: 23919
+      rv_id: 110823
+      rule_id: 8GU9NJ
+      version_id: kbTdLOJ
+      url: https://semgrep.dev/playground/r/kbTdLOJ/terraform.azure.best-practice.azure-frontdoor-enables-waf.azure-frontdoor-enables-waf
+      origin: community
+languages:
+- hcl
+severity: WARNING

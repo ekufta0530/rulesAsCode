@@ -1,0 +1,35 @@
+id: python.flask.caching.query-string.flask-cache-query-string
+patterns:
+- pattern-either:
+  - pattern: "@app.route(\"...\")\n@cache.cached(...)\ndef $HANDLER(...):\n  ...\n\
+      \  request.args.get(...)\n"
+  - pattern: "@app.route(\"...\", methods=[..., \"POST\", ...])\n@cache.cached(...)\n\
+      def $HANDLER(...):\n  ...\n"
+  - pattern: "@app.route(\"...\", methods=[..., \"PUT\", ...])\n@cache.cached(...)\n\
+      def $HANDLER(...):\n  ...\n"
+  - pattern: "@app.route(\"...\", methods=[..., \"DELETE\", ...])\n@cache.cached(...)\n\
+      def $HANDLER(...):\n  ...\n"
+  - pattern: "@app.route(\"...\", methods=[..., \"PATCH\", ...])\n@cache.cached(...)\n\
+      def $HANDLER(...):\n  ...\n"
+- pattern-not: "@app.route(\"...\")\n@cache.cached(..., query_string=True)\ndef $HANDLER(...):\n\
+    \  ...\n  request.args.get(...)\n"
+message: Flask-caching doesn't cache query strings by default. You have to use `query_string=True`.
+  Also you shouldn't cache verbs that can mutate state.
+severity: WARNING
+languages:
+- python
+metadata:
+  category: caching
+  technology:
+  - flask
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.flask.caching.query-string.flask-cache-query-string
+  shortlink: https://sg.run/jROJ
+  semgrep.dev:
+    rule:
+      r_id: 9521
+      rv_id: 110244
+      rule_id: kxUko3
+      version_id: K3Tvjl9
+      url: https://semgrep.dev/playground/r/K3Tvjl9/python.flask.caching.query-string.flask-cache-query-string
+      origin: community

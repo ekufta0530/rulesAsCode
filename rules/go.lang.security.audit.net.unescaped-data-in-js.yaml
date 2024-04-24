@@ -1,0 +1,85 @@
+id: go.lang.security.audit.net.unescaped-data-in-js.unescaped-data-in-js
+message: Found a formatted template string passed to 'template.JS()'. 'template.JS()'
+  does not escape contents. Be absolutely sure there is no user-controlled data in
+  this template.
+metadata:
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://golang.org/pkg/html/template/#JS
+  category: security
+  technology:
+  - go
+  confidence: LOW
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/go.lang.security.audit.net.unescaped-data-in-js.unescaped-data-in-js
+  shortlink: https://sg.run/eLNl
+  semgrep.dev:
+    rule:
+      r_id: 9132
+      rv_id: 109621
+      rule_id: 3qUP8K
+      version_id: 7ZTgolZ
+      url: https://semgrep.dev/playground/r/7ZTgolZ/go.lang.security.audit.net.unescaped-data-in-js.unescaped-data-in-js
+      origin: community
+languages:
+- go
+severity: WARNING
+pattern-either:
+- pattern: template.JS($T + $X, ...)
+- pattern: template.JS(fmt.$P("...", ...), ...)
+- pattern: '$T = "..."
+
+    ...
+
+    $T = $FXN(..., $T, ...)
+
+    ...
+
+    template.JS($T, ...)
+
+    '
+- pattern: '$T = fmt.$P("...", ...)
+
+    ...
+
+    template.JS($T, ...)
+
+    '
+- pattern: '$T, $ERR = fmt.$P("...", ...)
+
+    ...
+
+    template.JS($T, ...)
+
+    '
+- pattern: '$T = $X + $Y
+
+    ...
+
+    template.JS($T, ...)
+
+    '
+- pattern: '$T = "..."
+
+    ...
+
+    $OTHER, $ERR = fmt.$P(..., $T, ...)
+
+    ...
+
+    template.JS($OTHER, ...)
+
+    '

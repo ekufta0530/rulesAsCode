@@ -1,0 +1,77 @@
+id: python.lang.security.audit.insecure-transport.urllib.insecure-openerdirector-open-ftp.insecure-openerdirector-open-ftp
+message: Detected an unsecured transmission channel. 'OpenerDirector.open(...)' is
+  being used with 'ftp://'. Information sent over this connection will be unencrypted.
+  Consider using SFTP instead. urllib does not support SFTP, so consider a library
+  which supports SFTP.
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  references:
+  - https://docs.python.org/3/library/urllib.request.html#urllib.request.OpenerDirector.open
+  category: security
+  technology:
+  - urllib
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/python.lang.security.audit.insecure-transport.urllib.insecure-openerdirector-open-ftp.insecure-openerdirector-open-ftp
+  shortlink: https://sg.run/Klj7
+  semgrep.dev:
+    rule:
+      r_id: 9655
+      rv_id: 110398
+      rule_id: zdUkPQ
+      version_id: BjTXpXx
+      url: https://semgrep.dev/playground/r/BjTXpXx/python.lang.security.audit.insecure-transport.urllib.insecure-openerdirector-open-ftp.insecure-openerdirector-open-ftp
+      origin: community
+severity: WARNING
+languages:
+- python
+pattern-either:
+- pattern: urllib.request.OpenerDirector(...).open("=~/^[Ff][Tt][Pp]://.*/", ...)
+- patterns:
+  - pattern-inside: '$OPENERDIRECTOR = urllib.request.OpenerDirector(...)
+
+      ...
+
+      '
+  - pattern: $OPENERDIRECTOR.open("=~/^[Ff][Tt][Pp]://.*/", ...)
+- patterns:
+  - pattern-inside: '$OPENERDIRECTOR = urllib.request.OpenerDirector(...)
+
+      ...
+
+      '
+  - pattern: '$URL = "=~/^[Ff][Tt][Pp]://.*/"
+
+      ...
+
+      $OPENERDIRECTOR.open($URL, ...)
+
+      '
+- pattern: '$URL = "=~/^[Ff][Tt][Pp]://.*/"
+
+    ...
+
+    urllib.request.OpenerDirector(...).open($URL, ...)
+
+    '
+- patterns:
+  - pattern-inside: "def $FUNC(..., $URL = \"=~/^[Ff][Tt][Pp]://.*/\", ...):\n  ...\n"
+  - pattern-either:
+    - pattern: urllib.request.OpenerDirector(...).open($URL, ...)
+    - patterns:
+      - pattern-inside: '$OPENERDIRECTOR = urllib.request.OpenerDirector(...)
+
+          ...
+
+          '
+      - pattern: $OPENERDIRECTOR.open($URL, ...)

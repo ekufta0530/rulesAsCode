@@ -1,0 +1,51 @@
+id: csharp.dotnet.security.razor-template-injection.razor-template-injection
+message: User-controllable string passed to Razor.Parse. This leads directly to code
+  execution in the context of the process.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  cwe:
+  - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+  cwe2022-top25: true
+  owasp:
+  - A03:2021 - Injection
+  references:
+  - https://clement.notin.org/blog/2020/04/15/Server-Side-Template-Injection-(SSTI)-in-ASP.NET-Razor/
+  subcategory:
+  - vuln
+  technology:
+  - .net
+  - razor
+  - asp
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Code Injection
+  source: https://semgrep.dev/r/csharp.dotnet.security.razor-template-injection.razor-template-injection
+  shortlink: https://sg.run/oyj0
+  semgrep.dev:
+    rule:
+      r_id: 18216
+      rv_id: 109183
+      rule_id: EwUr68
+      version_id: GxTv6YJ
+      url: https://semgrep.dev/playground/r/GxTv6YJ/csharp.dotnet.security.razor-template-injection.razor-template-injection
+      origin: community
+languages:
+- csharp
+mode: taint
+pattern-sources:
+- patterns:
+  - focus-metavariable: $ARG
+  - pattern-inside: 'public ActionResult $METHOD(..., string $ARG,...){...}
+
+      '
+pattern-sinks:
+- pattern: 'Razor.Parse(...)
+
+    '
+pattern-sanitizers:
+- not_conflicting: true
+  pattern: $F(...)

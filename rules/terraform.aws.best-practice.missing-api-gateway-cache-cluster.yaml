@@ -1,0 +1,27 @@
+id: terraform.aws.best-practice.missing-api-gateway-cache-cluster.missing-api-gateway-cache-cluster
+severity: WARNING
+languages:
+- hcl
+message: Found a AWS API Gateway Stage without cache cluster enabled. Enabling the
+  cache cluster feature enhances responsiveness of your API. Add `cache_cluster_enabled
+  = true` to your resource block.
+metadata:
+  category: best-practice
+  technology:
+  - aws
+  - terraform
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.aws.best-practice.missing-api-gateway-cache-cluster.missing-api-gateway-cache-cluster
+  shortlink: https://sg.run/GOkq
+  semgrep.dev:
+    rule:
+      r_id: 14948
+      rv_id: 110712
+      rule_id: PeUo8N
+      version_id: pZT1Lzz
+      url: https://semgrep.dev/playground/r/pZT1Lzz/terraform.aws.best-practice.missing-api-gateway-cache-cluster.missing-api-gateway-cache-cluster
+      origin: community
+patterns:
+- pattern: "resource \"aws_api_gateway_stage\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_api_gateway_stage\" $ANYTHING {\n  ...\n  cache_cluster_enabled\
+    \ = true\n  ...\n}\n"

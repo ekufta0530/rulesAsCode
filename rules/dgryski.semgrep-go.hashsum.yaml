@@ -1,0 +1,51 @@
+id: dgryski.semgrep-go.hashsum.hash-sum-without-write
+patterns:
+- pattern-either:
+  - pattern: '$HASH.New().Sum($SLICE)
+
+      '
+  - pattern: '$H := $HASH.New()
+
+      ...
+
+      $H.Sum($SLICE)
+
+      '
+- pattern-not: '$H := $HASH.New()
+
+    ...
+
+    $H.Write(...)
+
+    ...
+
+    $H.Sum($SLICE)
+
+    '
+- pattern-not: '$H := $HASH.New()
+
+    ...
+
+    $FUNC(..., $H, ...)
+
+    ...
+
+    $H.Sum($SLICE)
+
+    '
+message: odd hash.Sum call flow
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.hashsum.hash-sum-without-write
+  shortlink: https://sg.run/RoNE
+  semgrep.dev:
+    rule:
+      r_id: 8693
+      rv_id: 11980
+      rule_id: DbUp34
+      version_id: X0T7gx
+      url: https://semgrep.dev/playground/r/X0T7gx/dgryski.semgrep-go.hashsum.hash-sum-without-write
+      origin: community

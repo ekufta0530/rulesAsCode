@@ -1,0 +1,48 @@
+id: php.laravel.security.laravel-cookie-same-site.laravel-cookie-same-site
+patterns:
+- pattern: '''cookie''
+
+    '
+- pattern-inside: "return [\n  ...,\n  'cookie' => env(...),\n  ...\n];\n"
+- pattern-not-inside: "return [\n  ...,\n  'same_site' => 'lax',\n  ...\n];\n"
+- pattern-not-inside: "return [\n  ...,\n  'same_site' => 'strict',\n  ...\n];\n"
+- pattern-not-inside: "return [\n  ...,\n  'same_site' => env('$NAME', $DEFAULT),\n\
+    \  ...\n];\n"
+paths:
+  include:
+  - '*session.php'
+message: Found a configuration file where the same_site attribute is not set to 'lax'
+  or 'strict'. Setting 'same_site' to 'lax' or 'strict' restricts cookies to a first-party
+  or same-site context, which will protect your cookies and prevent CSRF.
+languages:
+- php
+severity: ERROR
+metadata:
+  category: security
+  cwe:
+  - 'CWE-1275: Sensitive Cookie with Improper SameSite Attribute'
+  owasp:
+  - A01:2021 - Broken Access Control
+  technology:
+  - php
+  - laravel
+  references:
+  - https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Laravel_Cheat_Sheet.md
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/php.laravel.security.laravel-cookie-same-site.laravel-cookie-same-site
+  shortlink: https://sg.run/5Apk
+  semgrep.dev:
+    rule:
+      r_id: 23091
+      rv_id: 110068
+      rule_id: X5ULvK
+      version_id: ExTjNw5
+      url: https://semgrep.dev/playground/r/ExTjNw5/php.laravel.security.laravel-cookie-same-site.laravel-cookie-same-site
+      origin: community

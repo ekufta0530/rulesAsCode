@@ -1,0 +1,91 @@
+id: ajinabraham.njsscan.database.sql_injection.node_sqli_injection
+patterns:
+- pattern-either:
+  - pattern-inside: 'require(''sql-client'')
+
+      ...
+
+      '
+  - pattern-inside: 'require(''mysql'')
+
+      ...
+
+      '
+  - pattern-inside: 'require(''pg'')
+
+      ...
+
+      '
+  - pattern-inside: 'require(''mssql'')
+
+      ...
+
+      '
+  - pattern-inside: 'require(''oracledb'')
+
+      ...
+
+      '
+- pattern-either:
+  - pattern: '$CON.query(<... $REQ.$QUERY.$VAR ...>, ...)
+
+      '
+  - pattern: '$CON.query(<... $REQ.$QUERY ...>, ...)
+
+      '
+  - pattern: '$SQL = <... $REQ.$QUERY.$VAR ...>;
+
+      ...
+
+      $CON.query(<... $SQL ...>, ...)
+
+      '
+  - pattern: '$SQL = <... $REQ.$QUERY ...>;
+
+      ...
+
+      $CON.query(<... $SQL ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$QUERY.$VAR ...>;
+
+      ...
+
+      $SQL = <... $INP ...>;
+
+      ...
+
+      $CON.query(<... $SQL ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$QUERY ...>;
+
+      ...
+
+      $SQL = <... $INP ...>;
+
+      ...
+
+      $CON.query(<... $SQL ...>, ...)
+
+      '
+message: Untrusted input concatinated with raw SQL query can result in SQL Injection.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a1
+  cwe: cwe-89
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.database.sql_injection.node_sqli_injection
+  shortlink: https://sg.run/6poB
+  semgrep.dev:
+    rule:
+      r_id: 43615
+      rv_id: 78233
+      rule_id: gxUpve
+      version_id: zyTxrK
+      url: https://semgrep.dev/playground/r/zyTxrK/ajinabraham.njsscan.database.sql_injection.node_sqli_injection
+      origin: community

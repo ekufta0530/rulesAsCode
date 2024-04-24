@@ -1,0 +1,30 @@
+id: ajinabraham.njsscan.electronjs.security_electron.electron_allow_http
+patterns:
+- pattern-either:
+  - pattern: 'new BrowserWindow({webPreferences: {allowRunningInsecureContent: true}})
+
+      '
+  - pattern: 'var $X = {webPreferences: {allowRunningInsecureContent: true}};
+
+      '
+message: Application can load content over HTTP and that makes the app vulnerable
+  to Man in the middle attacks.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a6
+  cwe: cwe-319
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.electronjs.security_electron.electron_allow_http
+  shortlink: https://sg.run/1lKv
+  semgrep.dev:
+    rule:
+      r_id: 43622
+      rv_id: 78240
+      rule_id: GdUgbB
+      version_id: yeT6eA
+      url: https://semgrep.dev/playground/r/yeT6eA/ajinabraham.njsscan.electronjs.security_electron.electron_allow_http
+      origin: community

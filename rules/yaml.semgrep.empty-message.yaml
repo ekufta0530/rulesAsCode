@@ -1,0 +1,27 @@
+id: yaml.semgrep.empty-message.empty-message
+message: This rule has an empty message field. Consider adding a message field that
+  communicates why this rule is an issue and how to fix it. This will increase the
+  chance that the finding gets addressed.
+languages:
+- yaml
+patterns:
+- pattern-inside: 'rules: [..., $RULE, ...]'
+- pattern: 'message: ""
+
+    '
+severity: WARNING
+metadata:
+  category: correctness
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.empty-message.empty-message
+  shortlink: https://sg.run/O1RR
+  semgrep.dev:
+    rule:
+      r_id: 11075
+      rv_id: 111159
+      rule_id: 9AUOpp
+      version_id: zyTKDrL
+      url: https://semgrep.dev/playground/r/zyTKDrL/yaml.semgrep.empty-message.empty-message
+      origin: community

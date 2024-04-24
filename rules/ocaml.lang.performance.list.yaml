@@ -1,0 +1,21 @@
+id: ocaml.lang.performance.list.ocamllint-length-more-than-zero
+pattern: List.length $X > 0
+message: You probably want $X <> [], which is faster.
+languages:
+- ocaml
+severity: WARNING
+metadata:
+  category: performance
+  technology:
+  - ocaml
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ocaml.lang.performance.list.ocamllint-length-more-than-zero
+  shortlink: https://sg.run/gLZ5
+  semgrep.dev:
+    rule:
+      r_id: 9385
+      rv_id: 110024
+      rule_id: AbUz2X
+      version_id: ExTjNx5
+      url: https://semgrep.dev/playground/r/ExTjNx5/ocaml.lang.performance.list.ocamllint-length-more-than-zero
+      origin: community

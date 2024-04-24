@@ -1,0 +1,42 @@
+id: ajinabraham.njsscan.headers.header_xss_protection.header_xss_generic
+patterns:
+- pattern-either:
+  - pattern-inside: function ($REQ, $RES, ...) {...}
+  - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+  - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+- pattern-either:
+  - pattern: '$RES.header("=~/x-xss-protection/i", 0, ...)
+
+      '
+  - pattern: '$RES.set("=~/x-xss-protection/i", 0, ...)
+
+      '
+  - pattern: '$RES.set(..., { "=~/x-xss-protection/i" : 0 }, ...)
+
+      '
+  - pattern: '$RES.writeHead(..., {"=~/x-xss-protection/i": 0 }, ...)
+
+      '
+message: X-XSS-Protection header is set to 0. This will disable the browser's XSS
+  Filter.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a6
+  cwe: cwe-693
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.headers.header_xss_protection.header_xss_generic
+  shortlink: https://sg.run/vowb
+  semgrep.dev:
+    rule:
+      r_id: 43677
+      rv_id: 78281
+      rule_id: JDU4wb
+      version_id: DkTOvW
+      url: https://semgrep.dev/playground/r/DkTOvW/ajinabraham.njsscan.headers.header_xss_protection.header_xss_generic
+      origin: community

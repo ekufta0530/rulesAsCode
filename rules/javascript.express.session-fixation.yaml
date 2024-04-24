@@ -1,0 +1,99 @@
+id: javascript.express.session-fixation.session-fixation
+message: Detected `$REQ` argument which enters `$RES.$HEADER`, this can lead to session
+  fixation vulnerabilities if an attacker can control the cookie value. This vulnerability
+  can lead to unauthorized access to accounts, and in some esoteric cases, Cross-Site-Scripting
+  (XSS). Users should not be able to influence cookies directly, for session cookies,
+  they should be generated securely using an approved session management library.
+  If the cookie does need to be set by a user, consider using an allow-list based
+  approach to restrict the cookies which can be set.
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: MEDIUM
+  interfile: true
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-384: Session Fixation'
+  functional-categories:
+  - web::source::cookie::express
+  - web::source::http-params::express
+  - web::source::http-body::express
+  - web::source::header::express
+  - web::source::url-path-params::express
+  - web::sink::session-properties::express
+  owasp:
+  - A02:2017 - Broken Authentication
+  - A07:2021 - Identification and Authentication Failures
+  references:
+  - https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures
+  - https://owasp.org/www-community/attacks/Session_fixation
+  technology:
+  - javascript
+  - express
+  - nodejs
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/javascript.express.session-fixation.session-fixation
+  shortlink: https://sg.run/0qDv
+  semgrep.dev:
+    rule:
+      r_id: 43798
+      rv_id: 111674
+      rule_id: 10UnRQ
+      version_id: NdT3oPg
+      url: https://semgrep.dev/playground/r/NdT3oPg/javascript.express.session-fixation.session-fixation
+      origin: pro_rules
+languages:
+- javascript
+- typescript
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern-inside: function ... (...,$REQ, ...) {...}
+  - pattern-either:
+    - pattern: $REQ.query
+    - pattern: $REQ.body
+    - pattern: $REQ.params
+    - pattern: $REQ.cookies
+    - pattern: $REQ.headers
+- patterns:
+  - pattern-either:
+    - pattern-inside: '(...,{ $REQ }: Request,...) => {...}
+
+        '
+    - pattern-inside: '(...,{ $REQ }: $EXPRESS.Request,...) => {...}
+
+        '
+  - focus-metavariable: $REQ
+  - pattern-either:
+    - pattern: params
+    - pattern: query
+    - pattern: cookies
+    - pattern: headers
+    - pattern: body
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: function ... (...,$RES, ...) {...}
+  - pattern-either:
+    - patterns:
+      - pattern: $RES.$HEADER("$COOKIE", $SOURCE)
+      - metavariable-regex:
+          metavariable: $COOKIE
+          regex: ^(Set-Cookie|connect.sid|Cookie)$
+      - metavariable-regex:
+          metavariable: $HEADER
+          regex: ^(setHeader)$
+    - patterns:
+      - pattern: '$RES.$HEADER(''...'',$SOURCE, ...);
+
+          '
+      - metavariable-regex:
+          metavariable: $HEADER
+          regex: ^(cookie)$
+  - focus-metavariable: $SOURCE

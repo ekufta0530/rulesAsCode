@@ -1,0 +1,30 @@
+id: mobsf.mobsfscan.crypto.aes_ecb.aes_ecb_mode_default
+patterns:
+- pattern-either:
+  - pattern: 'Cipher.getInstance("AES")
+
+      '
+message: Calling Cipher.getInstance("AES") will return AES ECB mode by default. ECB
+  mode is known to be weak as it results in the same ciphertext for identical blocks
+  of plaintext.
+severity: ERROR
+languages:
+- java
+metadata:
+  cwe: cwe-327
+  owasp-mobile: m5
+  masvs: crypto-2
+  reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x04g-Testing-Cryptography.md#weak-block-cipher-mode
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/mobsf.mobsfscan.crypto.aes_ecb.aes_ecb_mode_default
+  shortlink: https://sg.run/wzPY
+  semgrep.dev:
+    rule:
+      r_id: 43729
+      rv_id: 78333
+      rule_id: 0oUZRX
+      version_id: o5T759
+      url: https://semgrep.dev/playground/r/o5T759/mobsf.mobsfscan.crypto.aes_ecb.aes_ecb_mode_default
+      origin: community

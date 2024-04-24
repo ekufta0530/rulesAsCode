@@ -1,0 +1,37 @@
+id: c.lang.security.insecure-use-strcat-fn.insecure-use-strcat-fn
+pattern-either:
+- pattern: strcat(...)
+- pattern: strncat(...)
+message: Finding triggers whenever there is a strcat or strncat used. This is an issue
+  because strcat or strncat can lead to buffer overflow vulns. Fix this by using strcat_s
+  instead.
+metadata:
+  cwe:
+  - 'CWE-676: Use of Potentially Dangerous Function'
+  references:
+  - https://nvd.nist.gov/vuln/detail/CVE-2019-12553
+  - https://techblog.mediaservice.net/2020/04/cve-2020-2851-stack-based-buffer-overflow-in-cde-libdtsvc/
+  category: security
+  technology:
+  - c
+  confidence: LOW
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/c.lang.security.insecure-use-strcat-fn.insecure-use-strcat-fn
+  shortlink: https://sg.run/EkRP
+  semgrep.dev:
+    rule:
+      r_id: 8837
+      rv_id: 109012
+      rule_id: BYUNjA
+      version_id: ZRTQNpR
+      url: https://semgrep.dev/playground/r/ZRTQNpR/c.lang.security.insecure-use-strcat-fn.insecure-use-strcat-fn
+      origin: community
+languages:
+- c
+severity: WARNING

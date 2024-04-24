@@ -1,0 +1,39 @@
+id: terraform.lang.security.ecr-image-scan-on-push.ecr-image-scan-on-push
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"aws_ecr_repository\" \"...\" {\n  ...\n  image_scanning_configuration\
+    \ {\n    ...\n    scan_on_push=true\n    ...\n  }\n  ...\n}\n"
+- pattern-inside: "resource \"aws_ecr_repository\" \"...\" {\n  ...\n}\n"
+languages:
+- hcl
+message: The ECR Repository isn't configured to scan images on push
+severity: WARNING
+metadata:
+  cwe:
+  - 'CWE-1104: Use of Unmaintained Third Party Components'
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A06:2021 - Vulnerable and Outdated Components
+  references:
+  - https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/terraform.lang.security.ecr-image-scan-on-push.ecr-image-scan-on-push
+  shortlink: https://sg.run/R8eE
+  semgrep.dev:
+    rule:
+      r_id: 9749
+      rv_id: 111050
+      rule_id: 0oUELR
+      version_id: WrTW381
+      url: https://semgrep.dev/playground/r/WrTW381/terraform.lang.security.ecr-image-scan-on-push.ecr-image-scan-on-push
+      origin: community

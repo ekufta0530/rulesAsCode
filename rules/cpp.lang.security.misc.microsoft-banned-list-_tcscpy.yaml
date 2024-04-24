@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-_tcscpy.microsoft-banned-list-_tcscpy
+message: '_tcscpy is a banned function: limited error detection. Alternatives are
+  StringCbCopy, StringCbCopyEx, StringCchCopy, StringCchCopyEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_tcscpy.microsoft-banned-list-_tcscpy
+  shortlink: https://sg.run/PeL3p
+  semgrep.dev:
+    rule:
+      r_id: 114801
+      rv_id: 257412
+      rule_id: 10UO27Z
+      version_id: 1QTb8xY
+      url: https://semgrep.dev/playground/r/1QTb8xY/cpp.lang.security.misc.microsoft-banned-list-_tcscpy.microsoft-banned-list-_tcscpy
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: _tcscpy(...)

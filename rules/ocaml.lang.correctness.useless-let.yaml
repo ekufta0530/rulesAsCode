@@ -1,0 +1,21 @@
+id: ocaml.lang.correctness.useless-let.useless-let
+pattern: let $X = $E in $X
+message: Useless let
+languages:
+- ocaml
+severity: ERROR
+metadata:
+  category: correctness
+  technology:
+  - ocaml
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/ocaml.lang.correctness.useless-let.useless-let
+  shortlink: https://sg.run/grz0
+  semgrep.dev:
+    rule:
+      r_id: 12785
+      rv_id: 110022
+      rule_id: oqUrpj
+      version_id: ZRTQNAJ
+      url: https://semgrep.dev/playground/r/ZRTQNAJ/ocaml.lang.correctness.useless-let.useless-let
+      origin: community

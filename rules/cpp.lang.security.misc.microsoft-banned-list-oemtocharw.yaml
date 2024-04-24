@@ -1,0 +1,34 @@
+id: cpp.lang.security.misc.microsoft-banned-list-oemtocharw.microsoft-banned-list-oemtocharw
+message: 'OemToCharW is a banned function: no bounds checking. Alternatives are WideCharToMultiByte'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-oemtocharw.microsoft-banned-list-oemtocharw
+  shortlink: https://sg.run/wdJAn
+  semgrep.dev:
+    rule:
+      r_id: 114829
+      rv_id: 257440
+      rule_id: AbU9qXo
+      version_id: A8TrjY6
+      url: https://semgrep.dev/playground/r/A8TrjY6/cpp.lang.security.misc.microsoft-banned-list-oemtocharw.microsoft-banned-list-oemtocharw
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: OemToCharW(...)

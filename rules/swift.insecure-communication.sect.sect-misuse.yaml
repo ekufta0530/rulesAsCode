@@ -1,0 +1,70 @@
+id: swift.insecure-communication.sect.sect-misuse.sectrustevaluate-misuse
+message: The application should check the trust result of the SecTrustEvaluate API
+  call to ensure that the connection is trusted. Failure to do so may allow connections
+  to proceed under insecure circumstances, resulting in a reduction in transport layer
+  security guarantees.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - audit
+  cwe: 'CWE-295: Improper Certificate Validation'
+  masvs:
+  - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+    best practices.'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A07:2021 - Identification and Authentication Failures
+  references:
+  - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Improper Authentication
+  source: https://semgrep.dev/r/swift.insecure-communication.sect.sect-misuse.sectrustevaluate-misuse
+  shortlink: https://sg.run/3DGo
+  semgrep.dev:
+    rule:
+      r_id: 60543
+      rv_id: 112023
+      rule_id: PeU8QA
+      version_id: o5Tg9wY
+      url: https://semgrep.dev/playground/r/o5Tg9wY/swift.insecure-communication.sect.sect-misuse.sectrustevaluate-misuse
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern: 'SecTrustEvaluate($TRUST, $ARG)
+
+          '
+    - focus-metavariable: $ARG
+    - pattern: nil
+  - patterns:
+    - pattern: 'SecTrustEvaluate($TRUST, &$RESULT)
+
+        '
+    - pattern-not-inside: 'SecTrustEvaluate($TRUST, &$RESULT)
+
+        ...
+
+        <... ($RESULT == ...) ...>
+
+        '
+    - pattern-not-inside: 'SecTrustEvaluate($TRUST, &$RESULT)
+
+        ...
+
+        <... ($RESULT != ...) ...>
+
+        '
+    - focus-metavariable: $RESULT

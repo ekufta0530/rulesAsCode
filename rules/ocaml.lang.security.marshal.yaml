@@ -1,0 +1,37 @@
+id: ocaml.lang.security.marshal.ocamllint-marshal
+pattern-either:
+- pattern: input_value
+- pattern: Marshal.from_channel
+- pattern: Marshal.from_bytes
+- pattern: Marshal.from_string
+message: Marshaling is currently not type-safe and can lead to insecure behaviour
+  when untrusted data is marshalled. Marshalling can lead to out-of-bound reads as
+  well.
+languages:
+- ocaml
+severity: WARNING
+metadata:
+  category: security
+  technology:
+  - ocaml
+  cwe: 'CWE-502: Deserialization of Untrusted Data'
+  references:
+  - https://eternal.red/2021/secure-ocaml-sandbox/
+  confidence: LOW
+  likelihood: MEDIUM
+  impact: HIGH
+  subcategory:
+  - vuln
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/ocaml.lang.security.marshal.ocamllint-marshal
+  shortlink: https://sg.run/eqLqL
+  semgrep.dev:
+    rule:
+      r_id: 92976
+      rv_id: 230012
+      rule_id: lBU4949
+      version_id: ExTR7W5
+      url: https://semgrep.dev/playground/r/ExTR7W5/ocaml.lang.security.marshal.ocamllint-marshal
+      origin: community

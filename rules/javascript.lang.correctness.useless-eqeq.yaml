@@ -1,0 +1,29 @@
+id: javascript.lang.correctness.useless-eqeq.eqeq-is-bad
+patterns:
+- pattern-not-inside: assert(...)
+- pattern-either:
+  - pattern: $X == $X
+  - pattern: $X != $X
+- pattern-not: 1 == 1
+message: Detected a useless comparison operation `$X == $X` or `$X != $X`. This operation
+  is always true. If testing for floating point NaN, use `math.isnan`, or `cmath.isnan`
+  if the number is complex.
+languages:
+- javascript
+- typescript
+severity: INFO
+metadata:
+  category: correctness
+  technology:
+  - javascript
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/javascript.lang.correctness.useless-eqeq.eqeq-is-bad
+  shortlink: https://sg.run/Kl6n
+  semgrep.dev:
+    rule:
+      r_id: 9311
+      rv_id: 109910
+      rule_id: X5U8Kj
+      version_id: yeTR27L
+      url: https://semgrep.dev/playground/r/yeTR27L/javascript.lang.correctness.useless-eqeq.eqeq-is-bad
+      origin: community

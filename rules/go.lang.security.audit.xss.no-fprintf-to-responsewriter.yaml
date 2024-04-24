@@ -1,0 +1,46 @@
+id: go.lang.security.audit.xss.no-fprintf-to-responsewriter.no-fprintf-to-responsewriter
+message: Detected 'Fprintf' or similar writing to 'http.ResponseWriter'. This bypasses
+  HTML escaping that prevents cross-site scripting vulnerabilities. Instead, use the
+  'html/template' package to render data to users.
+metadata:
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  references:
+  - https://blogtitle.github.io/robn-go-security-pearls-cross-site-scripting-xss/
+  category: security
+  technology:
+  - go
+  confidence: LOW
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/go.lang.security.audit.xss.no-fprintf-to-responsewriter.no-fprintf-to-responsewriter
+  shortlink: https://sg.run/7oqR
+  semgrep.dev:
+    rule:
+      r_id: 9138
+      rv_id: 109634
+      rule_id: ReUgyJ
+      version_id: BjTXrgq
+      url: https://semgrep.dev/playground/r/BjTXrgq/go.lang.security.audit.xss.no-fprintf-to-responsewriter.no-fprintf-to-responsewriter
+      origin: community
+severity: WARNING
+patterns:
+- pattern-either:
+  - pattern-inside: "func $HANDLER(..., $WRITER http.ResponseWriter, ...) {\n  ...\n\
+      }\n"
+  - pattern-inside: "func(..., $WRITER http.ResponseWriter, ...) {\n  ...\n}\n"
+- pattern-not: fmt.$PRINTF($WRITER, "...")
+- pattern: fmt.$PRINTF($WRITER, ...)
+languages:
+- go

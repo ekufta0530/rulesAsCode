@@ -1,0 +1,79 @@
+id: python.flask.security.audit.wtf-csrf-disabled.flask-wtf-csrf-disabled
+message: Setting 'WTF_CSRF_ENABLED' to 'False' explicitly disables CSRF protection.
+options:
+  symbolic_propagation: true
+metadata:
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://flask-wtf.readthedocs.io/en/1.2.x/csrf/
+  category: security
+  technology:
+  - flask
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  functional-categories:
+  - web::search::csrf-config::flask
+  - web::search::csrf-config::flask-wtf
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/python.flask.security.audit.wtf-csrf-disabled.flask-wtf-csrf-disabled
+  shortlink: https://sg.run/Q5AQ
+  semgrep.dev:
+    rule:
+      r_id: 9542
+      rv_id: 252100
+      rule_id: ReUgXz
+      version_id: A8TkY3P
+      url: https://semgrep.dev/playground/r/A8TkY3P/python.flask.security.audit.wtf-csrf-disabled.flask-wtf-csrf-disabled
+      origin: community
+severity: WARNING
+languages:
+- python
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern: $APP.config["WTF_CSRF_ENABLED"] = $FALSE
+      - pattern: $APP.config.WTF_CSRF_ENABLED = $FALSE
+      - patterns:
+        - pattern: "$APP.config.$UPDATE(\n  ...,\n  WTF_CSRF_ENABLED = $FALSE,\n \
+            \ ...\n)\n"
+        - pattern-not-inside: "$APP.config.$UPDATE(\n    ...,\n    TESTING=True,\n\
+            \    ...\n)\n"
+        - pattern-not-inside: "$APP.config.$UPDATE(\n    ...,\n    DEBUG=True,\n \
+            \   ...\n)\n"
+        - metavariable-regex:
+            metavariable: $UPDATE
+            regex: ^(update|from_mapping)$
+      - pattern: '$OBJ = $CLASS()
+
+          ...
+
+          $OBJ.WTF_CSRF_ENABLED = $FALSE
+
+          ...
+
+          $APP.config.from_object($OBJ, ...)
+
+          '
+      - pattern: 'WTF_CSRF_ENABLED = $FALSE
+
+          ...
+
+          $APP.config.from_object(__name__)
+
+          '
+    - metavariable-regex:
+        metavariable: $FALSE
+        regex: ^(False)$
+    - focus-metavariable: $FALSE
+fix: 'True'

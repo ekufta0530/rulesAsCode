@@ -1,0 +1,54 @@
+id: terraform.azure.security.azure-postgresql-encryption-enabled.azure-postgresql-encryption-enabled
+message: Ensure that PostgreSQL server enables infrastructure encryption
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_postgresql_server" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: 'resource "azurerm_postgresql_server" "..." {
+
+    ...
+
+    infrastructure_encryption_enabled = true
+
+    ...
+
+    }
+
+    '
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.azure.security.azure-postgresql-encryption-enabled.azure-postgresql-encryption-enabled
+  shortlink: https://sg.run/4LXg
+  semgrep.dev:
+    rule:
+      r_id: 24000
+      rv_id: 110910
+      rule_id: X5UxkJ
+      version_id: YDTpn2W
+      url: https://semgrep.dev/playground/r/YDTpn2W/terraform.azure.security.azure-postgresql-encryption-enabled.azure-postgresql-encryption-enabled
+      origin: community
+languages:
+- hcl
+severity: WARNING

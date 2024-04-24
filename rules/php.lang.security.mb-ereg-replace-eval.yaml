@@ -1,0 +1,39 @@
+id: php.lang.security.mb-ereg-replace-eval.mb-ereg-replace-eval
+patterns:
+- pattern: mb_ereg_replace($PATTERN, $REPL, $STR, $OPTIONS);
+- pattern-not: mb_ereg_replace($PATTERN, $REPL, $STR, "...");
+message: Calling mb_ereg_replace with user input in the options can lead to arbitrary
+  code execution. The eval modifier (`e`) evaluates the replacement argument as code.
+metadata:
+  cwe:
+  - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+  references:
+  - https://www.php.net/manual/en/function.mb-ereg-replace.php
+  - https://www.php.net/manual/en/function.mb-regex-set-options.php
+  category: security
+  technology:
+  - php
+  owasp:
+  - A03:2021 - Injection
+  cwe2022-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Code Injection
+  source: https://semgrep.dev/r/php.lang.security.mb-ereg-replace-eval.mb-ereg-replace-eval
+  shortlink: https://sg.run/AvdB
+  semgrep.dev:
+    rule:
+      r_id: 9394
+      rv_id: 110047
+      rule_id: JDUyj4
+      version_id: o5Tglwy
+      url: https://semgrep.dev/playground/r/o5Tglwy/php.lang.security.mb-ereg-replace-eval.mb-ereg-replace-eval
+      origin: community
+languages:
+- php
+severity: ERROR

@@ -1,0 +1,46 @@
+id: terraform.azure.security.appservice.azure-appservice-auth.azure-appservice-auth
+message: Ensure App Service Authentication is set on Azure App Service
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_app_service\" \"...\" {\n...\nauth_settings\
+    \ {\n  ...\n  enabled = true\n  ...\n}\n...\n}\n"
+- pattern-inside: 'resource "azurerm_app_service" "..." {
+
+    ...
+
+    }
+
+    '
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.azure.security.appservice.azure-appservice-auth.azure-appservice-auth
+  shortlink: https://sg.run/oR19
+  semgrep.dev:
+    rule:
+      r_id: 23960
+      rv_id: 110870
+      rule_id: yyU2qb
+      version_id: O9TNdXW
+      url: https://semgrep.dev/playground/r/O9TNdXW/terraform.azure.security.appservice.azure-appservice-auth.azure-appservice-auth
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,24 @@
+id: html.best-practice.robots-denied.robots-denied
+metadata:
+  category: best-practice
+  technology:
+  - html
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/html.best-practice.robots-denied.robots-denied
+  shortlink: https://sg.run/J94Q
+  semgrep.dev:
+    rule:
+      r_id: 9146
+      rv_id: 109649
+      rule_id: lBU9Ej
+      version_id: 1QTOYrO
+      url: https://semgrep.dev/playground/r/1QTOYrO/html.best-practice.robots-denied.robots-denied
+      origin: community
+message: This page denies crawlers from indexing the page. Remove the robots 'meta'
+  tag.
+severity: INFO
+languages:
+- generic
+pattern-either:
+- pattern: <meta name="robots" ...>
+- pattern: <META NAME="ROBOTS" ...>

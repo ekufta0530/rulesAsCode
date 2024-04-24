@@ -1,0 +1,48 @@
+id: csharp.lang.security.insecure-deserialization.los-formatter.insecure-losformatter-deserialization
+severity: WARNING
+languages:
+- C#
+metadata:
+  cwe:
+  - 'CWE-502: Deserialization of Untrusted Data'
+  owasp:
+  - A08:2017 - Insecure Deserialization
+  - A08:2021 - Software and Data Integrity Failures
+  references:
+  - https://docs.microsoft.com/en-us/dotnet/api/system.web.ui.losformatter?view=netframework-4.8
+  category: security
+  technology:
+  - .net
+  confidence: MEDIUM
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - vuln
+  likelihood: LOW
+  impact: HIGH
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/csharp.lang.security.insecure-deserialization.los-formatter.insecure-losformatter-deserialization
+  shortlink: https://sg.run/70pG
+  semgrep.dev:
+    rule:
+      r_id: 11138
+      rv_id: 109206
+      rule_id: wdU87G
+      version_id: NdT3dGO
+      url: https://semgrep.dev/playground/r/NdT3dGO/csharp.lang.security.insecure-deserialization.los-formatter.insecure-losformatter-deserialization
+      origin: community
+message: The LosFormatter type is dangerous and is not recommended for data processing.
+  Applications should stop using LosFormatter as soon as possible, even if they believe
+  the data they're processing to be trustworthy. LosFormatter is insecure and can't
+  be made secure
+patterns:
+- pattern-inside: 'using System.Web.UI;
+
+    ...
+
+    '
+- pattern: 'new LosFormatter();
+
+    '

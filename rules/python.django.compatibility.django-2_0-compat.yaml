@@ -1,0 +1,23 @@
+id: python.django.compatibility.django-2_0-compat.django-compat-2_0-assert-redirects-helper
+message: The host argument to assertRedirects is removed in Django 2.0.
+languages:
+- python
+severity: WARNING
+pattern-either:
+- pattern: $X.assertRedirects(..., host=$Y, ...)
+- pattern: assertRedirects(..., host=$Y, ...)
+metadata:
+  category: compatibility
+  technology:
+  - django
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.django.compatibility.django-2_0-compat.django-compat-2_0-assert-redirects-helper
+  shortlink: https://sg.run/YvQy
+  semgrep.dev:
+    rule:
+      r_id: 9458
+      rv_id: 110167
+      rule_id: 10UKlx
+      version_id: ZRTQNzd
+      url: https://semgrep.dev/playground/r/ZRTQNzd/python.django.compatibility.django-2_0-compat.django-compat-2_0-assert-redirects-helper
+      origin: community

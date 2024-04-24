@@ -1,0 +1,829 @@
+id: cpp.lang.security.strings.std-string-npos.std-string-npos
+message: The return value of `$VAR.$NPOS_CALL(...)` has been modified so it can never
+  equal `std::string::npos`. This could lead to an `std::out_of_range` exception being
+  thrown or trigger an out-of-bounds read if the position is used as an array index.
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - CTR55-CPP
+  - L1
+  cwe:
+  - 'CWE-125: Out-of-bounds Read'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  references:
+  - https://wiki.sei.cmu.edu/confluence/display/cplusplus/CTR55-CPP.+Do+not+use+an+additive+operator+on+an+iterator+if+the+result+would+overflow
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Memory Issues
+  source: https://semgrep.dev/r/cpp.lang.security.strings.std-string-npos.std-string-npos
+  shortlink: https://sg.run/4b00x
+  semgrep.dev:
+    rule:
+      r_id: 114888
+      rv_id: 269856
+      rule_id: DbU6kkp
+      version_id: 3ZTpjWP
+      url: https://semgrep.dev/playground/r/3ZTpjWP/cpp.lang.security.strings.std-string-npos.std-string-npos
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+  taint_only_propagate_through_assignments: true
+pattern-sources:
+- patterns:
+  - pattern: $X + $VAR.find(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) + $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) - $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.rfind(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.rfind(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.rfind(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) + $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) - $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_first_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_first_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_first_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) + $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) - $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_first_not_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_first_not_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_first_not_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) + $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) - $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_last_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_last_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_last_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) + $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) - $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_last_not_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_last_not_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_last_not_of(...)
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) + $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) - $X
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR = ...;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) + $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) - $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.rfind(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.rfind(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.rfind(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) + $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) - $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.rfind(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_first_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_first_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_first_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) + $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) - $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_first_not_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_first_not_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_first_not_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) + $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) - $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_first_not_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_last_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_last_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_last_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) + $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) - $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $VAR.find_last_not_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $VAR.find_last_not_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $X + $Y + $Z + $VAR.find_last_not_of(...)
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) + $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) + $X + $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) + $X + $Y + $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) - $X
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) - $X - $Y
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+- patterns:
+  - pattern: $VAR.find_last_not_of(...) - $X - $Y - $Z
+  - pattern-inside: 'std::string $VAR;
+
+      ...
+
+      '
+pattern-sinks:
+- patterns:
+  - pattern: $POS == string::npos
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: $POS != string::npos
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: string::npos == $POS
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: string::npos != $POS
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: $POS == std::string::npos
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: $POS != std::string::npos
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: std::string::npos == $POS
+  - focus-metavariable: $POS
+- patterns:
+  - pattern: std::string::npos != $POS
+  - focus-metavariable: $POS

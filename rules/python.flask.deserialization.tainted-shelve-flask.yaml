@@ -1,0 +1,86 @@
+id: python.flask.deserialization.tainted-shelve-flask.tainted-shelve-flask
+message: 'The application may convert user-controlled data into an object, which can
+  lead to an insecure deserialization vulnerability. An attacker can create a malicious
+  serialized object, pass it to the application, and take advantage of the deserialization
+  process to perform Denial-of-service (DoS), Remote code execution (RCE), or bypass
+  access control measures. To prevent this vulnerability, leverage data formats such
+  as JSON or XML as safer alternatives. If you need to deserialize user input in a
+  specific format, consider digitally signing the data before serialization to prevent
+  tampering. For more information, see: [Deserialization prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+  The `shelve` module uses `pickle` and should not be used with data from untrusted
+  sources.'
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-502: Deserialization of Untrusted Data'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - deserialization::sink::load-object::lang
+  - web::source::cookie::flask
+  - web::source::http-params::flask
+  - web::source::http-body::flask
+  - web::source::header::flask
+  - web::source::url-path-params::flask
+  - web::source::form-data::flask
+  owasp:
+  - A08:2017 - Insecure Deserialization
+  - A08:2021 - Software and Data Integrity Failures
+  references:
+  - https://portswigger.net/web-security/deserialization
+  - https://docs.python.org/3/library/shelve.html
+  - https://docs.python.org/3/library/pickle.html
+  - https://davidhamann.de/2020/04/05/exploiting-python-pickle/
+  related_oss_rules:
+  - python.aws-lambda.security.tainted-pickle-deserialization
+  - python.lang.security.deserialization.avoid-shelve
+  technology:
+  - python
+  - flask
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - 'Insecure Deserialization '
+  source: https://semgrep.dev/r/python.flask.deserialization.tainted-shelve-flask.tainted-shelve-flask
+  shortlink: https://sg.run/Jlgo
+  semgrep.dev:
+    rule:
+      r_id: 44946
+      rv_id: 111839
+      rule_id: JDUOl4
+      version_id: d6Trvdg
+      url: https://semgrep.dev/playground/r/d6Trvdg/python.flask.deserialization.tainted-shelve-flask.tainted-shelve-flask
+      origin: pro_rules
+languages:
+- python
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern: flask.request.$FUNCTION(...)
+          - metavariable-regex:
+              metavariable: $FUNCTION
+              regex: ^(from_values|get_data|get_json)$
+        - patterns:
+          - pattern-either:
+            - pattern: flask.request.$PROPERTY
+            - pattern: flask.request.$PROPERTY[...]
+            - pattern: flask.request.$PROPERTY.get(...)
+          - metavariable-regex:
+              metavariable: $PROPERTY
+              regex: ^(args|cookies|data|files|form|full_path|headers|input_stream|json|path|stream|values|view_args)$
+    - patterns:
+      - pattern: "@$APP.route(...)\ndef $FUNC(..., $PARAM, ...):\n  ...\n"
+      - focus-metavariable: $PARAM
+pattern-sinks:
+- pattern-either:
+  - pattern: shelve.open($SINK, ...)
+  - pattern: shelve.DbfilenameShelf($SINK, ...)

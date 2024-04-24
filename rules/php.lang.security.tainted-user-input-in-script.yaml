@@ -1,0 +1,67 @@
+id: php.lang.security.tainted-user-input-in-script.tainted-user-input-in-script
+message: Untrusted input could be used to tamper with a web page rendering, which
+  can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+  when untrusted input executes malicious JavaScript code, leading to issues such
+  as account compromise and sensitive information leakage. To prevent this vulnerability,
+  validate the user input, perform contextual output encoding or sanitize the input.
+  In PHP you can encode or sanitize user input with `htmlspecialchars` or use automatic
+  context-aware escaping with a template engine such as Latte.
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::source::cookie::lang
+  - web::source::http-params::lang
+  - web::source::http-body::lang
+  - web::source::url-path-params::lang
+  - web::sink::html-webpage::lang
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://brightsec.com/blog/cross-site-scripting-php/
+  technology:
+  - php
+  - generic
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/php.lang.security.tainted-user-input-in-script.tainted-user-input-in-script
+  shortlink: https://sg.run/JRdw
+  semgrep.dev:
+    rule:
+      r_id: 27202
+      rv_id: 111779
+      rule_id: d8Uyq6
+      version_id: O9TNd5R
+      url: https://semgrep.dev/playground/r/O9TNd5R/php.lang.security.tainted-user-input-in-script.tainted-user-input-in-script
+      origin: pro_rules
+languages:
+- generic
+paths:
+  include:
+  - '*.html'
+patterns:
+- pattern: '[ <?php $...PHP ?> ]
+
+    '
+- metavariable-pattern:
+    metavariable: $...PHP
+    patterns:
+    - pattern-not-inside: htmlspecialchars(...)
+    - pattern-either:
+      - pattern: $_GET
+      - pattern: $_REQUEST
+      - pattern: $_POST
+      - pattern: $_COOKIE
+      - pattern: $_FILES

@@ -1,0 +1,27 @@
+id: html.correctness.https-equiv.https-equiv
+metadata:
+  category: correctness
+  technology:
+  - html
+  references:
+  - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta#http-equiv
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/html.correctness.https-equiv.https-equiv
+  shortlink: https://sg.run/X5RdA
+  semgrep.dev:
+    rule:
+      r_id: 113620
+      rv_id: 254644
+      rule_id: WAUWqBQ
+      version_id: rxT0PBn
+      url: https://semgrep.dev/playground/r/rxT0PBn/html.correctness.https-equiv.https-equiv
+      origin: community
+message: The correct attribute name for this meta tag is `http-equiv`, not `https-equiv`.
+severity: ERROR
+languages:
+- html
+pattern-either:
+- pattern: <meta ... https-equiv=...>
+fix-regex:
+  regex: https-equiv=
+  replacement: http-equiv=

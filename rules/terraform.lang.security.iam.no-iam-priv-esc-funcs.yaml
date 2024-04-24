@@ -1,0 +1,106 @@
+id: terraform.lang.security.iam.no-iam-priv-esc-funcs.no-iam-priv-esc-funcs
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern-inside: "resource $TYPE \"...\" {\n  ...\n  policy = jsonencode({\n\
+        \    ...\n    Statement = [\n      ...\n    ]\n    ...\n  })\n  ...\n}\n"
+    - pattern-not-inside: "resource $TYPE \"...\" {\n  ...\n  policy = jsonencode({\n\
+        \    ...\n    Statement = [\n      ...,\n      {... Effect = \"Deny\" ...},\n\
+        \      ...\n    ]\n    ...\n  })\n  ...\n}\n"
+    - pattern: Action = $ACTION
+    - metavariable-pattern:
+        metavariable: $TYPE
+        pattern-either:
+        - pattern: '"aws_iam_role_policy"
+
+            '
+        - pattern: '"aws_iam_policy"
+
+            '
+        - pattern: '"aws_iam_user_policy"
+
+            '
+        - pattern: '"aws_iam_group_policy"
+
+            '
+  - patterns:
+    - pattern-inside: "data aws_iam_policy_document \"...\" {\n  ...\n  statement\
+        \ {\n    ...\n  }\n  ...\n}\n"
+    - pattern-not-inside: "data aws_iam_policy_document \"...\" {\n  ...\n  statement\
+        \ {\n    ...\n    effect = \"Deny\"\n    ...\n  }\n  ...\n}\n"
+    - pattern: 'actions = [..., $ACTION, ...]
+
+        '
+- metavariable-pattern:
+    metavariable: $ACTION
+    pattern-either:
+    - pattern: '"iam:AddUserToGroup"
+
+        '
+    - pattern: '"iam:CreatePolicyVersion"
+
+        '
+    - pattern: '"iam:SetDefaultPolicyVersion"
+
+        '
+    - pattern: '"iam:AttachUserPolicy"
+
+        '
+    - pattern: '"iam:AttachGroupPolicy"
+
+        '
+    - pattern: '"iam:AttachRolePolicy"
+
+        '
+    - pattern: '"iam:PutUserPolicy"
+
+        '
+    - pattern: '"iam:PutGroupPolicy"
+
+        '
+    - pattern: '"iam:PutRolePolicy"
+
+        '
+    - pattern: '"glue:UpdateDevEndpoint"
+
+        '
+    - pattern: '"iam:*"
+
+        '
+    - pattern: '"glue:*"
+
+        '
+message: Ensure that actions that can result in privilege escalation are not used.
+  These actions could potentially result in an attacker gaining full administrator
+  access of an AWS account. Try not to use these actions.
+metadata:
+  references:
+  - https://rhinosecuritylabs.com/aws/aws-privilege-escalation-methods-mitigation/
+  - https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
+  category: security
+  cwe:
+  - 'CWE-250: Execution with Unnecessary Privileges'
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  technology:
+  - terraform
+  - aws
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.lang.security.iam.no-iam-priv-esc-funcs.no-iam-priv-esc-funcs
+  shortlink: https://sg.run/28y5
+  semgrep.dev:
+    rule:
+      r_id: 13563
+      rv_id: 378648
+      rule_id: x8UxLq
+      version_id: YDTROjB
+      url: https://semgrep.dev/playground/r/YDTROjB/terraform.lang.security.iam.no-iam-priv-esc-funcs.no-iam-priv-esc-funcs
+      origin: community
+languages:
+- hcl
+severity: WARNING

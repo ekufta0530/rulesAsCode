@@ -1,0 +1,70 @@
+id: cpp.lang.correctness.memset-removal.memset-removal
+message: This call to `$MEMSET` may be optimized out by the compiler because the buffer
+  is not accessed later in the function. This could be an issue if `$BUF` contains
+  sensitive data, such as passwords or cryptographic keys. Applications should use
+  functions such as `memset_s` or `memset_explicit` to ensure that the sensitive data
+  is cleared.
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - L2
+  - MSC06-C
+  cwe:
+  - 'CWE-14: Compiler Removal of Code to Clear Buffers'
+  references:
+  - https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations
+  supersedes:
+  - c.lang.security.insecure-use-memset.insecure-use-memset
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Memory Issues
+  source: https://semgrep.dev/r/cpp.lang.correctness.memset-removal.memset-removal
+  shortlink: https://sg.run/DbKdj
+  semgrep.dev:
+    rule:
+      r_id: 114752
+      rv_id: 704229
+      rule_id: zdUKL8q
+      version_id: 6xTExPD
+      url: https://semgrep.dev/playground/r/6xTExPD/cpp.lang.correctness.memset-removal.memset-removal
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+patterns:
+- pattern-not-inside: '$MEMSET($BUF, ...);
+
+    ...
+
+    <... $BUF ...>;
+
+    '
+- patterns:
+  - pattern-either:
+    - pattern-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  $LOCAL_VAR_TYPE $BUF =\
+        \ ...;\n  ...\n}\n"
+    - pattern-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  $LOCAL_VAR_TYPE $BUF;\n\
+        \  ...\n}\n"
+    - pattern-inside: "$RETURN_TYPE $FUNC(..., $LOCAL_VAR_TYPE $BUF, ...) {\n  ...\n\
+        }\n"
+  - pattern-not-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  static $LOCAL_VAR_TYPE\
+      \ $BUF = ...;\n  ...\n}\n"
+  - pattern-not-inside: "$RETURN_TYPE $FUNC(...)\n{\n  ...\n  static $LOCAL_VAR_TYPE\
+      \ $BUF;\n  ...\n}\n"
+- pattern: $MEMSET($BUF, ...)
+- metavariable-pattern:
+    metavariable: $MEMSET
+    patterns:
+    - pattern: memset
+- focus-metavariable: $MEMSET

@@ -1,0 +1,188 @@
+id: kotlin.spring.exposed-exec-sqli.exposed-exec-sqli
+message: 'Untrusted input might be used to build a database query, which can lead
+  to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions. When building
+  SQL queries in Kotlin, it is possible to adopt prepared statements using the `connection.PreparedStatement`
+  class with parameterized queries. For more information, see: [Prepared statements
+  in Kotlin](https://developer.android.com/reference/kotlin/java/sql/PreparedStatement).'
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::sink::sql-or-nosql-query::exposed
+  - web::source::cookie::SpringBoot
+  - web::source::header::SpringBoot
+  - web::source::http-body::SpringBoot
+  - web::source::http-params::SpringBoot
+  - web::source::url-path-params::SpringBoot
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - exposed
+  - kotlin
+  - orm
+  - spring
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/kotlin.spring.exposed-exec-sqli.exposed-exec-sqli
+  shortlink: https://sg.run/y4rR
+  semgrep.dev:
+    rule:
+      r_id: 56868
+      rv_id: 731945
+      rule_id: AbU8En
+      version_id: l4TWArd
+      url: https://semgrep.dev/playground/r/l4TWArd/kotlin.spring.exposed-exec-sqli.exposed-exec-sqli
+      origin: pro_rules
+languages:
+- kotlin
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: '($REQ: ServletRequest)
+
+        '
+    - pattern: '($REQ: HttpServletRequest)
+
+        '
+    - pattern: '($REQ: WebRequest)
+
+        '
+    - pattern: '($REQ: ServletWebRequest)
+
+        '
+    - pattern: '($REQ: FacesWebRequest)
+
+        '
+    - pattern: '($REQ: NativeWebRequest)
+
+        '
+    - patterns:
+      - pattern-either:
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) {...}
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+        - pattern: 'fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) = $Z(...)
+
+            '
+      - metavariable-regex:
+          metavariable: $TYPE
+          regex: ^(?!(Int|Long|Float|Double|Short|Byte|Char|UByte|UInt|ULong|UShort|Boolean))
+      - metavariable-regex:
+          metavariable: $REQ
+          regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+      - focus-metavariable: $SOURCE
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.jetbrains.exposed.sql.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.jetbrains.exposed.sql.transactions
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: transactions.transaction.$EXEC($SQL, ...)
+          - patterns:
+            - pattern-inside: transactions.transaction { ... }
+            - pattern: $EXEC($SQL, ...)
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.jetbrains.exposed.sql.transactions.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.jetbrains.exposed.sql.transactions.transaction
+
+              ...
+
+              '
+        - pattern-either:
+          - pattern: transaction.$EXEC($SQL, ...)
+          - patterns:
+            - pattern-inside: transaction { ... }
+            - pattern: $EXEC($SQL, ...)
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.jetbrains.exposed.sql.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.jetbrains.exposed.sql.transactions
+
+              ...
+
+              '
+        - patterns:
+          - pattern-either:
+            - pattern: transactions.TransactionManager. ... .$EXEC($SQL, ...)
+            - pattern: '($TM: transactions.TransactionManager). ... .$EXEC($SQL, ...)
+
+                '
+      - patterns:
+        - pattern-either:
+          - pattern-inside: 'import org.jetbrains.exposed.sql.transactions.*
+
+              ...
+
+              '
+          - pattern-inside: 'import org.jetbrains.exposed.sql.transactions.TransactionManager
+
+              ...
+
+              '
+        - patterns:
+          - pattern-either:
+            - pattern: TransactionManager. ... .$EXEC($SQL, ...)
+            - pattern: '($TM: TransactionManager). ... .$EXEC($SQL, ...)
+
+                '
+  - metavariable-regex:
+      metavariable: $EXEC
+      regex: (exec|execInBatch)
+  - focus-metavariable: $SQL
+pattern-sanitizers:
+- patterns:
+  - pattern: $X.$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (equals|toInt|toLong|toFloat|toDouble|toShort|toByte|toUByte|toUInt|toULong|toUShort)
+- pattern: '($X: boolean)
+
+    '

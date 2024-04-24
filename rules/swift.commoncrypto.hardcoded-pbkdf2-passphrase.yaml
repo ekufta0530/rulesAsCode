@@ -1,0 +1,63 @@
+id: swift.commoncrypto.hardcoded-pbkdf2-passphrase.hardcoded-pbkdf2-passphrase
+message: A hardcoded passphrase was used with a call to the Password Based Key Derivation
+  Function (PBKDF2) function which derives a cryptographic key from the password input.
+  Because of this, the derived key is predictable and can be considered hard-coded
+  too. Keys should be derived using a unique passphrase and randomly generated salt
+  - per user.
+severity: WARNING
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-259: Use of Hard-coded Password'
+  functional-categories:
+  - crypto::search::secret::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-1: The app does not rely on symmetric cryptography with hardcoded
+    keys as a sole method of encryption.'
+  owasp:
+  - A07:2021 - Identification and Authentication Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  - https://pages.nist.gov/800-63-3/sp800-63b.html#sec5
+  technology:
+  - ios
+  - macos
+  - secrets
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.commoncrypto.hardcoded-pbkdf2-passphrase.hardcoded-pbkdf2-passphrase
+  shortlink: https://sg.run/Rd6K
+  semgrep.dev:
+    rule:
+      r_id: 59705
+      rv_id: 111987
+      rule_id: 6JUn9e
+      version_id: ExTjAwK
+      url: https://semgrep.dev/playground/r/ExTjAwK/swift.commoncrypto.hardcoded-pbkdf2-passphrase.hardcoded-pbkdf2-passphrase
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern: 'CCKeyDerivationPBKDF($A, "...", ...)
+
+        '
+    - pattern-not: 'CCKeyDerivationPBKDF($A, "", ...)
+
+        '
+  - patterns:
+    - pattern: 'CCKeyDerivationPBKDF($A, NSString(string: "...").UTF8String, ...)
+
+        '
+    - pattern-not: 'CCKeyDerivationPBKDF($A, NSString(string: "").UTF8String, ...)
+
+        '

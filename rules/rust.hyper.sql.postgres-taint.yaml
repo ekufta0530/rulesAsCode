@@ -1,0 +1,159 @@
+id: rust.hyper.sql.postgres-taint.postgres-taint
+message: Untrusted input might be used to build a database query, which can lead to
+  a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions.
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::sink::sql-or-nosql-query::postgres
+  - web::source::header::hyper
+  - web::source::http-body::hyper
+  - web::source::http-params::hyper
+  - web::source::url-path-params::hyper
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://docs.rs/postgres/latest/postgres/
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - hyper
+  - postgres
+  - rust
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/rust.hyper.sql.postgres-taint.postgres-taint
+  shortlink: https://sg.run/57Gj
+  semgrep.dev:
+    rule:
+      r_id: 63203
+      rv_id: 229344
+      rule_id: ZqUo8X
+      version_id: e1TgQA4
+      url: https://semgrep.dev/playground/r/e1TgQA4/rust.hyper.sql.postgres-taint.postgres-taint
+      origin: pro_rules
+languages:
+- rust
+mode: taint
+pattern-sources:
+- label: REQUEST
+  patterns:
+  - pattern: $REQ
+  - pattern-either:
+    - pattern-inside: "fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Incoming>,\
+        \ ...) {\n  ...\n}\n"
+    - pattern-inside: "fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Body>, ...)\
+        \ {\n  ...\n}\n"
+    - pattern-inside: "fn $FN_NAME(..., $REQ: hyper::Request<hyper::Body>, ...) {\n\
+        \  ...\n}\n"
+- label: USER_INPUT
+  patterns:
+  - pattern-either:
+    - pattern: $R.body()
+    - pattern: $R.body_mut()
+    - pattern: $R.into_body()
+    - pattern: $R.headers
+    - pattern: $R.headers_mut()
+    - pattern: $R.query()
+    - pattern: $R.path()
+    - pattern: $R.path_and_query()
+    - pattern: $R.collect()
+- label: CONCAT
+  patterns:
+  - pattern-either:
+    - pattern: '"..." + ...
+
+        '
+    - pattern: '... + "..."'
+    - pattern: $STR.push_str(...)
+    - pattern: format!(...)
+    - pattern: std::fmt::format(...)
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - pattern: $TO.push_str($FROM)
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $TO.$FUNC(..., $FROM)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(insert_str|replace_range)$
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $FROM.$FUNC(&$TO)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: $TO = $FROM.into()
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: $TO = std::from_utf8($FROM)
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: "let $TO = if let $SOME = $FROM {\n  ...\n} else {\n  ...\n};\n"
+  to: $TO
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $QUERY
+  - metavariable-pattern:
+      metavariable: $METHOD
+      patterns:
+      - pattern-either:
+        - pattern: query
+        - pattern: query_one
+        - pattern: query_opt
+        - pattern: query_raw
+        - pattern: prepare
+        - pattern: prepare_typed
+        - pattern: simple_query
+        - pattern: execute
+        - pattern: batch_execute
+  - pattern-either:
+    - pattern: '($CLIENT: postgres::Client).$METHOD($QUERY,...)
+
+        '
+    - patterns:
+      - pattern: $CLIENT.$METHOD($QUERY,...)
+      - pattern-either:
+        - pattern-inside: 'let $CLIENT = Client::connect(...);
+
+            ...
+
+            '
+        - pattern-inside: 'let $CLIENT = Client::connect(...)?;
+
+            ...
+
+            '
+        - pattern-inside: 'let $CLIENT = Client::connect(...). ...;
+
+            ...
+
+            '
+  requires: REQUEST and USER_INPUT and CONCAT

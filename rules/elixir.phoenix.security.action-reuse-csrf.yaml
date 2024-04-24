@@ -1,0 +1,50 @@
+id: elixir.phoenix.security.action-reuse-csrf.action-reuse-csrf
+message: 'The app is most likely vulnerable to CSRF attacks through the reuse of the
+  same action for both GET and POST '
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: LOW
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control/
+  technology:
+  - phoenix
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/elixir.phoenix.security.action-reuse-csrf.action-reuse-csrf
+  shortlink: https://sg.run/2ZDpY
+  semgrep.dev:
+    rule:
+      r_id: 114619
+      rv_id: 257009
+      rule_id: QrUWXnK
+      version_id: 9lToQPO
+      url: https://semgrep.dev/playground/r/9lToQPO/elixir.phoenix.security.action-reuse-csrf.action-reuse-csrf
+      origin: pro_rules
+languages:
+- elixir
+min-version: 1.55.2
+patterns:
+- pattern-inside:
+    pattern-either:
+    - pattern: "defmodule $ROUTER do\n  ...\n  use ..., Phoenix.Router, ...\n  ...\n\
+        end\n"
+    - pattern: "defmodule $ROUTER do\n  ...\n  use ..., :router, ...\n  ...\nend\n"
+- pattern-either:
+  - pattern: "scope \"...\", $APP do\n  ...\n  get $PATH, $CONTROLLER, $ACTION\n \
+      \ post $PATH, $CONTROLLER, $ACTION\n  ...\nend\n"
+  - pattern: "scope \"...\", $APP do\n  ...\n  get $PATH, $CONTROLLER, $ACTION\n \
+      \ ...\nend\n...\nscope \"...\", $APP do\n  ...\n  post $PATH, $CONTROLLER, $ACTION\n\
+      \  ...\nend\n"
+  - pattern: "scope \"...\", $APP do\n  ...\n  get $PATH, $CONTROLLER, $ACTION\n \
+      \ ...\n  scope \"...\" do\n    ...\n    post \"...\", $CONTROLLER, $ACTION\n\
+      \    ...\n  end\n  ...\nend\n"

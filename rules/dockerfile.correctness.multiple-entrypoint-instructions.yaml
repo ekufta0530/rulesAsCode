@@ -1,0 +1,39 @@
+id: dockerfile.correctness.multiple-entrypoint-instructions.multiple-entrypoint-instructions
+severity: ERROR
+languages:
+- dockerfile
+patterns:
+- pattern: 'ENTRYPOINT ...
+
+    ...
+
+    $ENTRYPOINT_INSTR
+
+    '
+- metavariable-pattern:
+    metavariable: $ENTRYPOINT_INSTR
+    pattern: 'ENTRYPOINT ...
+
+      '
+- focus-metavariable: $ENTRYPOINT_INSTR
+message: Multiple ENTRYPOINT instructions were found. Only the last one will take
+  effect.
+metadata:
+  source-rule-url: https://github.com/hadolint/hadolint/wiki/DL4004
+  references:
+  - https://github.com/hadolint/hadolint/wiki/DL4004
+  - https://kapeli.com/cheat_sheets/Dockerfile.docset/Contents/Resources/Documents/index#//dash_ref_Instructions/Entry/ENTRYPOINT/0
+  category: correctness
+  technology:
+  - dockerfile
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/dockerfile.correctness.multiple-entrypoint-instructions.multiple-entrypoint-instructions
+  shortlink: https://sg.run/JwvQ
+  semgrep.dev:
+    rule:
+      r_id: 20146
+      rv_id: 109254
+      rule_id: GdUoYA
+      version_id: O9TNORk
+      url: https://semgrep.dev/playground/r/O9TNORk/dockerfile.correctness.multiple-entrypoint-instructions.multiple-entrypoint-instructions
+      origin: community

@@ -1,0 +1,32 @@
+id: ajinabraham.njsscan.dos.express_bodyparser_dos.express_bodyparser
+patterns:
+- pattern-inside: '$APP = express()
+
+    ...
+
+    '
+- pattern-inside: '$APP.use(...)
+
+    '
+- pattern: $X.bodyParser(...)
+message: POST Request to Express Body Parser 'bodyParser()' can create Temporary files
+  and consume space.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a9
+  cwe: cwe-400
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.dos.express_bodyparser_dos.express_bodyparser
+  shortlink: https://sg.run/zXQW
+  semgrep.dev:
+    rule:
+      r_id: 43617
+      rv_id: 78235
+      rule_id: 3qUg5r
+      version_id: 2KTDEQ
+      url: https://semgrep.dev/playground/r/2KTDEQ/ajinabraham.njsscan.dos.express_bodyparser_dos.express_bodyparser
+      origin: community

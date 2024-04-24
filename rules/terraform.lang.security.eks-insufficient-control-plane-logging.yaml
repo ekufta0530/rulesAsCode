@@ -1,0 +1,47 @@
+id: terraform.lang.security.eks-insufficient-control-plane-logging.eks-insufficient-control-plane-logging
+patterns:
+- pattern: 'name = ...
+
+    '
+- pattern-inside: "resource \"aws_eks_cluster\" \"...\" {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_eks_cluster\" \"...\" {\n  ...\n  enabled_cluster_log_types\
+    \ = [..., \"api\", ..., \"audit\", ...]\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_eks_cluster\" \"...\" {\n  ...\n  enabled_cluster_log_types\
+    \ = [..., \"audit\", ..., \"api\", ...]\n  ...\n}\n"
+languages:
+- hcl
+message: Missing EKS control plane logging. It is recommended to enable at least Kubernetes
+  API server component logs ("api") and audit logs ("audit") of the EKS control plane
+  through the enabled_cluster_log_types attribute.
+severity: WARNING
+metadata:
+  references:
+  - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster#enabling-control-plane-logging
+  - https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
+  category: security
+  cwe:
+  - 'CWE-778: Insufficient Logging'
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A10:2017 - Insufficient Logging & Monitoring
+  - A09:2021 - Security Logging and Monitoring Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Insufficient Logging
+  source: https://semgrep.dev/r/terraform.lang.security.eks-insufficient-control-plane-logging.eks-insufficient-control-plane-logging
+  shortlink: https://sg.run/wZ3n
+  semgrep.dev:
+    rule:
+      r_id: 15829
+      rv_id: 111051
+      rule_id: x8UGx7
+      version_id: 0bTLeoA
+      url: https://semgrep.dev/playground/r/0bTLeoA/terraform.lang.security.eks-insufficient-control-plane-logging.eks-insufficient-control-plane-logging
+      origin: community

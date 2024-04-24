@@ -1,0 +1,23 @@
+id: dgryski.semgrep-go.ctx-time.ctx-done-and-timers
+patterns:
+- pattern-either:
+  - pattern: "select {\ncase <-ctx.Done():\n    $BODY\ncase <-time.After(...):\n \
+      \   $BODY\n}\n"
+  - pattern: "$T := time.NewTicker(...)\n...\nselect {\ncase <-ctx.Done():\n    $BODY\n\
+      case <-$T.C:\n    $BODY\n}\n"
+message: ctx.Done() and time.After/time.NewTicker
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.ctx-time.ctx-done-and-timers
+  shortlink: https://sg.run/AKXB
+  semgrep.dev:
+    rule:
+      r_id: 31306
+      rv_id: 37508
+      rule_id: 0oUG2Z
+      version_id: LjTlRp
+      url: https://semgrep.dev/playground/r/LjTlRp/dgryski.semgrep-go.ctx-time.ctx-done-and-timers
+      origin: community

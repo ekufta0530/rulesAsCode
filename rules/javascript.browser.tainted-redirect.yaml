@@ -1,0 +1,102 @@
+id: javascript.browser.tainted-redirect.tainted-redirect
+message: The application builds a URL using user-controlled input which can lead to
+  an open redirect vulnerability. An attacker can manipulate the URL and redirect
+  users to an arbitrary domain. Open redirect vulnerabilities can lead to issues such
+  as Cross-site scripting (XSS) or redirecting to a malicious domain for activities
+  such as phishing to capture users' credentials. To prevent this vulnerability perform
+  strict input validation of the domain against an allowlist of approved domains.
+  Notify a user in your application that they are leaving the website. Display a domain
+  where they are redirected to the user. A user can then either accept or deny the
+  redirect to an untrusted site.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-601: URL Redirection to Untrusted Site (''Open Redirect'')'
+  functional-categories:
+  - web::sink::redirect::WebAPI
+  - web::source::url-path-params::WebAPI
+  owasp:
+  - A01:2021 - Broken Access Control
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  technology:
+  - browser
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Open Redirect
+  source: https://semgrep.dev/r/javascript.browser.tainted-redirect.tainted-redirect
+  shortlink: https://sg.run/NGR7
+  semgrep.dev:
+    rule:
+      r_id: 60827
+      rv_id: 704280
+      rule_id: bwUyl6
+      version_id: WrTNEp7
+      url: https://semgrep.dev/playground/r/WrTNEp7/javascript.browser.tainted-redirect.tainted-redirect
+      origin: pro_rules
+languages:
+- javascript
+- typescript
+mode: taint
+pattern-sources:
+- label: LOCATION
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: window.location
+      - pattern: document.location
+      - pattern: location
+- label: PROP
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $LOCATION.hash
+      - pattern: $LOCATION.search
+      - pattern: $LOCATION.href
+  requires: LOCATION
+- label: CONCAT
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: '`...${$X}...`'
+      - pattern: $F + $X
+    - pattern-not: '`${$X}...`'
+    - pattern-not: '"https://" + $X
+
+        '
+    - pattern-not: '"http://" + $X
+
+        '
+    - pattern-not: '"//" + $X
+
+        '
+    - pattern-not: '`http://${$X}...`'
+    - pattern-not: '`https://${$X}...`'
+    - pattern-not: '`//${$X}...`'
+    - pattern-not: $X + $F
+    - focus-metavariable: $X
+  requires: PROP
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: location.href = $SINK
+    - pattern: $THIS. ... .location.href = $SINK
+    - pattern: location.replace($SINK)
+    - pattern: $THIS. ... .location.replace($SINK)
+    - pattern: location = $SINK
+    - pattern: $WINDOW. ... .location = $SINK
+    - pattern: window.open($SINK)
+    - pattern: $THIS. ... .window.open($SINK)
+  - focus-metavariable: $SINK
+  requires: PROP and not CONCAT
+pattern-sanitizers:
+- patterns:
+  - pattern-either:
+    - pattern: parseInt(...)
+    - pattern: Number.parseInt(...)

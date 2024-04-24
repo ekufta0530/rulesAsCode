@@ -1,0 +1,49 @@
+id: java.micronaut.audit.cookies.secure-false.secure-false
+message: Detected a cookie where the `Secure` flag is either missing or disabled.
+  The `Secure` cookie flag instructs the browser to forbid sending the cookie over
+  an insecure HTTP request. Set the `Secure` flag to `true` so the cookie will only
+  be sent over HTTPS.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+  functional-categories:
+  - web::search::cookie-config::Micronaut
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  technology:
+  - cookies
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/java.micronaut.audit.cookies.secure-false.secure-false
+  shortlink: https://sg.run/4b02x
+  semgrep.dev:
+    rule:
+      r_id: 115944
+      rv_id: 524269
+      rule_id: 0oULoA5
+      version_id: ExTQQWr
+      url: https://semgrep.dev/playground/r/ExTQQWr/java.micronaut.audit.cookies.secure-false.secure-false
+      origin: pro_rules
+languages:
+- java
+fix: 'true'
+options:
+  symbolic_propagation: true
+patterns:
+- focus-metavariable: $FALSE
+- pattern: $X. ... .secure(false)
+- pattern-either:
+  - pattern: io.micronaut.http.cookie.Cookie.of(...). ... .secure($FALSE)
+  - pattern: (io.micronaut.http.cookie.Cookie $C). ... .secure($FALSE)
+  - pattern: (io.micronaut.http.netty.cookies.NettyCookie $C). ... .secure($FALSE)
+  - pattern: (io.micronaut.http.simple.cookies.SimpleCookie $C). ... .secure($FALSE)

@@ -1,0 +1,32 @@
+id: terraform.azure.best-practice.azure-postgresql-threat-detection-enabled.azure-postgresql-threat-detection-enabled
+message: Ensure that PostgreSQL server enables Threat detection policy
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_postgresql_server" "..." {
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: "resource \"azurerm_postgresql_server\" \"...\" {\n...\nthreat_detection_policy\
+    \ {\n    ...\n    enabled = true\n    ...\n}\n...\n}\n"
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-postgresql-threat-detection-enabled.azure-postgresql-threat-detection-enabled
+  shortlink: https://sg.run/gN1J
+  semgrep.dev:
+    rule:
+      r_id: 23941
+      rv_id: 110845
+      rule_id: ReUkEP
+      version_id: A8T9XJ3
+      url: https://semgrep.dev/playground/r/A8T9XJ3/terraform.azure.best-practice.azure-postgresql-threat-detection-enabled.azure-postgresql-threat-detection-enabled
+      origin: community
+languages:
+- hcl
+severity: WARNING

@@ -1,0 +1,35 @@
+id: cpp.lang.security.misc.microsoft-banned-list-strcpyw.microsoft-banned-list-strcpyw
+message: 'strcpyW is a banned function: no bounds checking. Alternatives are StringCbCopy,
+  StringCbCopyEx, StringCchCopy, StringCchCopyEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-strcpyw.microsoft-banned-list-strcpyw
+  shortlink: https://sg.run/AbDpL
+  semgrep.dev:
+    rule:
+      r_id: 114850
+      rv_id: 257461
+      rule_id: YGUpEZY
+      version_id: YDT6qXk
+      url: https://semgrep.dev/playground/r/YDT6qXk/cpp.lang.security.misc.microsoft-banned-list-strcpyw.microsoft-banned-list-strcpyw
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: strcpyW(...)

@@ -1,0 +1,42 @@
+id: yaml.argo.correctness.event-binding-payload-with-hyphen.event-binding-payload-with-hyphen
+languages:
+- yaml
+severity: WARNING
+message: The parameter `$VALUE` to this WorkflowEventBinding includes hyphens, which
+  will, very confusingly, throw an error when Argo Workflows tries to invoke the workflow.
+  Set the payload value to use underscores instead.
+metadata:
+  category: correctness
+  references:
+  - https://argoproj.github.io/argo-workflows/variables/#expression
+  technology:
+  - argo
+  - argo-workflows
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.argo.correctness.event-binding-payload-with-hyphen.event-binding-payload-with-hyphen
+  shortlink: https://sg.run/wYBY
+  semgrep.dev:
+    rule:
+      r_id: 73473
+      rv_id: 113537
+      rule_id: 5rUz6z
+      version_id: 6xTv2rG
+      url: https://semgrep.dev/playground/r/6xTv2rG/yaml.argo.correctness.event-binding-payload-with-hyphen.event-binding-payload-with-hyphen
+      origin: community
+match:
+  all:
+  - inside: 'apiVersion: argoproj.io/v1alpha1
+
+      kind: WorkflowEventBinding
+
+      ...
+
+      '
+  - inside: "spec:\n  ...\n  submit:\n    ...\n    arguments:\n      ...\n      parameters:\n\
+      \        ...\n"
+  - 'event: $VALUE
+
+    '
+  where:
+  - metavariable: $VALUE
+    regex: payload\..*-.*

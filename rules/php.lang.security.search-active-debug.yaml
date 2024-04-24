@@ -1,0 +1,56 @@
+id: php.lang.security.search-active-debug.search-active-debug
+message: Debug logging is explicitly enabled. This can potentially disclose sensitive
+  information and should never be active on production systems.
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-489: Active Debug Code'
+  functional-categories:
+  - debug::search::active-debug-code::lang
+  - debug::search::active-debug-code::wordpress
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  - A06:2017 - Security Misconfiguration
+  references:
+  - https://www.php.net/manual/en/function.setcookie.php
+  - https://www.php.net/manual/en/function.session-set-cookie-params.php
+  - https://www.php.net/manual/en/configuration.file.php
+  technology:
+  - php
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Active Debug Code
+  source: https://semgrep.dev/r/php.lang.security.search-active-debug.search-active-debug
+  shortlink: https://sg.run/PKeW
+  semgrep.dev:
+    rule:
+      r_id: 27189
+      rv_id: 111766
+      rule_id: j2UngK
+      version_id: pZT1L5w
+      url: https://semgrep.dev/playground/r/pZT1L5w/php.lang.security.search-active-debug.search-active-debug
+      origin: pro_rules
+languages:
+- php
+paths:
+  exclude:
+  - dev/*
+  - development/*
+patterns:
+- pattern-either:
+  - pattern: 'define("WP_DEBUG",true)
+
+      '
+  - patterns:
+    - pattern: 'ini_set("display_errors",$X)
+
+        '
+    - metavariable-regex:
+        metavariable: $X
+        regex: (?i)("on"|1|true)

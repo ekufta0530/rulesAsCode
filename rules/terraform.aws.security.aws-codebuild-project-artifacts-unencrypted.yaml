@@ -1,0 +1,44 @@
+id: terraform.aws.security.aws-codebuild-project-artifacts-unencrypted.aws-codebuild-project-artifacts-unencrypted
+patterns:
+- pattern: "resource \"aws_codebuild_project\" $ANYTHING {\n  ...\n  artifacts {\n\
+    \    ...\n    encryption_disabled = true\n    ...\n  }\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_codebuild_project\" $ANYTHING {\n  ...\n  artifacts\
+    \ {\n    type = \"NO_ARTIFACTS\"\n    encryption_disabled = true\n  }\n  ...\n\
+    }\n"
+- pattern-not-inside: "resource \"aws_codebuild_project\" $ANYTHING {\n  ...\n  artifacts\
+    \ {\n    type = \"NO_ARTIFACTS\"\n  }\n  ...\n}\n"
+message: The AWS CodeBuild Project Artifacts are unencrypted. The AWS KMS encryption
+  key protects artifacts in the CodeBuild Projects. To create your own, create a aws_kms_key
+  resource or use the ARN string of a key in your account.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  cwe:
+  - 'CWE-320: CWE CATEGORY: Key Management Errors'
+  technology:
+  - aws
+  - terraform
+  category: security
+  references:
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.aws.security.aws-codebuild-project-artifacts-unencrypted.aws-codebuild-project-artifacts-unencrypted
+  shortlink: https://sg.run/JeWw
+  semgrep.dev:
+    rule:
+      r_id: 17346
+      rv_id: 110733
+      rule_id: eqUrdZ
+      version_id: LjTqAPO
+      url: https://semgrep.dev/playground/r/LjTqAPO/terraform.aws.security.aws-codebuild-project-artifacts-unencrypted.aws-codebuild-project-artifacts-unencrypted
+      origin: community

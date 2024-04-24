@@ -1,0 +1,102 @@
+id: java.servlets.security.tainted-code-injection-from-http-request-deepsemgrep.tainted-code-injection-from-http-request-deepsemgrep
+message: User data flows into a script engine or another means of dynamic code evaluation.
+  This is unsafe and could lead to code injection or arbitrary code execution as a
+  result. Avoid inputting user data into code execution or use proper sandboxing if
+  user code evaluation is necessary.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-95: Improper Neutralization of Directives in Dynamically Evaluated Code (''Eval
+    Injection'')'
+  functional-categories:
+  - expression-lang::sink::expression::commons-jexl
+  - expression-lang::sink::expression::javax.el
+  - expression-lang::sink::expression::javax.script
+  - expression-lang::sink::expression::velocity
+  - web::source::cookie::Servlet
+  - web::source::header::Servlet
+  - web::source::http-body::Servlet
+  - web::source::http-params::Servlet
+  - web::source::url-path-params::Servlet
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - java
+  - servlets
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Code Injection
+  source: https://semgrep.dev/r/java.servlets.security.tainted-code-injection-from-http-request-deepsemgrep.tainted-code-injection-from-http-request-deepsemgrep
+  shortlink: https://sg.run/ZYO4
+  semgrep.dev:
+    rule:
+      r_id: 40135
+      rv_id: 735026
+      rule_id: L1Upv5
+      version_id: BjTzg57
+      url: https://semgrep.dev/playground/r/BjTzg57/java.servlets.security.tainted-code-injection-from-http-request-deepsemgrep.tainted-code-injection-from-http-request-deepsemgrep
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: (ServletRequest $REQ).$METHOD(...)
+    - pattern: (HttpServletRequest $REQ).$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $SCRIPT
+  - pattern-either:
+    - pattern: (ScriptEngine $ENGINE).eval($SCRIPT, ...)
+    - pattern: (ExpressionFactory $FACTORY).createMethodExpression($CONTEXT, $SCRIPT,
+        ...)
+    - pattern: (ExpressionFactory $FACTORY).createValueExpression($CONTEXT, $SCRIPT,
+        ...)
+    - pattern: (ExpressionParser $PARSER).parseExpression($SCRIPT, ...)
+    - pattern: Velocity.evaluate($CONTEXT, $WRITER, $LOGTAG, $SCRIPT)
+    - pattern: (JexlEngine $JEXL).createExpression($SCRIPT, ...)
+    - patterns:
+      - pattern-either:
+        - pattern: (ExpressionParser $PARSER).parseExpression($SCRIPT, ...). ... .$FUNCS(...)
+        - pattern: (ExpressionFactory $FACTORY).createValueExpression($CONTEXT, $SCRIPT,
+            ...). ... .$FUNCS(...)
+      - metavariable-regex:
+          metavariable: $FUNCS
+          regex: (getValue|getType|getValueReference)
+    - patterns:
+      - pattern: MVEL.$FUNCS($SCRIPT, ...)
+      - metavariable-regex:
+          metavariable: $FUNCS
+          regex: (eval|evalToString|compileExpression|compileSetExpression)
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)

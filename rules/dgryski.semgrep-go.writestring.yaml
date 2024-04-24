@@ -1,0 +1,19 @@
+id: dgryski.semgrep-go.writestring.use-writer-not-writestring
+patterns:
+- pattern: io.WriteString($W, string($VAR))
+message: use $W.Write($VAR) instead of io.WriteString when $VAR is []byte
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.writestring.use-writer-not-writestring
+  shortlink: https://sg.run/YveD
+  semgrep.dev:
+    rule:
+      r_id: 8714
+      rv_id: 12005
+      rule_id: wdUJv6
+      version_id: PkTB0y
+      url: https://semgrep.dev/playground/r/PkTB0y/dgryski.semgrep-go.writestring.use-writer-not-writestring
+      origin: community

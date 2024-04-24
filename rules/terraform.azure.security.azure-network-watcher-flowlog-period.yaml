@@ -1,0 +1,69 @@
+id: terraform.azure.security.azure-network-watcher-flowlog-period.azure-network-watcher-flowlog-period
+message: Ensure that Network Security Group Flow Log retention period is 90 days or
+  greater
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "azurerm_network_watcher_flow_log" "..." {
+
+    ...
+
+    retention_policy {
+
+    ...
+
+    enabled = true
+
+    days = $DAYS
+
+    ...
+
+    }
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: 'resource "azurerm_network_watcher_flow_log" "..." {
+
+    ...
+
+    retention_policy {
+
+    ...
+
+    enabled = true
+
+    days = 0
+
+    ...
+
+    }
+
+    ...
+
+    }
+
+    '
+- metavariable-comparison:
+    metavariable: $DAYS
+    comparison: $DAYS < 90
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.security.azure-network-watcher-flowlog-period.azure-network-watcher-flowlog-period
+  shortlink: https://sg.run/Kev7
+  semgrep.dev:
+    rule:
+      r_id: 23999
+      rv_id: 110909
+      rule_id: 2ZUr5w
+      version_id: l4T46vb
+      url: https://semgrep.dev/playground/r/l4T46vb/terraform.azure.security.azure-network-watcher-flowlog-period.azure-network-watcher-flowlog-period
+      origin: community
+languages:
+- hcl
+severity: WARNING

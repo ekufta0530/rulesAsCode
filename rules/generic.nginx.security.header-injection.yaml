@@ -1,0 +1,46 @@
+id: generic.nginx.security.header-injection.header-injection
+pattern: "location ... <$VARIABLE> ... {\n  ...\n  add_header ... $$VARIABLE\n  ...\n\
+  }\n"
+paths:
+  include:
+  - '*.conf'
+  - '*.vhost'
+  - sites-available/*
+  - sites-enabled/*
+languages:
+- generic
+severity: ERROR
+message: 'The $$VARIABLE path parameter is added as a header in the response. This
+  could allow an attacker to inject a newline and add a new header into the response.
+  This is called HTTP response splitting. To fix, do not allow whitespace in the path
+  parameter: ''[^\s]+''.'
+metadata:
+  cwe:
+  - 'CWE-113: Improper Neutralization of CRLF Sequences in HTTP Headers (''HTTP Request/Response
+    Splitting'')'
+  references:
+  - https://github.com/yandex/gixy/blob/master/docs/en/plugins/httpsplitting.md
+  - https://owasp.org/www-community/attacks/HTTP_Response_Splitting
+  category: security
+  technology:
+  - nginx
+  confidence: MEDIUM
+  owasp:
+  - A03:2021 - Injection
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/generic.nginx.security.header-injection.header-injection
+  shortlink: https://sg.run/7oj4
+  semgrep.dev:
+    rule:
+      r_id: 9038
+      rv_id: 109346
+      rule_id: AbUz8p
+      version_id: 1QTOY0e
+      url: https://semgrep.dev/playground/r/1QTOY0e/generic.nginx.security.header-injection.header-injection
+      origin: community

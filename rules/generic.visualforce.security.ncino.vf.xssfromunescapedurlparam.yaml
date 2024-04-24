@@ -1,0 +1,55 @@
+id: generic.visualforce.security.ncino.vf.xssfromunescapedurlparam.xss-from-unescaped-url-param
+languages:
+- generic
+severity: ERROR
+message: To remediate this issue, ensure that all URL parameters are properly escaped
+  before including them in scripts. Please update your code to use either the JSENCODE
+  method to escape URL parameters or the escape="true" attribute on <apex:outputText>
+  tags. Passing URL parameters directly into scripts and DOM sinks creates an opportunity
+  for Cross-Site Scripting attacks. Cross-Site Scripting (XSS) attacks are a type
+  of injection, in which malicious scripts are injected into otherwise benign and
+  trusted websites. To remediate this issue, ensure that all URL parameters are properly
+  escaped before including them in scripts.
+metadata:
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/pages_security_tips_xss.htm
+  category: security
+  subcategory:
+  - vuln
+  technology:
+  - salesforce
+  - visualforce
+  cwe2022-top25: true
+  cwe2021-top25: true
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/generic.visualforce.security.ncino.vf.xssfromunescapedurlparam.xss-from-unescaped-url-param
+  shortlink: https://sg.run/9bGk
+  semgrep.dev:
+    rule:
+      r_id: 72423
+      rv_id: 109570
+      rule_id: BYUAJ2
+      version_id: 44TRlwe
+      url: https://semgrep.dev/playground/r/44TRlwe/generic.visualforce.security.ncino.vf.xssfromunescapedurlparam.xss-from-unescaped-url-param
+      origin: community
+patterns:
+- pattern-either:
+  - pattern: <apex:outputText...escape="false"...value="{!...CurrentPage.parameters.$URL_PARAM}".../>
+  - pattern: <apex:outputText...value="{!...CurrentPage.parameters.$URL_PARAM}"...escape="false".../>
+  - pattern: <script>...'{!...CurrentPage.parameters.$URL_PARAM}'...</script>
+- pattern-not: <script>...'{!...JSENCODE(...CurrentPage.parameters.$URL_PARAM})'...</script>
+paths:
+  include:
+  - '*.component'
+  - '*.page'

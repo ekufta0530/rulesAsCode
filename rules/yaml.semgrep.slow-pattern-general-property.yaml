@@ -1,0 +1,36 @@
+id: yaml.semgrep.slow-pattern-general-property.slow-pattern-general-property
+languages:
+- yaml
+message: Using patterns like `$X.$Y` may be too general and may slow down the rule
+  performance.
+patterns:
+- pattern-either:
+  - pattern-inside: 'pattern-inside: $X
+
+      '
+  - pattern-inside: 'pattern-not-inside: $X
+
+      '
+  - pattern-inside: 'pattern: $X
+
+      '
+  - pattern-inside: 'pattern-not: $X
+
+      '
+- pattern-regex: \$[A-Z]*\.\$[A-Z]*
+severity: WARNING
+metadata:
+  category: performance
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.slow-pattern-general-property.slow-pattern-general-property
+  shortlink: https://sg.run/B4X9
+  semgrep.dev:
+    rule:
+      r_id: 11207
+      rv_id: 111184
+      rule_id: 0oUEbn
+      version_id: QkTWw24
+      url: https://semgrep.dev/playground/r/QkTWw24/yaml.semgrep.slow-pattern-general-property.slow-pattern-general-property
+      origin: community

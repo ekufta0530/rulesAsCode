@@ -1,0 +1,73 @@
+id: cpp.lang.security.strings.return-c-str.return-c-str
+message: '`$FUNC` returns a pointer to the memory owned by `$STR`. This pointer is
+  invalid after `$STR` goes out of scope, which can trigger a use after free.'
+severity: ERROR
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - C
+  - C++
+  - DCL30-C
+  - EXP54-CPP
+  - L2
+  cwe:
+  - 'CWE-416: Use After Free'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - memory::search::use-after-free
+  references:
+  - https://wiki.sei.cmu.edu/confluence/display/c/DCL30-C.+Declare+objects+with+appropriate+storage+durations
+  - https://wiki.sei.cmu.edu/confluence/display/cplusplus/EXP54-CPP.+Do+not+access+an+object+outside+of+its+lifetime
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Memory Issues
+  source: https://semgrep.dev/r/cpp.lang.security.strings.return-c-str.return-c-str
+  shortlink: https://sg.run/8GYYq
+  semgrep.dev:
+    rule:
+      r_id: 114884
+      rv_id: 348152
+      rule_id: GdUvqqL
+      version_id: BjTNDZj
+      url: https://semgrep.dev/playground/r/BjTNDZj/cpp.lang.security.strings.return-c-str.return-c-str
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern: return $STR.c_str();
+    - metavariable-type:
+        metavariable: $STR
+        types:
+        - basic_string<$TYPE>
+        - std::basic_string<$TYPE>
+        - string
+        - std::string
+        - wstring
+        - std::wstring
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "$RETURN_TYPE * $FUNC(...)\n{\n  ...\n  $LOCAL_VAR_TYPE\
+            \ $STR = ...;\n  ...\n}\n"
+        - pattern-inside: "$RETURN_TYPE * $FUNC(...)\n{\n  ...\n  $LOCAL_VAR_TYPE\
+            \ $STR;\n  ...\n}\n"
+        - pattern-inside: "$RETURN_TYPE * $FUNC(..., $LOCAL_VAR_TYPE $STR, ...) {\n\
+            \  ...\n}\n"
+      - pattern-not-inside: "$RETURN_TYPE * $FUNC(...)\n{\n  ...\n  static $LOCAL_VAR_TYPE\
+          \ $STR = ...;\n  ...\n}\n"
+      - pattern-not-inside: "$RETURN_TYPE * $FUNC(...)\n{\n  ...\n  static $LOCAL_VAR_TYPE\
+          \ $STR;\n  ...\n}\n"
+  - pattern: return std::string(...).c_str();
+  - pattern: return string(...).c_str();

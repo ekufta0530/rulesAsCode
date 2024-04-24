@@ -1,0 +1,67 @@
+id: go.lang.correctness.use-filepath-join.use-filepath-join
+languages:
+- go
+severity: WARNING
+message: '`path.Join(...)` always joins using a forward slash. This may cause issues
+  on Windows or other systems using a different delimiter. Use `filepath.Join(...)`
+  instead which uses OS-specific path separators.'
+metadata:
+  category: correctness
+  references:
+  - https://parsiya.net/blog/2019-03-09-path.join-considered-harmful/
+  - https://go.dev/src/path/path.go?s=4034:4066#L145
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  subcategory:
+  - audit
+  technology:
+  - go
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/go.lang.correctness.use-filepath-join.use-filepath-join
+  shortlink: https://sg.run/dJEE
+  semgrep.dev:
+    rule:
+      r_id: 18234
+      rv_id: 109591
+      rule_id: KxUr33
+      version_id: DkT6nZE
+      url: https://semgrep.dev/playground/r/DkT6nZE/go.lang.correctness.use-filepath-join.use-filepath-join
+      origin: community
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern: '($STR : string)
+
+      '
+  - pattern-not: '"..."
+
+      '
+- patterns:
+  - pattern-inside: 'import "path"
+
+      ...
+
+      '
+  - pattern: path.$FUNC(...)
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ^(Base|Clean|Dir|Split)$
+- patterns:
+  - pattern-inside: 'import "path/filepath"
+
+      ...
+
+      '
+  - pattern: filepath.$FUNC(...)
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ^(Base|Clean|Dir|FromSlash|Glob|Rel|Split|SplitList|ToSlash|VolumeName)$
+pattern-sinks:
+- pattern: path.Join(...)
+pattern-sanitizers:
+- pattern: 'url.Parse(...)
+
+    ...
+
+    '

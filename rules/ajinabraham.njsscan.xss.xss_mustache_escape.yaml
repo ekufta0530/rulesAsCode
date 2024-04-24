@@ -1,0 +1,23 @@
+id: ajinabraham.njsscan.xss.xss_mustache_escape.xss_disable_mustache_escape
+pattern: $OBJ.escapeMarkup = false
+severity: WARNING
+languages:
+- javascript
+metadata:
+  cwe: cwe-116
+  owasp-web: a7
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.xss.xss_mustache_escape.xss_disable_mustache_escape
+  shortlink: https://sg.run/D0EY
+  semgrep.dev:
+    rule:
+      r_id: 43708
+      rv_id: 78312
+      rule_id: v8UJxL
+      version_id: LjT1lg
+      url: https://semgrep.dev/playground/r/LjT1lg/ajinabraham.njsscan.xss.xss_mustache_escape.xss_disable_mustache_escape
+      origin: community
+message: Markup escaping disabled. This can be used with some template engines to
+  escape disabling of HTML entities, which can lead to XSS attacks.

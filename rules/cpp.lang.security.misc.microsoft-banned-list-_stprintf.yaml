@@ -1,0 +1,36 @@
+id: cpp.lang.security.misc.microsoft-banned-list-_stprintf.microsoft-banned-list-_stprintf
+message: '_stprintf is a banned function: limited error detection. Alternatives are
+  StringCbPrintf, StringCbPrintf_l, StringCbPrintf_lEx, StringCbPrintfEx, StringCchPrintf,
+  StringCchPrintfEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_stprintf.microsoft-banned-list-_stprintf
+  shortlink: https://sg.run/DbK9j
+  semgrep.dev:
+    rule:
+      r_id: 114796
+      rv_id: 257407
+      rule_id: zdUKLDq
+      version_id: zyTAqRY
+      url: https://semgrep.dev/playground/r/zyTAqRY/cpp.lang.security.misc.microsoft-banned-list-_stprintf.microsoft-banned-list-_stprintf
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: _stprintf(...)

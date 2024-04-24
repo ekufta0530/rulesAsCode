@@ -1,0 +1,40 @@
+id: go.net.ssrf.http-ssrf-taint.http-ssrf-taint
+message: This rule has been deprecated.
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://golang.org/pkg/html/template/#HTML
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - go
+  - go-net/http
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/go.net.ssrf.http-ssrf-taint.http-ssrf-taint
+  shortlink: https://sg.run/WGn4
+  semgrep.dev:
+    rule:
+      r_id: 28309
+      rv_id: 111512
+      rule_id: x8Ujg0
+      version_id: 0bTLeYG
+      url: https://semgrep.dev/playground/r/0bTLeYG/go.net.ssrf.http-ssrf-taint.http-ssrf-taint
+      origin: pro_rules
+languages:
+- go
+patterns:
+- pattern: a()
+- pattern: b()

@@ -1,0 +1,40 @@
+id: solidity.security.arbitrary-send-erc20.arbitrary-send-erc20
+patterns:
+- pattern: $FUNC.transferFrom(...)
+- pattern-not: $FUNC.transferFrom(..., msg.sender, ...)
+message: msg.sender is not being used when calling erc20.transferFrom. Example - Alice
+  approves this contract to spend her ERC20 tokens. Bob can call function 'a' and
+  specify Alice's address as the from parameter in transferFrom, allowing him to transfer
+  Alice's tokens to himself.
+languages:
+- solidity
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: LOW
+  subcategory:
+  - audit
+  category: security
+  technology:
+  - solidity
+  cwe:
+  - 'CWE-285: Improper Authorization'
+  references:
+  - https://github.com/crytic/slither/wiki/Detector-Documentation#arbitrary-from-in-transferfrom
+  - https://cwe.mitre.org/data/definitions/285.html
+  owasp:
+  - A01:2021 - Broken Access Control
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/solidity.security.arbitrary-send-erc20.arbitrary-send-erc20
+  shortlink: https://sg.run/B72A
+  semgrep.dev:
+    rule:
+      r_id: 36951
+      rv_id: 110667
+      rule_id: 3qUepw
+      version_id: xyTKpxx
+      url: https://semgrep.dev/playground/r/xyTKpxx/solidity.security.arbitrary-send-erc20.arbitrary-send-erc20
+      origin: community

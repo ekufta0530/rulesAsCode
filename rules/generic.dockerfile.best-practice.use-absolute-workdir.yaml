@@ -1,0 +1,45 @@
+id: generic.dockerfile.best-practice.use-absolute-workdir.use-absolute-workdir
+pattern-either:
+- patterns:
+  - pattern: WORKDIR $VALUE
+  - metavariable-pattern:
+      metavariable: $VALUE
+      patterns:
+      - pattern-not-regex: (\/.*)
+- patterns:
+  - pattern: ENV $VAR=$VALUE ... $CMD ${$VAR}
+  - metavariable-pattern:
+      metavariable: $VALUE
+      patterns:
+      - pattern-not-regex: (\/.*)
+  - metavariable-pattern:
+      metavariable: $CMD
+      pattern: WORKDIR
+  - focus-metavariable: $CMD
+message: Detected a relative WORKDIR. Use absolute paths. This prevents issues based
+  on assumptions about the WORKDIR of previous containers.
+severity: WARNING
+languages:
+- generic
+metadata:
+  source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3000
+  references:
+  - https://github.com/hadolint/hadolint/wiki/DL3000
+  category: best-practice
+  technology:
+  - dockerfile
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/generic.dockerfile.best-practice.use-absolute-workdir.use-absolute-workdir
+  shortlink: https://sg.run/zve0
+  semgrep.dev:
+    rule:
+      r_id: 9017
+      rv_id: 109331
+      rule_id: wdUJE3
+      version_id: BjTXrGL
+      url: https://semgrep.dev/playground/r/BjTXrGL/generic.dockerfile.best-practice.use-absolute-workdir.use-absolute-workdir
+      origin: community
+paths:
+  include:
+  - '*dockerfile*'
+  - '*Dockerfile*'

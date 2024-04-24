@@ -1,0 +1,54 @@
+id: swift.insecure-communication.ats.ats-pins.ATS-CA-pins
+message: The application's App Transport Security (ATS) configuration leverages the
+  in-built public key pinning mechanisms however has pins which are Certificate Authority
+  Identities, rather than Leaf Identities. Trusting a Certificate Authority is much
+  more lenient than trusting a single leaf identity. Consider pinning to leaf identities
+  rather than CA, following the principle of least privelege.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe: 'CWE-272: Least Privilege Violation'
+  masvs:
+  - 'MASVS-NETWORK-2: The app performs identity pinning for all remote endpoints under
+    the developer''s control.'
+  references:
+  - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-pins.ATS-CA-pins
+  shortlink: https://sg.run/gwje
+  semgrep.dev:
+    rule:
+      r_id: 60541
+      rv_id: 112021
+      rule_id: 3qU8Od
+      version_id: YDTpn7o
+      url: https://semgrep.dev/playground/r/YDTpn7o/swift.insecure-communication.ats.ats-pins.ATS-CA-pins
+      origin: pro_rules
+languages:
+- xml
+options:
+  symbolic_propagation: true
+paths:
+  include:
+  - Info.plist
+patterns:
+- pattern: "<plist ...>\n<dict>\n...\n<key>NSAppTransportSecurity</key>\n<dict>\n\
+    ...\n<key>NSPinnedDomains</key>\n  <dict>\n    <key>...</key>\n    <dict>\n  \
+    \  ...\n    <key>$ENTITYTYPE</key>\n    <array>\n      <dict>\n      ...\n   \
+    \   <key>$HASH</key>\n      ...\n      </dict>\n    </array>\n    </dict>\n  </dict>\n\
+    ...\n</dict>\n...\n</dict>\n</plist>\n"
+- metavariable-comparison:
+    metavariable: $ENTITYTYPE
+    comparison: str($ENTITYTYPE) == "NSPinnedCAIdentities"
+- focus-metavariable:
+  - $ENTITYTYPE

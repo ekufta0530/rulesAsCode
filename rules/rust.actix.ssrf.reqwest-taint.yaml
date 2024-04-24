@@ -1,0 +1,257 @@
+id: rust.actix.ssrf.reqwest-taint.reqwest-taint
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::sink::http-request::actix_web
+  - net::sink::http-request::reqwest
+  - web::source::cookie::actix_web
+  - web::source::header::actix_web
+  - web::source::http-body::actix_web
+  - web::source::http-params::actix_web
+  - web::source::url-path-params::actix_web
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://docs.rs/reqwest/latest/reqwest/
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - actix
+  - http
+  - reqwest
+  - rust
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/rust.actix.ssrf.reqwest-taint.reqwest-taint
+  shortlink: https://sg.run/6D5Y
+  semgrep.dev:
+    rule:
+      r_id: 66115
+      rv_id: 229339
+      rule_id: pKUjwd
+      version_id: NdTgPQq
+      url: https://semgrep.dev/playground/r/NdTgPQq/rust.actix.ssrf.reqwest-taint.reqwest-taint
+      origin: pro_rules
+languages:
+- rust
+mode: taint
+pattern-sources:
+- label: INPUT
+  patterns:
+  - pattern: $SOURCE
+  - pattern-not-inside: "fn $NAME(..., $SOURCE: actix_web::HttpRequest, ...) {\n \
+      \ ...\n}\n"
+  - pattern-not-inside: "fn $NAME(..., $SOURCE: actix_web::web::Data<$T>, ...) {\n\
+      \  ...\n}\n"
+  - pattern-either:
+    - pattern-inside: "#[actix_web::$METHOD($X)]\nfn $NAME(..., $SOURCE: $TYPE, ...)\
+        \ {\n  ...\n}\n"
+    - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::Either<$L,$R>\
+        \ {\n  ...\n}\n"
+    - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::Result<$RES>\
+        \ {\n  ...\n}\n"
+    - pattern-inside: "fn $NAME(..., $SOURCE: actix_web::web::Path<$T>, ...) {\n \
+        \ ...\n}\n"
+    - pattern-either:
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::Responder\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::Responder,\
+          \ $S) {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::Responder>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::Responder,\
+          \ $ERR> {\n  ...\n}\n"
+    - pattern-either:
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::HttpResponse\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::HttpResponse,\
+          \ $S) {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::HttpResponse>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::HttpResponse,\
+          \ $ERR> {\n  ...\n}\n"
+    - pattern-either:
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::web::Json<$T>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::web::Json<$T>,\
+          \ $S) {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::web::Json<$T>>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::web::Json<$T>,\
+          \ $ERR> {\n  ...\n}\n"
+    - pattern-either:
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::CustomizeResponder<$T>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::CustomizeResponder<$T>,\
+          \ $S) {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::CustomizeResponder<$T>>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::CustomizeResponder<$T>,\
+          \ $ERR> {\n  ...\n}\n"
+    - pattern-either:
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_files::NamedFile\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_files::NamedFile,\
+          \ $S) {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_files::NamedFile>\
+          \ {\n  ...\n}\n"
+      - pattern-inside: "fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_files::NamedFile,\
+          \ $ERR> {\n  ...\n}\n"
+- label: REQUEST
+  patterns:
+  - pattern: $REQ
+  - pattern-inside: "fn $NAME(..., $REQ: actix_web::HttpRequest, ...) {\n  ...\n}\n"
+- label: REQ_INPUT
+  patterns:
+  - pattern-either:
+    - pattern: $R.headers()
+    - pattern: $R.headers_mut()
+    - pattern: $R.path()
+    - pattern: $R.query_string()
+    - pattern: $R.cookies()
+    - pattern: $R.cookie(...)
+  requires: REQUEST
+- label: CONCAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: $F + $X
+    - pattern: format!($F, $X, ...)
+  - pattern-not: $X + $F
+  - pattern-not: '"https://" + $X
+
+      '
+  - pattern-not: '"http://" + $X
+
+      '
+  - pattern-not: '"//" + $X
+
+      '
+  - pattern-not: String::from("https://") + $X
+  - pattern-not: String::from("http://") + $X
+  - pattern-not: String::from("//") + $X
+- label: FORMAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: format!("$REGEX", $X)
+    - pattern: std::fmt::format("$REGEX", ..., $X ,...)
+  - metavariable-regex:
+      metavariable: $REGEX
+      regex: ^(http://|https://|//)\{.*
+  requires: INPUT or REQ_INPUT
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - pattern: $TO.push_str($FROM)
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $TO.$FUNC(..., $FROM)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(insert_str|replace_range)$
+  to: $TO
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern: $FROM.$FUNC(&$TO)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: $TO = $FROM.into()
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: $TO = std::from_utf8($FROM)
+  to: $TO
+- from: $FROM
+  patterns:
+  - pattern: "let $TO = if let $SOME = $FROM {\n  ...\n} else {\n  ...\n};\n"
+  to: $TO
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $QUERY
+  - pattern-either:
+    - pattern: reqwest::get($QUERY,...)
+    - patterns:
+      - pattern-either:
+        - pattern: $CLIENT.delete($QUERY,...)
+        - pattern: $CLIENT.get($QUERY,...)
+        - pattern: $CLIENT.post($QUERY,...)
+        - pattern: $CLIENT.head($QUERY,...)
+        - pattern: $CLIENT.patch($QUERY,...)
+        - pattern: $CLIENT.put($QUERY,...)
+        - pattern: $CLIENT.request($M,$QUERY,...)
+      - pattern-inside: 'let $CLIENT = reqwest::Client::new(...);
+
+          ...
+
+          '
+    - pattern: '($CLIENT: reqwest::Client).delete($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: reqwest::Client).get($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: reqwest::Client).post($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: reqwest::Client).head($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: reqwest::Client).patch($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: reqwest::Client).put($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: reqwest::Client).request($M,$QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).delete($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).get($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).post($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).head($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).patch($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).put($QUERY,...)
+
+        '
+    - pattern: '($CLIENT: actix_web::web::Data<reqwest::Client>).request($M,$QUERY,...)
+
+        '
+  requires: FORMAT or (INPUT and not CONCAT) or (REQ_INPUT and not CONCAT)

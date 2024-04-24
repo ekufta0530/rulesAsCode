@@ -1,0 +1,48 @@
+id: csharp.lang.audit.cookies.httponly-false.httponly-false
+message: Detected a cookie where the `HttpOnly` flag is either missing or disabled.
+  The `HttpOnly` cookie flag instructs the browser to forbid client-side JavaScript
+  to read the cookie. If JavaScript interaction is required, you can ignore this finding.
+  However, set the `HttpOnly` flag to `true` in all other cases.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+  functional-categories:
+  - web::source::cookie::.NET
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  technology:
+  - cookies
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/csharp.lang.audit.cookies.httponly-false.httponly-false
+  shortlink: https://sg.run/zEgd
+  semgrep.dev:
+    rule:
+      r_id: 61161
+      rv_id: 229203
+      rule_id: lBUEA4
+      version_id: nWTOXJZ
+      url: https://semgrep.dev/playground/r/nWTOXJZ/csharp.lang.audit.cookies.httponly-false.httponly-false
+      origin: pro_rules
+languages:
+- csharp
+fix: 'true'
+options:
+  symbolic_propagation: true
+patterns:
+- patterns:
+  - pattern-either:
+    - pattern: (HttpCookie $COOKIE). ... .HttpOnly = $FALSE;
+    - pattern: $BUILDER.Cookie.HttpOnly = $FALSE;
+  - focus-metavariable: $FALSE
+  - pattern: 'false'

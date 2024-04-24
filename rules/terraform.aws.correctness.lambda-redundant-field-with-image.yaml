@@ -1,0 +1,33 @@
+id: terraform.aws.correctness.lambda-redundant-field-with-image.lambda-redundant-field-with-image
+severity: WARNING
+languages:
+- hcl
+message: When using the AWS Lambda "Image" package_type, `runtime` and `handler` are
+  not necessary for Lambda to understand how to run the code. These are built into
+  the container image. Including `runtime` or `handler` with an "Image" `package_type`
+  will result in an error on `terraform apply`. Remove these redundant fields.
+metadata:
+  category: correctness
+  references:
+  - https://stackoverflow.com/questions/72771366/why-do-i-get-error-handler-and-runtime-must-be-set-when-packagetype-is-zip-whe
+  technology:
+  - aws
+  - terraform
+  - aws-lambda
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.aws.correctness.lambda-redundant-field-with-image.lambda-redundant-field-with-image
+  shortlink: https://sg.run/4j9l
+  semgrep.dev:
+    rule:
+      r_id: 72344
+      rv_id: 110721
+      rule_id: wdULWl
+      version_id: NdT3oXG
+      url: https://semgrep.dev/playground/r/NdT3oXG/terraform.aws.correctness.lambda-redundant-field-with-image.lambda-redundant-field-with-image
+      origin: community
+patterns:
+- pattern-inside: "resource \"aws_lambda_function\" $NAME { \n  ...\n  package_type\
+    \ = \"Image\"\n}\n"
+- pattern-either:
+  - pattern: handler = ...
+  - pattern: runtime = ...

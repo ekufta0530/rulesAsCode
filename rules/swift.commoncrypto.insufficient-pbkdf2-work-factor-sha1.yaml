@@ -1,0 +1,68 @@
+id: swift.commoncrypto.insufficient-pbkdf2-work-factor-sha1.insufficient-pbkdf2-work-factor-sha1
+message: PBKDF2 usage was identified with an insufficient work factor, i.e. an iteration
+  count (rounds) lower than modern guidelines prescribe. Per OWASP guidance, 1.3M
+  iterations should be used with SHA1
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-916: Use of Password Hash With Insufficient Computational Effort'
+  functional-categories:
+  - crypto::search::hash-algorithm::CommonCrypto
+  masvs:
+  - 'MSTG-CRYPTO-3: The app uses cryptographic primitives that are appropriate for
+    the particular use-case, configured with parameters that adhere to industry best
+    practices.'
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  references:
+  - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+  - https://pages.nist.gov/800-63-3/sp800-63b.html#sec5
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Insecure Hashing Algorithm
+  source: https://semgrep.dev/r/swift.commoncrypto.insufficient-pbkdf2-work-factor-sha1.insufficient-pbkdf2-work-factor-sha1
+  shortlink: https://sg.run/XdXA
+  semgrep.dev:
+    rule:
+      r_id: 59720
+      rv_id: 112003
+      rule_id: x8UP5Z
+      version_id: WrTW3we
+      url: https://semgrep.dev/playground/r/WrTW3we/swift.commoncrypto.insufficient-pbkdf2-work-factor-sha1.insufficient-pbkdf2-work-factor-sha1
+      origin: pro_rules
+languages:
+- swift
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - patterns:
+    - pattern: 'CCKeyDerivationPBKDF($A, $B, $C, $D, $E, $ALG, UInt32($ROUNDS), ...)
+
+        '
+    - focus-metavariable: $ROUNDS
+  - patterns:
+    - pattern-inside: '$X = UInt32($ROUNDS)
+
+        ...
+
+        '
+    - pattern: 'CCKeyDerivationPBKDF($A, $B, $C, $D, $E, $ALG, $X, ...)
+
+        '
+    - focus-metavariable: $X
+- metavariable-comparison:
+    metavariable: $ROUNDS
+    comparison: $ROUNDS < 1300000
+- metavariable-regex:
+    metavariable: $ALG
+    regex: .*PRFHmacAlgSHA1.*

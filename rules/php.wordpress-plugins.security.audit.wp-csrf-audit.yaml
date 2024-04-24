@@ -1,0 +1,39 @@
+id: php.wordpress-plugins.security.audit.wp-csrf-audit.wp-csrf-audit
+pattern: check_ajax_referer(...,...,false)
+message: Passing false or 0 as the third argument to this function will not cause
+  the script to die, making the check useless.
+paths:
+  include:
+  - wp-content/plugins/**/*.php
+languages:
+- php
+severity: WARNING
+metadata:
+  category: security
+  confidence: LOW
+  likelihood: LOW
+  impact: MEDIUM
+  subcategory:
+  - audit
+  technology:
+  - Wordpress Plugins
+  references:
+  - https://github.com/wpscanteam/wpscan/wiki/WordPress-Plugin-Security-Testing-Cheat-Sheet#cross-site-request-forgery-csrf
+  - https://developer.wordpress.org/reference/functions/check_ajax_referer/
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/php.wordpress-plugins.security.audit.wp-csrf-audit.wp-csrf-audit
+  shortlink: https://sg.run/K2y5
+  semgrep.dev:
+    rule:
+      r_id: 39199
+      rv_id: 110080
+      rule_id: qNUKpk
+      version_id: RGTDklL
+      url: https://semgrep.dev/playground/r/RGTDklL/php.wordpress-plugins.security.audit.wp-csrf-audit.wp-csrf-audit
+      origin: community

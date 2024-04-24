@@ -1,0 +1,36 @@
+id: ruby.rails.security.audit.rails-skip-forgery-protection.rails-skip-forgery-protection
+pattern: skip_forgery_protection
+message: This call turns off CSRF protection allowing CSRF attacks against the application
+languages:
+- ruby
+severity: WARNING
+metadata:
+  cwe:
+  - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+  category: security
+  technology:
+  - rails
+  references:
+  - https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html#method-i-skip_forgery_protection
+  owasp:
+  - A01:2021 - Broken Access Control
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cross-Site Request Forgery (CSRF)
+  source: https://semgrep.dev/r/ruby.rails.security.audit.rails-skip-forgery-protection.rails-skip-forgery-protection
+  shortlink: https://sg.run/PgwY
+  semgrep.dev:
+    rule:
+      r_id: 16201
+      rv_id: 110568
+      rule_id: QrUnEk
+      version_id: e1T0386
+      url: https://semgrep.dev/playground/r/e1T0386/ruby.rails.security.audit.rails-skip-forgery-protection.rails-skip-forgery-protection
+      origin: community

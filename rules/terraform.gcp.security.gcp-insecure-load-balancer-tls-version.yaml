@@ -1,0 +1,41 @@
+id: terraform.gcp.security.gcp-insecure-load-balancer-tls-version.gcp-insecure-load-balancer-tls-version
+patterns:
+- pattern: "resource \"google_compute_ssl_policy\" $ANYTHING {\n  ...\n  min_tls_version\
+    \ = \"...\"\n  ...\n}\n"
+- pattern-not: "resource \"google_compute_ssl_policy\" $ANYTHING {\n  ...\n  min_tls_version\
+    \ = \"TLS_1_2\"\n  ...\n}\n"
+message: Detected GCP Load Balancer to be using an insecure version of TLS. To fix
+  this set your "min_tls_version" to "TLS_1_2"
+languages:
+- terraform
+severity: WARNING
+metadata:
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  technology:
+  - gcp
+  - terraform
+  category: security
+  references:
+  - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-insecure-load-balancer-tls-version.gcp-insecure-load-balancer-tls-version
+  shortlink: https://sg.run/Wjlj
+  semgrep.dev:
+    rule:
+      r_id: 18797
+      rv_id: 111018
+      rule_id: qNUQDQ
+      version_id: jQTgyBR
+      url: https://semgrep.dev/playground/r/jQTgyBR/terraform.gcp.security.gcp-insecure-load-balancer-tls-version.gcp-insecure-load-balancer-tls-version
+      origin: community

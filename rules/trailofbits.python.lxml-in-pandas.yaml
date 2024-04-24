@@ -1,0 +1,58 @@
+id: trailofbits.python.lxml-in-pandas.lxml-in-pandas
+message: Found usage of the `$FLAVOR` library, which is vulnerable to attacks such
+  as XML external entity (XXE) attacks
+languages:
+- python
+severity: ERROR
+metadata:
+  category: security
+  cwe: 'CWE-611: Improper Restriction of XML External Entity Reference'
+  subcategory:
+  - vuln
+  confidence: HIGH
+  likelihood: MEDIUM
+  impact: MEDIUM
+  technology:
+  - pandas
+  description: Potential XXE attacks from loading `lxml` in pandas
+  references:
+  - https://lxml.de/FAQ.html
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/trailofbits.python.lxml-in-pandas.lxml-in-pandas
+  shortlink: https://sg.run/1z1G
+  semgrep.dev:
+    rule:
+      r_id: 17166
+      rv_id: 733072
+      rule_id: 0oUrdJ
+      version_id: o5T2pO6
+      url: https://semgrep.dev/playground/r/o5T2pO6/trailofbits.python.lxml-in-pandas.lxml-in-pandas
+      origin: community
+pattern-either:
+- patterns:
+  - pattern: pandas.read_html($IO)
+  - pattern-not: pandas.read_html(**$KWARGS)
+- patterns:
+  - metavariable-pattern:
+      metavariable: $FLAVOR
+      patterns:
+      - pattern: '...'
+      - pattern-not: '"bs4"
+
+          '
+      - pattern-not: '"html5lib"
+
+          '
+  - pattern-either:
+    - pattern: pandas.read_html(..., flavor=$FLAVOR, ...)
+    - patterns:
+      - pattern-inside: '$KWARGS = {..., "flavor": $FLAVOR, ...}
+
+          ...
+
+          '
+      - pattern: 'pandas.read_html(**$KWARGS)
+
+          '

@@ -1,0 +1,348 @@
+id: ajinabraham.njsscan.eval.eval_vm2_injection.vm2_context_injection
+patterns:
+- pattern-inside: 'require(''vm2'')
+
+    ...
+
+    '
+- pattern-either:
+  - pattern-inside: function ($REQ, $RES, ...) {...}
+  - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+  - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+- pattern-either:
+  - pattern: 'new VM({sandbox: <... $REQ.$QUERY.$FOO ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... {$NAME:$REQ.$QUERY.$FOO} ...>;
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$QUERY.$FOO ...>};
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$OPTS = {sandbox: <... $REQ.$QUERY.$FOO ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$QUERY.$FOO ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: 'new NodeVM({sandbox: <... $REQ.$QUERY.$FOO ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... {$NAME:$REQ.$QUERY.$FOO} ...>;
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$QUERY.$FOO ...>};
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$OPTS = {sandbox: <... $REQ.$QUERY.$FOO ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$QUERY.$FOO ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$QUERY.$FOO ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: 'new VM({sandbox: <... $REQ.$BODY ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$BODY ...>;
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... {$NAME:$REQ.$BODY} ...>;
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$BODY ...>};
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$BODY ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      new VM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$OPTS = {sandbox: <... $REQ.$BODY ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$BODY ...>;
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$BODY ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$BODY ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new VM($OPTS,...)
+
+      '
+  - pattern: 'new NodeVM({sandbox: <... $REQ.$BODY ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$BODY ...>;
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = <... {$NAME:$REQ.$BODY} ...>;
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$BODY ...>};
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$BODY ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      new NodeVM({sandbox: <... $CONTEXT ...>},...)
+
+      '
+  - pattern: '$OPTS = {sandbox: <... $REQ.$BODY ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = <... $REQ.$BODY ...>;
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: '$CONTEXT = {$NAME: <... $REQ.$BODY ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)
+
+      '
+  - pattern: '$VAR = <... $REQ.$BODY ...>;
+
+      ...
+
+      $CONTEXT = {$NAME: <... $VAR ...>};
+
+      ...
+
+      $OPTS = {sandbox: <... $CONTEXT ...>};
+
+      ...
+
+      new NodeVM($OPTS,...)'
+message: Untrusted user input reaching `vm2` sandbox can result in context injection.
+severity: ERROR
+languages:
+- javascript
+metadata:
+  owasp-web: a1
+  cwe: cwe-94
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.eval.eval_vm2_injection.vm2_context_injection
+  shortlink: https://sg.run/dnod
+  semgrep.dev:
+    rule:
+      r_id: 43634
+      rv_id: 78252
+      rule_id: 5rUxKW
+      version_id: nWT6kw
+      url: https://semgrep.dev/playground/r/nWT6kw/ajinabraham.njsscan.eval.eval_vm2_injection.vm2_context_injection
+      origin: community

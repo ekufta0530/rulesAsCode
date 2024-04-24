@@ -1,0 +1,33 @@
+id: terraform.azure.best-practice.azure-appservice-dotnet-framework-version.azure-appservice-dotnet-framework-version
+message: Ensure that Net Framework version is the latest, if used as a part of the
+  web app
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_app_service\" \"...\" {\n...\nsite_config\
+    \ {\n  ...\n  dotnet_framework_version = \"v6.0\"\n  ...\n}\n...\n}\n"
+- pattern-inside: 'resource "azurerm_app_service" "..." {
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-appservice-dotnet-framework-version.azure-appservice-dotnet-framework-version
+  shortlink: https://sg.run/GpYp
+  semgrep.dev:
+    rule:
+      r_id: 23904
+      rv_id: 110808
+      rule_id: r6UL1L
+      version_id: l4T46Xp
+      url: https://semgrep.dev/playground/r/l4T46Xp/terraform.azure.best-practice.azure-appservice-dotnet-framework-version.azure-appservice-dotnet-framework-version
+      origin: community
+languages:
+- hcl
+severity: INFO

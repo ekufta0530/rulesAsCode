@@ -1,0 +1,52 @@
+id: java.spring.security.audit.cookie-serializer-secure-false.cookie-serializer-secure-false
+message: A CookieSerializer was detected without setting the 'secure' flag. The 'secure'
+  flag for cookies prevents the client from transmitting the cookie over insecure
+  channels such as HTTP. Set the 'secure' flag by calling '$S.setUseSecureCookie(true);'
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  asvs:
+    section: 'V3: Session Management Verification Requirements'
+    control_id: 3.4.1 Missing Cookie Attribute
+    control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x12-V3-Session-management.md#v34-cookie-based-session-management
+    version: '4'
+  cwe:
+  - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+  functional-categories:
+  - web::search::cookie-config::Spring
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://docs.spring.io/spring-session/docs/current/api/org/springframework/session/web/http/DefaultCookieSerializer.html
+  technology:
+  - java
+  - spring
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/java.spring.security.audit.cookie-serializer-secure-false.cookie-serializer-secure-false
+  shortlink: https://sg.run/8LGE
+  semgrep.dev:
+    rule:
+      r_id: 27184
+      rv_id: 111627
+      rule_id: oqUbgD
+      version_id: yeTRZEw
+      url: https://semgrep.dev/playground/r/yeTRZEw/java.spring.security.audit.cookie-serializer-secure-false.cookie-serializer-secure-false
+      origin: pro_rules
+languages:
+- java
+patterns:
+- pattern: $S = new DefaultCookieSerializer(...);
+- pattern-not-inside: '$S = new DefaultCookieSerializer(...);
+
+    ...
+
+    $S.setUseSecureCookie(true);
+
+    '

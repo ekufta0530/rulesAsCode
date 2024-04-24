@@ -1,0 +1,61 @@
+id: swift.insecure-communication.ats.ats-local.ATS-local-networking
+message: The application's App Transport Security (ATS) configuration allows for local
+  networking, which in some iOS versions is blocked by default in ATS. Consider whether
+  or not the application requires this in release builds, or for development reasons
+  only. This follows the principle of least privelege, reducing the attack surface
+  if local networking is not required.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - audit
+  cwe: 'CWE-272: Least Privilege Violation'
+  masvs:
+  - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+    best practices.'
+  references:
+  - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-local.ATS-local-networking
+  shortlink: https://sg.run/EbpP
+  semgrep.dev:
+    rule:
+      r_id: 60537
+      rv_id: 112017
+      rule_id: L1UjX3
+      version_id: 0bTLeXX
+      url: https://semgrep.dev/playground/r/0bTLeXX/swift.insecure-communication.ats.ats-local.ATS-local-networking
+      origin: pro_rules
+languages:
+- xml
+options:
+  symbolic_propagation: true
+paths:
+  include:
+  - Info.plist
+patterns:
+- pattern: '<dict>
+
+    ...
+
+    <key>$KEY</key>
+
+    <true/>
+
+    ...
+
+    </dict>
+
+    '
+- metavariable-comparison:
+    metavariable: $KEY
+    comparison: str($KEY) == "NSAllowsLocalNetworking"
+- focus-metavariable: $KEY

@@ -1,0 +1,47 @@
+id: csharp.lang.security.open-redirect.open-redirect
+mode: taint
+pattern-sources:
+- patterns:
+  - focus-metavariable: $PARAM
+  - pattern-inside: "public $TYPE $FUNCNAME (..., string $PARAM, ...) {\n  ...\n}\n"
+pattern-sinks:
+- patterns:
+  - pattern: Redirect(...)
+  - pattern-not-inside: "if (IsLocalUrl(...)) { \n    ... \n    Redirect(...); \n\
+      \    ...\n}\n"
+  - pattern-not-inside: "if ($URL.IsLocalUrl(...)) { \n    ... \n    Redirect(...);\
+      \ \n    ...\n}\n"
+message: A query string parameter may contain a URL value that could cause the web
+  application to redirect the request to a malicious website controlled by an attacker.
+  Make sure to sanitize this parameter sufficiently.
+metadata:
+  category: security
+  technology:
+  - csharp
+  cwe:
+  - 'CWE-601: URL Redirection to Untrusted Site (''Open Redirect'')'
+  references:
+  - https://cwe.mitre.org/data/definitions/601.html
+  owasp:
+  - A01:2021 - Broken Access Control
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Open Redirect
+  source: https://semgrep.dev/r/csharp.lang.security.open-redirect.open-redirect
+  shortlink: https://sg.run/2Jr5
+  semgrep.dev:
+    rule:
+      r_id: 26719
+      rv_id: 109212
+      rule_id: qNUBw4
+      version_id: vdTYNdn
+      url: https://semgrep.dev/playground/r/vdTYNdn/csharp.lang.security.open-redirect.open-redirect
+      origin: community
+languages:
+- csharp
+severity: ERROR

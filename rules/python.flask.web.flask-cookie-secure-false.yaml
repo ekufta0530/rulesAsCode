@@ -1,0 +1,71 @@
+id: python.flask.web.flask-cookie-secure-false.flask-cookie-secure-false
+message: Detected a cookie where the `Secure` flag is either missing or disabled.
+  The `Secure` cookie flag instructs the browser to forbid sending the cookie over
+  an insecure HTTP request. Set the `Secure` flag to `true` so the cookie will only
+  be sent over HTTPS.
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+  functional-categories:
+  - web::search::cookie-config::flask
+  - web::search::cookie-config::flask-jwt-extended
+  - web::search::cookie-config::flask-login
+  - web::search::cookie-config::flask-session
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  technology:
+  - cookie
+  - cookies
+  - flask
+  - web
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/python.flask.web.flask-cookie-secure-false.flask-cookie-secure-false
+  shortlink: https://sg.run/v8reW
+  semgrep.dev:
+    rule:
+      r_id: 116533
+      rv_id: 731983
+      rule_id: EwUjeqd
+      version_id: 7ZTWj1N
+      url: https://semgrep.dev/playground/r/7ZTWj1N/python.flask.web.flask-cookie-secure-false.flask-cookie-secure-false
+      origin: pro_rules
+languages:
+- python
+fix: 'True'
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - pattern-inside: "def $METHOD(..., $RESP: flask.Response, ...):\n    ...\n"
+  - pattern-inside: '$RESP = flask.make_response(...)
+
+      ...
+
+      '
+  - pattern-inside: '$RESP = $APP.make_response(...)
+
+      ...
+
+      '
+  - pattern-inside: '$RESP = flask.Response(...)
+
+      ...
+
+      '
+- patterns:
+  - pattern: $RESP.set_cookie(..., secure=$FALSE, ...)
+  - metavariable-regex:
+      metavariable: $FALSE
+      regex: ^(False)$
+  - focus-metavariable: $FALSE

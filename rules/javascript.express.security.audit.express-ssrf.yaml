@@ -1,0 +1,240 @@
+id: javascript.express.security.audit.express-ssrf.express-ssrf
+message: 'The following request $REQUEST.$METHOD() was found to be crafted from user-input
+  `$REQ` which can lead to Server-Side Request Forgery (SSRF) vulnerabilities. It
+  is recommended where possible to not allow user-input to craft the base request,
+  but to be treated as part of the path or query parameter. When user-input is necessary
+  to craft the request, it is recommeneded to follow OWASP best practices to prevent
+  abuse. '
+metadata:
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  technology:
+  - express
+  category: security
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  cwe2022-top25: true
+  cwe2021-top25: true
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/javascript.express.security.audit.express-ssrf.express-ssrf
+  shortlink: https://sg.run/0PNw
+  semgrep.dev:
+    rule:
+      r_id: 22554
+      rv_id: 109848
+      rule_id: eqU9l2
+      version_id: 2KTzr9N
+      url: https://semgrep.dev/playground/r/2KTzr9N/javascript.express.security.audit.express-ssrf.express-ssrf
+      origin: community
+languages:
+- javascript
+- typescript
+severity: WARNING
+mode: taint
+options:
+  taint_unify_mvars: true
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern-inside: function ... ($REQ, ...) {...}
+  - pattern-either:
+    - pattern: $REQ.query
+    - pattern: $REQ.body
+    - pattern: $REQ.params
+    - pattern: $REQ.cookies
+    - pattern: $REQ.headers
+- patterns:
+  - pattern-either:
+    - pattern-inside: '({ $REQ }: Request,...) =>
+
+        {...}
+
+        '
+    - pattern-inside: '({ $REQ }: $EXPRESS.Request,...) => {...}
+
+        '
+  - focus-metavariable: $REQ
+  - pattern-either:
+    - pattern: params
+    - pattern: query
+    - pattern: cookies
+    - pattern: headers
+    - pattern: body
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$REQUEST = require(''request'')
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $REQUEST from ''request''
+
+        ...
+
+        '
+    - pattern-inside: 'import $REQUEST from ''request''
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern: $REQUEST.$METHOD("$HTTP"+$REQ. ... .$VALUE)
+    - pattern: $REQUEST.$METHOD("$HTTP"+$REQ. ... .$VALUE + $...A)
+    - pattern: $REQUEST.$METHOD(`$HTTP${$REQ. ... .$VALUE}...`)
+    - pattern: $REQUEST.$METHOD("$HTTP"+$REQ.$VALUE[...])
+    - pattern: $REQUEST.$METHOD("$HTTP"+$REQ.$VALUE[...] + $...A)
+    - pattern: $REQUEST.$METHOD(`$HTTP${$REQ.$VALUE[...]}...`)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: ^(get|post|put|patch|del|head|delete)$
+  - metavariable-regex:
+      metavariable: $HTTP
+      regex: ^(https?:\/\/|//)$
+  - pattern-either:
+    - pattern: $REQ. ... .$VALUE
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$REQUEST = require(''request'')
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $REQUEST from ''request''
+
+        ...
+
+        '
+    - pattern-inside: 'import $REQUEST from ''request''
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern: $REQUEST.$METHOD($REQ. ... .$VALUE,...)
+    - pattern: $REQUEST.$METHOD($REQ. ... .$VALUE + $...A,...)
+    - pattern: $REQUEST.$METHOD(`${$REQ. ... .$VALUE}...`,...)
+  - pattern: $REQ. ... .$VALUE
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: ^(get|post|put|patch|del|head|delete)$
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$REQUEST = require(''request'')
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $REQUEST from ''request''
+
+        ...
+
+        '
+    - pattern-inside: 'import $REQUEST from ''request''
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern: $REQUEST.$METHOD($REQ.$VALUE['...'],...)
+    - pattern: $REQUEST.$METHOD($REQ.$VALUE['...'] + $...A,...)
+    - pattern: $REQUEST.$METHOD(`${$REQ.$VALUE['...']}...`,...)
+  - pattern: $REQ.$VALUE
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: ^(get|post|put|patch|del|head|delete)$
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$REQUEST = require(''request'')
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $REQUEST from ''request''
+
+        ...
+
+        '
+    - pattern-inside: 'import $REQUEST from ''request''
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern-inside: '$ASSIGN = $REQ. ... .$VALUE
+
+        ...
+
+        '
+    - pattern-inside: '$ASSIGN = $REQ. ... .$VALUE[''...'']
+
+        ...
+
+        '
+    - pattern-inside: '$ASSIGN = $REQ. ... .$VALUE + $...A
+
+        ...
+
+        '
+    - pattern-inside: "$ASSIGN = $REQ. ... .$VALUE['...'] + $...A\n...     \n"
+    - pattern-inside: '$ASSIGN = `${$REQ. ... .$VALUE}...`
+
+        ...
+
+        '
+    - pattern-inside: "$ASSIGN = `${$REQ. ... .$VALUE['...']}...`\n... \n"
+    - patterns:
+      - pattern-either:
+        - pattern-inside: '$ASSIGN = "$HTTP"+ $REQ. ... .$VALUE
+
+            ...
+
+            '
+        - pattern-inside: '$ASSIGN = "$HTTP"+$REQ. ... .$VALUE + $...A
+
+            ...
+
+            '
+        - pattern-inside: '$ASSIGN = "$HTTP"+$REQ.$VALUE[...]
+
+            ...
+
+            '
+        - pattern-inside: '$ASSIGN = "$HTTP"+$REQ.$VALUE[...] + $...A
+
+            ...
+
+            '
+        - pattern-inside: '$ASSIGN = `$HTTP${$REQ.$VALUE[...]}...`
+
+            ...
+
+            '
+      - metavariable-regex:
+          metavariable: $HTTP
+          regex: ^(https?:\/\/|//)$
+  - pattern-either:
+    - pattern: $REQUEST.$METHOD($ASSIGN,...)
+    - pattern: $REQUEST.$METHOD($ASSIGN + $...FOO,...)
+    - pattern: $REQUEST.$METHOD(`${$ASSIGN}...`,...)
+    - patterns:
+      - pattern-either:
+        - pattern: $REQUEST.$METHOD("$HTTP"+$ASSIGN,...)
+        - pattern: $REQUEST.$METHOD("$HTTP"+$ASSIGN + $...A,...)
+        - pattern: $REQUEST.$METHOD(`$HTTP${$ASSIGN}...`,...)
+      - metavariable-regex:
+          metavariable: $HTTP
+          regex: ^(https?:\/\/|//)$
+  - pattern: $ASSIGN
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: ^(get|post|put|patch|del|head|delete)$

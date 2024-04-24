@@ -1,0 +1,36 @@
+id: cpp.lang.security.misc.microsoft-banned-list-wvsprintfw.microsoft-banned-list-wvsprintfw
+message: 'wvsprintfW is a banned function: no null-termination. Alternatives are StringCbVPrintf,
+  StringCbVPrintf_l, StringCbVPrintf_lEx, StringCbVPrintfEx, StringCchVPrintf, StringCchVPrintf_l,
+  StringCchVPrintf_lEx, StringCchVPrintfEx'
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-477: Use of Obsolete Function'
+  references:
+  - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Dangerous Method or Function
+  source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-wvsprintfw.microsoft-banned-list-wvsprintfw
+  shortlink: https://sg.run/eq2Gd
+  semgrep.dev:
+    rule:
+      r_id: 114876
+      rv_id: 257487
+      rule_id: 8GUQN5r
+      version_id: 8KTqYee
+      url: https://semgrep.dev/playground/r/8KTqYee/cpp.lang.security.misc.microsoft-banned-list-wvsprintfw.microsoft-banned-list-wvsprintfw
+      origin: pro_rules
+languages:
+- cpp
+- c
+min-version: 1.59.0
+pattern: wvsprintfW(...)

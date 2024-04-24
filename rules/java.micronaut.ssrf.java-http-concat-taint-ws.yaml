@@ -1,0 +1,276 @@
+id: java.micronaut.ssrf.java-http-concat-taint-ws.java-http-concat-taint-ws
+message: Untrusted input might be used to build an HTTP request, which can lead to
+  a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker to send
+  crafted requests from the server side to other internal or external systems. SSRF
+  can lead to unauthorized access to sensitive data and, in some cases, allow the
+  attacker to control applications or systems that trust the vulnerable service. To
+  prevent this vulnerability, avoid allowing user input to craft the base request.
+  Instead, treat it as part of the path or query parameter and encode it appropriately.
+  When user input is necessary to prepare the HTTP request, perform strict input validation.
+  Additionally, whenever possible, use allowlists to only interact with expected,
+  trusted domains.
+severity: ERROR
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-918: Server-Side Request Forgery (SSRF)'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::sink::http-request::ApacheHttpClient
+  - net::sink::http-request::HttpClient
+  - net::sink::http-request::Jsoup
+  - net::sink::http-request::OkHttp
+  - net::sink::http-request::RestTemplate
+  - net::sink::http-request::URL
+  - net::sink::http-request::WebClient
+  - net::source::network-connection::Micronaut
+  - web::sink::http-request::ApacheHttpClient
+  - web::sink::http-request::HttpClient
+  - web::sink::http-request::Jsoup
+  - web::sink::http-request::OkHttp
+  - web::sink::http-request::RestTemplate
+  - web::sink::http-request::URL
+  - web::sink::http-request::WebClient
+  owasp:
+  - A10:2021 - Server-Side Request Forgery (SSRF)
+  references:
+  - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+  technology:
+  - Micronaut
+  - WebSocket
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Server-Side Request Forgery (SSRF)
+  source: https://semgrep.dev/r/java.micronaut.ssrf.java-http-concat-taint-ws.java-http-concat-taint-ws
+  shortlink: https://sg.run/pKwwe
+  semgrep.dev:
+    rule:
+      r_id: 114918
+      rv_id: 735011
+      rule_id: 7KUgBB9
+      version_id: nWTGbEN
+      url: https://semgrep.dev/playground/r/nWTGbEN/java.micronaut.ssrf.java-http-concat-taint-ws.java-http-concat-taint-ws
+      origin: pro_rules
+languages:
+- java
+mode: taint
+options:
+  interfile: true
+  taint_assume_safe_booleans: true
+  taint_assume_safe_numbers: true
+pattern-sources:
+- label: REQ
+  patterns:
+  - focus-metavariable: $INPUT
+  - pattern: '@io.micronaut.websocket.annotation.$ON(...)
+
+      $TYPE $NAME(..., $ITYPE $INPUT, ...) {...}
+
+      '
+  - pattern-either:
+    - pattern-inside: '@io.micronaut.websocket.annotation.ServerWebSocket(...)
+
+        class $CL {...}
+
+        '
+    - pattern-inside: '@io.micronaut.websocket.annotation.ClientWebSocket(...)
+
+        class $CL {...}
+
+        '
+  - metavariable-pattern:
+      metavariable: $ON
+      patterns:
+      - patterns:
+        - pattern-either:
+          - pattern: OnOpen
+          - pattern: OnClose
+          - pattern: OnMessage
+  - metavariable-pattern:
+      metavariable: $ITYPE
+      patterns:
+      - patterns:
+        - pattern-not-regex: WebSocketSession
+- label: NOT_CONCAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: $F + $X
+    - pattern: String.format(..., $X, ...)
+    - pattern: MessageFormat.format(..., $X, ...)
+  - pattern-not: $X + $F
+  - pattern-not: '"https://" + $X
+
+      '
+  - pattern-not: '"http://" + $X
+
+      '
+  - pattern-not: '"ws://" + $X
+
+      '
+  - pattern-not: '"wss://" + $X
+
+      '
+  - pattern-not: '"//" + $X
+
+      '
+  requires: REQ
+- label: HTTP_FORMAT
+  patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: MessageFormat.format("$REGEX", $X,...)
+    - pattern: String.format("$REGEX", $X,...)
+  - metavariable-regex:
+      metavariable: $REGEX
+      regex: ^(http://|https://|//|ws://|wss://)%s.*
+  requires: REQ
+- label: STRING_CONCAT
+  patterns:
+  - pattern-either:
+    - pattern: '"...${$X}..."
+
+        '
+    - pattern: $F + $X
+    - pattern: '"...".formatted(...)
+
+        '
+    - pattern: String.format(...)
+    - pattern: MessageFormat.format(...)
+  requires: REQ
+pattern-propagators:
+- from: $INPUT
+  patterns:
+  - pattern-either:
+    - pattern: String.format($FMT, ..., $INPUT, ...)
+    - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+  to: $FMT
+- from: $INPUT
+  patterns:
+  - pattern: (StringBuilder $BUILDER).append($INPUT);
+  to: $BUILDER
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: (java.net.http.HttpClient $CL). ... .send($URI, ...)
+    - pattern: (java.net.http.HttpClient $CL). ... .sendAsync($URI, ...)
+    - pattern: java.net.http.HttpClient. ... .send($URI, ...)
+    - pattern: java.net.http.HttpClient. ... .sendAsync($URI, ...)
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+- patterns:
+  - pattern: (java.net.URL $URL).$FUNC(...)
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ^(openConnection|openStream|getContent)$
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: (org.springframework.web.client.RestTemplate $REST). ... .$RESTFUNC($URI,
+        ...)
+    - pattern: new org.springframework.web.client.RestTemplate(...). ... .$RESTFUNC($URI,
+        ...)
+  - metavariable-regex:
+      metavariable: $RESTFUNC
+      regex: ^(exchange|doExecute|execute|getForEntity|getForObject|patchForObject|postForEntity|postForLocation|postForObject|put)$
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: org.springframework.web.reactive.function.client.WebClient. ... .$URIFUNC($URI)
+    - pattern: (org.springframework.web.reactive.function.client.WebClient $CLIENT).
+        ... .$URIFUNC($URI)
+  - pattern-either:
+    - pattern-inside: org.springframework.web.reactive.function.client.WebClient.
+        ... .retrieve(...)
+    - pattern-inside: (org.springframework.web.reactive.function.client.WebClient
+        $CLIENT). ... .retrieve(...)
+  - metavariable-regex:
+      metavariable: $URIFUNC
+      regex: ^(uri|baseUrl|create)$
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: new okhttp3.Request.Builder(). ... .url($URI)
+  - pattern-either:
+    - pattern-inside: '...
+
+        $CLIENT.newCall(...).execute(...);
+
+        '
+    - pattern-inside: '$CALL = $CLIENT.newCall(...);
+
+        ...
+
+        $CALL.execute(...);
+
+        '
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: org.jsoup.Jsoup.connect($URI)
+  - pattern-either:
+    - pattern-inside: $JSOUP.execute(...)
+    - pattern-inside: $JSOUP.get(...)
+    - pattern-inside: $JSOUP.post(...)
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+- patterns:
+  - focus-metavariable: $URI
+  - pattern-either:
+    - pattern: org.apache.http.HttpRequest. ... .newBuilder($URI)
+    - pattern: org.apache.http.HttpRequest. ... .uri($URI)
+    - patterns:
+      - pattern: new org.apache.http.client.methods.$METHOD($URI, ...)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(HttpGet|HttpPost|HttpDelete|HttpDelete|HttpOptions|HttpPatch|HttpPut|HttpHead)$
+  - pattern-either:
+    - pattern-inside: '...
+
+        $CLIENT.send(...);
+
+        '
+    - pattern-inside: '...
+
+        $CLIENT.execute(...);
+
+        '
+  requires: (REQ and STRING_CONCAT and not NOT_CONCAT) or HTTP_FORMAT
+pattern-sanitizers:
+- pattern: (ChoiceFormat $X).format(...)
+- pattern: (DecimalFormat $X).format(...)
+- pattern: (java.util.UUID $X)
+- patterns:
+  - focus-metavariable: $X
+  - pattern: io.micronaut.http.HttpRequest.$METHOD($URL, ..., $X, ...)
+- patterns:
+  - pattern: io.micronaut.http.uri.UriBuilder. ... .$FUNC(...)
+  - metavariable-pattern:
+      metavariable: $FUNC
+      patterns:
+      - pattern-either:
+        - pattern: path
+        - pattern: expand
+        - pattern: queryParam
+- patterns:
+  - focus-metavariable: $X
+  - pattern-either:
+    - pattern: java.net.http.HttpRequest. ... .$FUNC(..., $X, ...)
+    - pattern: (java.net.http.HttpRequest.Builder $B). ... .$FUNC(..., $X, ...)
+  - metavariable-pattern:
+      metavariable: $FUNC
+      patterns:
+      - pattern-not-regex: ^(newBuilder|uri)$
+- patterns:
+  - focus-metavariable: $PARAM
+  - pattern: $URLBUILDER. ... .addQueryParameter(..., $PARAM). ...

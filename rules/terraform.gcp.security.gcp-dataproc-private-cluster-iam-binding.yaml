@@ -1,0 +1,60 @@
+id: terraform.gcp.security.gcp-dataproc-private-cluster-iam-binding.gcp-dataproc-private-cluster-iam-binding
+patterns:
+- pattern: resource
+- pattern-either:
+  - pattern-inside: 'resource "google_dataproc_cluster_iam_binding" "..." {
+
+      ...
+
+      members = [ ..., "allAuthenticatedUsers", ...]
+
+      ...
+
+      }
+
+      '
+  - pattern-inside: 'resource "google_dataproc_cluster_iam_binding" "..." {
+
+      ...
+
+      members = [ ..., "allUsers", ...]
+
+      ...
+
+      }
+
+      '
+message: Ensure that Dataproc clusters are not anonymously or publicly accessible
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-dataproc-private-cluster-iam-binding.gcp-dataproc-private-cluster-iam-binding
+  shortlink: https://sg.run/y33P
+  semgrep.dev:
+    rule:
+      r_id: 33668
+      rv_id: 110995
+      rule_id: nJUJJG
+      version_id: K3TvGKD
+      url: https://semgrep.dev/playground/r/K3TvGKD/terraform.gcp.security.gcp-dataproc-private-cluster-iam-binding.gcp-dataproc-private-cluster-iam-binding
+      origin: community
+languages:
+- hcl
+severity: WARNING

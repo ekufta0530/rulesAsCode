@@ -1,0 +1,22 @@
+id: python.sqlalchemy.performance.performance-improvements.batch-import
+pattern: "for $X in $Y:\n  db.session.add($Z)\n"
+message: Rather than adding one element at a time, consider batch loading to improve
+  performance.
+languages:
+- python
+severity: WARNING
+metadata:
+  category: performance
+  technology:
+  - sqlalchemy
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/python.sqlalchemy.performance.performance-improvements.batch-import
+  shortlink: https://sg.run/PprN
+  semgrep.dev:
+    rule:
+      r_id: 9701
+      rv_id: 110496
+      rule_id: AbUWjy
+      version_id: GxTv8x6
+      url: https://semgrep.dev/playground/r/GxTv8x6/python.sqlalchemy.performance.performance-improvements.batch-import
+      origin: community

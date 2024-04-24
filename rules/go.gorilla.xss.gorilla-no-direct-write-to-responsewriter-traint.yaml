@@ -1,0 +1,224 @@
+id: go.gorilla.xss.gorilla-no-direct-write-to-responsewriter-traint.gorilla-no-direct-write-to-responsewriter-taint
+message: 'Untrusted input could be used to tamper with a web page rendering, which
+  can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+  when untrusted input executes malicious JavaScript code, leading to issues such
+  as account compromise and sensitive information leakage. To prevent this vulnerability,
+  validate the user input, perform contextual output encoding or sanitize the input.
+  For more information, see: [Go XSS prevention](https://semgrep.dev/docs/cheat-sheets/go-xss/).'
+severity: WARNING
+metadata:
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: HIGH
+  interfile: true
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - net::source::network-connection::gorilla
+  - web::sink::direct-response::net/http
+  - web::source::cookie::gorilla
+  - web::source::form-data::gorilla
+  owasp:
+  - A03:2021 - Injection
+  - A07:2017 - Cross-Site Scripting (XSS)
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - go
+  - gorilla
+  - net/http
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/go.gorilla.xss.gorilla-no-direct-write-to-responsewriter-traint.gorilla-no-direct-write-to-responsewriter-taint
+  shortlink: https://sg.run/O3Xw
+  semgrep.dev:
+    rule:
+      r_id: 59531
+      rv_id: 731867
+      rule_id: 3qUqy9
+      version_id: 9lTZ9dl
+      url: https://semgrep.dev/playground/r/9lTZ9dl/go.gorilla.xss.gorilla-no-direct-write-to-responsewriter-traint.gorilla-no-direct-write-to-responsewriter-taint
+      origin: pro_rules
+languages:
+- go
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-inside: 'import "github.com/gorilla/schema"
+
+      ...
+
+      '
+  - pattern-inside: '$DECODER = schema.NewDecoder()
+
+      ...
+
+      '
+  - pattern-inside: '$DECODER.Decode(&$TO, ...)
+
+      ...
+
+      '
+  - pattern: $TO
+- patterns:
+  - pattern-inside: 'import "github.com/gorilla/securecookie"
+
+      ...
+
+      '
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$COOKIE = securecookie.New(...)
+
+          ...
+
+          '
+      - pattern-inside: '$COOKIE.Decode($NAME, $C, &$VALUE)
+
+          ...
+
+          '
+    - pattern-inside: 'securecookie.DecodeMulti($NAME, $C, &$VALUE, ...)
+
+        ...
+
+        '
+  - pattern: $VALUE
+- patterns:
+  - pattern-inside: 'import "github.com/gorilla/sessions"
+
+      ...
+
+      '
+  - pattern-inside: '$STORE = sessions.NewCookieStore(...)
+
+      ...
+
+      '
+  - pattern-inside: '$SESSION, ... = $STORE.Get(...)
+
+      ...
+
+      '
+  - pattern: $SESSION.Values
+- by-side-effect: true
+  patterns:
+  - pattern-inside: 'import "github.com/gorilla/websocket"
+
+      ...
+
+      '
+  - pattern-inside: '$UPGRADER = websocket.Upgrader{...}
+
+      ...
+
+      '
+  - pattern-inside: '$CONN, ... = $UPGRADER.Upgrade(...)
+
+      ...
+
+      '
+  - pattern-either:
+    - patterns:
+      - pattern: $TYPE, $BYTES, $ERR = $CONN.$FUNC()
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(ReadMessage|ReadJSON)$
+      - focus-metavariable: $BYTES
+    - patterns:
+      - pattern-inside: '$TYPE, $READER, $ERR = $CONN.NextReader()
+
+          ...
+
+          '
+      - pattern: $READER.Read($VAR)
+      - focus-metavariable: $VAR
+    - patterns:
+      - pattern: $TYPE, $READER, $ERR = $CONN.NextReader()
+      - focus-metavariable: $READER
+pattern-sinks:
+- pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern: 'fmt.$P(($RES : http.ResponseWriter), ..., $SINK, ...)
+
+          '
+      - pattern: 'fmt.$P(($RES : *http.ResponseWriter), ..., $SINK, ...)
+
+          '
+    - metavariable-regex:
+        metavariable: $P
+        regex: ^(Fprint|Fprintf|Fprintln)$
+    - focus-metavariable: $REQ
+  - pattern: '($RES : http.ResponseWriter).Write(...)
+
+      '
+  - pattern: '($RES : *http.ResponseWriter).Write(...)
+
+      '
+- patterns:
+  - pattern-inside: 'import "github.com/gin-gonic/gin"
+
+      ...
+
+      '
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - pattern: '($CONTEXT : gin.Context).$METHOD($CODE, $CONTENT, ...)
+
+            '
+        - pattern: '($CONTEXT : *gin.Context).$METHOD($CODE, $CONTENT, ...)
+
+            '
+      - metavariable-regex:
+          metavariable: $FIELD
+          regex: ^(AsciiJSON|IndentedJSON|JSON|JSONP|ProtoBuf|PureJSON|SecureJSON|String|TOML|XML|YAML)$
+      - focus-metavariable: $CONTENT
+    - pattern-either:
+      - pattern: '($CONTEXT : gin.Context).Stream(...)
+
+          '
+      - pattern: '($CONTEXT : *gin.Context).Stream(...)
+
+          '
+    - pattern-either:
+      - pattern: '($CONTEXT : gin.Context).Writer.Write(...)
+
+          '
+      - pattern: '($CONTEXT : *gin.Context).Writer.Write(...)
+
+          '
+pattern-sanitizers:
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import "github.com/microcosm-cc/bluemonday"
+
+        ...
+
+        '
+    - pattern-inside: 'import "microcosm-cc/bluemonday"
+
+        ...
+
+        '
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$P := bluemonday.$POLICY()
+
+          ...
+
+          '
+      - pattern: $P.$SAN(...)
+    - pattern: bluemonday.$POLICY().$SAN(...)
+  - metavariable-regex:
+      metavariable: $SAN
+      regex: ^(Sanitize|SanitizeBytes)$

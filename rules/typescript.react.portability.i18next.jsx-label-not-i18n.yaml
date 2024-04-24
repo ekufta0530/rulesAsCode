@@ -1,0 +1,36 @@
+id: typescript.react.portability.i18next.jsx-label-not-i18n.jsx-label-not-i18n
+patterns:
+- pattern-either:
+  - pattern: <TextField ... label="$MESSAGE" ... />
+  - pattern: <Tab ... label="$MESSAGE" ... />
+- metavariable-regex:
+    metavariable: $MESSAGE
+    regex: (.*[a-zA-Z]+.*)
+- pattern-not: <$ELEMENT ... label="" ... />
+- pattern-not: <$ELEMENT ... label={t($KEY, ...)} ... />
+message: 'JSX Component label not internationalized: ''$MESSAGE'''
+languages:
+- typescript
+- javascript
+severity: WARNING
+metadata:
+  category: portability
+  technology:
+  - react
+  - mui
+  - i18next
+  references:
+  - https://www.notion.so/hendyirawan/Internationalization-Localization-Policy-318c21674e5f44c48d6f136a6eb2e024
+  - https://mui.com/
+  - https://react.i18next.com/
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/typescript.react.portability.i18next.jsx-label-not-i18n.jsx-label-not-i18n
+  shortlink: https://sg.run/6kv6
+  semgrep.dev:
+    rule:
+      r_id: 20159
+      rv_id: 111086
+      rule_id: zdUGrY
+      version_id: PkTJde4
+      url: https://semgrep.dev/playground/r/PkTJde4/typescript.react.portability.i18next.jsx-label-not-i18n.jsx-label-not-i18n
+      origin: community

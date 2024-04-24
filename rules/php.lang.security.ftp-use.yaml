@@ -1,0 +1,40 @@
+id: php.lang.security.ftp-use.ftp-use
+patterns:
+- pattern: $FUNC(...);
+- metavariable-regex:
+    metavariable: $FUNC
+    regex: ftp_.+
+message: FTP allows for unencrypted file transfers. Consider using an encrypted alternative.
+metadata:
+  cwe:
+  - 'CWE-319: Cleartext Transmission of Sensitive Information'
+  references:
+  - https://www.php.net/manual/en/intro.ftp.php
+  - https://github.com/FloeDesignTechnologies/phpcs-security-audit/blob/master/Security/Sniffs/BadFunctions/FringeFunctionsSniff.php
+  category: security
+  technology:
+  - php
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mishandled Sensitive Information
+  source: https://semgrep.dev/r/php.lang.security.ftp-use.ftp-use
+  shortlink: https://sg.run/RoYN
+  semgrep.dev:
+    rule:
+      r_id: 9393
+      rv_id: 110040
+      rule_id: PeUZyE
+      version_id: WrTWQKR
+      url: https://semgrep.dev/playground/r/WrTWQKR/php.lang.security.ftp-use.ftp-use
+      origin: community
+languages:
+- php
+severity: ERROR

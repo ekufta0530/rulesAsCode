@@ -1,0 +1,50 @@
+id: terraform.gcp.security.gcp-compute-template-ip-forward.gcp-compute-template-ip-forward
+patterns:
+- pattern: resource
+- pattern-inside: 'resource "google_compute_instance_template" "..." {
+
+    ...
+
+    can_ip_forward = true
+
+    ...
+
+    }
+
+    '
+message: Ensure that IP forwarding is not enabled on Instances. This lets the instance
+  act as a traffic router and receive traffic not intended for it, which may route
+  traffic through unintended passages.
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  references:
+  - https://www.trendmicro.com/cloudoneconformity/knowledge-base/gcp/ComputeEngine/disable-ip-forwarding.html
+  technology:
+  - terraform
+  - gcp
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-compute-template-ip-forward.gcp-compute-template-ip-forward
+  shortlink: https://sg.run/p1J0
+  semgrep.dev:
+    rule:
+      r_id: 32318
+      rv_id: 110986
+      rule_id: qNUv6r
+      version_id: JdTNvzK
+      url: https://semgrep.dev/playground/r/JdTNvzK/terraform.gcp.security.gcp-compute-template-ip-forward.gcp-compute-template-ip-forward
+      origin: community
+languages:
+- hcl
+severity: INFO

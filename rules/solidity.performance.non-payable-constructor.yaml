@@ -1,0 +1,27 @@
+id: solidity.performance.non-payable-constructor.non-payable-constructor
+message: Consider making costructor payable to save gas.
+metadata:
+  references:
+  - https://twitter.com/0xAsm0d3us/status/1518960704271056897
+  category: performance
+  technology:
+  - solidity
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/solidity.performance.non-payable-constructor.non-payable-constructor
+  shortlink: https://sg.run/wRBd
+  semgrep.dev:
+    rule:
+      r_id: 67629
+      rv_id: 110656
+      rule_id: zdUJ5K
+      version_id: 2KTz3KD
+      url: https://semgrep.dev/playground/r/2KTz3KD/solidity.performance.non-payable-constructor.non-payable-constructor
+      origin: community
+languages:
+- solidity
+severity: INFO
+patterns:
+- pattern-inside: "contract $ANY{\n  ...\n}\n"
+- pattern-not-inside: "abstract contract $ANY{\n  ...\n}\n"
+- pattern: "constructor(...){\n  ...\n}\n"
+- pattern-not: "constructor(...) payable{\n  ...\n}\n"

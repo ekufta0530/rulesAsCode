@@ -1,0 +1,31 @@
+id: ajinabraham.njsscan.eval.eval_yaml_deserialize.yaml_deserialize
+patterns:
+- pattern-inside: 'require(''js-yaml'')
+
+    ...
+
+    '
+- pattern: '$X.load(...)
+
+    '
+message: User controlled data in 'yaml.load()' function can result in Remote Code
+  Injection.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a8
+  cwe: cwe-502
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.eval.eval_yaml_deserialize.yaml_deserialize
+  shortlink: https://sg.run/Lp6o
+  semgrep.dev:
+    rule:
+      r_id: 43639
+      rv_id: 78257
+      rule_id: DbULBy
+      version_id: gETb0G
+      url: https://semgrep.dev/playground/r/gETb0G/ajinabraham.njsscan.eval.eval_yaml_deserialize.yaml_deserialize
+      origin: community

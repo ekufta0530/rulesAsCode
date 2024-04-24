@@ -1,0 +1,39 @@
+id: terraform.gcp.security.gcp-compute-serial-ports.gcp-compute-serial-ports
+patterns:
+- pattern: resource
+- pattern-inside: "resource \"google_compute_instance\" \"...\" {\n...\nmetadata =\
+    \ {\n    serial-port-enable = true\n}\n...\n}\n"
+message: "Ensure 'Enable connecting to serial ports' is not enabled for VM Instance\t"
+metadata:
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-compute-serial-ports.gcp-compute-serial-ports
+  shortlink: https://sg.run/o1P6
+  semgrep.dev:
+    rule:
+      r_id: 32316
+      rv_id: 110984
+      rule_id: 0oUGN6
+      version_id: 44TR6Eb
+      url: https://semgrep.dev/playground/r/44TR6Eb/terraform.gcp.security.gcp-compute-serial-ports.gcp-compute-serial-ports
+      origin: community
+languages:
+- hcl
+severity: WARNING

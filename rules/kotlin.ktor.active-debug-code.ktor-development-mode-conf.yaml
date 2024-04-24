@@ -1,0 +1,49 @@
+id: kotlin.ktor.active-debug-code.ktor-development-mode-conf.ktor-development-mode-conf
+message: The application is running debug code or has debug mode enabled. This may
+  expose sensitive information, like stack traces and environment variables, to attackers.
+  It may also modify application behavior, potentially enabling attackers to bypass
+  restrictions. To remediate this finding, ensure that the application's debug code
+  and debug mode are disabled or removed from the production environment.
+severity: INFO
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-489: Active Debug Code'
+  functional-categories:
+  - debug::search::active-debug-code::Ktor
+  references:
+  - https://ktor.io/docs/development-mode.html#application-conf
+  technology:
+  - ktor
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Active Debug Code
+  source: https://semgrep.dev/r/kotlin.ktor.active-debug-code.ktor-development-mode-conf.ktor-development-mode-conf
+  shortlink: https://sg.run/2ByL
+  semgrep.dev:
+    rule:
+      r_id: 60019
+      rv_id: 229278
+      rule_id: bwUyAK
+      version_id: 0bTyNqd
+      url: https://semgrep.dev/playground/r/0bTyNqd/kotlin.ktor.active-debug-code.ktor-development-mode-conf.ktor-development-mode-conf
+      origin: pro_rules
+languages:
+- generic
+paths:
+  include:
+  - application.conf
+  - ktor-development-mode-conf.conf
+patterns:
+- patterns:
+  - pattern-inside: "ktor {\n  ...\n}\n"
+  - pattern: development = $OPT
+  - metavariable-regex:
+      metavariable: $OPT
+      regex: 'true'
+  - focus-metavariable: $OPT

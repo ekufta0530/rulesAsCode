@@ -1,0 +1,88 @@
+id: java.lang.security.audit.tainted-session-from-http-request.tainted-session-from-http-request
+message: Detected input from a HTTPServletRequest going into a session command, like
+  `setAttribute`. User input into such a command could lead to an attacker inputting
+  malicious code into your session parameters, blurring the line between what's trusted
+  and untrusted, and therefore leading to a trust boundary violation. This could lead
+  to programmers trusting unvalidated data. Instead, thoroughly sanitize user input
+  before passing it into such function calls.
+languages:
+- java
+severity: WARNING
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: '(HttpServletRequest $REQ).$FUNC(...)
+
+          '
+      - pattern-not: '(HttpServletRequest $REQ).getSession()
+
+          '
+    - patterns:
+      - pattern-inside: "(javax.servlet.http.Cookie[] $COOKIES) = (HttpServletRequest\
+          \ $REQ).getCookies(...);\n...\nfor (javax.servlet.http.Cookie $COOKIE: $COOKIES)\
+          \ {\n  ...\n}\n"
+      - pattern: '$COOKIE.getValue(...)
+
+          '
+    - patterns:
+      - pattern-inside: '$TYPE[] $VALS = (HttpServletRequest $REQ).$GETFUNC(... );
+
+          ...
+
+          '
+      - pattern: '$PARAM = $VALS[$INDEX];
+
+          '
+    - patterns:
+      - pattern-inside: '$HEADERS = (HttpServletRequest $REQ).getHeaders(...);
+
+          ...
+
+          $PARAM = $HEADERS.$FUNC(...);
+
+          ...
+
+          '
+      - pattern: 'java.net.URLDecoder.decode($PARAM, ...)
+
+          '
+pattern-sinks:
+- patterns:
+  - pattern: (HttpServletRequest $REQ).getSession().$FUNC($NAME, $VALUE);
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ^(putValue|setAttribute)$
+  - focus-metavariable: $VALUE
+options:
+  interfile: true
+metadata:
+  category: security
+  technology:
+  - java
+  cwe:
+  - 'CWE-501: Trust Boundary Violation'
+  owasp:
+  - A04:2021 - Insecure Design
+  references:
+  - https://owasp.org/Top10/A04_2021-Insecure_Design
+  subcategory:
+  - vuln
+  impact: MEDIUM
+  likelihood: MEDIUM
+  confidence: MEDIUM
+  interfile: true
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/java.lang.security.audit.tainted-session-from-http-request.tainted-session-from-http-request
+  shortlink: https://sg.run/QbDZ
+  semgrep.dev:
+    rule:
+      r_id: 18242
+      rv_id: 109738
+      rule_id: 2ZU7Eo
+      version_id: 0bTLlNy
+      url: https://semgrep.dev/playground/r/0bTLlNy/java.lang.security.audit.tainted-session-from-http-request.tainted-session-from-http-request
+      origin: community

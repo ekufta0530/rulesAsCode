@@ -1,0 +1,47 @@
+id: python.django.security.injection.mass-assignment.mass-assignment
+languages:
+- python
+severity: WARNING
+message: Mass assignment detected. This can result in assignment to model fields that
+  are unintended and can be exploited by an attacker. Instead of using '**request.$W',
+  assign each field you want to edit individually to prevent mass assignment. You
+  can read more about mass assignment at https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html.
+metadata:
+  cwe:
+  - 'CWE-915: Improperly Controlled Modification of Dynamically-Determined Object
+    Attributes'
+  owasp:
+  - A08:2021 - Software and Data Integrity Failures
+  owaspapi: 'API6: Mass Assignment'
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html
+  category: security
+  technology:
+  - django
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Mass Assignment
+  source: https://semgrep.dev/r/python.django.security.injection.mass-assignment.mass-assignment
+  shortlink: https://sg.run/Ro0q
+  semgrep.dev:
+    rule:
+      r_id: 9493
+      rv_id: 110219
+      rule_id: lBU97n
+      version_id: xyTKZYJ
+      url: https://semgrep.dev/playground/r/xyTKZYJ/python.django.security.injection.mass-assignment.mass-assignment
+      origin: community
+pattern-either:
+- pattern: $MODEL.objects.create(**request.$W)
+- pattern: '$OBJ.update(**request.$W)
+
+    ...
+
+    $OBJ.save()
+
+    '

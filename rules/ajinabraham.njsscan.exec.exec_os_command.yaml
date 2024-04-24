@@ -1,0 +1,75 @@
+id: ajinabraham.njsscan.exec.exec_os_command.generic_os_command_exec
+patterns:
+- pattern-inside: 'require(''child_process'')
+
+    ...
+
+    '
+- pattern-either:
+  - pattern-inside: function ($REQ, $RES, ...) {...}
+  - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+  - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+  - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+- pattern-either:
+  - pattern: '$EXEC.exec(..., <... $REQ.$QUERY.$VAR ...>, ...)
+
+      '
+  - pattern: '$EXEC.exec(..., <... $REQ.$QUERY ...>, ...)
+
+      '
+  - pattern: '$EXEC.execSync(..., <... $REQ.$QUERY.$VAR ...>, ...)
+
+      '
+  - pattern: '$EXEC.execSync(..., <... $REQ.$QUERY ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$QUERY.$VAR ...>;
+
+      ...
+
+      $EXEC.exec(..., <... $INP ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$QUERY ...>;
+
+      ...
+
+      $EXEC.exec(..., <... $INP ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$QUERY ...>;
+
+      ...
+
+      $EXEC.execSync(..., <... $INP ...>, ...)
+
+      '
+  - pattern: '$INP = <... $REQ.$QUERY.$VAR ...>;
+
+      ...
+
+      $EXEC.execSync(..., <... $INP ...>, ...)
+
+      '
+message: User controlled data in 'child_process.exec()' can result in Remote OS Command
+  Execution.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a1
+  cwe: cwe-78
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.exec.exec_os_command.generic_os_command_exec
+  shortlink: https://sg.run/gP2Z
+  semgrep.dev:
+    rule:
+      r_id: 43641
+      rv_id: 78259
+      rule_id: 0oUZ0X
+      version_id: 3ZTobG
+      url: https://semgrep.dev/playground/r/3ZTobG/ajinabraham.njsscan.exec.exec_os_command.generic_os_command_exec
+      origin: community

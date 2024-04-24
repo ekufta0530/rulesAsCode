@@ -1,0 +1,241 @@
+id: typescript.react.react-create-element-dangerouslysetinnerhtml-prop.react-create-element-dangerouslysetinnerhtml-prop
+message: Untrusted input could be used to tamper with a web page rendering, which
+  can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+  when untrusted input executes malicious JavaScript code, leading to issues such
+  as account compromise and sensitive information leakage. Validate the user input,
+  perform contextual output encoding, or sanitize the input. If you have to use dangerouslySetInnerHTML,
+  consider using a sanitization library such as DOMPurify to sanitize the HTML within.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: MEDIUM
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+    Scripting'')'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::source::http-params::react
+  - web::source::url-path-params::react
+  - web::sink::html-webpage::react
+  owasp:
+  - A07:2017 - Cross-Site Scripting (XSS)
+  - A03:2021 - Injection
+  references:
+  - https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+  technology:
+  - react
+  - browser
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cross-Site-Scripting (XSS)
+  source: https://semgrep.dev/r/typescript.react.react-create-element-dangerouslysetinnerhtml-prop.react-create-element-dangerouslysetinnerhtml-prop
+  shortlink: https://sg.run/lK4y
+  semgrep.dev:
+    rule:
+      r_id: 27213
+      rv_id: 112052
+      rule_id: PeURDE
+      version_id: PkTJd69
+      url: https://semgrep.dev/playground/r/PkTJd69/typescript.react.react-create-element-dangerouslysetinnerhtml-prop.react-create-element-dangerouslysetinnerhtml-prop
+      origin: pro_rules
+languages:
+- typescript
+- javascript
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'function ...(..., $PROP, ...) { ... }
+
+        '
+    - pattern-inside: 'function ...({..., $PROP, ...}) { ... }
+
+        '
+  - focus-metavariable: $PROP
+  - pattern-not-inside: '$F. ... .$SOURCE(...)
+
+      '
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'var { ..., $PROP,... } = this.props
+
+        ...
+
+        '
+    - pattern-inside: 'const { ..., $PROP,... } = this.props
+
+        ...
+
+        '
+    - pattern-inside: 'let { ..., $PROP,... } = this.props
+
+        ...
+
+        '
+  - focus-metavariable: $PROP
+- patterns:
+  - pattern: this.props.$VALUE
+  - pattern-not: this.props.size
+  - pattern-not: this.props. ... .$FUNC()
+pattern-sinks:
+- patterns:
+  - pattern-not-inside: '$VALUE.createElement("script", {...},...);
+
+      '
+  - pattern-not-inside: '$VALUE.createElement("style", {...},...);
+
+      '
+  - pattern-not-inside: '$VALUE.createElement("a", {...},...);
+
+      '
+  - pattern-either:
+    - pattern-inside: 'React.createElement("...", {...,dangerouslySetInnerHTML:
+
+        {__html: $PROPS},...},...);
+
+        '
+    - pattern-inside: 'window.React.createElement("...",
+
+        {...,dangerouslySetInnerHTML: {__html: $PROPS},...},...);
+
+        '
+    - pattern-inside: 'preact.createElement("...", {...,dangerouslySetInnerHTML:
+
+        {__html: $PROPS},...},...);
+
+        '
+    - pattern-inside: 'Preact.createElement("...", {...,dangerouslySetInnerHTML:
+
+        {__html: $PROPS},...},...);
+
+        '
+  - focus-metavariable: $PROPS
+pattern-sanitizers:
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from "underscore.string"
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "underscore.string"
+
+        ...
+
+        '
+    - pattern-inside: 'import $S from "underscore.string"
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("underscore.string")
+
+        ...
+
+        '
+  - pattern-either:
+    - pattern: $S.escapeHTML(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from "dompurify"
+
+        ...
+
+        '
+    - pattern-inside: 'import { $S} from "dompurify"
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "dompurify"
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("dompurify")
+
+        ...
+
+        '
+    - pattern-inside: 'import $S from "isomorphic-dompurify"
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "isomorphic-dompurify"
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("isomorphic-dompurify")
+
+        ...
+
+        '
+  - pattern-either:
+    - patterns:
+      - pattern-inside: '$VALUE = $S(...)
+
+          ...
+
+          '
+      - pattern: $VALUE.sanitize(...)
+    - patterns:
+      - pattern-inside: '$VALUE = $S.sanitize
+
+          ...
+
+          '
+      - pattern: $S(...)
+    - pattern: $S.sanitize(...)
+    - pattern: $S(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from ''xss'';
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from ''xss'';
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("xss")
+
+        ...
+
+        '
+  - pattern: $S(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: 'import $S from ''sanitize-html'';
+
+        ...
+
+        '
+    - pattern-inside: 'import * as $S from "sanitize-html";
+
+        ...
+
+        '
+    - pattern-inside: '$S = require("sanitize-html")
+
+        ...
+
+        '
+  - pattern: $S(...)
+- patterns:
+  - pattern-either:
+    - pattern-inside: '$S = new Remarkable()
+
+        ...
+
+        '
+  - pattern: $S.render(...)

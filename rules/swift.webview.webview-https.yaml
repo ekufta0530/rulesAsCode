@@ -1,0 +1,85 @@
+id: swift.webview.webview-https.swift-webview-config-https-upgrade
+message: Webviews were observed that do not enable the `upgradeKnownHostsToHTTPS`
+  feature. This feature will ensure accidental HTTP connections are automatically
+  upgraded to HTTPS, avoiding potential data leakage over the network.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-272: Least Privilege Violation'
+  functional-categories:
+  - mobile::search::privacy-controls-and-permissions::lang
+  masvs:
+  - 'MASVS-PLATFORM-2: The app uses WebViews securely'
+  references:
+  - https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/3752243-upgradeknownhoststohttps
+  - https://mas.owasp.org/MASVS/controls/MASVS-PLATFORM-2/
+  technology:
+  - ios
+  - macos
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/swift.webview.webview-https.swift-webview-config-https-upgrade
+  shortlink: https://sg.run/D1KG
+  semgrep.dev:
+    rule:
+      r_id: 66508
+      rv_id: 112041
+      rule_id: BYU0bj
+      version_id: d6TrvZ7
+      url: https://semgrep.dev/playground/r/d6TrvZ7/swift.webview.webview-https.swift-webview-config-https-upgrade
+      origin: pro_rules
+languages:
+- swift
+patterns:
+- pattern: '$P = WKWebViewConfiguration()
+
+    ...
+
+    '
+- pattern-either:
+  - patterns:
+    - pattern-inside: '$P.upgradeKnownHostsToHTTPS  = $FALSE
+
+        ...
+
+        $P.upgradeKnownHostsToHTTPS  = $TRUE
+
+        '
+    - pattern-not-inside: '...
+
+        $P.upgradeKnownHostsToHTTPS  = $TRUE
+
+        ...
+
+        $P.upgradeKnownHostsToHTTPS = $FALSE
+
+        '
+    - pattern: '$P.upgradeKnownHostsToHTTPS  = false
+
+        '
+    - metavariable-regex:
+        metavariable: $TRUE
+        regex: ^(false)$
+    - metavariable-regex:
+        metavariable: $TRUE
+        regex: (.*(?!false))
+  - patterns:
+    - pattern: '$P.upgradeKnownHostsToHTTPS  = false
+
+        '
+    - pattern-not-inside: '...
+
+        $P.upgradeKnownHostsToHTTPS  = ...
+
+        ...
+
+        $P.upgradeKnownHostsToHTTPS  = ...
+
+        '

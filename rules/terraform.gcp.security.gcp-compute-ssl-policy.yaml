@@ -1,0 +1,89 @@
+id: terraform.gcp.security.gcp-compute-ssl-policy.gcp-compute-ssl-policy
+patterns:
+- pattern: resource
+- pattern-either:
+  - pattern-inside: 'resource "google_compute_ssl_policy" "..." {
+
+      ...
+
+      profile = "MODERN"
+
+      ...
+
+      }
+
+      '
+  - pattern-inside: 'resource "google_compute_ssl_policy" "..." {
+
+      ...
+
+      profile = "CUSTOM"
+
+      custom_features = [..., "TLS_RSA_WITH_AES_256_GCM_SHA384", ...]
+
+      ...
+
+      }
+
+      '
+- pattern-not-inside: 'resource "google_compute_ssl_policy" "..." {
+
+    ...
+
+    profile = "MODERN"
+
+    min_tls_version = "TLS_1_2"
+
+    ...
+
+    }
+
+    '
+- pattern-not-inside: 'resource "google_compute_ssl_policy" "..." {
+
+    ...
+
+    profile = "CUSTOM"
+
+    custom_features = ["TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384", "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"]
+
+    ...
+
+    }
+
+    '
+message: Ensure no HTTPS or SSL proxy load balancers permit SSL policies with weak
+  cipher suites
+metadata:
+  owasp:
+  - A03:2017 - Sensitive Data Exposure
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-326: Inadequate Encryption Strength'
+  category: security
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/terraform.gcp.security.gcp-compute-ssl-policy.gcp-compute-ssl-policy
+  shortlink: https://sg.run/zrql
+  semgrep.dev:
+    rule:
+      r_id: 32317
+      rv_id: 110985
+      rule_id: KxUgEP
+      version_id: PkTJdR2
+      url: https://semgrep.dev/playground/r/PkTJdR2/terraform.gcp.security.gcp-compute-ssl-policy.gcp-compute-ssl-policy
+      origin: community
+languages:
+- hcl
+severity: WARNING

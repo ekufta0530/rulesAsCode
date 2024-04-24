@@ -1,0 +1,32 @@
+id: mobsf.mobsfscan.deserialization.object_deserialization.object_deserialization
+patterns:
+- pattern: new ObjectInputStream(...);
+severity: WARNING
+languages:
+- java
+message: 'Found object deserialization using ObjectInputStream. Deserializing entire
+  Java objects is dangerous because malicious actors can create Java object streams
+  with unintended consequences. Ensure that the objects being deserialized are not
+  user-controlled. Consider using HMACs to sign the data stream to make sure it is
+  not tampered with, or consider only  transmitting object fields and populating a
+  new object.
+
+  '
+metadata:
+  cwe: cwe-502
+  owasp-mobile: m1
+  masvs: platform-8
+  reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05h-Testing-Platform-Interaction.md#testing-object-persistence-mstg-platform-8
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/mobsf.mobsfscan.deserialization.object_deserialization.object_deserialization
+  shortlink: https://sg.run/QxZ4
+  semgrep.dev:
+    rule:
+      r_id: 43742
+      rv_id: 78346
+      rule_id: 0oUZYJ
+      version_id: w8Te0B
+      url: https://semgrep.dev/playground/r/w8Te0B/mobsf.mobsfscan.deserialization.object_deserialization.object_deserialization
+      origin: community

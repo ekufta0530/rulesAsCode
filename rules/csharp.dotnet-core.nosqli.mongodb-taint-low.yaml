@@ -1,0 +1,259 @@
+id: csharp.dotnet-core.nosqli.mongodb-taint-low.mongodb-taint-low
+message: Untrusted input might be used to build a database query, which can lead to
+  a NoSQL injection vulnerability. An attacker can execute malicious NoSQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. Make sure all user input is validated and sanitized,
+  and avoid using tainted user input to construct NoSQL statements if possible. Ideally,
+  avoid raw queries and instead use parameterized queries.
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: LOW
+  category: security
+  subcategory:
+  - audit
+  cwe:
+  - 'CWE-943: Improper Neutralization of Special Elements in Data Query Logic'
+  functional-categories:
+  - db::sink::sql-or-nosql-query
+  - web::source::header::ASP.NET
+  - web::source::http-body::ASP.NET
+  - web::source::http-params::ASP.NET
+  - web::source::url-path-params::ASP.NET
+  owasp:
+  - A01:2017 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  technology:
+  - .NET
+  - api
+  - csharp
+  - dotnet
+  - ef
+  - entity
+  - entity framework
+  - mvc
+  - sql
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Improper Validation
+  source: https://semgrep.dev/r/csharp.dotnet-core.nosqli.mongodb-taint-low.mongodb-taint-low
+  shortlink: https://sg.run/vlql
+  semgrep.dev:
+    rule:
+      r_id: 71977
+      rv_id: 229180
+      rule_id: 10Uvdv
+      version_id: l4Tlkpg
+      url: https://semgrep.dev/playground/r/l4Tlkpg/csharp.dotnet-core.nosqli.mongodb-taint-low.mongodb-taint-low
+      origin: pro_rules
+languages:
+- csharp
+mode: taint
+options:
+  interfile: true
+pattern-sources:
+- label: REQ
+  patterns:
+  - focus-metavariable: $VAR
+  - metavariable-pattern:
+      metavariable: $T
+      patterns:
+      - pattern-not-regex: (int|long|float|double|bool|Guid)
+  - pattern-either:
+    - pattern-inside: IActionResult $FN(..., $T $VAR, ...) {...}
+    - pattern-inside: Task<IActionResult> $FN(..., $T $VAR, ...) {...}
+    - pattern-inside: ActionResult<$TYPE> $FN(..., $T $VAR, ...) {...}
+    - pattern-inside: Task<ActionResult<$TYPE>> $FN(..., $T $VAR, ...) {...}
+    - pattern-inside: $X.MapGet($ROUTE, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.MapPost($ROUTE, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.MapPut($ROUTE, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.MapDelete($ROUTE, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.MapPatch($ROUTE, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.MapMethods($ROUTE, $M, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.Map($ROUTE, (..., $T $VAR, ...) => {...})
+    - pattern-inside: $X.MapFallback($ROUTE, (..., $T $VAR, ...) => {...})
+- label: CONCAT
+  patterns:
+  - pattern-either:
+    - pattern: '"..." + ...
+
+        '
+    - pattern: '... + "..."'
+    - pattern: $"..."
+    - pattern: String.Format(...)
+    - pattern: string.Format(...)
+    - pattern: String.Concat(...)
+    - pattern: string.Concat(...)
+    - pattern: String.Concat<$T>(...)
+    - pattern: string.Concat<$T>(...)
+    - pattern: String.Join(...)
+    - pattern: string.Join(...)
+    - pattern: String.Join<$T>(...)
+    - pattern: string.Join<$T>(...)
+    - pattern: new String(...)
+    - pattern: new string(...)
+    - pattern: new StringBuilder(...)
+    - pattern: (StringBuilder $S).Append(...)
+    - pattern: (StringBuilder $S).AppendLine(...)
+    - pattern: (StringBuilder $S).AppendFormat(...)
+    - pattern: (StringBuilder $S).AppendJoin(...)
+    - pattern: (StringBuilder $S).Replace(...)
+    - pattern: (StringBuilder $S).Insert(...)
+    - patterns:
+      - pattern-either:
+        - pattern: $S.Append(...)
+        - pattern: $S.AppendLine(...)
+        - pattern: $S.AppendFormat(...)
+        - pattern: $S.AppendJoin(...)
+        - pattern: $S.Replace(...)
+        - pattern: $S.Insert(...)
+      - pattern-either:
+        - pattern-inside: 'var $S = new StringBuilder(...);
+
+            ...
+
+            '
+        - pattern-inside: '$S = new StringBuilder(...);
+
+            ...
+
+            '
+  requires: REQ
+pattern-propagators:
+- from: $FROM
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+      - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+      - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+      - patterns:
+        - pattern-either:
+          - pattern: $TO.Append(..., $FROM,...)
+          - pattern: $TO.AppendLine(..., $FROM,...)
+          - pattern: $TO.AppendFormat(..., $FROM,...)
+          - pattern: $TO.AppendJoin(..., $FROM,...)
+          - pattern: $TO.Replace(..., $FROM,...)
+          - pattern: $TO.Insert(..., $FROM,...)
+        - pattern-either:
+          - pattern-inside: 'var $TO = new StringBuilder(...);
+
+              ...
+
+              '
+          - pattern-inside: '$TO = new StringBuilder(...);
+
+              ...
+
+              '
+  to: $TO
+pattern-sinks:
+- patterns:
+  - focus-metavariable: $FILTER
+  - pattern-either:
+    - patterns:
+      - pattern-inside: 'using MongoDB.Driver;
+
+          ...
+
+          '
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: (Find|FindSync|FindOneAndDelete|FindOneAndReplace|FindOneAndUpdate|Distinct|ReplaceOne|UpdateMany|UpdateOne)(Async)?$
+      - pattern-either:
+        - pattern: (IMongoCollection<$TYPE> $COL).$METHOD($FILTER, ...)
+        - pattern: (IMongoCollection<$TYPE> $COL).$METHOD<$T>($FILTER, ...)
+        - pattern: (IMongoCollection<$TYPE> $COL).$METHOD($X, $FILTER,...)
+        - pattern: (IMongoCollection<$TYPE> $COL).$METHOD<$T>($X, $FILTER,...)
+        - pattern: (IMongoCollection<$TYPE> $COL).$METHOD($X, $Z, $FILTER,...)
+        - pattern: (IMongoCollection<$TYPE> $COL).$METHOD<$T>($X, $Z, $FILTER,...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: '$COL = $DB.GetCollection(...);
+
+            ...
+
+            '
+        - pattern-inside: '$COL = $DB.GetCollection<$CT>(...);
+
+            ...
+
+            '
+        - pattern-inside: 'var $COL = $DB.GetCollection(...);
+
+            ...
+
+            '
+        - pattern-inside: 'var $COL = $DB.GetCollection<$CT>(...);
+
+            ...
+
+            '
+        - pattern-inside: '$ITYPE $COL = $DB.GetCollection(...);
+
+            ...
+
+            '
+        - pattern-inside: '$ITYPE $COL = $DB.GetCollection<$CT>(...);
+
+            ...
+
+            '
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: (Find|FindSync|FindOneAndDelete|FindOneAndReplace|FindOneAndUpdate|Distinct|ReplaceOne|UpdateMany|UpdateOne)(Async)?$
+      - pattern-either:
+        - pattern: $COL.$METHOD($FILTER, ...)
+        - pattern: $COL.$METHOD<$T>($FILTER, ...)
+        - pattern: $COL.$METHOD($X, $FILTER,...)
+        - pattern: $COL.$METHOD<$T>($X, $FILTER,...)
+        - pattern: $COL.$METHOD($X, $Z, $FILTER,...)
+        - pattern: $COL.$METHOD<$T>($X, $Z, $FILTER,...)
+    - patterns:
+      - pattern-inside: 'using MongoDB.Driver;
+
+          ...
+
+          '
+      - pattern: FilterDefinition<$TYPE> $FD = $FILTER;
+    - patterns:
+      - pattern-inside: 'using MongoDB.Bson;
+
+          ...
+
+          '
+      - pattern: BsonDocument.Create($FILTER,...)
+  requires: CONCAT
+pattern-sanitizers:
+- patterns:
+  - pattern: Convert.$METHOD(...)
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: (ToBase64CharArray|ToBase64String|ToBoolean|ToDateTime|ToDecimal|ToDouble|ToInt16|ToInt32|ToInt64|ToSByte|ToSingle|ToUInt16|ToUInt32|ToUInt64)
+- patterns:
+  - pattern-either:
+    - pattern: $INT.Parse(...)
+    - pattern: $INT.TryParse(...)
+    - pattern: $INT.TryParseExact(...)
+  - metavariable-regex:
+      metavariable: $INT
+      regex: (Int32|Int128|Int16|Int64|IntPtr|Boolean|Decimal|Double|Guid|DateTime|Single|SByte|UInt128|UInt16|UInt32|UInt64|UIntPtr)
+- patterns:
+  - pattern-either:
+    - pattern: (int $NUM)
+    - pattern: (long $NUM)
+    - pattern: (float $NUM)
+    - pattern: (double $NUM)
+    - pattern: (bool $NUM)
+    - pattern: (Guid $NUM)
+    - pattern: var $X = (int) ...;
+    - pattern: var $X = (long) ...;
+    - pattern: var $X = (float) ...;
+    - pattern: var $X = (double) ...;
+    - pattern: var $X = (bool) ...;
+    - pattern: var $X = (Guid) ...;

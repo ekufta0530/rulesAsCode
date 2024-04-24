@@ -1,0 +1,31 @@
+id: trailofbits.yaml.ansible.wrm-cert-validation-ignore.wrm-cert-validation-ignore
+message: Found Windows Remote Management connection with certificate validation disabled
+languages:
+- yaml
+severity: WARNING
+metadata:
+  category: security
+  cwe: 'CWE-295: Improper Certificate Validation'
+  subcategory:
+  - audit
+  technology:
+  - ansible
+  confidence: HIGH
+  likelihood: HIGH
+  impact: HIGH
+  references:
+  - https://docs.ansible.com/ansible/latest/os_guide/windows_winrm.html#https-certificate-validation
+  license: AGPL-3.0 license
+  vulnerability_class:
+  - Improper Authentication
+  source: https://semgrep.dev/r/trailofbits.yaml.ansible.wrm-cert-validation-ignore.wrm-cert-validation-ignore
+  shortlink: https://sg.run/nJlP1
+  semgrep.dev:
+    rule:
+      r_id: 113236
+      rv_id: 253307
+      rule_id: oqUgbWQ
+      version_id: YDTNPeX
+      url: https://semgrep.dev/playground/r/YDTNPeX/trailofbits.yaml.ansible.wrm-cert-validation-ignore.wrm-cert-validation-ignore
+      origin: community
+pattern: 'ansible_winrm_server_cert_validation: ignore'

@@ -1,0 +1,31 @@
+id: ajinabraham.njsscan.eval.eval_deserialize.node_deserialize
+patterns:
+- pattern-inside: 'require(''node-serialize'')
+
+    ...
+
+    '
+- pattern: '$X.unserialize(...)
+
+    '
+message: User controlled data in 'unserialize()' or 'deserialize()' function can result
+  in Object Injection or Remote Code Injection.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a8
+  cwe: cwe-502
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.eval.eval_deserialize.node_deserialize
+  shortlink: https://sg.run/kR32
+  semgrep.dev:
+    rule:
+      r_id: 43628
+      rv_id: 78246
+      rule_id: 0oUZ0k
+      version_id: xyTYwj
+      url: https://semgrep.dev/playground/r/xyTYwj/ajinabraham.njsscan.eval.eval_deserialize.node_deserialize
+      origin: community

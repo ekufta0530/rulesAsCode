@@ -1,0 +1,32 @@
+id: terraform.azure.best-practice.azure-appservice-python-version.azure-appservice-python-version
+message: Ensure that Python version is the latest, if used to run the web app
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_app_service\" \"...\" {\n...\nsite_config\
+    \ {\n  ...\n  python_version = \"3.10\"\n  ...\n}\n...\n}\n"
+- pattern-inside: 'resource "azurerm_app_service" "..." {
+
+    ...
+
+    }
+
+    '
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - azure
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.azure.best-practice.azure-appservice-python-version.azure-appservice-python-version
+  shortlink: https://sg.run/WRv4
+  semgrep.dev:
+    rule:
+      r_id: 23909
+      rv_id: 110813
+      rule_id: x8UZ80
+      version_id: pZT1Lbq
+      url: https://semgrep.dev/playground/r/pZT1Lbq/terraform.azure.best-practice.azure-appservice-python-version.azure-appservice-python-version
+      origin: community
+languages:
+- hcl
+severity: INFO

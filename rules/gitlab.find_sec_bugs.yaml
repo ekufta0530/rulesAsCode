@@ -1,0 +1,34 @@
+id: gitlab.find_sec_bugs.HARD_CODE_KEY-3
+patterns:
+- pattern: String $VAR = "$VAL";
+- metavariable-regex:
+    metavariable: $VAL
+    regex: (?i).*(password|motdepasse|heslo|adgangskode|wachtwoord|salasana|passwort|passord|senha|geslo|clave|losenord|clave|parola|secret|pwd).*
+message: 'Cryptographic keys should not be kept in the source code. The source code
+  can be widely shared
+
+  in an enterprise environment, and is certainly shared in open source. To be managed
+  safely,
+
+  passwords and secret keys should be stored in separate configuration files or keystores.
+
+  '
+languages:
+- java
+severity: WARNING
+metadata:
+  category: security
+  cwe: 'CWE-321: Use of Hard-coded Cryptographic Key'
+  technology:
+  - java
+  license: MIT
+  source: https://semgrep.dev/r/gitlab.find_sec_bugs.HARD_CODE_KEY-3
+  shortlink: https://sg.run/z561
+  semgrep.dev:
+    rule:
+      r_id: 21217
+      rv_id: 26892
+      rule_id: DbU28G
+      version_id: kbTLq6
+      url: https://semgrep.dev/playground/r/kbTLq6/gitlab.find_sec_bugs.HARD_CODE_KEY-3
+      origin: community

@@ -1,0 +1,36 @@
+id: yaml.semgrep.slow-pattern-top-ellipsis.slow-pattern-top-ellipsis
+languages:
+- yaml
+message: Using the ellipsis operator `...` at the top of the pattern drastically slows
+  down the rule performance.
+patterns:
+- pattern-either:
+  - pattern-inside: 'pattern-inside: $X
+
+      '
+  - pattern-inside: 'pattern-not-inside: $X
+
+      '
+  - pattern-inside: 'pattern: $X
+
+      '
+  - pattern-inside: 'pattern-not: $X
+
+      '
+- pattern-regex: \|\s*\n\s*\.\.\.\s*\n[^\n]*\n\s*\.\.\.
+severity: WARNING
+metadata:
+  category: performance
+  technology:
+  - semgrep
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/yaml.semgrep.slow-pattern-top-ellipsis.slow-pattern-top-ellipsis
+  shortlink: https://sg.run/WgBz
+  semgrep.dev:
+    rule:
+      r_id: 11209
+      rv_id: 111186
+      rule_id: qNUon8
+      version_id: 44TR683
+      url: https://semgrep.dev/playground/r/44TR683/yaml.semgrep.slow-pattern-top-ellipsis.slow-pattern-top-ellipsis
+      origin: community

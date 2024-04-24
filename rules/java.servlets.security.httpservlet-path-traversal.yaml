@@ -1,0 +1,122 @@
+id: java.servlets.security.httpservlet-path-traversal.httpservlet-path-traversal
+message: 'The application builds a file path from potentially untrusted data, which
+  can lead to a path traversal vulnerability. An attacker can manipulate the file
+  path which the application uses to access files. If the application does not validate
+  user input and sanitize file paths, sensitive files such as configuration or user
+  data can be accessed, potentially creating or overwriting files. To prevent this
+  vulnerability, validate and sanitize any input that is used to create references
+  to file paths. Also, enforce strict file access controls. For example, choose privileges
+  allowing public-facing applications to access only the required files. In Java,
+  you may also consider using a utility method such as `org.apache.commons.io.FilenameUtils.getName(...)`
+  to only retrieve the file name from the path. '
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: MEDIUM
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path Traversal'')'
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - web::source::cookie::Servlet
+  - web::source::http-params::Servlet
+  - web::source::http-body::Servlet
+  - web::source::header::Servlet
+  - web::source::url-path-params::Servlet
+  - web::source::form-data::Servlet
+  - file::sink::file-access::java.io
+  - file::sink::file-access::java.nio
+  - file::sink::file-access::commons-io
+  - file::sink::file-access::javax.xml
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  references:
+  - https://www.owasp.org/index.php/Path_Traversal
+  source-rule-url: https://find-sec-bugs.github.io/bugs.htm#PATH_TRAVERSAL_IN
+  technology:
+  - java
+  - servlets
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Path Traversal
+  source: https://semgrep.dev/r/java.servlets.security.httpservlet-path-traversal.httpservlet-path-traversal
+  shortlink: https://sg.run/wLdP
+  semgrep.dev:
+    rule:
+      r_id: 27173
+      rv_id: 111591
+      rule_id: ReU0DY
+      version_id: PkTJd9o
+      url: https://semgrep.dev/playground/r/PkTJd9o/java.servlets.security.httpservlet-path-traversal.httpservlet-path-traversal
+      origin: pro_rules
+languages:
+- java
+mode: taint
+pattern-sources:
+- patterns:
+  - pattern-either:
+    - pattern: (HttpServletRequest $REQ).$REQFUNC(...)
+    - pattern: "(ServletRequest $REQ).$REQFUNC(...) \n"
+    - patterns:
+      - pattern-inside: "(javax.servlet.http.Cookie[] $COOKIES) = (HttpServletRequest\
+          \ $REQ).getCookies(...);\n...\nfor (javax.servlet.http.Cookie $COOKIE: $COOKIES)\
+          \ {\n  ...\n}\n"
+      - pattern: '$COOKIE.getValue(...)
+
+          '
+    - patterns:
+      - pattern-inside: '$TYPE[] $VALS = (HttpServletRequest $REQ).$GETFUNC(...);
+
+          ...
+
+          '
+      - pattern: '$PARAM = $VALS[$INDEX];
+
+          '
+  - pattern-not: "$REQ.getUserPrincipal() \n"
+  - pattern-not: "$REQ.getSession(...) \n"
+  - pattern-not: "$REQ.getAuthType(...) \n"
+  - pattern-not: "$REQ.getMethod(...) \n"
+  - pattern-not: "$REQ.getLocales(...) \n"
+  - pattern-not: "$REQ.getLocale(...) \n"
+  - pattern-not: "$REQ.isUserinRole(...) \n"
+  - pattern-not: "$REQ.isRequestdSessionIdValid(...) \n"
+  - pattern-not: "$REQ.isRequestedSessionIdFromUrl(...) \n"
+  - pattern-not: "$REQ.getIntHeader(...) \n"
+  - pattern-not: "$REQ.getDateHeader(...) \n"
+  - pattern-not: "$REQ.authenticate(...) \n"
+  - pattern-not: "$REQ.isUserInRole(...) \n"
+  - pattern-not: '$REQ.getAttribute(...)
+
+      '
+  - pattern-not: '$REQ.getAttributeNames(...)
+
+      '
+  - pattern-not: '$REQ.getAuthType(...)
+
+      '
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - pattern: '(java.io.File $FILE) = ...
+
+        '
+    - pattern: '(java.io.FileOutputStream $FOS) = ...
+
+        '
+    - pattern: 'new java.io.FileInputStream(...)
+
+        '
+    - pattern: 'new javax.xml.transform.stream.StreamSource(...)
+
+        '
+    - pattern: '(java.nio.file.Paths $PATHS).get(...)
+
+        '
+pattern-sanitizers:
+- pattern: org.apache.commons.io.FilenameUtils.getName(...)

@@ -1,0 +1,48 @@
+id: generic.nginx.security.header-redefinition.header-redefinition
+patterns:
+- pattern-inside: "server {\n  ...\n  add_header ...;\n  ...\n  ...\n}\n"
+- pattern-inside: "location ... {\n  ...\n  ...\n}\n"
+- pattern: add_header ...;
+paths:
+  include:
+  - '*.conf'
+  - '*.vhost'
+  - sites-available/*
+  - sites-enabled/*
+languages:
+- generic
+severity: WARNING
+message: The 'add_header' directive is called in a 'location' block after headers
+  have been set at the server block. Calling 'add_header' in the location block will
+  actually overwrite the headers defined in the server block, no matter which headers
+  are set. To fix this, explicitly set all headers or set all headers in the server
+  block.
+metadata:
+  cwe:
+  - 'CWE-16: CWE CATEGORY: Configuration'
+  references:
+  - https://github.com/yandex/gixy/blob/master/docs/en/plugins/addheaderredefinition.md
+  category: security
+  technology:
+  - nginx
+  confidence: LOW
+  owasp:
+  - A06:2017 - Security Misconfiguration
+  - A05:2021 - Security Misconfiguration
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/generic.nginx.security.header-redefinition.header-redefinition
+  shortlink: https://sg.run/Lwl7
+  semgrep.dev:
+    rule:
+      r_id: 9039
+      rv_id: 109347
+      rule_id: BYUN58
+      version_id: 9lTdWER
+      url: https://semgrep.dev/playground/r/9lTdWER/generic.nginx.security.header-redefinition.header-redefinition
+      origin: community

@@ -1,0 +1,46 @@
+id: terraform.azure.security.appservice.azure-appservice-enabled-failed-request.azure-appservice-enabled-failed-request
+message: Ensure that App service enables failed request tracing
+patterns:
+- pattern: resource
+- pattern-not-inside: "resource \"azurerm_app_service\" \"...\" {\n...\nlogs {\n \
+    \ ...\n  failed_request_tracing_enabled = true\n  ...\n}\n...\n}\n"
+- pattern-inside: 'resource "azurerm_app_service" "..." {
+
+    ...
+
+    }
+
+    '
+metadata:
+  owasp:
+  - A10:2017 - Insufficient Logging & Monitoring
+  - A09:2021 - Security Logging and Monitoring Failures
+  cwe:
+  - 'CWE-778: Insufficient Logging'
+  category: security
+  technology:
+  - terraform
+  - azure
+  references:
+  - https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Insufficient Logging
+  source: https://semgrep.dev/r/terraform.azure.security.appservice.azure-appservice-enabled-failed-request.azure-appservice-enabled-failed-request
+  shortlink: https://sg.run/XAbK
+  semgrep.dev:
+    rule:
+      r_id: 23964
+      rv_id: 110874
+      rule_id: kxUxWE
+      version_id: ZRTQp3r
+      url: https://semgrep.dev/playground/r/ZRTQp3r/terraform.azure.security.appservice.azure-appservice-enabled-failed-request.azure-appservice-enabled-failed-request
+      origin: community
+languages:
+- hcl
+severity: WARNING

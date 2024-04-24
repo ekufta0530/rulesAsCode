@@ -1,0 +1,27 @@
+id: terraform.aws.best-practice.missing-aws-autoscaling-tags.missing-aws-autoscaling-tags
+patterns:
+- pattern: "resource \"aws_autoscaling_group\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_autoscaling_group\" $ANYTHING {\n  ...\n  tag\
+    \ {\n    ...\n  }\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_autoscaling_group\" $ANYTHING {\n  ...\n  tags\
+    \ = concat(\n    ...\n  )\n  ...\n}\n"
+message: The AWS Autoscaling Group is not tagged.
+languages:
+- hcl
+severity: WARNING
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - aws
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.aws.best-practice.missing-aws-autoscaling-tags.missing-aws-autoscaling-tags
+  shortlink: https://sg.run/EyGw
+  semgrep.dev:
+    rule:
+      r_id: 17337
+      rv_id: 110714
+      rule_id: 9AUZKd
+      version_id: X0TQ2gA
+      url: https://semgrep.dev/playground/r/X0TQ2gA/terraform.aws.best-practice.missing-aws-autoscaling-tags.missing-aws-autoscaling-tags
+      origin: community

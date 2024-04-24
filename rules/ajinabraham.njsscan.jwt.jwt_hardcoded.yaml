@@ -1,0 +1,131 @@
+id: ajinabraham.njsscan.jwt.jwt_hardcoded.hardcoded_jwt_secret
+patterns:
+- pattern-either:
+  - pattern: '$JWT = require("jsonwebtoken")
+
+      ...
+
+      $JWT.sign($P, "...", ...)
+
+      '
+  - pattern: '$JWT = require("jsonwebtoken")
+
+      ...
+
+      $JWT.verify($P, "...", ...)
+
+      '
+  - pattern: '$JWT = require("jsonwebtoken")
+
+      ...
+
+      $SECRET = "...";
+
+      ...
+
+      $JWT.sign($P, $SECRET, ...)
+
+      '
+  - pattern: '$JWT = require("jsonwebtoken")
+
+      ...
+
+      $SECRET = "...";
+
+      ...
+
+      $JWT.verify($P, $SECRET, ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $JOSE.JWT.sign($P, "...", ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $JOSE.JWT.verify($P, "...", ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $JOSE.JWT.sign($P, $JOSE.JWK.asKey("..."), ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $JOSE.JWT.verify($P, $JOSE.JWK.asKey("..."), ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $SECRET = "...";
+
+      ...
+
+      $JOSE.JWT.sign($P, $SECRET, ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $SECRET = "...";
+
+      ...
+
+      $JOSE.JWT.verify($P, $SECRET, ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $SECRET = "...";
+
+      ...
+
+      $JOSE.JWT.sign($P, $JOSE.JWK.asKey($SECRET), ...)
+
+      '
+  - pattern: '$JOSE = require("jose")
+
+      ...
+
+      $SECRET = "...";
+
+      ...
+
+      $JOSE.JWT.verify($P, $JOSE.JWK.asKey($SECRET), ...)
+
+      '
+message: Hardcoded JWT secret was found. Store it properly in an environment variable.
+languages:
+- javascript
+severity: ERROR
+metadata:
+  owasp-web: a3
+  cwe: cwe-798
+  license: LGPL-3.0-or-later
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/ajinabraham.njsscan.jwt.jwt_hardcoded.hardcoded_jwt_secret
+  shortlink: https://sg.run/72NW
+  semgrep.dev:
+    rule:
+      r_id: 43682
+      rv_id: 78286
+      rule_id: BYUoj0
+      version_id: l4TL2X
+      url: https://semgrep.dev/playground/r/l4TL2X/ajinabraham.njsscan.jwt.jwt_hardcoded.hardcoded_jwt_secret
+      origin: community

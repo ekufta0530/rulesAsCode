@@ -1,0 +1,272 @@
+id: go.net.sql.pg-sqli-taint.pg-sqli-taint
+message: 'Untrusted input might be used to build a database query, which can lead
+  to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+  and gain unauthorized access to sensitive data, modify, delete data, or execute
+  arbitrary system commands. To prevent this vulnerability, use prepared statements
+  that do not concatenate user-controllable strings and use parameterized queries
+  where SQL commands and user data are strictly separated. Also, consider using an
+  object-relational (ORM) framework to operate with safer abstractions. When building
+  SQL queries in Go, it is possible to adopt prepared statements by using the `Prepare`
+  and `PrepareContext` calls with parameterized queries. For more information, see:
+  [Prepared statements in Go](https://go.dev/doc/database/prepared-statements).'
+severity: ERROR
+metadata:
+  likelihood: HIGH
+  impact: HIGH
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command (''SQL
+    Injection'')'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  functional-categories:
+  - db::search::password::database
+  - db::search::password::gorm
+  - db::search::password::mysql
+  - db::search::password::pg
+  - db::search::password::pgx
+  - db::sink::sql-or-nosql-query::pg
+  - web::source::cookie::gin
+  - web::source::cookie::net/http
+  - web::source::form-data::gin
+  - web::source::form-data::net/http
+  - web::source::header::gin
+  - web::source::header::net/http
+  - web::source::http-body::gin
+  - web::source::http-body::net/http
+  - web::source::http-params::gin
+  - web::source::http-params::net/http
+  - web::source::session-properties::net/http
+  - web::source::url-path-params::gin
+  - web::source::url-path-params::net/http
+  owasp:
+  - A01:2017 - Injection
+  - A03:2021 - Injection
+  references:
+  - https://owasp.org/Top10/A03_2021-Injection
+  - https://pg.uptrace.dev/queries/
+  technology:
+  - gin
+  - gin-gonic/gin
+  - go
+  - go-net/http
+  - go-pg/pg/v10
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - SQL Injection
+  source: https://semgrep.dev/r/go.net.sql.pg-sqli-taint.pg-sqli-taint
+  shortlink: https://sg.run/BpbW
+  semgrep.dev:
+    rule:
+      r_id: 28307
+      rv_id: 731879
+      rule_id: kxUzBD
+      version_id: ZRTGvQ9
+      url: https://semgrep.dev/playground/r/ZRTGvQ9/go.net.sql.pg-sqli-taint.pg-sqli-taint
+      origin: pro_rules
+languages:
+- go
+mode: taint
+pattern-sources:
+- label: USERINPUT
+  patterns:
+  - pattern-either:
+    - pattern: '($REQ : http.Request).$FIELD
+
+        '
+    - pattern: '($REQ : *http.Request).$FIELD
+
+        '
+  - metavariable-regex:
+      metavariable: $FIELD
+      regex: ^(BasicAuth|Body|Cookie|Cookies|Form|FormValue|GetBody|Host|Header|MultipartReader|ParseForm|ParseMultipartForm|PostForm|PostFormValue|Referer|RequestURI|Trailer|TransferEncoding|URL|UserAgent)$
+- label: USERINPUT
+  patterns:
+  - pattern-inside: 'import "github.com/gin-gonic/gin"
+
+      ...
+
+      '
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - pattern: '($CONTEXT : gin.Context).$FIELD
+
+            '
+        - pattern: '($CONTEXT : *gin.Context).$FIELD
+
+            '
+      - metavariable-regex:
+          metavariable: $FIELD
+          regex: ^(Cookie|DefaultPostForm|DefaultQuery|FormFile|GetHeader|GetPostForm|GetPostFormArray|GetPostFormMap|GetQuery|GetQueryArray|GetQueryMap|GetRawData|MultipartForm|Param|Params|PostForm|PostFormArray|PostFormMap|Query|QueryArray|QueryMap)$
+    - pattern-either:
+      - pattern: '($CONTEXT : gin.Context).Request.URL.Query().Get(...)
+
+          '
+      - pattern: '($CONTEXT : *gin.Context).Request.URL.Query().Get(...)
+
+          '
+- label: IMPORTSQL
+  pattern-either:
+  - pattern: 'import "database/sql"
+
+      ...
+
+      '
+  - pattern: 'import "github.com/go-sql-driver/mysql"
+
+      ...
+
+      '
+  - pattern: 'import "gorm.io/driver/mysql"
+
+      ...
+
+      '
+  - pattern: 'import "gorm.io/driver/postgres"
+
+      ...
+
+      '
+  - pattern: 'import "gorm.io/driver/clickhouse"
+
+      ...
+
+      '
+- label: SPRINTF
+  patterns:
+  - pattern-inside: 'import "fmt"
+
+      ...
+
+      '
+  - pattern: fmt.$P("...", $REQ, ...)
+  - metavariable-regex:
+      metavariable: $P
+      regex: ^(Sprint|Sprintf|Sprintln)$
+  requires: USERINPUT
+- label: CONCAT
+  pattern-either:
+  - pattern: '"$A" + $B
+
+      '
+  - pattern: $A + "$B"
+  - pattern: '"$A" += $B
+
+      '
+  - pattern: $A += "$B"
+  requires: USERINPUT
+- label: PREPARE
+  patterns:
+  - pattern-either:
+    - pattern: '($DB : $DBTYPE).Prepare(...)
+
+        '
+    - pattern: '($DB : $DBTYPE).SafeQuery(...)
+
+        '
+  - metavariable-regex:
+      metavariable: $DBTYPE
+      regex: ^((\*)?sql.(Conn|DB|Tx))$
+  requires: IMPORTSQL and USERINPUT and (CONCAT or SPRINTF)
+- label: PREPARECONN
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: '$DB := sql.$OPEN(...)
+
+          ...
+
+          '
+      - pattern-inside: '$DB, ... := sql.$OPEN(...)
+
+          ...
+
+          '
+    - metavariable-regex:
+        metavariable: $OPEN
+        regex: ^(Open|OpenDB)$
+  - pattern-either:
+    - pattern: $DB.Prepare(...)
+    - pattern: $DB.SafeQuery(...)
+  requires: IMPORTSQL and USERINPUT and (CONCAT or SPRINTF)
+- label: IMPORTPG
+  patterns:
+  - pattern-inside: 'import "$IMPORT"
+
+      ...
+
+      '
+  - metavariable-regex:
+      metavariable: $IMPORT
+      regex: ^(.*go\-pg\/pg\/v10\/orm.*)$
+pattern-sinks:
+- patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: '($DB : $DBTYPE). ... .$METHOD($QUERY, ...)
+
+          '
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(Exec|ExecOne|Prepare)$
+    - patterns:
+      - pattern: '($DB : $DBTYPE). ... .$METHOD($MDL_CTX_WRITER, $QUERY, ...)
+
+          '
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(CopyFrom|CopyTo|ExecContext|ExecOneContext|Query|QueryOne)$
+    - patterns:
+      - pattern: '($DB : $DBTYPE). ... .$METHOD($CTX, $MODEL, $QUERY, ...)
+
+          '
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(QueryContext|QueryOneContext)$
+  - pattern-not: $DB. ... .Prepare("..."). ... .$METHOD(...)
+  - metavariable-regex:
+      metavariable: $DBTYPE
+      regex: ^((\*)?pg.(Conn|DB|Tx))$
+  - focus-metavariable: $QUERY
+  requires: IMPORTPG and USERINPUT and (CONCAT or SPRINTF)
+- patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: '$DB := pg.$CONN(...)
+
+          ...
+
+          '
+      - pattern: '$DB, $ERR := pg.$CONN(...)
+
+          ...
+
+          '
+    - metavariable-regex:
+        metavariable: $CONN
+        regex: ^(Connect|ParseURL)$
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: $DB. ... .$METHOD($QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(Exec|ExecOne|Prepare)$
+      - patterns:
+        - pattern: $DB. ... .$METHOD($MDL_CTX_WRITER, $QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(CopyFrom|CopyTo|ExecContext|ExecOneContext|Query|QueryOne)$
+      - patterns:
+        - pattern: $DB. ... .$METHOD($CTX, $MODEL, $QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(QueryContext|QueryOneContext)$
+    - pattern-not: $DB. ... .Prepare("..."). ... .$METHOD(...)
+  - focus-metavariable: $QUERY
+  requires: IMPORTPG and USERINPUT and (CONCAT or SPRINTF)

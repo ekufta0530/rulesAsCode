@@ -1,0 +1,123 @@
+id: dgryski.semgrep-go.oddifsequence.odd-sequence-ifs
+patterns:
+- pattern-either:
+  - pattern: 'if $X { return ... }
+
+      if $X { ... }
+
+      '
+  - pattern: 'if ! $X { return ... }
+
+      if $X { ... }
+
+      '
+  - pattern: 'if $X { return ... }
+
+      if ! $X { ... }
+
+      '
+  - pattern: 'if $X == $Y { return ... }
+
+      if $X != $Y { ... }
+
+      '
+  - pattern: 'if $X != $Y { return ... }
+
+      if $X == $Y { ... }
+
+      '
+  - pattern: 'if $X { return  ... }
+
+      for $X { ... }
+
+      '
+  - pattern: 'if $X { break }
+
+      if $X { ... }
+
+      '
+  - pattern: 'if ! $X { break }
+
+      if $X { ... }
+
+      '
+  - pattern: 'if $X { break }
+
+      if ! $X { ... }
+
+      '
+  - pattern: 'if $X == $Y { break }
+
+      if $X != $Y { ... }
+
+      '
+  - pattern: 'if $X != $Y { break }
+
+      if $X == $Y { ... }
+
+      '
+  - pattern: 'if $X { break }
+
+      for $X { ... }
+
+      '
+  - pattern: 'if $X { continue }
+
+      if $X { ... }
+
+      '
+  - pattern: 'if ! $X { continue }
+
+      if $X { ... }
+
+      '
+  - pattern: 'if $X { continue }
+
+      if ! $X { ... }
+
+      '
+  - pattern: 'if $X == $Y { continue }
+
+      if $X != $Y { ... }
+
+      '
+  - pattern: 'if $X != $Y { continue }
+
+      if $X == $Y { ... }
+
+      '
+  - pattern: 'if $X { continue }
+
+      for $X { ... }
+
+      '
+  - pattern: "if $X {\n        if $X { ... }\n        ...\n}\n"
+  - pattern: "if $X {\n        if ! $X { ... }\n        ...\n}\n"
+  - pattern: "if ! $X {\n        if $X { ... }\n      ...\n}\n"
+  - pattern: "if $X == $Y {\n        if $X != $Y { ... }\n        ...\n}\n"
+  - pattern: "if $X != $Y {\n        if $X == $Y { ... }\n        ...\n}\n"
+  - pattern: "if $X {\n        for ! $X { ... }\n        ...\n}\n"
+  - pattern: "if ! $X {\n        for $X { ... }\n      ...\n}\n"
+  - pattern: "if $X == $Y {\n        for $X != $Y { ... }\n        ...\n}\n"
+  - pattern: "if $X != $Y {\n        for $X == $Y { ... }\n        ...\n}\n"
+  - pattern: "for $X {\n        if $X { ... }\n        ...\n}\n"
+  - pattern: "for $X {\n        if ! $X { ... }\n        ...\n}\n"
+  - pattern: "for ! $X {\n        if $X { ... }\n        ...\n}\n"
+  - pattern: "for $X == $Y {\n        if $X != $Y { ... }\n        ...\n}\n"
+  - pattern: "for $X != $Y {\n        if $X == $Y { ... }\n        ...\n}\n"
+message: Odd sequence of ifs
+languages:
+- go
+severity: ERROR
+metadata:
+  license: MIT
+  source: https://semgrep.dev/r/dgryski.semgrep-go.oddifsequence.odd-sequence-ifs
+  shortlink: https://sg.run/AvnQ
+  semgrep.dev:
+    rule:
+      r_id: 8706
+      rv_id: 46231
+      rule_id: j2UvLx
+      version_id: e1TYnB
+      url: https://semgrep.dev/playground/r/e1TYnB/dgryski.semgrep-go.oddifsequence.odd-sequence-ifs
+      origin: community

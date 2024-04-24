@@ -1,0 +1,22 @@
+id: gitlab.bandit.B108-1
+pattern: open("=~/^\/tmp.*/", ...)
+message: 'Detected hardcoded temp directory. Consider using ''tempfile.TemporaryFile''
+  instead.
+
+  '
+metadata:
+  cwe: 'CWE-377: Insecure Temporary File'
+  license: MIT
+  source: https://semgrep.dev/r/gitlab.bandit.B108-1
+  shortlink: https://sg.run/O81B
+  semgrep.dev:
+    rule:
+      r_id: 11875
+      rv_id: 13242
+      rule_id: 6JU6qd
+      version_id: l4TzRP
+      url: https://semgrep.dev/playground/r/l4TzRP/gitlab.bandit.B108-1
+      origin: community
+severity: WARNING
+languages:
+- python

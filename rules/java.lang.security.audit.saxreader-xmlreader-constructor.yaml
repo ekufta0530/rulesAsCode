@@ -1,0 +1,72 @@
+id: java.lang.security.audit.saxreader-xmlreader-constructor.saxreader-xmlreader-constructor
+message: 'The application is using an XML parser that has not been safely configured.
+  This might lead to XML External Entity (XXE) vulnerabilities when parsing user-controlled
+  input. An attacker can include document type definitions (DTDs) which can interact
+  with internal or external hosts. XXE can lead to other vulnerabilities, such as
+  Local File Inclusion (LFI), Remote Code Execution (RCE), and Server-side request
+  forgery (SSRF), depending on the application configuration. An attacker can also
+  use DTDs to expand recursively, leading to a Denial-of-Service (DoS) attack, also
+  known as a Billion Laughs Attack. The constructor for SAXReader has an optional
+  XMLReader argument. However, configuring this XMLReader before using it in the constructor
+  has no effect on the security of the SAXReader. The SAXReader itself needs to be
+  configured to prevent XXE vulnerabilities. For more information, see: [Java XXE
+  prevention](https://semgrep.dev/docs/cheat-sheets/java-xxe/)'
+severity: INFO
+metadata:
+  likelihood: MEDIUM
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-611: Improper Restriction of XML External Entity Reference'
+  - 'CWE-776: Improper Restriction of Recursive Entity References in DTDs (''XML Entity
+    Expansion'')'
+  functional-categories:
+  - xml::sink::xml-parser::dom4j
+  owasp:
+  - A04:2017 - XML External Entities (XXE)
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://docs.oracle.com/en/java/javase/13/security/java-api-xml-processing-jaxp-security-guide.html#GUID-D97A1F1D-8DDF-4D19-A7E5-99099F27346E
+  - https://github.com/semgrep/java-xxe-research
+  - https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+  - https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-2755
+  - https://blog.sonarsource.com/secure-xml-processor/
+  - https://blog.sonarsource.com/understanding-xxe-vulnerabilities/
+  - https://cwe.mitre.org/data/definitions/776.html
+  - https://cwe.mitre.org/data/definitions/611.html
+  - https://cwe.mitre.org/data/definitions/827.html
+  technology:
+  - java
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - XML Injection
+  source: https://semgrep.dev/r/java.lang.security.audit.saxreader-xmlreader-constructor.saxreader-xmlreader-constructor
+  shortlink: https://sg.run/PKrW
+  semgrep.dev:
+    rule:
+      r_id: 27145
+      rv_id: 115216
+      rule_id: d8UywD
+      version_id: d6Tr3EN
+      url: https://semgrep.dev/playground/r/d6Tr3EN/java.lang.security.audit.saxreader-xmlreader-constructor.saxreader-xmlreader-constructor
+      origin: pro_rules
+languages:
+- java
+patterns:
+- pattern: '(SAXReader $PARSER) = new SAXReader($READER);
+
+    '
+- pattern-inside: (XMLReader $READER) = ...; ... $READER.$CONFIGURE(...); ... (SAXReader
+    $PARSER) = new SAXReader($READER);
+- metavariable-pattern:
+    metavariable: $CONFIGURE
+    pattern-either:
+    - pattern: setFeature
+    - pattern: setAttribute
+    - pattern: setValidating
+    - pattern: setExpandEntityReferences
+    - pattern: setXIncludeAware
+    - pattern: setProperty

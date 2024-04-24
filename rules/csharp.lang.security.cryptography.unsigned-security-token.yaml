@@ -1,0 +1,41 @@
+id: csharp.lang.security.cryptography.unsigned-security-token.unsigned-security-token
+patterns:
+- pattern: RequireSignedTokens = false
+- pattern-inside: "new TokenValidationParameters {\n  ...\n}\n"
+fix: RequireSignedTokens = true
+message: Accepting unsigned security tokens as valid security tokens allows an attacker
+  to remove its signature and potentially forge an identity. As a fix, set RequireSignedTokens
+  to be true.
+metadata:
+  category: security
+  technology:
+  - csharp
+  owasp:
+  - A02:2021 - Cryptographic Failures
+  cwe:
+  - 'CWE-347: Improper Verification of Cryptographic Signature'
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control/
+  - https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
+  - https://cwe.mitre.org/data/definitions/347
+  subcategory:
+  - vuln
+  likelihood: MEDIUM
+  impact: MEDIUM
+  confidence: MEDIUM
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Cryptographic Issues
+  source: https://semgrep.dev/r/csharp.lang.security.cryptography.unsigned-security-token.unsigned-security-token
+  shortlink: https://sg.run/pqzN
+  semgrep.dev:
+    rule:
+      r_id: 26718
+      rv_id: 109196
+      rule_id: KxUGLw
+      version_id: zyTK8NE
+      url: https://semgrep.dev/playground/r/zyTK8NE/csharp.lang.security.cryptography.unsigned-security-token.unsigned-security-token
+      origin: community
+languages:
+- csharp
+severity: ERROR

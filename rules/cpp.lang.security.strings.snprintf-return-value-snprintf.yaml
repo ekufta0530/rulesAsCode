@@ -1,0 +1,101 @@
+id: cpp.lang.security.strings.snprintf-return-value-snprintf.snprintf-return-value-snprintf
+message: The return value of `snprintf` is the number of characters that would be
+  written, excluding the NUL terminator. The return value must be validated before
+  using it as a buffer index or buffer length in this following `snprintf` call.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: HIGH
+  confidence: MEDIUM
+  category: security
+  subcategory:
+  - vuln
+  cert:
+  - ARR30-C
+  - C
+  - C++
+  - L2
+  cwe:
+  - 'CWE-787: Out-of-bounds Write'
+  cwe2020-top25: true
+  cwe2021-top25: true
+  cwe2022-top25: true
+  references:
+  - https://cwe.mitre.org/data/definitions/787.html
+  - https://wiki.sei.cmu.edu/confluence/display/c/ARR30-C.+Do+not+form+or+use+out-of-bounds+pointers+or+array+subscripts
+  technology:
+  - cpp
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Other
+  source: https://semgrep.dev/r/cpp.lang.security.strings.snprintf-return-value-snprintf.snprintf-return-value-snprintf
+  shortlink: https://sg.run/QrLLk
+  semgrep.dev:
+    rule:
+      r_id: 114886
+      rv_id: 269855
+      rule_id: AbU9qqk
+      version_id: QkT7dA7
+      url: https://semgrep.dev/playground/r/QkT7dA7/cpp.lang.security.strings.snprintf-return-value-snprintf.snprintf-return-value-snprintf
+      origin: pro_rules
+languages:
+- cpp
+- c
+mode: taint
+min-version: 1.59.0
+options:
+  interfile: true
+pattern-sources:
+- patterns:
+  - pattern: $LEN = snprintf($DEST, $SIZE, "$FORMAT", ...)
+  - focus-metavariable: $LEN
+  - metavariable-pattern:
+      metavariable: $DEST
+      patterns:
+      - patterns:
+        - pattern-not: 'NULL'
+        - pattern-not: '0'
+  - metavariable-pattern:
+      metavariable: $SIZE
+      patterns:
+      - pattern-not: '0'
+  - metavariable-regex:
+      metavariable: $FORMAT
+      regex: ^.*%[^%].*$
+- patterns:
+  - pattern: $LEN += snprintf($DEST, $SIZE, "$FORMAT", ...)
+  - focus-metavariable: $LEN
+  - metavariable-pattern:
+      metavariable: $DEST
+      patterns:
+      - patterns:
+        - pattern-not: 'NULL'
+        - pattern-not: '0'
+  - metavariable-pattern:
+      metavariable: $SIZE
+      patterns:
+      - pattern-not: '0'
+  - metavariable-regex:
+      metavariable: $FORMAT
+      regex: ^.*%[^%].*$
+pattern-sinks:
+- pattern-either:
+  - patterns:
+    - pattern: snprintf($PTR, ...)
+    - focus-metavariable: $PTR
+  - patterns:
+    - pattern: snprintf($BUFFER, $SIZE, ...)
+    - focus-metavariable: $SIZE
+pattern-sanitizers:
+- by-side-effect: true
+  patterns:
+  - pattern-either:
+    - pattern: $LEN > $RHS
+    - pattern: $LHS > $LEN
+    - pattern: $LEN >= $RHS
+    - pattern: $LHS >= $LEN
+    - pattern: $LEN < $RHS
+    - pattern: $LHS < $LEN
+    - pattern: $LEN <= $RHS
+    - pattern: $LHS <= $LEN
+  - focus-metavariable: $LEN

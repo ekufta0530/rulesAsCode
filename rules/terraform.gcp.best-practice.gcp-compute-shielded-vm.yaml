@@ -1,0 +1,37 @@
+id: terraform.gcp.best-practice.gcp-compute-shielded-vm.gcp-compute-shielded-vm
+patterns:
+- pattern: resource
+- pattern-either:
+  - pattern-inside: 'resource "google_compute_instance" "..." {
+
+      ...
+
+      }
+
+      '
+  - pattern-inside: "resource \"google_compute_instance\" \"...\" {\n...\nshielded_instance_config\
+      \ {\n  ...\n  enable_integrity_monitoring = false\n  ...\n}\n...\n}\n"
+- pattern-not-inside: "resource \"google_compute_instance\" \"...\" {\n...\nshielded_instance_config\
+    \ {\n  ...\n  enable_integrity_monitoring = true\n  ...\n}\n...\n}\n"
+message: Ensure Compute instances are launched with Shielded VM enabled
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - gcp
+  references:
+  - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-compute-shielded-vm.gcp-compute-shielded-vm
+  shortlink: https://sg.run/GzDn
+  semgrep.dev:
+    rule:
+      r_id: 32292
+      rv_id: 110938
+      rule_id: x8UROY
+      version_id: QkTWwwG
+      url: https://semgrep.dev/playground/r/QkTWwwG/terraform.gcp.best-practice.gcp-compute-shielded-vm.gcp-compute-shielded-vm
+      origin: community
+languages:
+- hcl
+severity: WARNING

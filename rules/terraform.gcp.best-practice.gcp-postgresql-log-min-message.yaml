@@ -1,0 +1,31 @@
+id: terraform.gcp.best-practice.gcp-postgresql-log-min-message.gcp-postgresql-log-min-message
+patterns:
+- pattern: resource
+- pattern-inside: "resource \"google_sql_database_instance\" \"...\" {\n  ...\n  database_flags\
+    \ {\n    ...\n    name  = \"log_min_messages\"\n    value = \"$VALUE\"\n    ...\n\
+    \  }\n  ...\n}\n"
+- metavariable-pattern:
+    metavariable: $VALUE
+    language: generic
+    patterns:
+    - pattern-not-regex: (?i)(DEBUG5|DEBUG4|DEBUG3|DEBUG2|DEBUG1|INFO|NOTICE|WARNING|ERROR|LOG|FATAL|PANIC)
+message: Ensure PostgreSQL database 'log_min_messages' flag is set to a valid value
+metadata:
+  category: best-practice
+  technology:
+  - terraform
+  - gcp
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-postgresql-log-min-message.gcp-postgresql-log-min-message
+  shortlink: https://sg.run/o330
+  semgrep.dev:
+    rule:
+      r_id: 33660
+      rv_id: 110959
+      rule_id: kxU33K
+      version_id: 2KTz33O
+      url: https://semgrep.dev/playground/r/2KTz33O/terraform.gcp.best-practice.gcp-postgresql-log-min-message.gcp-postgresql-log-min-message
+      origin: community
+languages:
+- hcl
+severity: WARNING

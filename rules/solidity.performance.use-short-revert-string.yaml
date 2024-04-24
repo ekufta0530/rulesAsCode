@@ -1,0 +1,34 @@
+id: solidity.performance.use-short-revert-string.use-short-revert-string
+message: Shortening revert strings to fit in 32 bytes will decrease gas costs for
+  deployment and  gas costs when the revert condition has been met.
+metadata:
+  references:
+  - https://github.com/byterocket/c4-common-issues/blob/main/0-Gas-Optimizations.md/#g007---long-revert-strings
+  category: performance
+  technology:
+  - solidity
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  source: https://semgrep.dev/r/solidity.performance.use-short-revert-string.use-short-revert-string
+  shortlink: https://sg.run/E9LB
+  semgrep.dev:
+    rule:
+      r_id: 67637
+      rv_id: 110664
+      rule_id: r6UzxD
+      version_id: NdT3oNk
+      url: https://semgrep.dev/playground/r/NdT3oNk/solidity.performance.use-short-revert-string.use-short-revert-string
+      origin: community
+patterns:
+- pattern-either:
+  - pattern: 'require(..., "$MSG");
+
+      '
+  - pattern: 'revert("$MSG");
+
+      '
+- metavariable-regex:
+    metavariable: $MSG
+    regex: .{33,}
+languages:
+- solidity
+severity: INFO

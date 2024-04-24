@@ -1,0 +1,40 @@
+id: terraform.aws.security.aws-transfer-server-is-public.aws-transfer-server-is-public
+patterns:
+- pattern: "resource \"aws_transfer_server\" $ANYTHING {\n  ...\n}\n"
+- pattern-not-inside: "resource \"aws_transfer_server\" $ANYTHING {\n  ...\n  endpoint_type\
+    \ = \"VPC\"\n  ...\n}\n"
+message: Transfer Server endpoint type should not have public or null configured in
+  order to block public access. To fix this, set your `endpoint_type` to `"VPC"`.
+metadata:
+  category: security
+  technology:
+  - terraform
+  - aws
+  owasp:
+  - A05:2017 - Broken Access Control
+  - A01:2021 - Broken Access Control
+  cwe:
+  - 'CWE-284: Improper Access Control'
+  references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+  subcategory:
+  - audit
+  likelihood: LOW
+  impact: LOW
+  confidence: LOW
+  license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+  vulnerability_class:
+  - Improper Authorization
+  source: https://semgrep.dev/r/terraform.aws.security.aws-transfer-server-is-public.aws-transfer-server-is-public
+  shortlink: https://sg.run/L39r
+  semgrep.dev:
+    rule:
+      r_id: 17383
+      rv_id: 110798
+      rule_id: qNUWl1
+      version_id: 5PTdeN8
+      url: https://semgrep.dev/playground/r/5PTdeN8/terraform.aws.security.aws-transfer-server-is-public.aws-transfer-server-is-public
+      origin: community
+languages:
+- hcl
+severity: WARNING

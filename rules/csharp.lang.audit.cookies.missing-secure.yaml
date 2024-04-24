@@ -1,0 +1,52 @@
+id: csharp.lang.audit.cookies.missing-secure.missing-secure
+message: Detected a cookie where the `Secure` flag is either missing or disabled.
+  The `Secure` cookie flag instructs the browser to forbid sending the cookie over
+  an insecure HTTP request. Set the `Secure` flag to `true` so the cookie will only
+  be sent over HTTPS.
+severity: WARNING
+metadata:
+  likelihood: LOW
+  impact: LOW
+  confidence: HIGH
+  category: security
+  subcategory:
+  - vuln
+  cwe:
+  - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+  functional-categories:
+  - web::source::cookie::.NET
+  owasp:
+  - A05:2021 - Security Misconfiguration
+  references:
+  - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+  technology:
+  - cookies
+  license: Copyright 2023 Semgrep, Inc.
+  vulnerability_class:
+  - Cookie Security
+  source: https://semgrep.dev/r/csharp.lang.audit.cookies.missing-secure.missing-secure
+  shortlink: https://sg.run/2BwL
+  semgrep.dev:
+    rule:
+      r_id: 61163
+      rv_id: 229205
+      rule_id: 6JUBw5
+      version_id: 7ZTD0Zx
+      url: https://semgrep.dev/playground/r/7ZTD0Zx/csharp.lang.audit.cookies.missing-secure.missing-secure
+      origin: pro_rules
+languages:
+- csharp
+options:
+  symbolic_propagation: true
+patterns:
+- pattern-either:
+  - pattern: var $COOKIE = new HttpCookie(...);
+  - pattern: HttpCookie $COOKIE = ...;
+  - patterns:
+    - pattern: $BUILDER. ... .AddCookie($VALUE, $COOKIE => {...});
+    - focus-metavariable: $COOKIE
+- pattern-not-inside: '...
+
+    $COOKIE. ... .Secure = ...;
+
+    '
