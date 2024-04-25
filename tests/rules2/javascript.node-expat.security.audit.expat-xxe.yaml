@@ -1,0 +1,97 @@
+rules:
+- id: javascript.node-expat.security.audit.expat-xxe.expat-xxe
+  message: If unverified user data can reach the XML Parser it can result in XML External
+    or Internal Entity (XXE) Processing vulnerabilities
+  metadata:
+    owasp:
+    - A04:2017 - XML External Entities (XXE)
+    - A05:2021 - Security Misconfiguration
+    cwe:
+    - 'CWE-611: Improper Restriction of XML External Entity Reference'
+    category: security
+    technology:
+    - node-expat
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - XML Injection
+    source: https://semgrep.dev/r/javascript.node-expat.security.audit.expat-xxe.expat-xxe
+    shortlink: https://sg.run/eLdL
+    semgrep.dev:
+      rule:
+        r_id: 9332
+        rv_id: 109955
+        rule_id: gxU171
+        version_id: rxTyLzP
+        url: https://semgrep.dev/playground/r/rxTyLzP/javascript.node-expat.security.audit.expat-xxe.expat-xxe
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-either:
+    - pattern: |
+        var $EXPAT = require('node-expat');
+        ...
+        new $EXPAT.Parser(...);
+        ...
+        $PARSER.parse(...);
+    - pattern: |
+        var $EXPAT = require('node-expat');
+        ...
+        new $EXPAT.Parser(...);
+        ...
+        $PARSER.write(...);
+    - pattern: |
+        require('node-expat');
+        ...
+        new Parser(...);
+        ...
+        $PARSER.parse(...);
+    - pattern: |
+        require('node-expat');
+        ...
+        new Parser(...);
+        ...
+        $PARSER.write(...);
+  - pattern-not: |
+      var $EXPAT = require('node-expat');
+      ...
+      new $EXPAT.Parser(...);
+      ...
+      $PARSER.parse("...");
+  - pattern-not: |
+      var $EXPAT = require('node-expat');
+      ...
+      new $EXPAT.Parser(...);
+      ...
+      $PARSER.write("...");
+  - pattern-not: |
+      require('node-expat');
+      ...
+      new Parser(...);
+      ...
+      $PARSER.parse("...");
+  - pattern-not: |
+      require('node-expat');
+      ...
+      new Parser(...);
+      ...
+      $PARSER.write("...");
+  - pattern-not: |
+      $X = "...";
+      ...
+      $PARSER.parse($X);
+  - pattern-not: |-
+      $X = "...";
+      ...
+      $PARSER.write($X);

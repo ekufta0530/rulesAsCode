@@ -1,0 +1,43 @@
+rules:
+- id: python.lang.correctness.concurrent.uncaught-executor-exceptions
+  patterns:
+  - pattern-inside: |
+      with concurrent.futures.thread.ThreadPoolExecutor(...) as $EXECUTOR:
+        ...
+  - pattern-not-inside: |
+      $VAR = $EXECUTOR.map(...)
+      ...
+      for ... in $VAR:
+        ...
+  - pattern-not-inside: |
+      $VAR = $EXECUTOR.map(...)
+      ...
+      [... for ... in $VAR]
+  - pattern-not-inside: |
+      [... for ... in $EXECUTOR.map(...)]
+  - pattern-not-inside: |
+      for $IT in $EXECUTOR.map(...):
+        ...
+  - pattern: $EXECUTOR.map(...)
+  message: 'Values returned by thread pool map must be read in order to raise exceptions.
+    Consider using `for _ in $EXECUTOR.map(...): pass`.'
+  severity: WARNING
+  languages:
+  - python
+  metadata:
+    references:
+    - https://superfastpython.com/threadpoolexecutor-exception-handling/
+    category: correctness
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.correctness.concurrent.uncaught-executor-exceptions
+    shortlink: https://sg.run/Av48
+    semgrep.dev:
+      rule:
+        r_id: 9594
+        rv_id: 110334
+        rule_id: lBU9Pl
+        version_id: 44TRlvw
+        url: https://semgrep.dev/playground/r/44TRlvw/python.lang.correctness.concurrent.uncaught-executor-exceptions
+        origin: community

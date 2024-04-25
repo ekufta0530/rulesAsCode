@@ -1,0 +1,68 @@
+rules:
+- id: swift.webview.webview-fraudulent.swift-webview-config-fraudulent-site-warning
+  message: Webviews were observed that explicitly opt ouf of the WKWebView fraudulent
+    site warnings. Consider enabling such functionality, to better protect your users
+    from fraud/malware.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-272: Least Privilege Violation'
+    masvs:
+    - 'MASVS-PLATFORM-2: The app uses WebViews securely'
+    references:
+    - https://mas.owasp.org/MASVS/controls/MASVS-PLATFORM-2/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.webview.webview-fraudulent.swift-webview-config-fraudulent-site-warning
+    shortlink: https://sg.run/BXWR
+    semgrep.dev:
+      rule:
+        r_id: 66507
+        rv_id: 112040
+        rule_id: AbU7qv
+        version_id: vdTY8PL
+        url: https://semgrep.dev/playground/r/vdTY8PL/swift.webview.webview-fraudulent.swift-webview-config-fraudulent-site-warning
+        origin: pro_rules
+  languages:
+  - swift
+  patterns:
+  - pattern: |
+      $P = WKPreferences()
+      ...
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          $P.isFraudulentWebsiteWarningEnabled  = $FALSE
+          ...
+          $P.isFraudulentWebsiteWarningEnabled  = $TRUE
+      - pattern-not-inside: |
+          ...
+          $P.isFraudulentWebsiteWarningEnabled  = $TRUE
+          ...
+          $P.isFraudulentWebsiteWarningEnabled = $FALSE
+      - pattern: |
+          $P.isFraudulentWebsiteWarningEnabled  = false
+      - metavariable-regex:
+          metavariable: $TRUE
+          regex: ^(false)$
+      - metavariable-regex:
+          metavariable: $TRUE
+          regex: (.*(?!false))
+    - patterns:
+      - pattern: |
+          $P.isFraudulentWebsiteWarningEnabled  = false
+      - pattern-not-inside: |
+          ...
+          $P.isFraudulentWebsiteWarningEnabled  = ...
+          ...
+          $P.isFraudulentWebsiteWarningEnabled  = ...

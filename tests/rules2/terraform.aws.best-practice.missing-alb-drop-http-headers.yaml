@@ -1,0 +1,39 @@
+rules:
+- id: terraform.aws.best-practice.missing-alb-drop-http-headers.missing-alb-drop-http-headers
+  severity: WARNING
+  languages:
+  - hcl
+  message: Detected a AWS load balancer that is not configured to drop invalid HTTP
+    headers. Add `drop_invalid_header_fields = true` in your resource block.
+  metadata:
+    category: best-practice
+    technology:
+    - aws
+    - terraform
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.missing-alb-drop-http-headers.missing-alb-drop-http-headers
+    shortlink: https://sg.run/4eW5
+    semgrep.dev:
+      rule:
+        r_id: 14944
+        rv_id: 110711
+        rule_id: 0oU2nD
+        version_id: zyTKDnY
+        url: https://semgrep.dev/playground/r/zyTKDnY/terraform.aws.best-practice.missing-alb-drop-http-headers.missing-alb-drop-http-headers
+        origin: community
+  patterns:
+  - pattern-either:
+    - pattern: |
+        resource "aws_lb" $ENABLED {
+          ...
+        }
+    - pattern: |
+        resource "aws_alb" $ENABLED {
+          ...
+        }
+  - pattern-not-inside: |
+      resource $ANYTHING $ENABLED {
+        ...
+        drop_invalid_header_fields = true
+        ...
+      }

@@ -1,0 +1,36 @@
+rules:
+- id: dockerfile.correctness.missing-assume-yes-switch.missing-assume-yes-switch
+  patterns:
+  - pattern: "RUN ... apt-get install ... $MULTIFLAG ... \n"
+  - pattern-not: |
+      RUN ... apt-get install ... --assume-yes ...
+  - pattern-not: |
+      RUN ... apt-get install ... --yes ...
+  - pattern-not: |
+      RUN ... apt-get install ... -y ...
+  - metavariable-regex:
+      metavariable: $MULTIFLAG
+      regex: (^([^-])|(-[^y]+)$)
+  languages:
+  - dockerfile
+  message: This 'apt-get install' is missing the '-y' switch. This might stall builds
+    because it requires human intervention. Add the '-y' switch.
+  severity: WARNING
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3014
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3014
+    category: correctness
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.correctness.missing-assume-yes-switch.missing-assume-yes-switch
+    shortlink: https://sg.run/PPvq
+    semgrep.dev:
+      rule:
+        r_id: 20145
+        rv_id: 109253
+        rule_id: 5rUNrz
+        version_id: xyTKZQK
+        url: https://semgrep.dev/playground/r/xyTKZQK/dockerfile.correctness.missing-assume-yes-switch.missing-assume-yes-switch
+        origin: community

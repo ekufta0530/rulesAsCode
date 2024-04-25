@@ -1,0 +1,60 @@
+rules:
+- id: terraform.aws.security.aws-insecure-redshift-ssl-configuration.aws-insecure-redshift-ssl-configuration
+  patterns:
+  - pattern: |
+      resource "aws_redshift_parameter_group" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_redshift_parameter_group" $ANYTHING {
+        ...
+        parameter {
+          name  = "require_ssl"
+          value = "true"
+        }
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_redshift_parameter_group" $ANYTHING {
+        ...
+        parameter {
+          name  = "require_ssl"
+          value = true
+        }
+        ...
+      }
+  message: Detected an AWS Redshift configuration with a SSL disabled. To fix this,
+    set your `require_ssl` to `"true"`.
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-326: Inadequate Encryption Strength'
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.aws.security.aws-insecure-redshift-ssl-configuration.aws-insecure-redshift-ssl-configuration
+    shortlink: https://sg.run/yPYx
+    semgrep.dev:
+      rule:
+        r_id: 17368
+        rv_id: 110770
+        rule_id: 0oUrOj
+        version_id: e1T03Dw
+        url: https://semgrep.dev/playground/r/e1T03Dw/terraform.aws.security.aws-insecure-redshift-ssl-configuration.aws-insecure-redshift-ssl-configuration
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

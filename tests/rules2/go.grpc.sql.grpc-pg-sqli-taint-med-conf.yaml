@@ -1,0 +1,146 @@
+rules:
+- id: go.grpc.sql.grpc-pg-sqli-taint-med-conf.grpc-pg-sqli-taint-med-conf
+  message: 'Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions. When
+    building SQL queries in Go, it is possible to adopt prepared statements by using
+    the `Prepare` and `PrepareContext` calls with parameterized queries. For more
+    information, see: [Prepared statements in Go](https://go.dev/doc/database/prepared-statements).'
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - db::search::password::database
+    - db::search::password::gorm
+    - db::search::password::mysql
+    - db::search::password::pg
+    - db::search::password::pgx
+    - db::sink::sql-or-nosql-query::pg
+    - net::source::remote-procedure-call::grpc
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    - https://pg.uptrace.dev/queries/
+    technology:
+    - go
+    - go-pg/pg/v10
+    - grpc
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/go.grpc.sql.grpc-pg-sqli-taint-med-conf.grpc-pg-sqli-taint-med-conf
+    shortlink: https://sg.run/1w85
+    semgrep.dev:
+      rule:
+        r_id: 58422
+        rv_id: 731870
+        rule_id: PeU4or
+        version_id: bZTzgbl
+        url: https://semgrep.dev/playground/r/bZTzgbl/go.grpc.sql.grpc-pg-sqli-taint-med-conf.grpc-pg-sqli-taint-med-conf
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - label: USERINPUT
+    patterns:
+    - pattern-inside: |
+        import "google.golang.org/grpc"
+        ...
+    - pattern-inside: |
+        import $PROTOBUF "$IMPORTPATH"
+        ...
+    - pattern-inside: |
+        type $SERVER struct {
+            ...
+        }
+        ...
+    - pattern: |
+        func ($NAME *$SERVER) $FUNCNAME(..., $PARAM *$PROTOBUF.$FIELD, ...) {
+            ...
+        }
+    - focus-metavariable: $PARAM
+  - label: IMPORTPG
+    patterns:
+    - pattern-inside: |
+        import "$IMPORT"
+        ...
+    - metavariable-regex:
+        metavariable: $IMPORT
+        regex: ^(.*go\-pg\/pg\/v10\/orm.*)$
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: |
+            ($DB : $DBTYPE). ... .$METHOD($QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(Exec|ExecOne|Prepare)$
+      - patterns:
+        - pattern: |
+            ($DB : $DBTYPE). ... .$METHOD($MDL_CTX_WRITER, $QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(CopyFrom|CopyTo|ExecContext|ExecOneContext|Query|QueryOne)$
+      - patterns:
+        - pattern: |
+            ($DB : $DBTYPE). ... .$METHOD($CTX, $MODEL, $QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(QueryContext|QueryOneContext)$
+    - pattern-not: $DB. ... .Prepare("..."). ... .$METHOD(...)
+    - metavariable-regex:
+        metavariable: $DBTYPE
+        regex: ^((\*)?pg.(Conn|DB|Tx))$
+    - focus-metavariable: $QUERY
+    requires: IMPORTPG and USERINPUT
+  - patterns:
+    - patterns:
+      - pattern-either:
+        - pattern: |
+            $DB := pg.$CONN(...)
+            ...
+        - pattern: |
+            $DB, $ERR := pg.$CONN(...)
+            ...
+      - metavariable-regex:
+          metavariable: $CONN
+          regex: ^(Connect|ParseURL)$
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern: $DB. ... .$METHOD($QUERY, ...)
+          - metavariable-regex:
+              metavariable: $METHOD
+              regex: ^(Exec|ExecOne|Prepare)$
+        - patterns:
+          - pattern: $DB. ... .$METHOD($MDL_CTX_WRITER, $QUERY, ...)
+          - metavariable-regex:
+              metavariable: $METHOD
+              regex: ^(CopyFrom|CopyTo|ExecContext|ExecOneContext|Query|QueryOne)$
+        - patterns:
+          - pattern: $DB. ... .$METHOD($CTX, $MODEL, $QUERY, ...)
+          - metavariable-regex:
+              metavariable: $METHOD
+              regex: ^(QueryContext|QueryOneContext)$
+      - pattern-not: $DB. ... .Prepare("..."). ... .$METHOD(...)
+    - focus-metavariable: $QUERY
+    requires: IMPORTPG and USERINPUT

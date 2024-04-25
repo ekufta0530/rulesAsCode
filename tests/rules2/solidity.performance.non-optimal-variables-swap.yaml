@@ -1,0 +1,31 @@
+rules:
+- id: solidity.performance.non-optimal-variables-swap.non-optimal-variables-swap
+  message: Consider swapping variables using `($VAR1, $VAR2) = ($VAR2, $VAR1)` to
+    save gas
+  languages:
+  - solidity
+  severity: INFO
+  metadata:
+    category: performance
+    technology:
+    - solidity
+    references:
+    - https://dev.to/oliverjumpertz/solidity-quick-tip-efficiently-swap-two-variables-1f8i
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/solidity.performance.non-optimal-variables-swap.non-optimal-variables-swap
+    shortlink: https://sg.run/kNnA
+    semgrep.dev:
+      rule:
+        r_id: 67628
+        rv_id: 110655
+        rule_id: oqUEnX
+        version_id: pZT1LwK
+        url: https://semgrep.dev/playground/r/pZT1LwK/solidity.performance.non-optimal-variables-swap.non-optimal-variables-swap
+        origin: community
+  patterns:
+  - pattern: |
+      $TMP = $VAR1;
+      ...
+      $VAR1 = $VAR2;
+      ...
+      $VAR2 = $TMP;

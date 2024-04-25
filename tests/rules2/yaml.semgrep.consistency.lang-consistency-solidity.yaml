@@ -1,0 +1,29 @@
+rules:
+- fix: solidity
+  id: yaml.semgrep.consistency.lang-consistency-solidity.lang-consistency-solidity
+  languages:
+  - yaml
+  message: Found '$X' in language config which diverges from semgrep.dev normalization.
+    Please use 'solidity' instead.
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.consistency.lang-consistency-solidity.lang-consistency-solidity
+    shortlink: https://sg.run/DAgP
+    semgrep.dev:
+      rule:
+        r_id: 18296
+        rv_id: 111155
+        rule_id: oqUBRD
+        version_id: l4T461x
+        url: https://semgrep.dev/playground/r/l4T461x/yaml.semgrep.consistency.lang-consistency-solidity.lang-consistency-solidity
+        origin: community
+  patterns:
+  - pattern: $X
+  - pattern-inside: 'languages: ...'
+  - metavariable-regex:
+      metavariable: $X
+      regex: ^(sol)$
+  severity: WARNING

@@ -1,0 +1,50 @@
+rules:
+- id: terraform.gcp.security.gcp-vertexai-dataset-encrypted-with-cmk.gcp-vertexai-dataset-encrypted-with-cmk
+  patterns:
+  - pattern: |
+      resource "google_vertex_ai_dataset" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "google_vertex_ai_dataset" $ANYTHING {
+        ...
+        encryption_spec {
+          ...
+          kms_key_name = ...
+          ...
+        }
+        ...
+      }
+  message: Ensure Vertex AI datasets uses a CMK (Customer Manager Key)
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - gcp
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-vertexai-dataset-encrypted-with-cmk.gcp-vertexai-dataset-encrypted-with-cmk
+    shortlink: https://sg.run/zZjW
+    semgrep.dev:
+      rule:
+        r_id: 33717
+        rv_id: 111045
+        rule_id: gxUE0O
+        version_id: GxTv8qd
+        url: https://semgrep.dev/playground/r/GxTv8qd/terraform.gcp.security.gcp-vertexai-dataset-encrypted-with-cmk.gcp-vertexai-dataset-encrypted-with-cmk
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

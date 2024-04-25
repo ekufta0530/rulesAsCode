@@ -1,0 +1,183 @@
+rules:
+- id: kotlin.spring.kmongo-nosqli.kmongo-nosqli
+  message: Untrusted input might be used to build a database query, which can lead
+    to a NoSQL injection vulnerability. An attacker can execute malicious NoSQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. Make sure all user input is validated and sanitized,
+    and avoid using tainted user input to construct NoSQL statements if possible.
+    Ideally, avoid raw queries and instead use parameterized queries.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-943: Improper Neutralization of Special Elements in Data Query Logic'
+    functional-categories:
+    - db::sink::sql-or-nosql-query::kmongo
+    - web::source::cookie::SpringBoot
+    - web::source::header::SpringBoot
+    - web::source::http-body::SpringBoot
+    - web::source::http-params::SpringBoot
+    - web::source::url-path-params::SpringBoot
+    owasp:
+    - A01:2017 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - kmongo
+    - kotlin
+    - mongo
+    - nosql
+    - spring
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Improper Validation
+    source: https://semgrep.dev/r/kotlin.spring.kmongo-nosqli.kmongo-nosqli
+    shortlink: https://sg.run/Xdpw
+    semgrep.dev:
+      rule:
+        r_id: 59564
+        rv_id: 731948
+        rule_id: eqUQNJ
+        version_id: 5PTp2Pp
+        url: https://semgrep.dev/playground/r/5PTp2Pp/kotlin.spring.kmongo-nosqli.kmongo-nosqli
+        origin: pro_rules
+  languages:
+  - kotlin
+  mode: taint
+  pattern-sources:
+  - label: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          ($REQ: ServletRequest)
+      - pattern: |
+          ($REQ: HttpServletRequest)
+      - pattern: |
+          ($REQ: WebRequest)
+      - pattern: |
+          ($REQ: ServletWebRequest)
+      - pattern: |
+          ($REQ: FacesWebRequest)
+      - pattern: |
+          ($REQ: NativeWebRequest)
+      - patterns:
+        - pattern-either:
+          - pattern: |
+              fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) {...}
+          - pattern: |
+              fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) {...}
+          - pattern: |
+              fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) = $Z(...)
+          - pattern: |
+              fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) = $Z(...)
+        - metavariable-regex:
+            metavariable: $TYPE
+            regex: ^(?!(Int|Long|Float|Double|Short|Byte|Char|UByte|UInt|ULong|UShort|Boolean))
+        - metavariable-regex:
+            metavariable: $REQ
+            regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+        - focus-metavariable: $SOURCE
+  - label: CONCAT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          "...${...}..."
+      - pattern: |
+          "...${...}...".$MD(...)
+      - pattern: |
+          "..." + ...
+      - pattern: '... + "..."'
+      - pattern: |
+          "...${...}..." + ...
+      - pattern: '... + "...${...}..."'
+      - pattern: String.format(...)
+    requires: USER_INPUT
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import org.litote.kmongo.*
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.coroutine.*
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.reactivestreams.*
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.reactor.*
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.rxjava2.*
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.$METHOD
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.coroutine.$METHOD
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.reactivestreams.$METHOD
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.reactor.$METHOD
+          ...
+      - pattern-inside: |
+          import org.litote.kmongo.rxjava2.$METHOD
+          ...
+    - pattern-either:
+      - pattern-inside: |
+          $COL = $X.getCollection(...)
+          ...
+      - pattern-inside: |
+          class $CL(...) {
+            ...
+            val $COL = $X.getCollection(...)
+            ...
+          }
+      - pattern: |
+          ($COL: MongoCollection<$Z>).$METHOD(...)
+    - metavariable-pattern:
+        metavariable: $METHOD
+        patterns:
+        - pattern-either:
+          - pattern: aggregate
+          - pattern: bulkWrite
+          - pattern: countDocuments
+          - pattern: createIndex
+          - pattern: deleteMany
+          - pattern: deleteOne
+          - pattern: distinct
+          - pattern: dropIndex
+          - pattern: dropIndexOfKeys
+          - pattern: ensureIndex
+          - pattern: find
+          - pattern: findOne
+          - pattern: findOneAndDelete
+          - pattern: findOneAndReplace
+          - pattern: findOneAndUpdate
+          - pattern: insertOne
+          - pattern: mapReduce
+          - pattern: mapReduceWith
+          - pattern: replaceOne
+          - pattern: updateMany
+          - pattern: updateOne
+    - focus-metavariable: $QUERY
+    - pattern-either:
+      - pattern: $COL.$METHOD($QUERY,...)
+      - pattern: $COL.$METHOD($SESSION, $QUERY,...)
+    requires: CONCAT
+  pattern-sanitizers:
+  - patterns:
+    - pattern: $X.$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (equals|toInt|toLong|toFloat|toDouble|toShort|toByte|toUByte|toUInt|toULong|toUShort)
+  - pattern: |
+      ($X: boolean)
+  - pattern: $X.json

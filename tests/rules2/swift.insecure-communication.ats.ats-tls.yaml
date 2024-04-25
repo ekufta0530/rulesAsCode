@@ -1,0 +1,60 @@
+rules:
+- id: swift.insecure-communication.ats.ats-tls.ATS-minimum-tls-version
+  message: The application's App Transport Security (ATS) configuration lowers the
+    minimum TLS version requirement for one or more domains. This potentially reduces
+    the efficacy of the transport layer security, allowing for older, more vulnerable
+    versions of TLS to be utilized.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe: 'CWE-757: Selection of Less-Secure Algorithm During Negotiation (''Algorithm
+      Downgrade'')'
+    masvs:
+    - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+      best practices.'
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-tls.ATS-minimum-tls-version
+    shortlink: https://sg.run/QBeo
+    semgrep.dev:
+      rule:
+        r_id: 60542
+        rv_id: 112022
+        rule_id: 4bUDZ3
+        version_id: 6xTvQoK
+        url: https://semgrep.dev/playground/r/6xTvQoK/swift.insecure-communication.ats.ats-tls.ATS-minimum-tls-version
+        origin: pro_rules
+  languages:
+  - xml
+  options:
+    symbolic_propagation: true
+  paths:
+    include:
+    - Info.plist
+  patterns:
+  - pattern: |
+      <dict>
+      ...
+      <key>$KEY</key>
+      ...
+      </dict>
+  - metavariable-comparison:
+      metavariable: $KEY
+      comparison: str($KEY) == "NSTemporaryExceptionMinimumTLSVersion"
+  - patterns:
+    - pattern: <string>$VALUE</string>
+  - focus-metavariable: $VALUE
+  - metavariable-regex:
+      metavariable: $VALUE
+      regex: ^(TLSv1.0|TLSv1.1|TLSv1.2)$

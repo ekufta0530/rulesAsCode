@@ -1,0 +1,99 @@
+rules:
+- id: javascript.jquery.security.audit.jquery-insecure-selector.jquery-insecure-selector
+  message: User controlled data in a `$(...)` is an anti-pattern that can lead to
+    XSS vulnerabilities
+  metadata:
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/www-community/attacks/xss/
+    - https://bugs.jquery.com/ticket/9521
+    category: security
+    technology:
+    - jquery
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/javascript.jquery.security.audit.jquery-insecure-selector.jquery-insecure-selector
+    shortlink: https://sg.run/W8NL
+    semgrep.dev:
+      rule:
+        r_id: 9297
+        rv_id: 109892
+        rule_id: AbUzlX
+        version_id: A8T95oP
+        url: https://semgrep.dev/playground/r/A8T95oP/javascript.jquery.security.audit.jquery-insecure-selector.jquery-insecure-selector
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $(<... window ...>)
+    - pattern: |
+        $(<... location ...>)
+    - patterns:
+      - pattern: |
+          $X = <... window ...>;
+          ...
+          $(<... $X ...>);
+      - focus-metavariable: $X
+    - patterns:
+      - pattern: |
+          $X = <... location ...>;
+          ...
+          $(<... $X ...>);
+      - focus-metavariable: $X
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            function $FUNC(..., $Y, ...) {
+              ...
+            }
+        - pattern-inside: |
+            function (..., $Y, ...) {
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...,$Z,...) {
+              ...
+              $Y = <... $Z ...>;
+              ...
+            }
+        - pattern-inside: |
+            function (...,$Z,...) {
+              ...
+              $Y = <... $Z ...>;
+              ...
+            }
+      - pattern-either:
+        - pattern: |
+            $(<... $Y ...>)
+        - pattern: |
+            $("..." + (<... $Y ...>))
+        - pattern: |
+            $((<... $Y ...>) + "...")
+      - pattern-not-inside: |
+          $JQUERY.each(function($INDEX, $Y) {
+            ...
+          })
+      - focus-metavariable: $Y
+  - pattern-not: |
+      $(window)
+  - pattern-not: |
+      $(document)
+  - pattern-not: |
+      $(this)

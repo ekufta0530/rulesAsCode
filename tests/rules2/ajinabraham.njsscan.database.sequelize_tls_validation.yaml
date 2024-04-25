@@ -1,0 +1,38 @@
+rules:
+- id: ajinabraham.njsscan.database.sequelize_tls_validation.sequelize_tls_cert_validation
+  message: |
+    The Sequelize connection string indicates that TLS certificate vailidation of database server is disabled. This is equivalent to not having TLS. An attacker can present any invalid certificate and Sequelize will make database connection ignoring certificate errors. This setting make the connection susceptible to man in the middle (MITM) attacks. Not applicable to SQLite database.
+  severity: ERROR
+  languages:
+  - javascript
+  metadata:
+    owasp-web: a6
+    cwe: cwe-295
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.database.sequelize_tls_validation.sequelize_tls_cert_validation
+    shortlink: https://sg.run/lAQ9
+    semgrep.dev:
+      rule:
+        r_id: 43613
+        rv_id: 78231
+        rule_id: L1UJLE
+        version_id: 6xTLGp
+        url: https://semgrep.dev/playground/r/6xTLGp/ajinabraham.njsscan.database.sequelize_tls_validation.sequelize_tls_cert_validation
+        origin: community
+  patterns:
+  - pattern: |
+      {
+        host: $HOST,
+        database: $DATABASE,
+        dialect: $DIALECT,
+        dialectOptions: {
+          ssl: {
+            rejectUnauthorized: false
+          }
+        }
+       }
+  - metavariable-regex:
+      metavariable: $DIALECT
+      regex: '[''"](mariadb|mysql|postgres)[''"]'

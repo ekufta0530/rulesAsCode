@@ -1,0 +1,39 @@
+rules:
+- id: python.lang.security.audit.ftplib.ftplib
+  pattern: ftplib.$ANYTHING(...)
+  message: FTP does not encrypt communications by default. This can lead to sensitive
+    data being exposed. Ensure use of FTP here does not expose sensitive data.
+  metadata:
+    source-rule-url: https://github.com/PyCQA/bandit/blob/d5f8fa0d89d7b11442fc6ec80ca42953974354c8/bandit/blacklists/calls.py#L265
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    bandit-code: B321
+    references:
+    - https://docs.python.org/3/library/telnetlib.html
+    category: security
+    technology:
+    - ftplib
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/python.lang.security.audit.ftplib.ftplib
+    shortlink: https://sg.run/7oyZ
+    semgrep.dev:
+      rule:
+        r_id: 9638
+        rv_id: 110389
+        rule_id: 4bUkv7
+        version_id: K3TvG2X
+        url: https://semgrep.dev/playground/r/K3TvG2X/python.lang.security.audit.ftplib.ftplib
+        origin: community
+  severity: WARNING
+  languages:
+  - python

@@ -1,0 +1,70 @@
+rules:
+- id: php.lang.security.taint-cookie-http-false.taint-cookie-http-false
+  message: HttpOnly cookie flag is explicitly disabled. This will cause cookies to
+    be transmitted over unencrypted HTTP connections which can allow theft of confidential
+    user data such as session tokens.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: LOW
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+    functional-categories:
+    - debug::search::active-debug-code::lang
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://www.php.net/manual/en/function.setcookie.php
+    - https://www.php.net/manual/en/function.session-set-cookie-params.php
+    - https://www.php.net/manual/en/configuration.file.php
+    technology:
+    - php
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/php.lang.security.taint-cookie-http-false.taint-cookie-http-false
+    shortlink: https://sg.run/5qrX
+    semgrep.dev:
+      rule:
+        r_id: 27191
+        rv_id: 111768
+        rule_id: 9AU4dD
+        version_id: X0TQ2rg
+        url: https://semgrep.dev/playground/r/X0TQ2rg/php.lang.security.taint-cookie-http-false.taint-cookie-http-false
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          false
+      - pattern: |
+          [
+            ...,
+            'httponly' => false,
+            ...
+          ]
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $SINK
+    - pattern-either:
+      - pattern: |
+          setcookie($NAME,$VALUE,$EXPIRES,$PATH,$DOMAIN,$SECURE,$SINK)
+      - pattern: |
+          setrawcookie($NAME,$VALUE,$EXPIRES,$PATH,$DOMAIN,$SECURE,$SINK)
+      - pattern: |
+          set_session_cookie_params($EXPIRES,$PATH,$DOMAIN,$SECURE,$SINK)
+      - pattern: |
+          setcookie(...,httponly:$SINK)
+      - pattern: |
+          setrawcookie(...,httponly:$SINK)
+      - pattern: |
+          set_session_cookie_params(...,httponly:$SINK)
+      - pattern: |
+          setcookie($NAME,$VALUE,$SINK)

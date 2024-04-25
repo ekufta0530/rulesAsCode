@@ -1,0 +1,128 @@
+rules:
+- id: javascript.express.needle.ssrf.ssrf
+  message: Untrusted input might be used to build an HTTP request, which can lead
+    to a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker
+    to send crafted requests from the server side to other internal or external systems.
+    SSRF can lead to unauthorized access to sensitive data and, in some cases, allow
+    the attacker to control applications or systems that trust the vulnerable service.
+    To prevent this vulnerability, avoid allowing user input to craft the base request.
+    Instead, treat it as part of the path or query parameter and encode it appropriately.
+    When user input is necessary to prepare the HTTP request, perform strict input
+    validation. Additionally, whenever possible, use allowlists to only interact with
+    expected, trusted domains.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::sink::http-request::needle
+    - web::source::cookie::express
+    - web::source::header::express
+    - web::source::http-body::express
+    - web::source::http-params::express
+    - web::source::url-path-params::express
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    references:
+    - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+    technology:
+    - express
+    - nodejs
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/javascript.express.needle.ssrf.ssrf
+    shortlink: https://sg.run/pKGPN
+    semgrep.dev:
+      rule:
+        r_id: 92718
+        rv_id: 250790
+        rule_id: PeUJWgj
+        version_id: WrTObep
+        url: https://semgrep.dev/playground/r/WrTObep/javascript.express.needle.ssrf.ssrf
+        origin: pro_rules
+  languages:
+  - javascript
+  - typescript
+  mode: taint
+  options:
+    taint_assume_safe_booleans: true
+    taint_assume_safe_comparisons: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - label: EXPRESS
+    patterns:
+    - patterns:
+      - pattern-inside: function ... (...,$REQ, ...) {...}
+      - pattern-either:
+        - pattern: $REQ.query
+        - pattern: $REQ.body
+        - pattern: $REQ.params
+        - pattern: $REQ.cookies
+        - pattern: $REQ.headers
+  - label: EXPRESS
+    patterns:
+    - patterns:
+      - pattern-either:
+        - pattern-inside: function ... (...,$REQ, ...) {...}
+        - pattern-inside: |
+            (...,{ $REQ }: $EXPRESS.Request,...) => {...}
+      - focus-metavariable: $REQ
+      - pattern-either:
+        - pattern: params
+        - pattern: query
+        - pattern: cookies
+        - pattern: headers
+        - pattern: body
+  - label: CONCAT
+    patterns:
+    - patterns:
+      - pattern-either:
+        - pattern: '`...${$X}...`'
+        - pattern: $F + $X
+      - pattern-not: '`${$X}...`'
+      - pattern-not: |
+          "https://" + $X
+      - pattern-not: |
+          "http://" + $X
+      - pattern-not: |
+          "//" + $X
+      - pattern-not: '`http://${$X}...`'
+      - pattern-not: '`https://${$X}...`'
+      - pattern-not: '`//${$X}...`'
+      - pattern-not: $X + $F
+      - focus-metavariable: $X
+    requires: EXPRESS
+  - label: EDGECASE
+    patterns:
+    - patterns:
+      - pattern: $X.$Y. ... + $X.$Y. ...
+      - focus-metavariable: $X
+    requires: EXPRESS
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $X = require("needle")
+          ...
+      - pattern-inside: |
+          import * as $X from 'needle'
+          ...
+      - pattern-inside: |
+          import * as $X from 'needle'
+          ...
+    - pattern-either:
+      - pattern: $X. ... .$METHOD($URL,...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (?i)get|put|post|options|delete|patch
+    - focus-metavariable: $URL
+    requires: EXPRESS and not CONCAT or EXPRESS and EDGECASE

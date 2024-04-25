@@ -1,0 +1,51 @@
+rules:
+- id: generic.dockerfile.correctness.alias-must-be-unique.alias-must-be-unique
+  severity: ERROR
+  languages:
+  - generic
+  patterns:
+  - pattern-either:
+    - pattern: |
+        FROM ... as $REF
+        ...
+        ...
+        FROM ... as $REF
+    - pattern: |
+        FROM ... AS $REF
+        ...
+        ...
+        FROM ... AS $REF
+  - pattern-not-inside: |
+      FROM ... as $REF
+      ...
+      ...
+      FROM ... as $REF-
+  - pattern-not-inside: |
+      FROM ... AS $REF
+      ...
+      ...
+      FROM ... AS $REF-
+  paths:
+    include:
+    - '*dockerfile*'
+    - '*Dockerfile*'
+  message: Image aliases must have a unique name, and '$REF' is used twice. Use another
+    name for '$REF'.
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3024
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3024
+    category: correctness
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/generic.dockerfile.correctness.alias-must-be-unique.alias-must-be-unique
+    shortlink: https://sg.run/jRY2
+    semgrep.dev:
+      rule:
+        r_id: 9021
+        rv_id: 109332
+        rule_id: v8UngY
+        version_id: DkT6neb
+        url: https://semgrep.dev/playground/r/DkT6neb/generic.dockerfile.correctness.alias-must-be-unique.alias-must-be-unique
+        origin: community

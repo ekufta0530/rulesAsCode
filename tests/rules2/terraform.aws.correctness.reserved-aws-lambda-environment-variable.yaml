@@ -1,0 +1,56 @@
+rules:
+- id: terraform.aws.correctness.reserved-aws-lambda-environment-variable.reserved-aws-lambda-environment-variable
+  message: '`terraform apply` will fail because the environment variable "$VARIABLE"
+    is a reserved by AWS. Use another name for "$VARIABLE".'
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    category: correctness
+    references:
+    - https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime
+    technology:
+    - aws
+    - aws-lambda
+    - terraform
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.correctness.reserved-aws-lambda-environment-variable.reserved-aws-lambda-environment-variable
+    shortlink: https://sg.run/4jk5
+    semgrep.dev:
+      rule:
+        r_id: 72100
+        rv_id: 110722
+        rule_id: 4bUdeB
+        version_id: kbTdL65
+        url: https://semgrep.dev/playground/r/kbTdL65/terraform.aws.correctness.reserved-aws-lambda-environment-variable.reserved-aws-lambda-environment-variable
+        origin: community
+  patterns:
+  - pattern-inside: |
+      resource "aws_lambda_function" $FUNCTION { ... }
+  - pattern-inside: |
+      environment { ... }
+  - pattern-inside: |
+      variables = { ... }
+  - pattern: |
+      $VARIABLE = ...
+  - metavariable-pattern:
+      metavariable: $VARIABLE
+      patterns:
+      - pattern-either:
+        - pattern: _HANDLER
+        - pattern: _X_AMZN_TRACE_ID
+        - pattern: AWS_DEFAULT_REGION
+        - pattern: AWS_REGION
+        - pattern: AWS_EXECUTION_ENV
+        - pattern: AWS_LAMBDA_FUNCTION_NAME
+        - pattern: AWS_LAMBDA_FUNCTION_MEMORY_SIZE
+        - pattern: AWS_LAMBDA_FUNCTION_VERSION
+        - pattern: AWS_LAMBDA_INITIALIZATION_TYPE
+        - pattern: AWS_LAMBDA_LOG_GROUP_NAME
+        - pattern: AWS_LAMBDA_LOG_STREAM_NAME
+        - pattern: AWS_ACCESS_KEY
+        - pattern: AWS_ACCESS_KEY_ID
+        - pattern: AWS_SECRET_ACCESS_KEY
+        - pattern: AWS_LAMBDA_RUNTIME_API
+        - pattern: LAMBDA_TASK_ROOT
+        - pattern: LAMBDA_RUNTIME_DIR

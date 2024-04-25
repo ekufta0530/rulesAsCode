@@ -1,0 +1,27 @@
+rules:
+- id: elixir.lang.best-practice.deprecated-calendar-iso-day-of-week-3.deprecated_calendar_iso_day_of_week_3
+  message: '`Calendar.ISO.day_of_week/3` is already deprecated. Please use `Calendar.ISO.day_of_week/4`
+    instead.'
+  severity: WARNING
+  languages:
+  - elixir
+  pattern: $VAR = Calendar.ISO.day_of_week($YEAR, $MONTH, $DAY)
+  fix: |
+    {$VAR, _, _} = Calendar.ISO.day_of_week($YEAR, $MONTH, $DAY, :default)
+  metadata:
+    references:
+    - https://github.com/elixir-lang/elixir/releases/tag/v1.15.0
+    category: best-practice
+    technology:
+    - elixir
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/elixir.lang.best-practice.deprecated-calendar-iso-day-of-week-3.deprecated_calendar_iso_day_of_week_3
+    shortlink: https://sg.run/r470
+    semgrep.dev:
+      rule:
+        r_id: 67425
+        rv_id: 109262
+        rule_id: 6JUg9G
+        version_id: LjTqQlz
+        url: https://semgrep.dev/playground/r/LjTqQlz/elixir.lang.best-practice.deprecated-calendar-iso-day-of-week-3.deprecated_calendar_iso_day_of_week_3
+        origin: community

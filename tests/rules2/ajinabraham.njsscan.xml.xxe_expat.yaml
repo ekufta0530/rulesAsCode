@@ -1,0 +1,60 @@
+rules:
+- id: ajinabraham.njsscan.xml.xxe_expat.xxe_expat
+  patterns:
+  - pattern-inside: |
+      require('node-expat')
+      ...
+  - pattern-either:
+    - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+    - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+  - pattern-either:
+    - pattern-inside: |
+        $PARSER = new $EXPAT.Parser(...)
+        ...
+    - pattern-inside: |
+        $PARSER = new Parser(...)
+        ...
+  - pattern-either:
+    - pattern: $PARSER.parse(<... $REQ.$QUERY.$FOO ...>,...)
+    - pattern: $PARSER.parse(<... $REQ.$BODY ...>,...)
+    - pattern: |
+        $INPUT = <... $REQ.$QUERY.$FOO ...>;
+        ...
+        $PARSER.parse(<... $INPUT ...>,...)
+    - pattern: |
+        $INPUT = <... $REQ.$BODY ...>;
+        ...
+        $PARSER.parse(<... $INPUT ...>,...)
+    - pattern: $PARSER.write(<... $REQ.$QUERY.$FOO ...>,...)
+    - pattern: $PARSER.write(<... $REQ.$BODY ...>,...)
+    - pattern: |
+        $INPUT = <... $REQ.$QUERY.$FOO ...>;
+        ...
+        $PARSER.write(<... $INPUT ...>,...)
+    - pattern: |-
+        $INPUT = <... $REQ.$BODY ...>;
+        ...
+        $PARSER.write(<... $INPUT ...>,...)
+  message: Make sure that unverified user data can not reach the XML Parser, as it
+    can result in XML External or Internal Entity (XXE) Processing vulnerabilities.
+  metadata:
+    owasp-web: a4
+    cwe: cwe-611
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.xml.xxe_expat.xxe_expat
+    shortlink: https://sg.run/G3Ep
+    semgrep.dev:
+      rule:
+        r_id: 43704
+        rv_id: 78308
+        rule_id: wdUvdn
+        version_id: ZRTLXo
+        url: https://semgrep.dev/playground/r/ZRTLXo/ajinabraham.njsscan.xml.xxe_expat.xxe_expat
+        origin: community
+  severity: ERROR
+  languages:
+  - javascript

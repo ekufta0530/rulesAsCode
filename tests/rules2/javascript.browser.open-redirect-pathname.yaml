@@ -1,0 +1,96 @@
+rules:
+- id: javascript.browser.open-redirect-pathname.open-redirect-pathname
+  message: The application builds a URL using user-controlled input which can lead
+    to an open redirect vulnerability. An attacker can manipulate the URL and redirect
+    users to an arbitrary domain. Open redirect vulnerabilities can lead to issues
+    such as Cross-site scripting (XSS) or redirecting to a malicious domain for activities
+    such as phishing to capture users' credentials. To prevent this vulnerability
+    perform strict input validation of the domain against an allowlist of approved
+    domains. Notify a user in your application that they are leaving the website.
+    Display a domain where they are redirected to the user. A user can then either
+    accept or deny the redirect to an untrusted site.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-601: URL Redirection to Untrusted Site (''Open Redirect'')'
+    functional-categories:
+    - web::source::url-path-params::WebAPI
+    - web::sink::redirect::WebAPI
+    owasp:
+    - A01:2021 - Broken Access Control
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html
+    technology:
+    - browser
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Open Redirect
+    source: https://semgrep.dev/r/javascript.browser.open-redirect-pathname.open-redirect-pathname
+    shortlink: https://sg.run/PxnY
+    semgrep.dev:
+      rule:
+        r_id: 43789
+        rv_id: 111657
+        rule_id: lBUYKy
+        version_id: 0bTLeBB
+        url: https://semgrep.dev/playground/r/0bTLeBB/javascript.browser.open-redirect-pathname.open-redirect-pathname
+        origin: pro_rules
+  languages:
+  - javascript
+  - typescript
+  mode: taint
+  pattern-sources:
+  - label: TAINTED
+    patterns:
+    - pattern-either:
+      - pattern: $THIS. ... .location.pathname
+      - pattern: location.pathname
+  - label: CONCAT
+    requires: TAINTED
+    patterns:
+    - pattern-either:
+      - pattern: |
+          `...${$X}...`
+      - pattern: |
+          $F + $X
+    - pattern-not: |
+        `${$X}...`
+    - pattern-not: |
+        "https://" + $X
+    - pattern-not: |
+        "http://" + $X
+    - pattern-not: |
+        "//" + $X
+    - pattern-not: |
+        `http://${$X}...`
+    - pattern-not: |
+        `https://${$X}...`
+    - pattern-not: |
+        `//${$X}...`
+    - pattern-not: |
+        $X + $F
+    - focus-metavariable: $X
+  pattern-sinks:
+  - requires: TAINTED and not CONCAT
+    patterns:
+    - pattern-either:
+      - pattern: location.href = $SINK
+      - pattern: $THIS. ... .location.href = $SINK
+      - pattern: location.replace($SINK)
+      - pattern: $THIS. ... .location.replace($SINK)
+      - pattern: location = $SINK
+      - pattern: $WINDOW. ... .location = $SINK
+      - pattern: window. ... .open($SINK)
+      - pattern: this. ... .window.open($SINK)
+    - focus-metavariable: $SINK
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern: parseInt(...)
+      - pattern: Number.parseInt(...)

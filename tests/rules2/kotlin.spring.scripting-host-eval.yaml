@@ -1,0 +1,109 @@
+rules:
+- id: kotlin.spring.scripting-host-eval.scripting-host-eval
+  message: The application might dynamically evaluate untrusted input, which can lead
+    to a code injection vulnerability. An attacker can execute arbitrary code, potentially
+    gaining complete control of the system. To prevent this vulnerability, avoid executing
+    code containing user input. If this is unavoidable, validate and sanitize the
+    input, and use safe alternatives for evaluating user input.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    cwe2020-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - os::sink::os-command-or-thread
+    - web::source::cookie::SpringBoot
+    - web::source::header::SpringBoot
+    - web::source::http-body::SpringBoot
+    - web::source::http-params::SpringBoot
+    - web::source::url-path-params::SpringBoot
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - kotlin
+    - spring
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/kotlin.spring.scripting-host-eval.scripting-host-eval
+    shortlink: https://sg.run/k612
+    semgrep.dev:
+      rule:
+        r_id: 56872
+        rv_id: 731951
+        rule_id: 0oUBGk
+        version_id: A8TeZrJ
+        url: https://semgrep.dev/playground/r/A8TeZrJ/kotlin.spring.scripting-host-eval.scripting-host-eval
+        origin: pro_rules
+  languages:
+  - kotlin
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          ($REQ: ServletRequest)
+      - pattern: |
+          ($REQ: HttpServletRequest)
+      - pattern: |
+          ($REQ: WebRequest)
+      - pattern: |
+          ($REQ: ServletWebRequest)
+      - pattern: |
+          ($REQ: FacesWebRequest)
+      - pattern: |
+          ($REQ: NativeWebRequest)
+      - patterns:
+        - pattern-either:
+          - pattern: |
+              fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) {...}
+          - pattern: |
+              fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) {...}
+          - pattern: |
+              fun $METHOD(..., @$REQ(...) $SOURCE: $TYPE, ...) = $Z(...)
+          - pattern: |
+              fun $METHOD(..., @$REQ $SOURCE: $TYPE, ...) = $Z(...)
+        - metavariable-regex:
+            metavariable: $TYPE
+            regex: ^(?!(Int|Long|Float|Double|Short|Byte|Char|UByte|UInt|ULong|UShort|Boolean))
+        - metavariable-regex:
+            metavariable: $REQ
+            regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute)
+        - focus-metavariable: $SOURCE
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: BasicJvmScriptingHost(...).eval($SCRIPT,...)
+      - pattern: BasicJvmScriptingHost(...).compileAndEval($SCRIPT,...)
+      - patterns:
+        - pattern-either:
+          - pattern-inside: |
+              $H = BasicJvmScriptingHost(...)
+              ...
+          - pattern-inside: |
+              class $CL(...) {
+                ...
+                val $H = BasicJvmScriptingHost(...)
+                ...
+              }
+        - pattern-either:
+          - pattern: $H.eval($SCRIPT,...)
+          - pattern: $H.compileAndEval($SCRIPT,...)
+    - focus-metavariable: $SCRIPT
+  pattern-sanitizers:
+  - patterns:
+    - pattern: $X.$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (equals|toInt|toLong|toFloat|toDouble|toShort|toByte|toUByte|toUInt|toULong|toUShort)
+  - pattern: |
+      ($X: boolean)

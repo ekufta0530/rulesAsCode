@@ -1,0 +1,54 @@
+rules:
+- id: python.pyramid.audit.csrf-check-disabled.pyramid-csrf-check-disabled
+  message: CSRF protection is disabled for this view. This is a security risk.
+  metadata:
+    cwe:
+    - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    owasp:
+    - A01:2021 - Broken Access Control
+    asvs:
+      section: V4 Access Control
+      control_id: 4.2.2 CSRF
+      control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x12-V4-Access-Control.md#v42-operation-level-access-control
+      version: '4'
+    category: security
+    technology:
+    - pyramid
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/python.pyramid.audit.csrf-check-disabled.pyramid-csrf-check-disabled
+    shortlink: https://sg.run/Qewq
+    semgrep.dev:
+      rule:
+        r_id: 21442
+        rv_id: 110474
+        rule_id: OrUXnp
+        version_id: LjTqA7b
+        url: https://semgrep.dev/playground/r/LjTqA7b/python.pyramid.audit.csrf-check-disabled.pyramid-csrf-check-disabled
+        origin: community
+  severity: WARNING
+  languages:
+  - python
+  patterns:
+  - pattern-inside: |
+      from pyramid.view import view_config
+      ...
+      @view_config(..., require_csrf=$REQUIRE_CSRF, ...)
+      def $VIEW(...):
+        ...
+  - pattern: $REQUIRE_CSRF
+  - metavariable-comparison:
+      metavariable: $REQUIRE_CSRF
+      comparison: $REQUIRE_CSRF == False
+  fix: |
+    True

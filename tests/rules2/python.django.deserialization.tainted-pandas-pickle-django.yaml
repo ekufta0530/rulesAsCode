@@ -1,0 +1,132 @@
+rules:
+- id: python.django.deserialization.tainted-pandas-pickle-django.tainted-pandas-pickle-django
+  message: Insecure deserialization (called pickling in python) is when user-controllable
+    data is deserialized by an application. This potentially enables an attacker to
+    manipulate serialized objects in order to pass harmful data into the application
+    code and may result in arbitrary code execution, OS command injection or DoS.
+    Many deserialization-based attacks are completed before deserialization is finished.
+    This means that the deserialization process itself can initiate an attack, even
+    if the app's own functionality does not directly interact with the malicious object.
+    The `pandas.read_pickle()` function uses `pickle` for object deserialization and
+    should not be used with untrusted data.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - deserialization::sink::load-object::pandas
+    - web::source::cookie::django
+    - web::source::http-params::django
+    - web::source::http-body::django
+    - web::source::header::django
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://portswigger.net/web-security/deserialization
+    - https://pandas.pydata.org/docs/reference/api/pandas.read_pickle.html
+    - https://docs.python.org/3/library/pickle.html
+    - https://redfoxsec.com/blog/insecure-deserialization-in-python/
+    - https://knowledge-base.secureflag.com/vulnerabilities/unsafe_deserialization/unsafe_deserialization_python.html
+    - https://davidhamann.de/2020/04/05/exploiting-python-pickle/
+    - https://www.exploit-db.com/exploits/49585
+    technology:
+    - python
+    - django
+    - pandas
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/python.django.deserialization.tainted-pandas-pickle-django.tainted-pandas-pickle-django
+    shortlink: https://sg.run/Opge
+    semgrep.dev:
+      rule:
+        r_id: 44931
+        rv_id: 111821
+        rule_id: 4bUKQ1
+        version_id: o5Tg98o
+        url: https://semgrep.dev/playground/r/o5Tg98o/python.django.deserialization.tainted-pandas-pickle-django.tainted-pandas-pickle-django
+        origin: pro_rules
+  languages:
+  - python
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern-either:
+        - pattern-inside: |
+            @rest_framework.decorators.api_view(...)
+            def $FUNC(..., $REQ, ...):
+              ...
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                class $VIEW(..., rest_framework.views.APIView, ...):
+                  ...
+            - pattern-inside: "class $VIEW(..., rest_framework.generics.GenericAPIView,\n\
+                ...):\n  ...                              \n"
+          - pattern-inside: |
+              def $METHOD(self, $REQ, ...):
+                ...
+          - metavariable-regex:
+              metavariable: $METHOD
+              regex: (get|post|put|patch|delete|head)
+      - pattern-either:
+        - pattern-inside: |
+            def $VIEW($REQ, ...):
+              ...
+              return django.shortcuts.render($REQ, ...)
+        - pattern-inside: |
+            def $VIEW($REQ, ...):
+              ...
+              return django.shortcuts.redirect(...)
+        - pattern-inside: |
+            def $VIEW($REQ, ...):
+              ...
+              return django.http.HttpResponseRedirect(...)
+        - pattern-inside: |
+            $REQ = django.http.HttpRequest()
+            ...
+    - pattern-either:
+      - patterns:
+        - pattern: $REQ.$FUNCTION(...)
+        - metavariable-regex:
+            metavariable: $FUNCTION
+            regex: ^(get_signed_cookie|read|readline|readlines|__iter__)$
+      - patterns:
+        - pattern-either:
+          - pattern: $REQ.$PROPERTY
+          - pattern: $REQ.$PROPERTY[...]
+          - pattern: $REQ.$PROPERTY.get(...)
+        - metavariable-regex:
+            metavariable: $PROPERTY
+            regex: ^(body|content_type|data|DATA|query_params|QUERY_PARAMS|GET|POST|COOKIES|FILES|headers|stream)$
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          def $VIEW($REQ, ..., $PARAM, ...):
+            ...
+            return django.shortcuts.render($REQ, ...)
+      - pattern-inside: |
+          def $VIEW($REQ, ..., $PARAM, ...):
+            ...
+            return django.shortcuts.redirect(...)
+      - pattern-inside: |
+          def $VIEW($REQ, ..., $PARAM, ...):
+            ...
+            return django.http.HttpResponseRedirect(...)
+    - focus-metavariable: $PARAM
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $SINK
+    - pattern: pandas.read_pickle($SINK, ...)

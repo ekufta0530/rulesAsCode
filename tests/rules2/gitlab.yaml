@@ -1,0 +1,22 @@
+rules:
+- id: gitlab.bar
+  patterns:
+  - pattern: func bar() {...}
+  message: |
+    Function bar detected
+  metadata:
+    cwe: 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+    license: MIT
+    source: https://semgrep.dev/r/gitlab.bar
+    shortlink: https://sg.run/gB8J
+    semgrep.dev:
+      rule:
+        r_id: 39385
+        rv_id: 47431
+        rule_id: WAU68Z
+        version_id: X0TeoB
+        url: https://semgrep.dev/playground/r/X0TeoB/gitlab.bar
+        origin: community
+  severity: ERROR
+  languages:
+  - go

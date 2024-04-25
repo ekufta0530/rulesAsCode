@@ -1,0 +1,36 @@
+rules:
+- id: terraform.azure.best-practice.azure-ad-used-auth-service-fabric.azure-ad-used-auth-service-fabric
+  message: "Ensures that Active Directory is used for authentication for Service Fabric\t"
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_service_fabric_cluster" "..." {
+      ...
+      azure_active_directory {
+        tenant_id = "..."
+      }
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_service_fabric_cluster" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-ad-used-auth-service-fabric.azure-ad-used-auth-service-fabric
+    shortlink: https://sg.run/PyLY
+    semgrep.dev:
+      rule:
+        r_id: 23901
+        rv_id: 110805
+        rule_id: 10UY2P
+        version_id: 0bTLepe
+        url: https://semgrep.dev/playground/r/0bTLepe/terraform.azure.best-practice.azure-ad-used-auth-service-fabric.azure-ad-used-auth-service-fabric
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

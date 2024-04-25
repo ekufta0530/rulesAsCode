@@ -1,0 +1,61 @@
+rules:
+- id: javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
+  message: A CSRF middleware was not detected in your express application. Ensure
+    you are either using one such as `csurf` or `csrf` (see rule references) and/or
+    you are properly doing CSRF validation in your routes with a token or cookies.
+  metadata:
+    category: security
+    references:
+    - https://www.npmjs.com/package/csurf
+    - https://www.npmjs.com/package/csrf
+    - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+    cwe:
+    - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    owasp:
+    - A01:2021 - Broken Access Control
+    technology:
+    - javascript
+    - typescript
+    - express
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
+    shortlink: https://sg.run/BxzR
+    semgrep.dev:
+      rule:
+        r_id: 22551
+        rv_id: 109832
+        rule_id: wdUKEq
+        version_id: 5PTdAbp
+        url: https://semgrep.dev/playground/r/5PTdAbp/javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: INFO
+  patterns:
+  - pattern-inside: |
+      $EXPRESS = require('express')
+      ...
+  - pattern-not-inside: |
+      import {$CSRF} from 'csurf'
+      ...
+  - pattern-not-inside: |
+      require('csurf')
+      ...
+  - pattern-not-inside: |
+      import {$CSRF} from 'csrf'
+      ...
+  - pattern-not-inside: |
+      require('csrf')
+      ...
+  - pattern: |
+      $APP = $EXPRESS()

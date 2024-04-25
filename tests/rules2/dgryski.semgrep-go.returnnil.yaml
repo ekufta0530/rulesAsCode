@@ -1,0 +1,29 @@
+rules:
+- id: dgryski.semgrep-go.returnnil.return-nil
+  patterns:
+  - pattern-either:
+    - pattern: |
+        if $X == nil {
+                return $X
+        }
+    - pattern: |
+        if $X != nil {
+                return ...
+        }
+        return $X
+  message: return nil instead of nil value
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.returnnil.return-nil
+    shortlink: https://sg.run/KlNj
+    semgrep.dev:
+      rule:
+        r_id: 8711
+        rv_id: 11999
+        rule_id: bwUwx0
+        version_id: LjTrPj
+        url: https://semgrep.dev/playground/r/LjTrPj/dgryski.semgrep-go.returnnil.return-nil
+        origin: community

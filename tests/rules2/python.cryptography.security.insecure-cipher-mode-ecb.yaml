@@ -1,0 +1,46 @@
+rules:
+- id: python.cryptography.security.insecure-cipher-mode-ecb.insecure-cipher-mode-ecb
+  message: ECB (Electronic Code Book) is the simplest mode of operation for block
+    ciphers.  Each block of data is encrypted in the same way.  This means identical
+    plaintext blocks will always result in identical ciphertext blocks, which can
+    leave significant patterns in the output. Use a different, cryptographically strong
+    mode instead, such as GCM.
+  metadata:
+    source-rule-url: https://github.com/PyCQA/bandit/blob/d5f8fa0d89d7b11442fc6ec80ca42953974354c8/bandit/blacklists/calls.py#L101
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    bandit-code: B305
+    references:
+    - https://cryptography.io/en/latest/hazmat/primitives/symmetric-encryption/#insecure-modes
+    - https://crypto.stackexchange.com/questions/20941/why-shouldnt-i-use-ecb-encryption
+    category: security
+    technology:
+    - cryptography
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: MEDIUM
+    functional-categories:
+    - crypto::search::mode::cryptography
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/python.cryptography.security.insecure-cipher-mode-ecb.insecure-cipher-mode-ecb
+    shortlink: https://sg.run/4xr5
+    semgrep.dev:
+      rule:
+        r_id: 9444
+        rv_id: 252915
+        rule_id: DbUp5g
+        version_id: l4TlPgr
+        url: https://semgrep.dev/playground/r/l4TlPgr/python.cryptography.security.insecure-cipher-mode-ecb.insecure-cipher-mode-ecb
+        origin: community
+  severity: WARNING
+  languages:
+  - python
+  pattern: cryptography.hazmat.primitives.ciphers.modes.ECB($IV)
+  fix: cryptography.hazmat.primitives.ciphers.modes.GCM($IV)

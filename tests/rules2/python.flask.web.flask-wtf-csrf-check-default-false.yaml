@@ -1,0 +1,95 @@
+rules:
+- id: python.flask.web.flask-wtf-csrf-check-default-false.flask-wtf-csrf-check-default-false
+  message: The application does not appear to verify inbound requests which can lead
+    to a Cross-site request forgery (CSRF) vulnerability. If the application uses
+    cookie-based authentication, an attacker can trick users into sending authenticated
+    HTTP requests without their knowledge from any arbitrary domain they visit. With
+    `WTF_CSRF_CHECK_DEFAULT` set to `False` the CSRF tokens are still enabled and
+    included, but the check no longer happens automatically. Doing the check manually
+    requires a call to `csrf.protect()` before handling the request. An appropriate
+    place to do this is a `@app.before_request` decorated function.
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::search::csrf-config::flask
+    - web::search::csrf-config::flask-wtf
+    owasp:
+    - A01:2021 - Broken Access Control
+    references:
+    - https://flask-wtf.readthedocs.io/en/1.2.x/config/
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    technology:
+    - cookie
+    - cookies
+    - flask
+    - web
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/python.flask.web.flask-wtf-csrf-check-default-false.flask-wtf-csrf-check-default-false
+    shortlink: https://sg.run/L1e3n
+    semgrep.dev:
+      rule:
+        r_id: 116539
+        rv_id: 731987
+        rule_id: 3qUk26G
+        version_id: QkTnjz7
+        url: https://semgrep.dev/playground/r/QkTnjz7/python.flask.web.flask-wtf-csrf-check-default-false.flask-wtf-csrf-check-default-false
+        origin: pro_rules
+  languages:
+  - python
+  fix: 'True'
+  options:
+    symbolic_propagation: true
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $APP.config["WTF_CSRF_CHECK_DEFAULT"] = $FALSE
+      - pattern: $APP.config.WTF_CSRF_CHECK_DEFAULT = $FALSE
+      - patterns:
+        - pattern: |
+            $APP.config.$UPDATE(
+              ...,
+              WTF_CSRF_CHECK_DEFAULT = $FALSE,
+              ...
+            )
+        - pattern-not-inside: |
+            $APP.config.$UPDATE(
+                ...,
+                TESTING=True,
+                ...
+            )
+        - pattern-not-inside: |
+            $APP.config.$UPDATE(
+                ...,
+                DEBUG=True,
+                ...
+            )
+        - metavariable-regex:
+            metavariable: $UPDATE
+            regex: ^(update|from_mapping)$
+      - pattern: |
+          $OBJ = $CLASS()
+          ...
+          $OBJ.WTF_CSRF_CHECK_DEFAULT = $FALSE
+          ...
+          $APP.config.from_object($OBJ, ...)
+      - pattern: |
+          WTF_CSRF_CHECK_DEFAULT = $FALSE
+          ...
+          $APP.config.from_object(__name__)
+    - metavariable-regex:
+        metavariable: $FALSE
+        regex: ^(False)$
+    - focus-metavariable: $FALSE

@@ -1,0 +1,82 @@
+rules:
+- id: java.servlets.security.tainted-xpath-from-http-request-deepsemgrep.tainted-xpath-from-http-request-deepsemgrep
+  message: XPath queries are constructed dynamically on user-controlled input. This
+    could lead to XPath injection if variables passed into the evaluate or compile
+    commands are not properly sanitized. Xpath injection could lead to unauthorized
+    access to sensitive information in XML documents. Thoroughly sanitize user input
+    or use parameterized XPath queries if you can.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-643: Improper Neutralization of Data within XPath Expressions (''XPath
+      Injection'')'
+    functional-categories:
+    - web::source::cookie::Servlet
+    - web::source::header::Servlet
+    - web::source::http-body::Servlet
+    - web::source::http-params::Servlet
+    - web::source::url-path-params::Servlet
+    - xml::sink::xpath::javax.xml
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - XPath Injection
+    source: https://semgrep.dev/r/java.servlets.security.tainted-xpath-from-http-request-deepsemgrep.tainted-xpath-from-http-request-deepsemgrep
+    shortlink: https://sg.run/gBq5
+    semgrep.dev:
+      rule:
+        r_id: 40141
+        rv_id: 742802
+        rule_id: PeUnNd
+        version_id: A8TeB84
+        url: https://semgrep.dev/playground/r/A8TeB84/java.servlets.security.tainted-xpath-from-http-request-deepsemgrep.tainted-xpath-from-http-request-deepsemgrep
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: (ServletRequest $REQ).$METHOD(...)
+      - pattern: (HttpServletRequest $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString|getPathInfo)
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $EXPR
+    - pattern-either:
+      - pattern: (javax.xml.xpath.XPath $XP).evaluate($EXPR, ...)
+      - pattern: (javax.xml.xpath.XPath $XP).evaluateExpression($EXPR, ...)
+      - pattern: (javax.xml.xpath.XPath $XP).compile($EXPR, ...)
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)

@@ -1,0 +1,22 @@
+rules:
+- id: python.lang.compatibility.python36.python36-compatibility-Popen2
+  pattern: subprocess.Popen(encoding=$X, ...)
+  message: the `encoding` argument to Popen is only available on Python 3.6+
+  languages:
+  - python
+  severity: ERROR
+  metadata:
+    category: compatibility
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.compatibility.python36.python36-compatibility-Popen2
+    shortlink: https://sg.run/x1Dg
+    semgrep.dev:
+      rule:
+        r_id: 9574
+        rv_id: 110308
+        rule_id: EwU2n3
+        version_id: pZT1y9P
+        url: https://semgrep.dev/playground/r/pZT1y9P/python.lang.compatibility.python36.python36-compatibility-Popen2
+        origin: community

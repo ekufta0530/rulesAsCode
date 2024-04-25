@@ -1,0 +1,30 @@
+rules:
+- id: terraform.gcp.best-practice.gcp-gke-enable-shielded-nodes.gcp-gke-enable-shielded-nodes
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_container_cluster" "..." {
+      ...
+      enable_shielded_nodes = false
+      ...
+      }
+  message: Ensure Shielded GKE Nodes are Enabled
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - gcp
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-gke-enable-shielded-nodes.gcp-gke-enable-shielded-nodes
+    shortlink: https://sg.run/4X95
+    semgrep.dev:
+      rule:
+        r_id: 33644
+        rv_id: 110943
+        rule_id: qNULvE
+        version_id: 5PTdee3
+        url: https://semgrep.dev/playground/r/5PTdee3/terraform.gcp.best-practice.gcp-gke-enable-shielded-nodes.gcp-gke-enable-shielded-nodes
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

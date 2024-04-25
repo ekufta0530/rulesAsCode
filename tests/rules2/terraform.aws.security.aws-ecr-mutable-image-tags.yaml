@@ -1,0 +1,50 @@
+rules:
+- id: terraform.aws.security.aws-ecr-mutable-image-tags.aws-ecr-mutable-image-tags
+  patterns:
+  - pattern: |
+      resource "aws_ecr_repository" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_ecr_repository" $ANYTHING {
+        ...
+        image_tag_mutability = "IMMUTABLE"
+        ...
+      }
+  message: The ECR repository allows tag mutability. Image tags could be overwritten
+    with compromised images. ECR images should be set to IMMUTABLE to prevent code
+    injection through image mutation. This can be done by setting `image_tag_mutability`
+    to IMMUTABLE.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A08:2021 - Software and Data Integrity Failures
+    cwe:
+    - 'CWE-345: Insufficient Verification of Data Authenticity'
+    references:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository#image_tag_mutability
+    - https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/terraform.aws.security.aws-ecr-mutable-image-tags.aws-ecr-mutable-image-tags
+    shortlink: https://sg.run/ZEeL
+    semgrep.dev:
+      rule:
+        r_id: 48635
+        rv_id: 110753
+        rule_id: KxUB4o
+        version_id: 6xTvQDq
+        url: https://semgrep.dev/playground/r/6xTvQDq/terraform.aws.security.aws-ecr-mutable-image-tags.aws-ecr-mutable-image-tags
+        origin: community

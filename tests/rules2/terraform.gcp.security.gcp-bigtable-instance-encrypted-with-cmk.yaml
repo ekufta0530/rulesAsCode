@@ -1,0 +1,51 @@
+rules:
+- id: terraform.gcp.security.gcp-bigtable-instance-encrypted-with-cmk.gcp-bigtable-instance-encrypted-with-cmk
+  patterns:
+  - pattern: |
+      resource "google_bigtable_instance" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "google_bigtable_instance" $ANYTHING {
+        ...
+        cluster {
+          ...
+          kms_key_name = ...
+          ...
+        }
+        ...
+      }
+  message: "Ensure Big Table Instances are encrypted with Customer Supplied Encryption\
+    \ Keys (CSEK)\t"
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - gcp
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-bigtable-instance-encrypted-with-cmk.gcp-bigtable-instance-encrypted-with-cmk
+    shortlink: https://sg.run/Pwdp
+    semgrep.dev:
+      rule:
+        r_id: 32301
+        rv_id: 110969
+        rule_id: L1URZ4
+        version_id: w8T9DR9
+        url: https://semgrep.dev/playground/r/w8T9DR9/terraform.gcp.security.gcp-bigtable-instance-encrypted-with-cmk.gcp-bigtable-instance-encrypted-with-cmk
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

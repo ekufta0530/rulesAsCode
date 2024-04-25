@@ -1,0 +1,93 @@
+rules:
+- id: php.lang.security.xml-external-entities-unsafe-entity-loader.xml-external-entities-unsafe-entity-loader
+  message: The application is using an XML parser that has not been safely configured.
+    This might lead to XML External Entity (XXE) vulnerabilities when parsing user-controlled
+    input. An attacker can include document type definitions (DTDs) which can interact
+    with internal or external hosts. XXE can lead to other vulnerabilities, such as
+    Local File Inclusion (LFI), Remote Code Execution (RCE), and Server-side request
+    forgery (SSRF), depending on the application configuration. An attacker can also
+    use DTDs to expand recursively, leading to a Denial-of-Service (DoS) attack, also
+    known as a Billion Laughs Attack. The best defense against XXE is to have an XML
+    parser that supports disabling DTDs. Limiting the use of external entities from
+    the start can prevent the parser from being used to process untrusted XML files.
+    Reducing dependencies on external resources is also a good practice for performance
+    reasons. It is difficult to guarantee that even a trusted XML file on your server
+    or during transmission has not been tampered with by a malicious third-party.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-611: Improper Restriction of XML External Entity Reference'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - xml::sink::xml-parser::lang
+    owasp:
+    - A04:2017 - XML External Entities (XXE)
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://websec.io/2012/08/27/Preventing-XXE-in-PHP.html
+    - https://www.php.net/libxml_disable_entity_loader
+    - https://www.php.net/manual/en/function.libxml-set-external-entity-loader.php
+    technology:
+    - php
+    - XML
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - XML Injection
+    source: https://semgrep.dev/r/php.lang.security.xml-external-entities-unsafe-entity-loader.xml-external-entities-unsafe-entity-loader
+    shortlink: https://sg.run/5qPA
+    semgrep.dev:
+      rule:
+        r_id: 27203
+        rv_id: 111780
+        rule_id: ZqUK63
+        version_id: e1T03JA
+        url: https://semgrep.dev/playground/r/e1T03JA/php.lang.security.xml-external-entities-unsafe-entity-loader.xml-external-entities-unsafe-entity-loader
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          $_GET
+      - pattern: |
+          $_POST
+      - pattern: |
+          $_COOKIE
+      - pattern: |
+          $_FILES
+      - pattern: |
+          $_REQUEST
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |
+        libxml_disable_entity_loader(false);
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern: |
+            $X->loadXML(...)
+        - pattern-inside: |
+            $X = new DOMDocument;
+            ...
+      - pattern: |
+          simplexml_load_string(...)
+      - pattern: |
+          simplexml_load_file(...)
+      - pattern: |
+          simplexml_import_dom(...)
+      - pattern: |
+          DOMDocument::loadXML(...)
+      - pattern: |
+          DOMDocument::load(...)

@@ -1,0 +1,366 @@
+rules:
+- id: php.laravel.security.laravel-http-client-ssrf.laravel-http-client-ssrf
+  message: Untrusted input might be used to build an HTTP request, which can lead
+    to a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker
+    to send crafted requests from the server side to other internal or external systems.
+    SSRF can lead to unauthorized access to sensitive data and, in some cases, allow
+    the attacker to control applications or systems that trust the vulnerable service.
+    To prevent this vulnerability, avoid allowing user input to craft the base request.
+    Instead, treat it as part of the path or query parameter and encode it appropriately.
+    When user input is necessary to prepare the HTTP request, perform strict input
+    validation. Additionally, whenever possible, use allowlists to only interact with
+    expected, trusted domains.
+  severity: ERROR
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - web::source::header::lang
+    - web::source::url-path-params::lang
+    - web::source::form-data::lang
+    - web::source::cookie::laravel
+    - web::source::http-params::laravel
+    - web::source::http-body::laravel
+    - web::source::header::laravel
+    - web::source::url-path-params::laravel
+    - web::source::form-data::laravel
+    - web::sink::http-request::laravel
+    - net::sink::http-request::laravel
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    references:
+    - https://laravel.com/docs/9.x/http-client
+    - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+    technology:
+    - laravel
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/php.laravel.security.laravel-http-client-ssrf.laravel-http-client-ssrf
+    shortlink: https://sg.run/0vRr
+    semgrep.dev:
+      rule:
+        r_id: 36254
+        rv_id: 111788
+        rule_id: WAUJLx
+        version_id: 8KTQyw6
+        url: https://semgrep.dev/playground/r/8KTQyw6/php.laravel.security.laravel-http-client-ssrf.laravel-http-client-ssrf
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  options:
+    taint_unify_mvars: true
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern: public function $CALL(..., $ARG, ...) {...}
+    - focus-metavariable: $ARG
+    - pattern-inside: |
+        class $CLASS extends App\Http\Controllers\Controller {...}
+  - patterns:
+    - pattern: |
+        Route::$GET($ROUTE, function(...,$ARG,...) { ... })
+    - focus-metavariable: $ARG
+  - patterns:
+    - pattern: function handle($ARG, Closure $NEXT) {...}
+    - focus-metavariable: $ARG
+  - patterns:
+    - pattern: |
+        function $FN(..., Illuminate\Http\Request $ARG, ...) {...}
+    - focus-metavariable: $ARG
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: $ARG
+        - pattern: $this->$PROPERTY
+      - patterns:
+        - pattern: $ARG->$GET
+        - pattern: $this->$PROPERTY->$GET
+    - metavariable-pattern:
+        metavariable: $PROPERTY
+        patterns:
+        - pattern-either:
+          - pattern: query
+          - pattern: request
+          - pattern: headers
+          - pattern: cookies
+          - pattern: cookie
+          - pattern: files
+          - pattern: file
+          - pattern: allFiles
+          - pattern: input
+          - pattern: all
+          - pattern: post
+          - pattern: json
+    - pattern-either:
+      - pattern-inside: |
+          class $CL extends Illuminate\Http\Request {...}
+      - pattern-inside: |
+          class $CL extends Illuminate\Foundation\Http\FormRequest {...}
+  - patterns:
+    - pattern-either:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_COOKIE
+      - pattern: $_REQUEST
+      - pattern: $_SERVER
+  pattern-sinks:
+  - patterns:
+    - metavariable-pattern:
+        metavariable: $METHOD
+        patterns:
+        - pattern-either:
+          - pattern: baseUrl
+          - pattern: delete
+          - pattern: get
+          - pattern: head
+          - pattern: patch
+          - pattern: post
+          - pattern: put
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($X.$ARG, ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($X.$ARG->$Y(...), ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($X.$ARG.$FOO, ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($X.$ARG->$Y(...).$FOO,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X.$ARG,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X.$ARG->$Y(...),
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X.$ARG.$FOO,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X.$ARG->$Y(...).$FOO,
+              ...)
+          - patterns:
+            - pattern-either:
+              - pattern: Illuminate\Support\Facades\Http->$METHOD($X.$VAR, ...)
+              - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X.$VAR,
+                  ...)
+            - pattern-either:
+              - pattern-inside: |
+                  $VAR = $ARG;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y(...);
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG.$FOO;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y(...).$FOO;
+                  ...
+        - metavariable-pattern:
+            metavariable: $X
+            patterns:
+            - pattern: |
+                "..."
+            - pattern-regex: ^['"]*https?:\/\/([^\/])*['"]*$
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern: Illuminate\Support\Facades\Http->$METHOD("...{$VAR}...", ...)
+            - pattern: Illuminate\Support\Facades\Http->$METHOD($X, ...)
+          - patterns:
+            - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD("...{$VAR}...",
+                ...)
+            - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X,
+                ...)
+        - focus-metavariable: $X
+        - metavariable-pattern:
+            metavariable: $X
+            patterns:
+            - pattern-regex: ^"https?:\/\/([^\/{}])*{
+      - patterns:
+        - pattern-either:
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($X, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($X,
+              ...)
+        - pattern-inside: |
+            $X = $A;
+            ...
+        - focus-metavariable: $X
+        - metavariable-pattern:
+            metavariable: $A
+            patterns:
+            - pattern-regex: \"https?:\/\/([^\/{}])*{
+      - patterns:
+        - pattern-either:
+          - pattern: Illuminate\Support\Facades\Http->$METHOD("{$ARG}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD("{$ARG->$Y}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD("{$ARG->$Y(...)}...",
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($ARG, ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($ARG->$Y, ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($ARG->$Y(...), ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($ARG.$SMTH, ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($ARG->$Y.$SMTH, ...)
+          - pattern: Illuminate\Support\Facades\Http->$METHOD($ARG->$Y(...).$SMTH,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD("{$ARG}...",
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD("{$ARG->$Y}...",
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD("{$ARG->$Y(...)}...",
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($ARG,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($ARG->$Y,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($ARG->$Y(...),
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($ARG.$SMTH,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($ARG->$Y.$SMTH,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($ARG->$Y(...).$SMTH,
+              ...)
+          - patterns:
+            - pattern-either:
+              - pattern: Illuminate\Support\Facades\Http->$METHOD($VAR, ...)
+              - pattern: Illuminate\Support\Facades\Http->$METHOD("{$VAR}...", ...)
+              - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD($VAR,
+                  ...)
+              - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->$METHOD("{$VAR}...",
+                  ...)
+            - pattern-either:
+              - pattern-inside: |
+                  $VAR = $ARG.$FOO;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y.$FOO;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y(...).$FOO;
+                  ...
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern: Illuminate\Support\Facades\Http->send($M, $X.$ARG, ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $X.$ARG->$Y(...), ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $X.$ARG.$FOO, ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $X.$ARG->$Y(...).$FOO,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $X.$ARG, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $X.$ARG->$Y(...), ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $X.$ARG.$FOO, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $X.$ARG->$Y(...).$FOO, ...)
+          - patterns:
+            - pattern-either:
+              - pattern: Illuminate\Support\Facades\Http->send($M, $X.$VAR, ...)
+              - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+                  $X.$VAR, ...)
+            - pattern-either:
+              - pattern-inside: |
+                  $VAR = $ARG;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y(...);
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG.$FOO;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y(...).$FOO;
+                  ...
+        - metavariable-pattern:
+            metavariable: $X
+            patterns:
+            - pattern: |
+                "..."
+            - pattern-regex: ^['"]*https?:\/\/([^\/])*['"]*$
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern: Illuminate\Support\Facades\Http->send($M, "...{$VAR}...", ...)
+            - pattern: Illuminate\Support\Facades\Http->send($M, $X, ...)
+          - patterns:
+            - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+                "...{$VAR}...", ...)
+            - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+                $X, ...)
+        - focus-metavariable: $X
+        - metavariable-pattern:
+            metavariable: $X
+            patterns:
+            - pattern-regex: ^"https?:\/\/([^\/{}])*{
+      - patterns:
+        - pattern-either:
+          - pattern: Illuminate\Support\Facades\Http->send($M, $X, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $X, ...)
+        - pattern-inside: |
+            $X = $A;
+            ...
+        - focus-metavariable: $X
+        - metavariable-pattern:
+            metavariable: $A
+            patterns:
+            - pattern-regex: \"https?:\/\/([^\/{}])*{
+      - patterns:
+        - pattern-either:
+          - pattern: Illuminate\Support\Facades\Http->send($M, "{$ARG}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, "{$ARG->$Y}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, "{$ARG->$Y(...)}...",
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $ARG, ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $ARG->$Y, ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $ARG->$Y(...), ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $ARG.$SMTH, ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $ARG->$Y.$SMTH, ...)
+          - pattern: Illuminate\Support\Facades\Http->send($M, $ARG->$Y(...).$SMTH,
+              ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              "{$ARG}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              "{$ARG->$Y}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              "{$ARG->$Y(...)}...", ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $ARG, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $ARG->$Y, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $ARG->$Y(...), ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $ARG.$SMTH, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $ARG->$Y.$SMTH, ...)
+          - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+              $ARG->$Y(...).$SMTH, ...)
+          - patterns:
+            - pattern-either:
+              - pattern: Illuminate\Support\Facades\Http->send($M, $VAR, ...)
+              - pattern: Illuminate\Support\Facades\Http->send($M, "{$VAR}...", ...)
+              - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+                  $VAR, ...)
+              - pattern: Illuminate\Support\Facades\Http->$ACTION(...)->...->send($M,
+                  "{$VAR}...", ...)
+            - pattern-either:
+              - pattern-inside: |
+                  $VAR = $ARG.$FOO;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y.$FOO;
+                  ...
+              - pattern-inside: |
+                  $VAR = $ARG->$Y(...).$FOO;
+                  ...

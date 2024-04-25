@@ -1,0 +1,187 @@
+rules:
+- id: typescript.react.react-refs-prop.react-refs-prop
+  message: Untrusted input could be used to tamper with a web page rendering, which
+    can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+    when untrusted input executes malicious JavaScript code, leading to issues such
+    as account compromise and sensitive information leakage. Validate the user input,
+    perform contextual output encoding, or sanitize the input. If you have to use
+    dangerouslySetInnerHTML, consider using a sanitization library such as DOMPurify
+    to sanitize the HTML within.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::http-params::react
+    - web::source::url-path-params::react
+    - web::sink::html-webpage::react
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+    technology:
+    - react
+    - browser
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/typescript.react.react-refs-prop.react-refs-prop
+    shortlink: https://sg.run/jWQY
+    semgrep.dev:
+      rule:
+        r_id: 27221
+        rv_id: 112060
+        rule_id: WAUqO9
+        version_id: WrTW31K
+        url: https://semgrep.dev/playground/r/WrTW31K/typescript.react.react-refs-prop.react-refs-prop
+        origin: pro_rules
+  languages:
+  - typescript
+  - javascript
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          function ...(..., $PROP, ...) { ... }
+      - pattern-inside: |
+          function ...({..., $PROP, ...}) { ... }
+    - focus-metavariable: $PROP
+    - pattern-not-inside: |
+        $F. ... .$SOURCE(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          var { ..., $PROP,... } = this.props
+          ...
+      - pattern-inside: |
+          const { ..., $PROP,... } = this.props
+          ...
+      - pattern-inside: |
+          let { ..., $PROP,... } = this.props
+          ...
+    - focus-metavariable: $PROP
+  - patterns:
+    - pattern: this.props.$VALUE
+    - pattern-not: this.props.size
+    - pattern-not: this.props. ... .$FUNC()
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $BODY = $REACT.useRef(...)
+          ...
+      - pattern-inside: |
+          $BODY = useRef(...)
+          ...
+      - pattern-inside: |
+          $BODY = findDOMNode(...)
+          ...
+      - pattern-inside: |
+          $BODY = createRef(...)
+          ...
+      - pattern-inside: |
+          $BODY = $REACT.findDOMNode(...)
+          ...
+      - pattern-inside: |
+          $BODY = $REACT.createRef(...)
+          ...
+    - pattern-either:
+      - pattern: "$BODY. ... .innerHTML = $SINK \n"
+      - pattern: "$BODY.innerHTML = $SINK \n"
+      - pattern: "$BODY. ... .outerHTML = $SINK \n"
+      - pattern: "$BODY.outerHTML = $SINK \n"
+    - focus-metavariable: $SINK
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import $S from "underscore.string"
+          ...
+      - pattern-inside: |
+          import * as $S from "underscore.string"
+          ...
+      - pattern-inside: |
+          import $S from "underscore.string"
+          ...
+      - pattern-inside: |
+          $S = require("underscore.string")
+          ...
+    - pattern-either:
+      - pattern: $S.escapeHTML(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import $S from "dompurify"
+          ...
+      - pattern-inside: |
+          import { ..., $S,... } from "dompurify"
+          ...
+      - pattern-inside: |
+          import * as $S from "dompurify"
+          ...
+      - pattern-inside: |
+          $S = require("dompurify")
+          ...
+      - pattern-inside: |
+          import $S from "isomorphic-dompurify"
+          ...
+      - pattern-inside: |
+          import * as $S from "isomorphic-dompurify"
+          ...
+      - pattern-inside: |
+          $S = require("isomorphic-dompurify")
+          ...
+    - pattern-either:
+      - patterns:
+        - pattern-inside: |
+            $VALUE = $S(...)
+            ...
+        - pattern: $VALUE.sanitize(...)
+      - patterns:
+        - pattern-inside: |
+            $VALUE = $S.sanitize
+            ...
+        - pattern: $S(...)
+      - pattern: $S.sanitize(...)
+      - pattern: $S(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import $S from 'xss';
+          ...
+      - pattern-inside: |
+          import * as $S from 'xss';
+          ...
+      - pattern-inside: |
+          $S = require("xss")
+          ...
+    - pattern: $S(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import $S from 'sanitize-html';
+          ...
+      - pattern-inside: |
+          import * as $S from "sanitize-html";
+          ...
+      - pattern-inside: |
+          $S = require("sanitize-html")
+          ...
+    - pattern: $S(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $S = new Remarkable()
+          ...
+    - pattern: $S.render(...)

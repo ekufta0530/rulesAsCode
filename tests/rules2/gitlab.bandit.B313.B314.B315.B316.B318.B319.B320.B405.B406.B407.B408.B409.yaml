@@ -1,0 +1,46 @@
+rules:
+- id: gitlab.bandit.B313.B314.B315.B316.B318.B319.B320.B405.B406.B407.B408.B409.B410
+  pattern-either:
+  - pattern: import xml
+  - pattern: import lxml
+  - pattern: xml.etree.cElementTree.fromstring(...)
+  - pattern: xml.etree.cElementTree.parse(...)
+  - pattern: xml.etree.cElementTree.iterparse(...)
+  - pattern: xml.etree.cElementTree.XMLParser(...)
+  - pattern: xml.etree.ElementTree.fromstring(...)
+  - pattern: xml.etree.ElementTree.parse(...)
+  - pattern: xml.etree.ElementTree.iterparse(...)
+  - pattern: xml.etree.ElementTree.XMLParser(...)
+  - pattern: xml.sax.expatreader.create_parser(...)
+  - pattern: xml.dom.expatbuilder.parse(...)
+  - pattern: xml.dom.expatbuilder.parseString(...)
+  - pattern: xml.dom.minidom.parseString(...)
+  - pattern: xml.dom.minidom.parse(...)
+  - pattern: xml.dom.pulldom.parseString(...)
+  - pattern: xml.dom.pulldom.parse(...)
+  - pattern: lxml.etree.fromstring(...)
+  - pattern: lxml.etree.RestrictedElement(...)
+  - pattern: lxml.etree.GlobalParserTLS(...)
+  - pattern: lxml.etree.getDefaultParser(...)
+  - pattern: lxml.etree.check_docinfo(...)
+  metadata:
+    cwe: 'CWE-611: Improper Restriction of XML External Entity Reference'
+    owasp: 'A4: XML External Entities (XXE)'
+    license: MIT
+    source: https://semgrep.dev/r/gitlab.bandit.B313.B314.B315.B316.B318.B319.B320.B405.B406.B407.B408.B409.B410
+    shortlink: https://sg.run/DJ5G
+    semgrep.dev:
+      rule:
+        r_id: 11552
+        rv_id: 13281
+        rule_id: L1U4Yd
+        version_id: DkTKjj
+        url: https://semgrep.dev/playground/r/DkTKjj/gitlab.bandit.B313.B314.B315.B316.B318.B319.B320.B405.B406.B407.B408.B409.B410
+        origin: community
+  message: |
+    Found use of the native Python XML libraries, which is vulnerable to XML external entity (XXE)
+    attacks. The Python documentation recommends the 'defusedxml' library instead. Use 'defusedxml'.
+    See https://github.com/tiran/defusedxml for more information.
+  severity: ERROR
+  languages:
+  - python

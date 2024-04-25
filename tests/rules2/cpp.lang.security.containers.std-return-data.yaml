@@ -1,0 +1,113 @@
+rules:
+- id: cpp.lang.security.containers.std-return-data.std-return-data
+  message: '`$FUNC` returns a pointer to the memory owned by `$VAR`. This pointer
+    is invalid after `$VAR` goes out of scope, which can trigger a use after free.'
+  severity: ERROR
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - C
+    - C++
+    - DCL30-C
+    - EXP54-CPP
+    - L2
+    cwe:
+    - 'CWE-416: Use After Free'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - memory::search::use-after-free
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/DCL30-C.+Declare+objects+with+appropriate+storage+durations
+    - https://wiki.sei.cmu.edu/confluence/display/cplusplus/EXP54-CPP.+Do+not+access+an+object+outside+of+its+lifetime
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/cpp.lang.security.containers.std-return-data.std-return-data
+    shortlink: https://sg.run/X5x3w
+    semgrep.dev:
+      rule:
+        r_id: 128820
+        rv_id: 742787
+        rule_id: JDUN4O8
+        version_id: ZRTGbnk
+        url: https://semgrep.dev/playground/r/ZRTGbnk/cpp.lang.security.containers.std-return-data.std-return-data
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  patterns:
+  - patterns:
+    - pattern: return $VAR.data();
+    - metavariable-type:
+        metavariable: $VAR
+        types:
+        - array<$T>
+        - std::array<$T>
+        - deque<$T>
+        - std::deque<$T>
+        - forward_list<$T>
+        - std::forward_list<$T>
+        - list<$T>
+        - std::list<$T>
+        - map<$KEY, $T>
+        - std::map<$KEY, $T>
+        - multimap<$KEY, $T>
+        - std::multimap<$KEY, $T>
+        - multiset<$T>
+        - std::multiset<$T>
+        - set<$T>
+        - std::set<$T>
+        - unordered_map<$T>
+        - std::unordered_map<$T>
+        - unordered_multimap<$KEY, $T>
+        - std::unordered_multimap<$KEY, $T>
+        - unordered_multiset<$KEY>
+        - std::unordered_multiset<$KEY>
+        - unordered_set<$KEY>
+        - std::unordered_set<$KEY>
+        - vector<$T>
+        - std::vector<$T>
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            $RETURN_TYPE * $FUNC(...)
+            {
+              ...
+              $LOCAL_VAR_TYPE $VAR = ...;
+              ...
+            }
+        - pattern-inside: |
+            $RETURN_TYPE * $FUNC(...)
+            {
+              ...
+              $LOCAL_VAR_TYPE $VAR;
+              ...
+            }
+        - pattern-inside: |
+            $RETURN_TYPE * $FUNC(..., $LOCAL_VAR_TYPE $VAR, ...) {
+              ...
+            }
+      - pattern-not-inside: |
+          $RETURN_TYPE * $FUNC(...)
+          {
+            ...
+            static $LOCAL_VAR_TYPE $VAR = ...;
+            ...
+          }
+      - pattern-not-inside: |
+          $RETURN_TYPE * $FUNC(...)
+          {
+            ...
+            static $LOCAL_VAR_TYPE $VAR;
+            ...
+          }

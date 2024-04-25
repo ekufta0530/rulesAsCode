@@ -1,0 +1,66 @@
+rules:
+- id: terraform.azure.security.storage.storage-queue-services-logging.storage-queue-services-logging
+  message: Storage Analytics logs detailed information about successful and failed
+    requests to a storage service. This information can be used to monitor individual
+    requests and to diagnose issues with a storage service. Requests are logged on
+    a best-effort basis.
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        resource "azurerm_storage_account" "..." {
+          ...
+              queue_properties  {
+                ...
+              }
+          ...
+        }
+    - pattern-inside: |
+        resource "azurerm_storage_account" "..." {
+          ...
+        }
+  - pattern-not-inside: |
+      resource "azurerm_storage_account" "..." {
+        ...
+              queue_properties  {
+                ...
+                logging {
+                  ...
+                }
+                ...
+              }
+        ...
+      }
+  metadata:
+    cwe:
+    - 'CWE-778: Insufficient Logging'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account#logging
+    - https://docs.microsoft.com/en-us/azure/storage/common/storage-analytics-logging?tabs=dotnet
+    owasp:
+    - A10:2017 - Insufficient Logging & Monitoring
+    - A09:2021 - Security Logging and Monitoring Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Insufficient Logging
+    source: https://semgrep.dev/r/terraform.azure.security.storage.storage-queue-services-logging.storage-queue-services-logging
+    shortlink: https://sg.run/0yEv
+    semgrep.dev:
+      rule:
+        r_id: 15154
+        rv_id: 110936
+        rule_id: ReU3L9
+        version_id: 8KTQyy9
+        url: https://semgrep.dev/playground/r/8KTQyy9/terraform.azure.security.storage.storage-queue-services-logging.storage-queue-services-logging
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

@@ -1,0 +1,143 @@
+rules:
+- id: typescript.nextjs.react-nextjs-router-create-element-href.react-nextjs-router-create-element-href
+  message: Untrusted input could be used to tamper with a web page rendering, which
+    can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+    when untrusted input executes malicious JavaScript code, leading to issues such
+    as account compromise and sensitive information leakage. To prevent this vulnerability,
+    validate URLs and their protocol before using them in your codebase.
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: MEDIUM
+    confidence: HIGH
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::http-params::nextjs
+    - web::source::url-path-params::nextjs
+    - web::sink::html-webpage::react
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://github.com/segmentio/ui-box/blob/master/src/utils/safeHref.ts
+    technology:
+    - react
+    - nextjs
+    - browser
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/typescript.nextjs.react-nextjs-router-create-element-href.react-nextjs-router-create-element-href
+    shortlink: https://sg.run/DxkY
+    semgrep.dev:
+      rule:
+        r_id: 27208
+        rv_id: 112047
+        rule_id: 8GU543
+        version_id: 8KTQy1P
+        url: https://semgrep.dev/playground/r/8KTQy1P/typescript.nextjs.react-nextjs-router-create-element-href.react-nextjs-router-create-element-href
+        origin: pro_rules
+  languages:
+  - typescript
+  - javascript
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import { ...,$IMPORT,... } from 'next/router'
+          ...
+      - pattern-inside: |
+          import $IMPORT from 'next/router';
+          ...
+    - pattern-either:
+      - patterns:
+        - pattern-inside: |
+            $ROUTER = $IMPORT()
+            ...
+        - pattern-either:
+          - pattern-inside: |
+              var { ...,$PROPS,... } = $ROUTER.query
+              ...
+          - pattern-inside: |
+              const { ...,$PROPS,... } = $ROUTER.query
+              ...
+          - pattern-inside: |
+              let { ...,$PROPS,... } = $ROUTER.query
+              ...
+        - focus-metavariable: $PROPS
+      - patterns:
+        - pattern-inside: |
+            $ROUTER = $IMPORT()
+            ...
+        - pattern: "$ROUTER.query.$VALUE \n"
+      - patterns:
+        - pattern: $IMPORT().query.$VALUE
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $REACT.createElement("a",{...,href:$PROP,...},...)
+      - pattern-inside: |
+          $REACT.createElement("a",{...,href:`${$PROP}`,...},...)
+    - pattern: $SINK + $ANYTHING
+    - focus-metavariable: $SINK
+    - metavariable-pattern:
+        patterns:
+        - pattern-not: |
+            "..." + $SOURCE
+        - pattern-not: |
+            `...${...}...`
+        metavariable: $SINK
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $REACT.createElement("a",{...,href:$PROP,...},...)
+      - pattern-inside: |
+          $REACT.createElement("a",{...,href:`${$PROP}`,...},...)
+    - focus-metavariable: $PROP
+    - metavariable-pattern:
+        patterns:
+        - pattern-not: |
+            $FOO + $VALUE
+        - pattern-not: |
+            "..." + $VALUE
+        - pattern-not: |
+            `...${...}...`
+        metavariable: $PROP
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          $A ? $VAL1 : $VAL2
+      - pattern: |
+          $A ? $VAL2 : $VAL1
+    - metavariable-pattern:
+        patterns:
+        - pattern-not: |
+            "..."
+        - pattern-not: |
+            "..." + $V
+        - pattern-not: |
+            `...${...}...`
+        metavariable: $VAL1
+    - focus-metavariable: $VAL1
+  - patterns:
+    - pattern: |
+        `...`
+    - pattern-not: |
+        `${$VALUE}...`
+  - patterns:
+    - pattern: |
+        "..." + $VALUE
+  - patterns:
+    - pattern-inside: "if (<... $SOURCE.startsWith(\"$REGEX\") ...>) { \n    ... \n\
+        \ }\n"

@@ -1,0 +1,28 @@
+rules:
+- id: javascript.lang.correctness.no-replaceall.no-replaceall
+  message: The string method replaceAll is not supported in all versions of javascript,
+    and is not supported by older browser versions. Consider using replace() with
+    a regex as the first argument instead like mystring.replace(/bad/g, "good") instead
+    of mystring.replaceAll("bad", "good") (https://discourse.threejs.org/t/replaceall-is-not-a-function/14585)
+  severity: WARNING
+  languages:
+  - javascript
+  - typescript
+  pattern: $STRING.replaceAll("...",$NEW)
+  metadata:
+    category: correctness
+    technology:
+    - javascript
+    references:
+    - https://discourse.threejs.org/t/replaceall-is-not-a-function/14585
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/javascript.lang.correctness.no-replaceall.no-replaceall
+    shortlink: https://sg.run/W8NE
+    semgrep.dev:
+      rule:
+        r_id: 9309
+        rv_id: 109907
+        rule_id: pKUODv
+        version_id: jQTgY7b
+        url: https://semgrep.dev/playground/r/jQTgY7b/javascript.lang.correctness.no-replaceall.no-replaceall
+        origin: community

@@ -1,0 +1,45 @@
+rules:
+- id: ruby.lang.security.dangerous-subshell.dangerous-subshell
+  patterns:
+  - pattern: |
+      `...#{$VAL}...`
+  - pattern-not: |
+      `...#{"..."}...`
+  - pattern-not-inside: |
+      $VAL = "..."
+      ...
+  message: Detected non-static command inside `...`. If unverified user data can reach
+    this call site, this is a code injection vulnerability. A malicious actor can
+    inject a malicious script to execute arbitrary code.
+  metadata:
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    owasp:
+    - A03:2021 - Injection
+    category: security
+    technology:
+    - ruby
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    cwe2022-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/ruby.lang.security.dangerous-subshell.dangerous-subshell
+    shortlink: https://sg.run/NrxL
+    semgrep.dev:
+      rule:
+        r_id: 9827
+        rv_id: 110519
+        rule_id: OrUGn8
+        version_id: NdT3o9R
+        url: https://semgrep.dev/playground/r/NdT3o9R/ruby.lang.security.dangerous-subshell.dangerous-subshell
+        origin: community
+  severity: WARNING
+  languages:
+  - ruby

@@ -1,0 +1,64 @@
+rules:
+- id: terraform.azure.security.appservice.azure-appservice-http-logging-enabled.azure-appservice-http-logging-enabled
+  message: Ensure that App service enables HTTP logging
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      logs {
+      ...
+        http_logs {
+        ...
+        }
+      }
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      logs {
+      ...
+        dynamic "http_logs" {
+        ...
+        }
+      }
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A10:2017 - Insufficient Logging & Monitoring
+    - A09:2021 - Security Logging and Monitoring Failures
+    cwe:
+    - 'CWE-778: Insufficient Logging'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Insufficient Logging
+    source: https://semgrep.dev/r/terraform.azure.security.appservice.azure-appservice-http-logging-enabled.azure-appservice-http-logging-enabled
+    shortlink: https://sg.run/j49Y
+    semgrep.dev:
+      rule:
+        r_id: 23965
+        rv_id: 110875
+        rule_id: wdUnWr
+        version_id: nWTxopB
+        url: https://semgrep.dev/playground/r/nWTxopB/terraform.azure.security.appservice.azure-appservice-http-logging-enabled.azure-appservice-http-logging-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

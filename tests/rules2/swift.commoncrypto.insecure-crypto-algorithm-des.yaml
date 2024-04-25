@@ -1,0 +1,67 @@
+rules:
+- id: swift.commoncrypto.insecure-crypto-algorithm-des.insecure-crypto-algorithm-des
+  message: The use of the insecure DES/3DES encryption algorithm(s) were detected.
+    DES is deprecated and considered insecure. The application should leverage more
+    suitable algorithms such as AES in GCM mode, or ChaChaPoly.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    functional-categories:
+    - crypto::search::symmetric-algorithm::CommonCrypto
+    masvs:
+    - 'MSTG-CRYPTO-4: The app does not use cryptographic protocols or algorithms that
+      are widely considered deprecated for security purposes.'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-algorithm-des.insecure-crypto-algorithm-des
+    shortlink: https://sg.run/0kzb
+    semgrep.dev:
+      rule:
+        r_id: 59710
+        rv_id: 111993
+        rule_id: X5UDqO
+        version_id: 3ZTkr1r
+        url: https://semgrep.dev/playground/r/3ZTkr1r/swift.commoncrypto.insecure-crypto-algorithm-des.insecure-crypto-algorithm-des
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          CCAlgorithm(kCCAlgorithmDES)
+      - pattern: |
+          CCAlgorithm(kCCAlgorithm3DES)
+      - pattern: |
+          CCAlgorithm(1)
+      - pattern: |
+          CCAlgorithm(2)
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          CCCrypt($A, $ALG, ...)
+      - pattern: |
+          CCCryptorCreate($A, $ALG, ...)
+      - pattern: |
+          CCCryptorCreateFromData($A, $ALG, ...)
+    - focus-metavariable: $ALG

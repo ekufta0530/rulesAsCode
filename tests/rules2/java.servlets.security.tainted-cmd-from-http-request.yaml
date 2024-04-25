@@ -1,0 +1,114 @@
+rules:
+- id: java.servlets.security.tainted-cmd-from-http-request.tainted-cmd-from-http-request
+  message: Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent command
+    injection, avoid executing OS commands with user input. If this is unavoidable,
+    validate and sanitize the user input, and use safe methods for executing the commands.
+    For more information, see [JavaScript command injection prevention](https://semgrep.dev/docs/cheat-sheets/java-command-injection/)
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::Servlet
+    - web::source::http-params::Servlet
+    - web::source::http-body::Servlet
+    - web::source::header::Servlet
+    - web::source::session-properties::Servlet
+    - web::source::url-path-params::Servlet
+    - web::source::form-data::Servlet
+    - os::sink::os-command-or-thread::lang
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/www-community/attacks/Command_Injection
+    - https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/12-Testing_for_Command_Injection
+    - https://www.securecodewarrior.com/blog/coders-conquer-security-share-learn-series-os-command-injection
+    - https://portal.securecodewarrior.com/#/learning-resources/application_security_weaknesses~2Fweb~2Fdata_handling~2Finjection~2Foscmd
+    technology:
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/java.servlets.security.tainted-cmd-from-http-request.tainted-cmd-from-http-request
+    shortlink: https://sg.run/eGqy
+    semgrep.dev:
+      rule:
+        r_id: 27176
+        rv_id: 111600
+        rule_id: DbUR6g
+        version_id: 0bTLeDG
+        url: https://semgrep.dev/playground/r/0bTLeDG/java.servlets.security.tainted-cmd-from-http-request.tainted-cmd-from-http-request
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: (HttpServletRequest $REQ).$REQFUNC(...)
+      - pattern: "(ServletRequest $REQ).$REQFUNC(...) \n"
+      - patterns:
+        - pattern-inside: |
+            (javax.servlet.http.Cookie[] $COOKIES) = (HttpServletRequest $REQ).getCookies(...);
+            ...
+            for (javax.servlet.http.Cookie $COOKIE: $COOKIES) {
+              ...
+            }
+        - pattern: |
+            $COOKIE.getValue(...)
+      - patterns:
+        - pattern-inside: |
+            $TYPE[] $VALS = (HttpServletRequest $REQ).$GETFUNC(...);
+            ...
+        - pattern: |
+            $PARAM = $VALS[$INDEX];
+    - pattern-not: "$REQ.getUserPrincipal() \n"
+    - pattern-not: "$REQ.getSession(...) \n"
+    - pattern-not: "$REQ.getAuthType(...) \n"
+    - pattern-not: "$REQ.getMethod(...) \n"
+    - pattern-not: "$REQ.getLocales(...) \n"
+    - pattern-not: "$REQ.getLocale(...) \n"
+    - pattern-not: "$REQ.isUserinRole(...) \n"
+    - pattern-not: "$REQ.isRequestdSessionIdValid(...) \n"
+    - pattern-not: "$REQ.isRequestedSessionIdFromUrl(...) \n"
+    - pattern-not: "$REQ.getIntHeader(...) \n"
+    - pattern-not: "$REQ.getDateHeader(...) \n"
+    - pattern-not: "$REQ.authenticate(...) \n"
+    - pattern-not: "$REQ.isUserInRole(...) \n"
+    - pattern-not: |
+        $REQ.getAttribute(...)
+    - pattern-not: |
+        $REQ.getAttributeNames(...)
+    - pattern-not: |
+        $REQ.getAuthType(...)
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          (ProcessBuilder $PB) = ...;
+      - pattern: |
+          (Process $P) = ...;
+      - patterns:
+        - pattern-either:
+          - pattern-inside: "(java.util.List<$TYPE> $ARGLIST) = ...;  \n...\n(ProcessBuilder\
+              \ $PB) = ...;\n...\n$PB.command($ARGLIST);\n"
+          - pattern-inside: "(java.util.List<$TYPE> $ARGLIST) = ...;  \n...\n(ProcessBuilder\
+              \ $PB) = ...;\n"
+          - pattern-inside: "(java.util.List<$TYPE> $ARGLIST) = ...;  \n...\n(Process\
+              \ $P) = ...;\n"
+        - pattern: |
+            $ARGLIST.add(...);

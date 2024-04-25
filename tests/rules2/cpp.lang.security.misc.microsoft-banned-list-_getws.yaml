@@ -1,0 +1,35 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-_getws.microsoft-banned-list-_getws
+  message: '_getws is a banned function: no size limit on data. Alternatives are _getws_s'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_getws.microsoft-banned-list-_getws
+    shortlink: https://sg.run/3qW2b
+    semgrep.dev:
+      rule:
+        r_id: 114787
+        rv_id: 257398
+        rule_id: DbU6kny
+        version_id: DkT9dQ8
+        url: https://semgrep.dev/playground/r/DkT9dQ8/cpp.lang.security.misc.microsoft-banned-list-_getws.microsoft-banned-list-_getws
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: _getws(...)

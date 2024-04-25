@@ -1,0 +1,46 @@
+rules:
+- id: terraform.azure.security.azure-customrole-definition-subscription-owner.azure-customrole-definition-subscription-owner
+  message: Ensure that no custom subscription owner roles are created
+  patterns:
+  - pattern: |
+      ["*"]
+  - pattern-inside: |
+      resource "azurerm_role_definition" "..." {
+        permissions {
+          ...
+        }
+      }
+  - pattern-inside: actions = ...
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.azure.security.azure-customrole-definition-subscription-owner.azure-customrole-definition-subscription-owner
+    shortlink: https://sg.run/dNOZ
+    semgrep.dev:
+      rule:
+        r_id: 23978
+        rv_id: 110888
+        rule_id: QrU0Ey
+        version_id: RGTDRkq
+        url: https://semgrep.dev/playground/r/RGTDRkq/terraform.azure.security.azure-customrole-definition-subscription-owner.azure-customrole-definition-subscription-owner
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

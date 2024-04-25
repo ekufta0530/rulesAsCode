@@ -1,0 +1,99 @@
+rules:
+- id: javascript.express.regexp-redos.regexp-redos
+  message: 'Detected `$REQ` argument enters calls to `RegExp`. This could lead to
+    a Regular Expression Denial of Service (ReDoS) through catastrophic backtracking.
+    If the input is attacker controllable, this vulnerability can lead to systems
+    being non-responsive or may crash due to ReDoS. Where possible avoid calls to
+    `RegExp` with user input, if required ensure user input is escaped or validated. '
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: MEDIUM
+    confidence: HIGH
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-1333: Inefficient Regular Expression Complexity'
+    functional-categories:
+    - web::source::cookie::express
+    - web::source::http-params::express
+    - web::source::http-body::express
+    - web::source::header::express
+    - web::source::url-path-params::express
+    - regex::sink::regex
+    references:
+    - https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
+    - https://www.regular-expressions.info/catastrophic.html
+    technology:
+    - javascript
+    - express
+    - nodejs
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Denial-of-Service (DoS)
+    source: https://semgrep.dev/r/javascript.express.regexp-redos.regexp-redos
+    shortlink: https://sg.run/D0nY
+    semgrep.dev:
+      rule:
+        r_id: 43796
+        rv_id: 111672
+        rule_id: X5UpjY
+        version_id: rxTy4dO
+        url: https://semgrep.dev/playground/r/rxTy4dO/javascript.express.regexp-redos.regexp-redos
+        origin: pro_rules
+  languages:
+  - javascript
+  - typescript
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: function ... (...,$REQ, ...) {...}
+    - pattern-either:
+      - pattern: $REQ.query
+      - pattern: $REQ.body
+      - pattern: $REQ.params
+      - pattern: $REQ.cookies
+      - pattern: $REQ.headers
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          (...,{ $REQ }: Request,...) => {...}
+      - pattern-inside: |
+          (...,{ $REQ }: $EXPRESS.Request,...) => {...}
+    - focus-metavariable: $REQ
+    - pattern-either:
+      - pattern: params
+      - pattern: query
+      - pattern: cookies
+      - pattern: headers
+      - pattern: body
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: new RegExp($REGEX,...)
+      - pattern: $VALUE. ... .match($REGEX)
+    - focus-metavariable: $REGEX
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $ESCAPE = require('escape-string-regexp')
+          ...
+      - pattern-inside: |
+          import $ESCAPE = require('escape-string-regexp')
+           ...
+      - pattern-inside: |
+          import $ESCAPE from 'escape-string-regexp'
+           ...
+      - pattern-inside: |
+          import {...,$ESCAPE,...} from 'escape-string-regexp'
+           ...
+      - pattern-inside: |
+          import * as $ESCAPE from 'escape-string-regexp'
+           ...
+    - pattern: $ESCAPE(...)

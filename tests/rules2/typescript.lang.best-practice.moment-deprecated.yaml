@@ -1,0 +1,29 @@
+rules:
+- id: typescript.lang.best-practice.moment-deprecated.moment-deprecated
+  pattern: |
+    import 'moment'
+  message: Moment is a legacy project in maintenance mode. Consider using libraries
+    that are actively supported, e.g. `dayjs`.
+  languages:
+  - typescript
+  - javascript
+  severity: INFO
+  metadata:
+    category: best-practice
+    technology:
+    - moment
+    - dayjs
+    references:
+    - https://momentjs.com/docs/#/-project-status/
+    - https://day.js.org/
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/typescript.lang.best-practice.moment-deprecated.moment-deprecated
+    shortlink: https://sg.run/lWej
+    semgrep.dev:
+      rule:
+        r_id: 20157
+        rv_id: 111074
+        rule_id: 6JUyWq
+        version_id: vdTY8Ld
+        url: https://semgrep.dev/playground/r/vdTY8Ld/typescript.lang.best-practice.moment-deprecated.moment-deprecated
+        origin: community

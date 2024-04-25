@@ -1,0 +1,38 @@
+rules:
+- id: terraform.azure.best-practice.azure-defenderon-servers.azure-defenderon-servers
+  message: Ensure that Azure Defender is set to On for Servers
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Standard"
+      resource_type = "VirtualMachines"
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Free"
+      resource_type = "VirtualMachines"
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-defenderon-servers.azure-defenderon-servers
+    shortlink: https://sg.run/68qo
+    semgrep.dev:
+      rule:
+        r_id: 23915
+        rv_id: 110819
+        rule_id: nJUP95
+        version_id: yeTRZD4
+        url: https://semgrep.dev/playground/r/yeTRZD4/terraform.azure.best-practice.azure-defenderon-servers.azure-defenderon-servers
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

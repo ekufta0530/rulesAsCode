@@ -1,0 +1,34 @@
+rules:
+- id: python.lang.correctness.dict-modify-iterating.dict-del-while-iterate
+  message: 'It appears that `$DICT[$KEY]` is a dict with items being deleted while
+    in a for loop. This is usually a bad idea and will likely lead to a RuntimeError:
+    dictionary changed size during iteration'
+  metadata:
+    references:
+    - https://docs.python.org/3/library/stdtypes.html#dictionary-view-objects
+    category: correctness
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.correctness.dict-modify-iterating.dict-del-while-iterate
+    shortlink: https://sg.run/BkP2
+    semgrep.dev:
+      rule:
+        r_id: 9595
+        rv_id: 110335
+        rule_id: PeUZLW
+        version_id: PkTJ1Al
+        url: https://semgrep.dev/playground/r/PkTJ1Al/python.lang.correctness.dict-modify-iterating.dict-del-while-iterate
+        origin: community
+  languages:
+  - python
+  severity: WARNING
+  pattern-either:
+  - pattern: |
+      for $KEY, $VALUE in $DICT.items():
+          ...
+          del $DICT[$KEY]
+  - pattern: |
+      for $KEY in $DICT.keys():
+          ...
+          del $DICT[$KEY]

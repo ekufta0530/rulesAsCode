@@ -1,0 +1,30 @@
+rules:
+- id: python.lang.maintainability.useless-literal.useless-literal
+  message: key `$X` is uselessly assigned twice
+  languages:
+  - python
+  severity: WARNING
+  patterns:
+  - pattern-either:
+    - pattern: |
+        {..., $X: $A, ..., $X: $B, ...}
+    - pattern: |
+        dict(..., ($X, $A), ..., ($X, $B), ...)
+  - focus-metavariable: $X
+  metadata:
+    category: maintainability
+    references:
+    - https://docs.python.org/3/library/stdtypes.html#mapping-types-dict
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.maintainability.useless-literal.useless-literal
+    shortlink: https://sg.run/Brd2
+    semgrep.dev:
+      rule:
+        r_id: 26095
+        rv_id: 113535
+        rule_id: 7KUn51
+        version_id: l4T4JgZ
+        url: https://semgrep.dev/playground/r/l4T4JgZ/python.lang.maintainability.useless-literal.useless-literal
+        origin: community

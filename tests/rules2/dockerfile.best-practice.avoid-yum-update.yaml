@@ -1,0 +1,26 @@
+rules:
+- id: dockerfile.best-practice.avoid-yum-update.avoid-yum-update
+  severity: INFO
+  languages:
+  - dockerfile
+  message: Packages in base images should be up-to-date, removing the need for 'yum
+    update'. If packages are out-of-date, consider contacting the base image maintainer.
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3031
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3031
+    category: best-practice
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.best-practice.avoid-yum-update.avoid-yum-update
+    shortlink: https://sg.run/yJ3r
+    semgrep.dev:
+      rule:
+        r_id: 20124
+        rv_id: 109231
+        rule_id: bwULQE
+        version_id: DkT6n7B
+        url: https://semgrep.dev/playground/r/DkT6n7B/dockerfile.best-practice.avoid-yum-update.avoid-yum-update
+        origin: community
+  pattern: yum update

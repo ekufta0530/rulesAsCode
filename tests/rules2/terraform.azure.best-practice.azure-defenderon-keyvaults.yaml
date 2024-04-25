@@ -1,0 +1,38 @@
+rules:
+- id: terraform.azure.best-practice.azure-defenderon-keyvaults.azure-defenderon-keyvaults
+  message: Ensure that Azure Defender is set to On for Key Vault
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Standard"
+      resource_type = "KeyVaults"
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Free"
+      resource_type = "KeyVaults"
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-defenderon-keyvaults.azure-defenderon-keyvaults
+    shortlink: https://sg.run/lJwy
+    semgrep.dev:
+      rule:
+        r_id: 23913
+        rv_id: 110817
+        rule_id: d8UA3n
+        version_id: 1QTO74A
+        url: https://semgrep.dev/playground/r/1QTO74A/terraform.azure.best-practice.azure-defenderon-keyvaults.azure-defenderon-keyvaults
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

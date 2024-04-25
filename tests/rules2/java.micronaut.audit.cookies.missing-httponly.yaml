@@ -1,0 +1,63 @@
+rules:
+- id: java.micronaut.audit.cookies.missing-httponly.missing-httponly
+  message: Detected a cookie where the `HttpOnly` flag is either missing or disabled.
+    The `HttpOnly` cookie flag instructs the browser to forbid client-side JavaScript
+    to read the cookie. If JavaScript interaction is required, you can ignore this
+    finding. However, set the `HttpOnly` flag to `true` in all other cases.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+    functional-categories:
+    - web::search::cookie-config::Micronaut
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+    technology:
+    - cookies
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/java.micronaut.audit.cookies.missing-httponly.missing-httponly
+    shortlink: https://sg.run/QrLWk
+    semgrep.dev:
+      rule:
+        r_id: 115942
+        rv_id: 524267
+        rule_id: DbU6kDq
+        version_id: ZRTggdO
+        url: https://semgrep.dev/playground/r/ZRTggdO/java.micronaut.audit.cookies.missing-httponly.missing-httponly
+        origin: pro_rules
+  languages:
+  - java
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: io.micronaut.http.cookie.Cookie.of(...)
+      - pattern-not-inside: io.micronaut.http.cookie.Cookie.of(...). ... .httpOnly(...)
+      - pattern-not-inside: $C = io.micronaut.http.cookie.Cookie.of(...). ...
+    - patterns:
+      - pattern-either:
+        - pattern: new io.micronaut.http.cookie.Cookie(...)
+        - pattern: new io.micronaut.http.netty.cookies.NettyCookie(...)
+        - pattern: new io.micronaut.http.simple.cookies.SimpleCookie(...)
+      - pattern-not-inside: new $COOKIE_TYPE(...). ... .httpOnly(...)
+      - pattern-not-inside: $C = new $COOKIE_TYPE(...)
+    - patterns:
+      - pattern-either:
+        - pattern: (io.micronaut.http.cookie.Cookie $C) = new $COOKIE_TYPE(...);
+        - pattern: (io.micronaut.http.netty.cookies.NettyCookie $C) = new $COOKIE_TYPE(...);
+        - pattern: (io.micronaut.http.simple.cookies.SimpleCookie $C) = new $COOKIE_TYPE(...);
+        - pattern: $C = io.micronaut.http.cookie.Cookie.of(...). ...;
+      - pattern-not-inside: $C = $REQ.getCookies(...). ...;
+      - pattern-not-inside: $C = $NEW. ... .httpOnly(...). ...;
+      - pattern-not-inside: |
+          ...
+          $C.httpOnly(...);

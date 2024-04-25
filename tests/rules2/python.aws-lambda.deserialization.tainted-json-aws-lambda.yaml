@@ -1,0 +1,69 @@
+rules:
+- id: python.aws-lambda.deserialization.tainted-json-aws-lambda.tainted-json-aws-lambda
+  message: 'The application may convert user-controlled data into a JSON object, which
+    can lead the decoder to consume considerable CPU and memory resources, potentially
+    causing DoS (Denial of Service). The documentation for the `json` package recommends
+    limiting the size of data to be parsed. '
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - deserialization::sink::load-object::lang
+    - serverless::source::function-params::aws-lambda
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://portswigger.net/web-security/deserialization
+    - https://knowledge-base.secureflag.com/vulnerabilities/unsafe_deserialization/unsafe_deserialization_python.html
+    - https://docs.python.org/3/library/json.html
+    - https://docs.python.org/3/library/pickle.html
+    - https://davidhamann.de/2020/04/05/exploiting-python-pickle/
+    technology:
+    - python
+    - aws-lambda
+    - json
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/python.aws-lambda.deserialization.tainted-json-aws-lambda.tainted-json-aws-lambda
+    shortlink: https://sg.run/YRrW
+    semgrep.dev:
+      rule:
+        r_id: 44914
+        rv_id: 111800
+        rule_id: NbUvX2
+        version_id: DkT6YAO
+        url: https://semgrep.dev/playground/r/DkT6YAO/python.aws-lambda.deserialization.tainted-json-aws-lambda.tainted-json-aws-lambda
+        origin: pro_rules
+  languages:
+  - python
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern: |
+        def $HANDLER($EVENT, context):
+          ...
+    - focus-metavariable: $EVENT
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $SINK
+    - pattern-either:
+      - pattern: json.load($SINK, ...)
+      - pattern: json.loads($SINK, ...)
+      - patterns:
+        - pattern-either:
+          - pattern: $DEC.decode($SINK)
+          - pattern: $DEC.raw_decode($SINK)
+        - pattern-inside: |
+            $DEC = json.JSONDecoder()
+            ...

@@ -1,0 +1,41 @@
+rules:
+- id: ajinabraham.njsscan.dos.layer7_object_dos.layer7_object_dos
+  patterns:
+  - pattern-either:
+    - pattern-inside: function ($REQ, $RES, ...) {...}
+    - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+    - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+  - pattern-either:
+    - pattern-inside: |
+        $OBJ = $REQ.body;
+        ...
+    - pattern-inside: |
+        $OBJ = $REQ.body.$FOO;
+        ...
+  - pattern-inside: |
+      for(...){...}
+  - pattern: |
+      $OBJ.length
+  message: Layer7 Denial of Service. Looping over user controlled objects can result
+    in DoS.
+  languages:
+  - javascript
+  severity: ERROR
+  metadata:
+    owasp-web: a6
+    cwe: cwe-400
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.dos.layer7_object_dos.layer7_object_dos
+    shortlink: https://sg.run/p0QL
+    semgrep.dev:
+      rule:
+        r_id: 43618
+        rv_id: 78236
+        rule_id: 4bUJKE
+        version_id: X0Tvn8
+        url: https://semgrep.dev/playground/r/X0Tvn8/ajinabraham.njsscan.dos.layer7_object_dos.layer7_object_dos
+        origin: community

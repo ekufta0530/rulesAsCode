@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-_fstrncpy.microsoft-banned-list-_fstrncpy
+  message: '_fstrncpy is a banned function: legacy 16-bit far pointer implementation.
+    Alternatives are strncpy, wcsncpy'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_fstrncpy.microsoft-banned-list-_fstrncpy
+    shortlink: https://sg.run/nJNGO
+    semgrep.dev:
+      rule:
+        r_id: 114780
+        rv_id: 257391
+        rule_id: PeUJz19
+        version_id: PkTW5YG
+        url: https://semgrep.dev/playground/r/PkTW5YG/cpp.lang.security.misc.microsoft-banned-list-_fstrncpy.microsoft-banned-list-_fstrncpy
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: _fstrncpy(...)

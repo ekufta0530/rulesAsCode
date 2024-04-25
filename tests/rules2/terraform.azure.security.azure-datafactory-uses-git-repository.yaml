@@ -1,0 +1,58 @@
+rules:
+- id: terraform.azure.security.azure-datafactory-uses-git-repository.azure-datafactory-uses-git-repository
+  message: Ensure that Azure Data Factory uses Git repository for source control
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_data_factory" "..." {
+      ...
+      github_configuration {
+        ...
+      }
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_data_factory" "..." {
+      ...
+      vsts_configuration {
+        ...
+      }
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_data_factory" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.azure.security.azure-datafactory-uses-git-repository.azure-datafactory-uses-git-repository
+    shortlink: https://sg.run/78JZ
+    semgrep.dev:
+      rule:
+        r_id: 23982
+        rv_id: 110892
+        rule_id: JDUpG5
+        version_id: WrTW3QQ
+        url: https://semgrep.dev/playground/r/WrTW3QQ/terraform.azure.security.azure-datafactory-uses-git-repository.azure-datafactory-uses-git-repository
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

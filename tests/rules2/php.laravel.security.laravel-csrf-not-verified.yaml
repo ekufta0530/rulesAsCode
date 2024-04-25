@@ -1,0 +1,74 @@
+rules:
+- id: php.laravel.security.laravel-csrf-not-verified.laravel-csrf-not-verified
+  message: The application appears to have disabled the CSRF token verification middleware
+    which can lead to a Cross-site request forgery (CSRF) vulnerability. If the application
+    uses cookie-based authentication, an attacker can trick users into sending authenticated
+    HTTP requests without their knowledge from any arbitrary domain they visit. You
+    can prevent this vulnerability by enforcing usage and verification of the CSRF
+    tokens associated with user requests. To enable the CSRF token verification middleware
+    add `\$APP\Http\Middleware\VerifyCsrfToken` to the middleware group in your `$APP\Http\Kernel`
+    class.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    functional-categories:
+    - web::search::csrf-config::laravel
+    owasp:
+    - A01:2021 - Broken Access Control
+    references:
+    - https://laravel.com/docs/9.x/csrf#preventing-csrf-requests
+    - https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Laravel_Cheat_Sheet.md#cross-site-request-forgery-csrf
+    technology:
+    - php
+    - laravel
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/php.laravel.security.laravel-csrf-not-verified.laravel-csrf-not-verified
+    shortlink: https://sg.run/6vKW
+    semgrep.dev:
+      rule:
+        r_id: 36215
+        rv_id: 111786
+        rule_id: YGU4L6
+        version_id: 7ZTgnkj
+        url: https://semgrep.dev/playground/r/7ZTgnkj/php.laravel.security.laravel-csrf-not-verified.laravel-csrf-not-verified
+        origin: pro_rules
+  languages:
+  - php
+  paths:
+    include:
+    - '*Kernel.php'
+  patterns:
+  - pattern: |
+      [..., 'web' => $GROUPS, ...]
+  - pattern-not: |
+      [
+        ...,
+        'web' => [
+          ...,
+          \$APP\Http\Middleware\VerifyCsrfToken::class,
+          ...
+        ],
+        ...
+      ]
+  - pattern-not: |
+      [
+        ...,
+        'web' => [
+          ...,
+          VerifyCsrfToken::class,
+          ...
+        ],
+        ...
+      ]
+  - focus-metavariable: $GROUPS
+  - pattern-inside: |
+      $middlewareGroups = $X

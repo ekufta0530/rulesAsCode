@@ -1,0 +1,77 @@
+rules:
+- id: php.lang.security.tainted-command-injection.tainted-command-injection
+  message: Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent this
+    vulnerability, avoid executing OS commands with user input. If this is unavoidable,
+    validate and sanitize the user input, and use safe methods for executing the commands.
+    In PHP, it is possible to use `escapeshellcmd(...)` and `escapeshellarg(...)`
+    to correctly sanitize input that is used respectively as system commands or command
+    arguments.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - web::source::url-path-params::lang
+    - os::sink::os-command-or-thread::lang
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://www.php.net/manual/en/function.eval
+    - https://github.com/FloeDesignTechnologies/phpcs-security-audit/blob/master/Security/Sniffs/BadFunctions/NoEvalsSniff.php
+    technology:
+    - php
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/php.lang.security.tainted-command-injection.tainted-command-injection
+    shortlink: https://sg.run/Bpj2
+    semgrep.dev:
+      rule:
+        r_id: 27195
+        rv_id: 111772
+        rule_id: NbUzg9
+        version_id: yeTRZK2
+        url: https://semgrep.dev/playground/r/yeTRZK2/php.lang.security.tainted-command-injection.tainted-command-injection
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: $_REQUEST
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_FILES
+      - pattern: $_COOKIE
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: exec(...)
+      - pattern: system(...)
+      - pattern: passthru(...)
+      - pattern: shell_exec(...)
+      - pattern: |
+          `...`
+      - patterns:
+        - focus-metavariable: $COMMAND
+        - pattern: proc_open($COMMAND, ...)
+      - patterns:
+        - focus-metavariable: $COMMAND
+        - pattern: popen($COMMAND, ...)
+      - pattern: pcntl_exec(...)

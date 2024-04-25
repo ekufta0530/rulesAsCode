@@ -1,0 +1,25 @@
+rules:
+- id: java.lang.correctness.no-string-eqeq.no-string-eqeq
+  languages:
+  - java
+  patterns:
+  - pattern-not: null == (String $Y)
+  - pattern: $X == (String $Y)
+  message: Strings should not be compared with '=='. This is a reference comparison
+    operator. Use '.equals()' instead.
+  severity: WARNING
+  metadata:
+    category: correctness
+    technology:
+    - java
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/java.lang.correctness.no-string-eqeq.no-string-eqeq
+    shortlink: https://sg.run/YvxX
+    semgrep.dev:
+      rule:
+        r_id: 9158
+        rv_id: 109679
+        rule_id: r6UrQ9
+        version_id: DkT6ngE
+        url: https://semgrep.dev/playground/r/DkT6ngE/java.lang.correctness.no-string-eqeq.no-string-eqeq
+        origin: community

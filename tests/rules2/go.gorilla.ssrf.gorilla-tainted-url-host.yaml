@@ -1,0 +1,191 @@
+rules:
+- id: go.gorilla.ssrf.gorilla-tainted-url-host.gorilla-tainted-url-host
+  message: Untrusted input might be used to build an HTTP request, which can lead
+    to a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker
+    to send crafted requests from the server side to other internal or external systems.
+    SSRF can lead to unauthorized access to sensitive data and, in some cases, allow
+    the attacker to control applications or systems that trust the vulnerable service.
+    To prevent this vulnerability, avoid allowing user input to craft the base request.
+    Instead, treat it as part of the path or query parameter and encode it appropriately.
+    When user input is necessary to prepare the HTTP request, perform strict input
+    validation. Additionally, whenever possible, use allowlists to only interact with
+    expected, trusted domains.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - net::source::network-connection::gorilla
+    - web::sink::http-request::net/http
+    - web::sink::redirect::net/http
+    - web::source::cookie::gorilla
+    - web::source::form-data::gorilla
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    references:
+    - https://goteleport.com/blog/ssrf-attacks/
+    - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+    technology:
+    - github.com/gorilla/rpc/v2
+    - github.com/gorilla/schema
+    - github.com/gorilla/securecookie
+    - github.com/gorilla/sessions
+    - github.com/gorilla/websocket
+    - go
+    - gorilla
+    - gorilla/rpc
+    - gorilla/schema
+    - gorilla/securecookie
+    - gorilla/sessions
+    - gorilla/websocket
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/go.gorilla.ssrf.gorilla-tainted-url-host.gorilla-tainted-url-host
+    shortlink: https://sg.run/wWkB
+    semgrep.dev:
+      rule:
+        r_id: 59529
+        rv_id: 731865
+        rule_id: gxUdNq
+        version_id: jQTQ0gy
+        url: https://semgrep.dev/playground/r/jQTQ0gy/go.gorilla.ssrf.gorilla-tainted-url-host.gorilla-tainted-url-host
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - label: INPUT
+    patterns:
+    - pattern-inside: |
+        import "github.com/gorilla/schema"
+        ...
+    - pattern-inside: |
+        $DECODER = schema.NewDecoder()
+        ...
+    - pattern-inside: |
+        $DECODER.Decode(&$TO, ...)
+        ...
+    - pattern: $TO
+  - label: INPUT
+    patterns:
+    - pattern-inside: |
+        import "github.com/gorilla/securecookie"
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern-inside: |
+            $COOKIE = securecookie.New(...)
+            ...
+        - pattern-inside: |
+            $COOKIE.Decode($NAME, $C, &$VALUE)
+            ...
+      - pattern-inside: |
+          securecookie.DecodeMulti($NAME, $C, &$VALUE, ...)
+          ...
+    - pattern: $VALUE
+  - label: INPUT
+    patterns:
+    - pattern-inside: |
+        import "github.com/gorilla/sessions"
+        ...
+    - pattern-inside: |
+        $STORE = sessions.NewCookieStore(...)
+        ...
+    - pattern-inside: |
+        $SESSION, ... = $STORE.Get(...)
+        ...
+    - pattern: $SESSION.Values
+  - by-side-effect: true
+    label: INPUT
+    patterns:
+    - pattern-inside: |
+        import "github.com/gorilla/websocket"
+        ...
+    - pattern-inside: |
+        $UPGRADER = websocket.Upgrader{...}
+        ...
+    - pattern-inside: |
+        $CONN, ... = $UPGRADER.Upgrade(...)
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern: $TYPE, $BYTES, $ERR = $CONN.$FUNC()
+        - metavariable-regex:
+            metavariable: $FUNC
+            regex: ^(ReadMessage|ReadJSON)$
+        - focus-metavariable: $BYTES
+      - patterns:
+        - pattern-inside: |
+            $TYPE, $READER, $ERR = $CONN.NextReader()
+            ...
+        - pattern: $READER.Read($VAR)
+        - focus-metavariable: $VAR
+      - patterns:
+        - pattern: $TYPE, $READER, $ERR = $CONN.NextReader()
+        - focus-metavariable: $READER
+  - label: FORMAT
+    patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern: fmt.Fprintf($F, "$URLSTR", $INPUT, ...)
+          - pattern: fmt.Sprintf("$URLSTR", $INPUT, ...)
+          - pattern: fmt.Printf("$URLSTR", $INPUT, ...)
+        - metavariable-regex:
+            metavariable: $URLSTR
+            regex: ^((http://)|(https://)|(//))%(v|s|q).*
+    - focus-metavariable: $INPUT
+    requires: INPUT
+  - label: ADD_OR_DIRECT
+    patterns:
+    - pattern-either:
+      - pattern: $X + $F
+      - pattern: $X
+    - focus-metavariable: $X
+    - pattern-not-inside: |
+        fmt.Printf(...)
+        ...
+    - pattern-not-inside: |
+        fmt.Sprintf(...)
+        ...
+    - pattern-not-inside: |
+        fmt.Fprintf(...)
+        ...
+    requires: INPUT
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern-inside: |
+                $CLIENT := &http.Client{...}
+                ...
+            - pattern: $CLIENT.$METHOD($URL, ...)
+          - pattern: http.$METHOD($URL, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(Get|Head|Post|PostForm)$
+      - pattern: http.Redirect($W, $REQ, $URL, ...)
+      - patterns:
+        - pattern: http.NewRequest("$METHOD", $URL, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(GET|HEAD|POST|POSTFORM)$
+    - focus-metavariable: $URL
+    requires: FORMAT or ADD_OR_DIRECT
+  pattern-sanitizers:
+  - patterns:
+    - pattern: $F + $X
+    - metavariable-regex:
+        metavariable: $F
+        regex: .*//[a-zA-Z0-10]+\\..*

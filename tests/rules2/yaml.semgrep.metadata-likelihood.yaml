@@ -1,0 +1,28 @@
+rules:
+- id: yaml.semgrep.metadata-likelihood.metadata-likelihood
+  patterns:
+  - pattern-inside: "rules: \n  ...\n"
+  - pattern-inside: "metadata: \n  ...\n  category: security\n  ...\n"
+  - pattern-not-inside: "metadata: \n  ...\n  likelihood: $VALUE\n"
+  message: This Semgrep rule is missing a valid 'likelihood' field in the 'metadata'.
+    which should be either LOW, MEDIUM, or HIGH. For more information visit  https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/
+  languages:
+  - yaml
+  severity: WARNING
+  metadata:
+    references:
+    - https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.metadata-likelihood.metadata-likelihood
+    shortlink: https://sg.run/K29X
+    semgrep.dev:
+      rule:
+        r_id: 39211
+        rv_id: 111173
+        rule_id: yyUd0P
+        version_id: O9TNdBz
+        url: https://semgrep.dev/playground/r/O9TNdBz/yaml.semgrep.metadata-likelihood.metadata-likelihood
+        origin: community

@@ -1,0 +1,31 @@
+rules:
+- id: python.lang.best-practice.manual-collections-create.manual-counter-create
+  pattern: |
+    $DICT = {}
+    ...
+    for $KEY, $VALUE in $OTHERDICT.items():
+        ...
+        if $KEY not in $DICT:
+            ...
+            $DICT[$KEY] = 0
+            ...
+        $DICT[$KEY] += 1
+  message: manually creating a counter - use collections.Counter
+  languages:
+  - python
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.best-practice.manual-collections-create.manual-counter-create
+    shortlink: https://sg.run/jRZJ
+    semgrep.dev:
+      rule:
+        r_id: 9565
+        rv_id: 110298
+        rule_id: kxUk73
+        version_id: DkT6n80
+        url: https://semgrep.dev/playground/r/DkT6n80/python.lang.best-practice.manual-collections-create.manual-counter-create
+        origin: community

@@ -1,0 +1,77 @@
+rules:
+- id: java.lang.security.audit.script-engine-injection.script-engine-injection
+  message: Detected potential code injection using ScriptEngine. Ensure user-controlled
+    data cannot enter '.eval()', otherwise, this is a code injection vulnerability.
+  metadata:
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    owasp:
+    - A03:2021 - Injection
+    source-rule-url: https://find-sec-bugs.github.io/bugs.htm#SCRIPT_ENGINE_INJECTION
+    category: security
+    technology:
+    - java
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    cwe2022-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/java.lang.security.audit.script-engine-injection.script-engine-injection
+    shortlink: https://sg.run/gLqn
+    semgrep.dev:
+      rule:
+        r_id: 9185
+        rv_id: 109727
+        rule_id: DbUpAr
+        version_id: 3ZTkQnw
+        url: https://semgrep.dev/playground/r/3ZTkQnw/java.lang.security.audit.script-engine-injection.script-engine-injection
+        origin: community
+  severity: WARNING
+  languages:
+  - java
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        class $CLASS {
+          ...
+          ScriptEngine $SE;
+          ...
+        }
+    - pattern-inside: |
+        class $CLASS {
+          ...
+          ScriptEngine $SE = ...;
+          ...
+        }
+    - pattern-inside: |
+        $X $METHOD(...) {
+          ...
+          ScriptEngine $SE = ...;
+          ...
+        }
+  - pattern: |
+      $X $METHOD(...) {
+        ...
+        $SE.eval(...);
+        ...
+      }
+  - pattern-not: |
+      $X $METHOD(...) {
+        ...
+        $SE.eval("...");
+        ...
+      }
+  - pattern-not: |
+      $X $METHOD(...) {
+        ...
+        String $S = "...";
+        ...
+        $SE.eval($S);
+        ...
+      }

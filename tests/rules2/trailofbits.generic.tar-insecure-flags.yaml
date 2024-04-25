@@ -1,0 +1,38 @@
+rules:
+- id: trailofbits.generic.tar-insecure-flags.tar-insecure-flags
+  message: Found `tar` command using insecure flags
+  languages:
+  - generic
+  severity: WARNING
+  metadata:
+    category: security
+    subcategory:
+    - audit
+    technology:
+    - shell
+    cwe: 'CWE-73: External Control of File Name or Path'
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: HIGH
+    references:
+    - https://man7.org/linux/man-pages/man1/tar.1.html
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Path Traversal
+    source: https://semgrep.dev/r/trailofbits.generic.tar-insecure-flags.tar-insecure-flags
+    shortlink: https://sg.run/X5RyN
+    semgrep.dev:
+      rule:
+        r_id: 113220
+        rv_id: 258314
+        rule_id: lBU4JeW
+        version_id: 6xT5vWg
+        url: https://semgrep.dev/playground/r/6xT5vWg/trailofbits.generic.tar-insecure-flags.tar-insecure-flags
+        origin: community
+  options:
+    generic_ellipsis_max_span: 0
+  pattern-either:
+  - pattern: 'tar ... -P '
+  - pattern: tar ... --absolute-paths
+  - pattern: tar ... --absolute-names
+  - pattern: 'tar ... --passphrase '

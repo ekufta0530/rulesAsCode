@@ -1,0 +1,90 @@
+rules:
+- id: php.lang.security.tainted-url-to-guzzle-client.tainted-url-to-guzzle-client
+  message: Untrusted input might be used to build an HTTP request, which can lead
+    to a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker
+    to send crafted requests from the server side to other internal or external systems.
+    SSRF can lead to unauthorized access to sensitive data and, in some cases, allow
+    the attacker to control applications or systems that trust the vulnerable service.
+    To prevent this vulnerability, avoid allowing user input to craft the base request.
+    Instead, treat it as part of the path or query parameter and encode it appropriately.
+    When user input is necessary to prepare the HTTP request, perform strict input
+    validation. Additionally, whenever possible, use allowlists to only interact with
+    expected, trusted domains.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - web::source::url-path-params::lang
+    - net::sink::http-request::guzzle
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+    - https://docs.guzzlephp.org/en/stable/quickstart.html#making-a-request
+    technology:
+    - php
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/php.lang.security.tainted-url-to-guzzle-client.tainted-url-to-guzzle-client
+    shortlink: https://sg.run/KA3X
+    semgrep.dev:
+      rule:
+        r_id: 27199
+        rv_id: 111776
+        rule_id: OrUpk6
+        version_id: kbTdL1W
+        url: https://semgrep.dev/playground/r/kbTdL1W/php.lang.security.tainted-url-to-guzzle-client.tainted-url-to-guzzle-client
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: $_REQUEST
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_FILES
+      - pattern: $_COOKIE
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: |
+            new GuzzleHttp\Client([..., 'base_uri' => $URL, ...])
+        - focus-metavariable: $URL
+      - patterns:
+        - pattern-inside: |
+            $CLIENT = new GuzzleHttp\Client(...);
+            ...
+            $CLIENT->$REQMETH($HTTPTYPE, $URL, ...);
+        - pattern: $URL
+        - metavariable-regex:
+            metavariable: $REQMETH
+            regex: (request)|(requestAsync)
+      - patterns:
+        - pattern-inside: |
+            $CLIENT = new GuzzleHttp\Client(...);
+            ...
+            $CLIENT->$MAGICREQMETH($URL);
+        - pattern: $URL
+        - metavariable-regex:
+            metavariable: $MAGICREQMETH
+            regex: (getAsync)|(deleteAsync)|(headAsync)|(optionsAsync)|(patchAsync)|(postAsync)|(putAsync)|(get)|(delete)|(head)|(options)|(patch)|(post)|(put)
+      - patterns:
+        - pattern: |
+            new \GuzzleHttp\Psr7\Request($HTTPTYPE, $URL)
+        - focus-metavariable: $URL

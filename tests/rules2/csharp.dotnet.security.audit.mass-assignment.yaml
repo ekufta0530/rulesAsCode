@@ -1,0 +1,64 @@
+rules:
+- id: csharp.dotnet.security.audit.mass-assignment.mass-assignment
+  message: Mass assignment or Autobinding vulnerability in code allows an attacker
+    to execute over-posting attacks, which could create a new parameter in the binding
+    request and manipulate the underlying object in the application.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    cwe:
+    - 'CWE-915: Improperly Controlled Modification of Dynamically-Determined Object
+      Attributes'
+    owasp:
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://cwe.mitre.org/data/definitions/915.html
+    - https://github.com/OWASP/API-Security/blob/master/2019/en/src/0xa6-mass-assignment.md
+    subcategory:
+    - vuln
+    technology:
+    - .net
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mass Assignment
+    source: https://semgrep.dev/r/csharp.dotnet.security.audit.mass-assignment.mass-assignment
+    shortlink: https://sg.run/7B3e
+    semgrep.dev:
+      rule:
+        r_id: 26838
+        rv_id: 109174
+        rule_id: x8Up5B
+        version_id: DkT6nX2
+        url: https://semgrep.dev/playground/r/DkT6nX2/csharp.dotnet.security.audit.mass-assignment.mass-assignment
+        origin: community
+  languages:
+  - csharp
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          public IActionResult $METHOD(..., $TYPE $ARG, ...){
+            ...
+          }
+      - pattern: |
+          public ActionResult $METHOD(..., $TYPE $ARG, ...){
+            ...
+          }
+    - pattern-inside: |
+        using Microsoft.AspNetCore.Mvc;
+        ...
+    - pattern-not: |
+        public IActionResult $METHOD(..., [Bind(...)] $TYPE $ARG, ...){
+          ...
+        }
+    - pattern-not: |
+        public ActionResult $METHOD(..., [Bind(...)] $TYPE $ARG, ...){
+          ...
+        }
+    - focus-metavariable: $ARG
+  pattern-sinks:
+  - pattern: View(...)

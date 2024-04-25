@@ -1,0 +1,67 @@
+rules:
+- id: terraform.azure.security.azure-automation-encrypted.azure-automation-encrypted
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        resource "azurerm_automation_variable_string" "..." {
+        ...
+        }
+    - pattern-inside: |
+        resource "azurerm_automation_variable_datetime" "..." {
+        ...
+        }
+    - pattern-inside: |
+        resource "azurerm_automation_variable_int" "..." {
+        ...
+        }
+  - pattern-not-inside: |
+      resource "azurerm_automation_variable_string" "..." {
+      ...
+      encrypted = true
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_automation_variable_datetime" "..." {
+      ...
+      encrypted = true
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_automation_variable_int" "..." {
+      ...
+      encrypted = true
+      ...
+      }
+  message: Ensure that Automation account variables are encrypted
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-automation-encrypted.azure-automation-encrypted
+    shortlink: https://sg.run/bgLp
+    semgrep.dev:
+      rule:
+        r_id: 23970
+        rv_id: 110880
+        rule_id: d8UA8G
+        version_id: gET3OxZ
+        url: https://semgrep.dev/playground/r/gET3OxZ/terraform.azure.security.azure-automation-encrypted.azure-automation-encrypted
+        origin: community

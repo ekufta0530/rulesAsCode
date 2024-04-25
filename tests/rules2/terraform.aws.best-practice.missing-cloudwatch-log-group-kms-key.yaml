@@ -1,0 +1,33 @@
+rules:
+- id: terraform.aws.best-practice.missing-cloudwatch-log-group-kms-key.missing-cloudwatch-log-group-kms-key
+  patterns:
+  - patterns:
+    - pattern: resource "aws_cloudwatch_log_group" $ANYTHING {...}
+    - pattern-not-inside: |
+        resource "aws_cloudwatch_log_group" $ANYTHING {
+          ...
+          kms_key_id = ...
+          ...
+        }
+  message: The AWS CloudWatch Log group is missing a KMS key. While Log group data
+    is always encrypted, you can optionally use a KMS key instead. Add `kms_key_id
+    = "yourKey"` to your resource block.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    technology:
+    - aws
+    - terraform
+    category: best-practice
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.missing-cloudwatch-log-group-kms-key.missing-cloudwatch-log-group-kms-key
+    shortlink: https://sg.run/bX2d
+    semgrep.dev:
+      rule:
+        r_id: 15826
+        rv_id: 110718
+        rule_id: NbUXNP
+        version_id: yeTRZAx
+        url: https://semgrep.dev/playground/r/yeTRZAx/terraform.aws.best-practice.missing-cloudwatch-log-group-kms-key.missing-cloudwatch-log-group-kms-key
+        origin: community

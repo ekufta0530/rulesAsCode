@@ -1,0 +1,22 @@
+rules:
+- id: ocaml.lang.compatibility.deprecated.deprecated-pervasives
+  pattern: Pervasives.$X
+  message: Pervasives is deprecated and will not be available after 4.10. Use Stdlib.
+  languages:
+  - ocaml
+  severity: ERROR
+  metadata:
+    category: compatibility
+    technology:
+    - ocaml
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/ocaml.lang.compatibility.deprecated.deprecated-pervasives
+    shortlink: https://sg.run/dKe0
+    semgrep.dev:
+      rule:
+        r_id: 9378
+        rv_id: 110016
+        rule_id: 3qUP1E
+        version_id: w8T9noW
+        url: https://semgrep.dev/playground/r/w8T9noW/ocaml.lang.compatibility.deprecated.deprecated-pervasives
+        origin: community

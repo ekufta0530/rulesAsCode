@@ -1,0 +1,24 @@
+rules:
+- id: ocaml.lang.correctness.physical-vs-structural.physical-not-equal
+  pattern: $X != $Y
+  message: You probably want the structural inequality operator <>
+  languages:
+  - ocaml
+  severity: WARNING
+  metadata:
+    category: correctness
+    technology:
+    - ocaml
+    references:
+    - https://v2.ocaml.org/api/Stdlib.html#1_Comparisons
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/ocaml.lang.correctness.physical-vs-structural.physical-not-equal
+    shortlink: https://sg.run/7Gw2
+    semgrep.dev:
+      rule:
+        r_id: 12782
+        rv_id: 110018
+        rule_id: lBUzAY
+        version_id: O9TNOxB
+        url: https://semgrep.dev/playground/r/O9TNOxB/ocaml.lang.correctness.physical-vs-structural.physical-not-equal
+        origin: community

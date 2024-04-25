@@ -1,0 +1,53 @@
+rules:
+- id: terraform.aws.security.aws-dynamodb-point-in-time-recovery-disabled.aws-dynamodb-point-in-time-recovery-disabled
+  patterns:
+  - pattern: |
+      resource "aws_dynamodb_table" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_dynamodb_table" $ANYTHING {
+        ...
+        point_in_time_recovery {
+          ...
+          enabled = true
+          ...
+        }
+        ...
+      }
+  message: Point-in-time recovery is not enabled for the DynamoDB table. DynamoDB
+    tables should be protected against accidental or malicious write/delete actions.
+    By enabling point-in-time-recovery you can restore to a known point in the event
+    of loss of data.
+  languages:
+  - hcl
+  severity: INFO
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - aws
+    cwe:
+    - 'CWE-221: Information Loss or Omission'
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    references:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table#point_in_time_recovery
+    owasp:
+    - "A09:2021 \u2013 Security Logging and Monitoring Failures"
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/terraform.aws.security.aws-dynamodb-point-in-time-recovery-disabled.aws-dynamodb-point-in-time-recovery-disabled
+    shortlink: https://sg.run/eD4E
+    semgrep.dev:
+      rule:
+        r_id: 48632
+        rv_id: 110740
+        rule_id: DbU4Wn
+        version_id: JdTNv6x
+        url: https://semgrep.dev/playground/r/JdTNv6x/terraform.aws.security.aws-dynamodb-point-in-time-recovery-disabled.aws-dynamodb-point-in-time-recovery-disabled
+        origin: community

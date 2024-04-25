@@ -1,0 +1,168 @@
+rules:
+- id: cpp.lang.security.strings.string-buffer-overflow.string-buffer-overflow
+  message: '`$STR_FUNCTION` does not validate the length of the source string which
+    can trigger a buffer overflow'
+  severity: ERROR
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cert:
+    - ARR38-C
+    - C
+    - C++
+    - L1
+    cwe:
+    - 'CWE-120: Buffer Copy without Checking Size of Input (''Classic Buffer Overflow'')'
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/ARR38-C.+Guarantee+that+library+functions+do+not+form+invalid+pointers
+    supersedes:
+    - c.lang.security.insecure-use-strcat-fn.insecure-use-strcat-fn
+    - c.lang.security.insecure-use-string-copy-fn.insecure-use-string-copy-fn
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/cpp.lang.security.strings.string-buffer-overflow.string-buffer-overflow
+    shortlink: https://sg.run/PeLLp
+    semgrep.dev:
+      rule:
+        r_id: 114889
+        rv_id: 704232
+        rule_id: WAUW88Z
+        version_id: pZTzN7y
+        url: https://semgrep.dev/playground/r/pZTzN7y/cpp.lang.security.strings.string-buffer-overflow.string-buffer-overflow
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  mode: taint
+  min-version: 1.59.0
+  options:
+    interfile: true
+  pattern-sources:
+  - label: USER_CONTROLLED
+    patterns:
+    - pattern: |
+        int main(int $ARGC, $ARGV_TY $ARGV, $ENVP_TY $ENVP) {
+          ...
+        }
+    - focus-metavariable: $ENVP
+  - label: USER_CONTROLLED
+    patterns:
+    - pattern: |
+        int main(int $ARGC, $ARGV_TY $ARGV, ...) {
+          ...
+        }
+    - focus-metavariable: $ARGV
+  - label: USER_CONTROLLED
+    pattern-either:
+    - pattern: getenv(...)
+    - pattern: std::getenv(...)
+    - pattern: readline()
+  - by-side-effect: only
+    label: USER_CONTROLLED
+    patterns:
+    - pattern-either:
+      - pattern: gets($SRC)
+      - pattern: fread($SRC, ...)
+      - pattern: fgets($SRC, ...)
+      - pattern: getline($SRC, ...)
+      - pattern: getdelim($SRC, ...)
+      - pattern: read($S_OR_FP, $SRC, ...)
+      - pattern: msgrcv($QID, $SRC, ...)
+    - focus-metavariable: $SRC
+  - label: USER_CONTROLLED
+    pattern: gets(...)
+  - by-side-effect: only
+    label: USER_CONTROLLED
+    patterns:
+    - pattern-either:
+      - pattern: $X.get($SRC, ...)
+      - pattern: $X.getline($SRC, ...)
+      - pattern: $X.read($SRC, ...)
+      - pattern: $X.readsome($SRC, ...)
+    - metavariable-type:
+        metavariable: $X
+        types:
+        - basic_ifstream<$TYPE>
+        - std::basic_ifstream<$TYPE>
+        - ifstream
+        - std::ifstream
+        - wifstream
+        - std::wifstream
+        - basic_ofstream<$TYPE>
+        - std::basic_ofstream<$TYPE>
+        - ofstream
+        - std::ofstream
+        - wofstream
+        - std::wofstream
+        - basic_fstream<$TYPE>
+        - std::basic_fstream<$TYPE>
+        - fstream
+        - std::fstream
+        - wfstream
+        - std::wfstream
+        - basic_filebuf<$TYPE>
+        - std::basic_filebuf<$TYPE>
+        - filebuf
+        - std::filebuf
+        - wfilebuf
+        - std::wfilebuf
+    - focus-metavariable: $SRC
+  - by-side-effect: only
+    label: USER_CONTROLLED
+    patterns:
+    - pattern-either:
+      - pattern: recv($S, $SRC, ...)
+      - pattern: recvfrom($S, $SRC, ...)
+      - pattern: recvmsg($S, $SRC, ...)
+      - patterns:
+        - pattern: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $SRC)
+        - pattern-not: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $CURL)
+    - focus-metavariable: $SRC
+  - label: USER_CONTROLLED
+    pattern: mysql_fetch_row(...)
+  - by-side-effect: only
+    label: USER_CONTROLLED
+    patterns:
+    - pattern: mysql_fetch_row_nonblocking($RESULT, &$ROW)
+    - focus-metavariable: $ROW
+  - label: USER_CONTROLLED
+    patterns:
+    - pattern: $WT->body()
+    - metavariable-type:
+        metavariable: $WT
+        types:
+        - Wt::Http::Message*
+        - Http::Message*
+        - Wt::Mail::Message*
+        - Mail::Message*
+  - by-side-effect: true
+    label: SANITIZED
+    patterns:
+    - pattern: $FUNCTION(..., $STR, ...)
+    - metavariable-regex:
+        metavariable: $FUNCTION
+        regex: ^.*(capacity|len|size).*$
+    - focus-metavariable: $STR
+  - by-side-effect: true
+    label: SANITIZED
+    patterns:
+    - pattern: $STR.$FUNCTION(...)
+    - metavariable-regex:
+        metavariable: $FUNCTION
+        regex: ^.*(capacity|len|size).*$
+    - focus-metavariable: $STR
+  pattern-sinks:
+  - patterns:
+    - pattern: $STR_FUNCTION($DEST, $SRC)
+    - metavariable-regex:
+        metavariable: $STR_FUNCTION
+        regex: ^((std)?(::))?(strcpy|strcat)$
+    - focus-metavariable: $SRC
+    requires: USER_CONTROLLED and not SANITIZED

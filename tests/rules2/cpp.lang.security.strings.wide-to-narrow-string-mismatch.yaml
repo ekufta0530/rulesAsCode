@@ -1,0 +1,313 @@
+rules:
+- id: cpp.lang.security.strings.wide-to-narrow-string-mismatch.wide-to-narrow-string-mismatch
+  message: A wide-string is used in an API that should consume byte-string (narrow
+    string). This can trigger an out-of-bounds read.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - C
+    - C++
+    - L1
+    - STR38-C
+    cwe:
+    - 'CWE-125: Out-of-bounds Read'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - memory::sink::buffer-overflow
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/STR38-C.+Do+not+confuse+narrow+and+wide+character+strings+and+functions
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/cpp.lang.security.strings.wide-to-narrow-string-mismatch.wide-to-narrow-string-mismatch
+    shortlink: https://sg.run/ReLLg
+    semgrep.dev:
+      rule:
+        r_id: 114893
+        rv_id: 257504
+        rule_id: lBU4ZZy
+        version_id: l4Tr4Qp
+        url: https://semgrep.dev/playground/r/l4Tr4Qp/cpp.lang.security.strings.wide-to-narrow-string-mismatch.wide-to-narrow-string-mismatch
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  mode: taint
+  min-version: 1.59.0
+  options:
+    interfile: true
+  pattern-sources:
+  - by-side-effect: true
+    patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern: wchar_t *$STR;
+          - pattern: wchar_t *$STR = ...;
+          - pattern: wchar_t $STR[...];
+          - pattern: wchar_t $STR[...] = ...;
+      - patterns:
+        - pattern-either:
+          - pattern: $RET_ARG1($STR, ...)
+        - metavariable-pattern:
+            metavariable: $RET_ARG1
+            patterns:
+            - pattern-either:
+              - pattern: wcschr
+              - pattern: std::wcschr
+              - pattern: wmemchr
+              - pattern: std::wmemchr
+              - pattern: wmemset
+              - pattern: std::wmemset
+        - focus-metavariable: $STR
+      - patterns:
+        - pattern-either:
+          - pattern: $RET_ARG1_ARG2($STR, ...)
+          - pattern: $RET_ARG1_ARG2($ARG1, $STR, ...)
+        - metavariable-pattern:
+            metavariable: $RET_ARG1_ARG2
+            patterns:
+            - pattern-either:
+              - pattern: wcscpy
+              - pattern: std::wcscpy
+              - pattern: wcsncpy
+              - pattern: std::wcsncpy
+              - pattern: wcscat
+              - pattern: std::wcscat
+              - pattern: wcsncat
+              - pattern: std::wcsncat
+              - pattern: wcspbrk
+              - pattern: std::wcspbrk
+              - pattern: wcsstr
+              - pattern: std::wcsstr
+              - pattern: wmemcpy
+              - pattern: std::wmemcpy
+              - pattern: wmemmove
+              - pattern: std::wmemmove
+        - focus-metavariable: $STR
+      - patterns:
+        - pattern-either:
+          - pattern: $RET_ARG1_ARG2_ARG3($STR, ...)
+          - pattern: $RET_ARG1_ARG2_ARG3($ARG1, $STR, ...)
+          - pattern: $RET_ARG1_ARG2_ARG3($ARG1,$ARG2,  $STR, ...)
+        - metavariable-pattern:
+            metavariable: $RET_ARG1_ARG2
+            patterns:
+            - pattern-either:
+              - pattern: wcstok
+              - pattern: std::wcstok
+        - focus-metavariable: $STR
+      - patterns:
+        - pattern-either:
+          - pattern: $ARG1($STR)
+        - metavariable-pattern:
+            metavariable: $ARG1
+            patterns:
+            - pattern-either:
+              - pattern: wcslen
+              - pattern: std::wcslen
+              - pattern: wcsnlen_s
+              - pattern: std::wcsnlen_s
+              - pattern: wcscat
+              - pattern: std::wcscat
+              - pattern: wcsncat
+              - pattern: std::wcsncat
+              - pattern: wcstol
+              - pattern: std::wcstol
+              - pattern: wcstoll
+              - pattern: std::wcstoll
+              - pattern: wcstoul
+              - pattern: std::wcstoul
+              - pattern: wcstoull
+              - pattern: std::wcstoull
+              - pattern: wcstof
+              - pattern: std::wcstof
+              - pattern: wcstod
+              - pattern: std::wcstod
+              - pattern: wcstold
+              - pattern: std::wcstold
+              - pattern: wcstoimax
+              - pattern: std::wcstoimax
+              - pattern: wcstoumax
+              - pattern: std::wcstoumax
+        - focus-metavariable: $STR
+      - patterns:
+        - pattern-either:
+          - pattern: $ARG1_ARG2($STR, ...)
+          - pattern: $ARG1_ARG2($ARG1, $STR, ...)
+        - metavariable-pattern:
+            metavariable: $ARG1_ARG2
+            patterns:
+            - pattern-either:
+              - pattern: wcsxfrm
+              - pattern: std::wcsxfrm
+              - pattern: wcscmp
+              - pattern: std::wcscmp
+              - pattern: wcsncmp
+              - pattern: std::wcsncmp
+              - pattern: wcscoll
+              - pattern: std::wcscoll
+              - pattern: wcsspn
+              - pattern: std::wcsspn
+              - pattern: wcscspn
+              - pattern: std::wcscspn
+              - pattern: wmemcmp
+              - pattern: std::wmemcmp
+        - focus-metavariable: $STR
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern: $RET_ARG1(...)
+        - metavariable-pattern:
+            metavariable: $RET_ARG1
+            patterns:
+            - pattern-either:
+              - pattern: wcschr
+              - pattern: std::wcschr
+              - pattern: wmemchr
+              - pattern: std::wmemchr
+              - pattern: wmemset
+              - pattern: std::wmemset
+      - patterns:
+        - pattern-either:
+          - pattern: $RET_ARG1_ARG2(...)
+        - metavariable-pattern:
+            metavariable: $RET_ARG1_ARG2
+            patterns:
+            - pattern-either:
+              - pattern: wcscpy
+              - pattern: std::wcscpy
+              - pattern: wcsncpy
+              - pattern: std::wcsncpy
+              - pattern: wcscat
+              - pattern: std::wcscat
+              - pattern: wcsncat
+              - pattern: std::wcsncat
+              - pattern: wcspbrk
+              - pattern: std::wcspbrk
+              - pattern: wcsstr
+              - pattern: std::wcsstr
+              - pattern: wmemcpy
+              - pattern: std::wmemcpy
+              - pattern: wmemmove
+              - pattern: std::wmemmove
+      - patterns:
+        - pattern-either:
+          - pattern: $RET_ARG1_ARG2_ARG3(...)
+        - metavariable-pattern:
+            metavariable: $RET_ARG1_ARG2
+            patterns:
+            - pattern-either:
+              - pattern: wcstok
+              - pattern: std::wcstok
+  pattern-sinks:
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - pattern: $RET_ARG1($STR, ...)
+      - metavariable-pattern:
+          metavariable: $RET_ARG1
+          patterns:
+          - pattern-either:
+            - pattern: strchr
+            - pattern: std::strchr
+            - pattern: strrchr
+            - pattern: std::strrchr
+      - focus-metavariable: $STR
+    - patterns:
+      - pattern-either:
+        - pattern: $RET_ARG1_ARG2($STR, ...)
+        - pattern: $RET_ARG1_ARG2($ARG1, $STR, ...)
+      - metavariable-pattern:
+          metavariable: $RET_ARG1_ARG2
+          patterns:
+          - pattern-either:
+            - pattern: strcpy
+            - pattern: std::strcpy
+            - pattern: strncpy
+            - pattern: std::strncpy
+            - pattern: strcat
+            - pattern: std::strcat
+            - pattern: strncat
+            - pattern: std::strncat
+            - pattern: strpbrk
+            - pattern: std::strpbrk
+            - pattern: strstr
+            - pattern: std::strstr
+            - pattern: strtok
+            - pattern: std::strtok
+      - focus-metavariable: $STR
+    - patterns:
+      - pattern-either:
+        - pattern: $ARG1($STR, ...)
+      - metavariable-pattern:
+          metavariable: $ARG1
+          patterns:
+          - pattern-either:
+            - pattern: strlen
+            - pattern: std::strlen
+            - pattern: atof
+            - pattern: std::atof
+            - pattern: atoi
+            - pattern: std::atoi
+            - pattern: atol
+            - pattern: std::atol
+            - pattern: atoll
+            - pattern: std::atoll
+            - pattern: strtol
+            - pattern: std::strtol
+            - pattern: strtoll
+            - pattern: std::strtoll
+            - pattern: strtoul
+            - pattern: std::strtoul
+            - pattern: strtoull
+            - pattern: std::strtoull
+            - pattern: strtof
+            - pattern: std::strtof
+            - pattern: strtod
+            - pattern: std::strtod
+            - pattern: strtold
+            - pattern: std::strtold
+            - pattern: strtoimax
+            - pattern: std::strtoimax
+            - pattern: strtoumax
+            - pattern: std::strtoumax
+      - focus-metavariable: $STR
+    - patterns:
+      - pattern-either:
+        - pattern: $ARG1_ARG2($STR, ...)
+        - pattern: $ARG1_ARG2($ARG1, $STR, ...)
+      - metavariable-pattern:
+          metavariable: $ARG1_ARG2
+          patterns:
+          - pattern-either:
+            - pattern: strxfrm
+            - pattern: std::strxfrm
+            - pattern: strcmp
+            - pattern: std::strcmp
+            - pattern: strncmp
+            - pattern: std::strncmp
+            - pattern: strcoll
+            - pattern: std::strcoll
+            - pattern: strspn
+            - pattern: std::strspn
+            - pattern: strcspn
+            - pattern: std::strcspn
+      - focus-metavariable: $STR
+  pattern-sanitizers:
+  - patterns:
+    - pattern: $FUN(..., $STR, ...)
+    - metavariable-regex:
+        metavariable: $FUN
+        regex: ^.*(UTF_?8|utf_?8|to_bytes).*$

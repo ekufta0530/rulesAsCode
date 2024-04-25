@@ -1,0 +1,23 @@
+rules:
+- id: dgryski.semgrep-go.errclosed.use-net-errclosed
+  patterns:
+  - pattern: strings.Contains($ERR.Error(), $X)
+  - metavariable-regex:
+      metavariable: $X
+      regex: '".*closed network connection.*"'
+  message: Use errors.Is($ERR, net.ErrClosed) instead
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.errclosed.use-net-errclosed
+    shortlink: https://sg.run/J9No
+    semgrep.dev:
+      rule:
+        r_id: 8690
+        rv_id: 11977
+        rule_id: ReUgBd
+        version_id: zyT1nW
+        url: https://semgrep.dev/playground/r/zyT1nW/dgryski.semgrep-go.errclosed.use-net-errclosed
+        origin: community

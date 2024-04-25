@@ -1,0 +1,39 @@
+rules:
+- id: trailofbits.python.waiting-with-pytorch-distributed.waiting-with-pytorch-distributed
+  message: Not waiting for requests is a source of undefined behavior
+  languages:
+  - python
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-758: Reliance on Undefined, Unspecified, or Implementation-Defined Behavior'
+    subcategory:
+    - vuln
+    confidence: MEDIUM
+    likelihood: LOW
+    impact: LOW
+    technology:
+    - pytorch
+    description: Possible `PyTorch` undefined behavior when not waiting for requests
+    references:
+    - https://pytorch.org/docs/stable/distributed.html#torch.distributed.isend
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/trailofbits.python.waiting-with-pytorch-distributed.waiting-with-pytorch-distributed
+    shortlink: https://sg.run/LpoX
+    semgrep.dev:
+      rule:
+        r_id: 44139
+        rv_id: 95120
+        rule_id: 5rUxGL
+        version_id: ExTj44x
+        url: https://semgrep.dev/playground/r/ExTj44x/trailofbits.python.waiting-with-pytorch-distributed.waiting-with-pytorch-distributed
+        origin: community
+  patterns:
+  - pattern-either:
+    - pattern: $REQ = torch.distributed.irecv(...)
+    - pattern: $REQ = torch.distributed.isend(...)
+  - pattern-not-inside: |
+      ...
+      $REQ.wait()

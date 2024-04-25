@@ -1,0 +1,45 @@
+rules:
+- id: python.django.security.audit.xss.template-autoescape-off.template-autoescape-off
+  message: Detected a template block where autoescaping is explicitly disabled with
+    '{% autoescape off %}'. This allows rendering of raw HTML in this segment. Turn
+    autoescaping on to prevent cross-site scripting (XSS). If you must do this, consider
+    instead, using `mark_safe` in Python code.
+  metadata:
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://docs.djangoproject.com/en/3.1/ref/templates/builtins/#autoescape
+    category: security
+    technology:
+    - django
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/python.django.security.audit.xss.template-autoescape-off.template-autoescape-off
+    shortlink: https://sg.run/Q5WZ
+    semgrep.dev:
+      rule:
+        r_id: 9486
+        rv_id: 110200
+        rule_id: AbUzAZ
+        version_id: K3Tvjp9
+        url: https://semgrep.dev/playground/r/K3Tvjp9/python.django.security.audit.xss.template-autoescape-off.template-autoescape-off
+        origin: community
+  languages:
+  - regex
+  paths:
+    include:
+    - '*.html'
+  severity: WARNING
+  pattern-regex: '{%\s+autoescape\s+off\s+%}'

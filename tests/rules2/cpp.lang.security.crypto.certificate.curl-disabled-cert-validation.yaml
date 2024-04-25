@@ -1,0 +1,47 @@
+rules:
+- id: cpp.lang.security.crypto.certificate.curl-disabled-cert-validation.curl-disabled-cert-validation
+  message: TLS ceritificate validation is disabled. This could lead to a potential
+    man-in-the-middle attack. This may be used for testing purposes but it is not
+    considered safe in production deployments.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-295: Improper Certificate Validation'
+    functional-categories:
+    - crypto::search::config
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A07:2021 - Identification and Authentication Failures
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    - https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures
+    technology:
+    - cpp
+    - curl
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/cpp.lang.security.crypto.certificate.curl-disabled-cert-validation.curl-disabled-cert-validation
+    shortlink: https://sg.run/qNoBx
+    semgrep.dev:
+      rule:
+        r_id: 114756
+        rv_id: 257367
+        rule_id: j2UgBYv
+        version_id: jQT6kKz
+        url: https://semgrep.dev/playground/r/jQT6kKz/cpp.lang.security.crypto.certificate.curl-disabled-cert-validation.curl-disabled-cert-validation
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  options:
+    symbolic_propagation: true
+  pattern-either:
+  - pattern: curl_easy_setopt($CURL, CURLOPT_SSL_VERIFYPEER, 0);

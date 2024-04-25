@@ -1,0 +1,34 @@
+rules:
+- id: terraform.azure.best-practice.azure-functionapps-accessible-over-https.azure-functionapps-accessible-over-https
+  message: Ensure that HTTP Version is the latest if used to run the Function app
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      https_only = true
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-functionapps-accessible-over-https.azure-functionapps-accessible-over-https
+    shortlink: https://sg.run/1gBw
+    semgrep.dev:
+      rule:
+        r_id: 23922
+        rv_id: 110826
+        rule_id: 3qUQRq
+        version_id: O9TNdvW
+        url: https://semgrep.dev/playground/r/O9TNdvW/terraform.azure.best-practice.azure-functionapps-accessible-over-https.azure-functionapps-accessible-over-https
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

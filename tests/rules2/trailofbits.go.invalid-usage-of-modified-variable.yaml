@@ -1,0 +1,74 @@
+rules:
+- id: trailofbits.go.invalid-usage-of-modified-variable.invalid-usage-of-modified-variable
+  message: Variable `$X` is likely modified and later used on error. In some cases
+    this could result  in panics due to a nil dereference
+  languages:
+  - go
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-665: Improper Initialization'
+    subcategory:
+    - audit
+    confidence: HIGH
+    likelihood: MEDIUM
+    impact: MEDIUM
+    technology:
+    - --no-technology--
+    description: Possible unintentional assignment when an error occurs
+    references:
+    - https://blog.trailofbits.com/2019/11/07/attacking-go-vr-ttps/
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/trailofbits.go.invalid-usage-of-modified-variable.invalid-usage-of-modified-variable
+    shortlink: https://sg.run/WWQ2
+    semgrep.dev:
+      rule:
+        r_id: 17197
+        rv_id: 258507
+        rule_id: kxU6Xb
+        version_id: A8Tr9vQ
+        url: https://semgrep.dev/playground/r/A8Tr9vQ/trailofbits.go.invalid-usage-of-modified-variable.invalid-usage-of-modified-variable
+        origin: community
+  patterns:
+  - pattern: |
+      ..., $X, ..., $ERR = ...
+      if $ERR != nil {
+        ...
+        <... $X.$Y ...>
+      }
+  - pattern-not: |
+      ..., $X, ..., $ERR = ...
+      if $ERR != nil {
+        ...
+        $X, ... = ...
+        ...
+        <... $X.$Y ...>
+      }
+  - pattern-not: |
+      ..., $X, ..., $ERR = ...
+      if $ERR != nil {
+        ...
+        $X = ...
+        ...
+        <... $X.$Y ...>
+      }
+  - pattern-not: |
+      ..., $X, ..., $ERR = ...
+      if $ERR != nil {
+        ...
+        if $X != nil {
+          <... $X.$Y ...>
+        }
+        ...
+      }
+  - pattern-not: |
+      ..., $X, ..., $ERR := ...
+      if $ERR != nil {
+        ...
+        if  $X != nil && <... $X.$Y ...> {
+          ...
+        }
+        ...
+      }

@@ -1,0 +1,43 @@
+rules:
+- id: ajinabraham.njsscan.xml.xxe_xml2json.xxe_xml2json
+  patterns:
+  - pattern-inside: |
+      require('xml2json')
+      ...
+  - pattern-either:
+    - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+    - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+  - pattern-either:
+    - pattern: $EXPAT.toJson(<... $REQ.$QUERY.$FOO ...>,...)
+    - pattern: $EXPAT.toJson(<... $REQ.$BODY ...>,...)
+    - pattern: |
+        $INPUT = <... $REQ.$QUERY.$FOO ...>;
+        ...
+        $EXPAT.toJson(<... $INPUT ...>,...)
+    - pattern: |
+        $INPUT = <... $REQ.$BODY ...>;
+        ...
+        $EXPAT.toJson(<... $INPUT ...>,...)
+  message: Make sure that unverified user data can not reach the XML Parser, as it
+    can result in XML External or Internal Entity (XXE) Processing vulnerabilities.
+  metadata:
+    owasp-web: a4
+    cwe: cwe-611
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.xml.xxe_xml2json.xxe_xml2json
+    shortlink: https://sg.run/BD8W
+    semgrep.dev:
+      rule:
+        r_id: 43707
+        rv_id: 78311
+        rule_id: eqUwXe
+        version_id: 7ZTLXR
+        url: https://semgrep.dev/playground/r/7ZTLXR/ajinabraham.njsscan.xml.xxe_xml2json.xxe_xml2json
+        origin: community
+  severity: ERROR
+  languages:
+  - javascript

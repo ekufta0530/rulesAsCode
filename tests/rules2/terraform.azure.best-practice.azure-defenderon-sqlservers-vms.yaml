@@ -1,0 +1,38 @@
+rules:
+- id: terraform.azure.best-practice.azure-defenderon-sqlservers-vms.azure-defenderon-sqlservers-vms
+  message: Ensure that Azure Defender is set to On for SQL servers on machines
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Standard"
+      resource_type = "SqlServerVirtualMachines"
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Free"
+      resource_type = "SqlServerVirtualMachines"
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-defenderon-sqlservers-vms.azure-defenderon-sqlservers-vms
+    shortlink: https://sg.run/oRZ9
+    semgrep.dev:
+      rule:
+        r_id: 23916
+        rv_id: 110820
+        rule_id: EwUNo5
+        version_id: rxTy4jE
+        url: https://semgrep.dev/playground/r/rxTy4jE/terraform.azure.best-practice.azure-defenderon-sqlservers-vms.azure-defenderon-sqlservers-vms
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

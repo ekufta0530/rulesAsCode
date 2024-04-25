@@ -1,0 +1,59 @@
+rules:
+- id: swift.insecure-communication.ats.ats-insecure-website-load.ATS-insecure-webview-loads
+  message: The application's App Transport Security (ATS) configuration allows for
+    insecure accessing of HTTP content in WebViews. This means that connections accessed
+    in a WebView may be accessed via HTTP, potentially leaking that data to others
+    on the local network, or to other network devices the network traffic traverses
+    (proxies, firewalls, load balancers, etc).
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+    masvs:
+    - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+      best practices.'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-insecure-website-load.ATS-insecure-webview-loads
+    shortlink: https://sg.run/Zo7x
+    semgrep.dev:
+      rule:
+        r_id: 60535
+        rv_id: 112015
+        rule_id: EwUZgW
+        version_id: DkT6Yjy
+        url: https://semgrep.dev/playground/r/DkT6Yjy/swift.insecure-communication.ats.ats-insecure-website-load.ATS-insecure-webview-loads
+        origin: pro_rules
+  languages:
+  - xml
+  options:
+    symbolic_propagation: true
+  paths:
+    include:
+    - Info.plist
+  patterns:
+  - pattern: |
+      <dict>
+      ...
+      <key>$KEY</key>
+      <true/>
+      ...
+      </dict>
+  - metavariable-comparison:
+      metavariable: $KEY
+      comparison: str($KEY) == "NSAllowsArbitraryLoadsInWebContent"
+  - focus-metavariable: $KEY

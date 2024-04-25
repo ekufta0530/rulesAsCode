@@ -1,0 +1,116 @@
+rules:
+- id: cpp.lang.security.use-after-free.local-variable-new-delete.local-variable-new-delete
+  message: This expression points to memory that has been freed. This can lead to
+    a segmentation fault or memory corruption.
+  severity: ERROR
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - C
+    - C++
+    - EXP54-CPP
+    - L1
+    - L2
+    - MEM30-C
+    cwe:
+    - 'CWE-416: Use After Free'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/MEM30-C.+Do+not+access+freed+memory
+    - https://wiki.sei.cmu.edu/confluence/display/cplusplus/EXP54-CPP.+Do+not+access+an+object+outside+of+its+lifetime
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/cpp.lang.security.use-after-free.local-variable-new-delete.local-variable-new-delete
+    shortlink: https://sg.run/KxLLL
+    semgrep.dev:
+      rule:
+        r_id: 114899
+        rv_id: 348154
+        rule_id: 2ZUzppp
+        version_id: WrTolKA
+        url: https://semgrep.dev/playground/r/WrTolKA/cpp.lang.security.use-after-free.local-variable-new-delete.local-variable-new-delete
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  mode: taint
+  min-version: 1.59.0
+  options:
+    interfile: true
+    taint_only_propagate_through_assignments: true
+  pattern-sources:
+  - by-side-effect: only
+    patterns:
+    - pattern-either:
+      - pattern: delete $LOCAL_VAR
+      - pattern: delete[] $LOCAL_VAR
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            $RETURN_TYPE $FUNC(...)
+            {
+              ...
+              $LOCAL_VAR_TYPE $LOCAL_VAR = ...;
+              ...
+            }
+        - pattern-inside: |
+            $RETURN_TYPE $FUNC(...)
+            {
+              ...
+              $LOCAL_VAR_TYPE $LOCAL_VAR;
+              ...
+            }
+        - pattern-inside: |
+            $RETURN_TYPE $FUNC(..., $LOCAL_VAR_TYPE $LOCAL_VAR, ...) {
+              ...
+            }
+      - pattern-not-inside: |
+          $RETURN_TYPE $FUNC(...)
+          {
+            ...
+            static $LOCAL_VAR_TYPE $LOCAL_VAR = ...;
+            ...
+          }
+      - pattern-not-inside: |
+          $RETURN_TYPE $FUNC(...)
+          {
+            ...
+            static $LOCAL_VAR_TYPE $LOCAL_VAR;
+            ...
+          }
+    - focus-metavariable: $LOCAL_VAR
+    - pattern-not-inside: '[...](...) { ... }'
+    - pattern-not-inside: '[...](...) -> $LAMBDA_RETURN_TYPE { ... }'
+  pattern-sinks:
+  - patterns:
+    - pattern: $FUNC(..., $VAR, ...)
+    - focus-metavariable: $VAR
+  - patterns:
+    - pattern-either:
+      - pattern: $TY{..., $VAR, ...}
+      - pattern: $TYVAR $TY{..., $VAR, ...};
+      - patterns:
+        - pattern: '*$VAR'
+        - pattern-not-inside: sizeof(...)
+      - pattern: $VAR[$INDEX]
+      - pattern: return <... $VAR ...>;
+    - focus-metavariable: $VAR
+  pattern-sanitizers:
+  - by-side-effect: true
+    patterns:
+    - pattern: $FUNC(..., &$VAR, ...)
+    - focus-metavariable: $VAR
+  - by-side-effect: true
+    patterns:
+    - pattern: $VAR[$INDEX]
+    - focus-metavariable: $VAR

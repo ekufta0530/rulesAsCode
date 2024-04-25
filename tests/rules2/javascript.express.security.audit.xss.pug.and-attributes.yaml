@@ -1,0 +1,44 @@
+rules:
+- id: javascript.express.security.audit.xss.pug.and-attributes.template-and-attributes
+  message: Detected a unescaped variables using '&attributes'. If external data can
+    reach these locations, your application is exposed to a cross-site scripting (XSS)
+    vulnerability. If you must do this, ensure no external data can reach this location.
+  metadata:
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://pugjs.org/language/attributes.html#attributes
+    category: security
+    technology:
+    - express
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/javascript.express.security.audit.xss.pug.and-attributes.template-and-attributes
+    shortlink: https://sg.run/Q5jk
+    semgrep.dev:
+      rule:
+        r_id: 9286
+        rv_id: 109863
+        rule_id: DbUpyq
+        version_id: d6TrAJk
+        url: https://semgrep.dev/playground/r/d6TrAJk/javascript.express.security.audit.xss.pug.and-attributes.template-and-attributes
+        origin: community
+  languages:
+  - regex
+  severity: WARNING
+  paths:
+    include:
+    - '*.pug'
+  pattern-regex: .*&attributes.*

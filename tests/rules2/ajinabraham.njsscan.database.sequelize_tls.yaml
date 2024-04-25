@@ -1,0 +1,51 @@
+rules:
+- id: ajinabraham.njsscan.database.sequelize_tls.sequelize_tls
+  message: |
+    The Sequelize connection string indicates that database server does not use TLS. Non TLS connections are susceptible to man in the middle (MITM) attacks.
+  languages:
+  - javascript
+  severity: WARNING
+  metadata:
+    owasp-web: a6
+    cwe: cwe-319
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.database.sequelize_tls.sequelize_tls
+    shortlink: https://sg.run/q3Qy
+    semgrep.dev:
+      rule:
+        r_id: 43612
+        rv_id: 78230
+        rule_id: 7KUwJW
+        version_id: YDT3kP
+        url: https://semgrep.dev/playground/r/YDT3kP/ajinabraham.njsscan.database.sequelize_tls.sequelize_tls
+        origin: community
+  patterns:
+  - pattern: |
+      {
+        host: $HOST,
+        database: $DATABASE,
+        dialect: $DIALECT
+       }
+  - pattern-not: |
+      {
+        host: $HOST,
+        database: $DATABASE,
+        dialect: "postgres",
+        dialectOptions: {
+            ssl: true
+        }
+      }
+  - pattern-not: |
+      {
+        host: $HOST,
+        database: $DATABASE,
+        dialect: $DIALECT,
+        dialectOptions: {
+          ssl: { ... }
+        }
+      }
+  - metavariable-regex:
+      metavariable: $DIALECT
+      regex: '[''"](mariadb|mysql|postgres|oracle)[''"]'

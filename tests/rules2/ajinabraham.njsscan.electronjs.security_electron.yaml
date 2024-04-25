@@ -1,0 +1,28 @@
+rules:
+- id: ajinabraham.njsscan.electronjs.security_electron.electron_experimental_features
+  patterns:
+  - pattern-either:
+    - pattern: |
+        new BrowserWindow({webPreferences: {experimentalFeatures: true}})
+    - pattern: |
+        var $X = {webPreferences: {experimentalFeatures: true}};
+  message: Experimental features are not expected to be in production ready applications.
+  languages:
+  - javascript
+  severity: WARNING
+  metadata:
+    owasp-web: a6
+    cwe: cwe-272
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.electronjs.security_electron.electron_experimental_features
+    shortlink: https://sg.run/bEYE
+    semgrep.dev:
+      rule:
+        r_id: 43626
+        rv_id: 78244
+        rule_id: DbULBL
+        version_id: kbTo5x
+        url: https://semgrep.dev/playground/r/kbTo5x/ajinabraham.njsscan.electronjs.security_electron.electron_experimental_features
+        origin: community

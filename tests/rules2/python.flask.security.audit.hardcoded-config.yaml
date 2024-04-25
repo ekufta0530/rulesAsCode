@@ -1,0 +1,42 @@
+rules:
+- id: python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_DEBUG
+  message: Hardcoded variable `DEBUG` detected. Set this by using FLASK_DEBUG environment
+    variable
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    category: security
+    cwe:
+    - 'CWE-489: Active Debug Code'
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://bento.dev/checks/flask/avoid-hardcoded-config/
+    - https://flask.palletsprojects.com/en/1.1.x/config/?highlight=configuration#builtin-configuration-values
+    - https://flask.palletsprojects.com/en/1.1.x/config/?highlight=configuration#environment-and-debug-features
+    subcategory:
+    - audit
+    technology:
+    - flask
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Active Debug Code
+    source: https://semgrep.dev/r/python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_DEBUG
+    shortlink: https://sg.run/LwPo
+    semgrep.dev:
+      rule:
+        r_id: 9539
+        rv_id: 110255
+        rule_id: JDUyJR
+        version_id: 1QTOYjN
+        url: https://semgrep.dev/playground/r/1QTOYjN/python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_DEBUG
+        origin: community
+  languages:
+  - python
+  pattern-either:
+  - pattern: $M.update(DEBUG=True)
+  - pattern: $M.update(DEBUG=False)
+  - pattern: $M.config['DEBUG'] = True
+  - pattern: $M.config['DEBUG'] = False

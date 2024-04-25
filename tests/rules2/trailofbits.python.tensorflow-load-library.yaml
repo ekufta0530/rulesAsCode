@@ -1,0 +1,39 @@
+rules:
+- id: trailofbits.python.tensorflow-load-library.tensorflow-load-library
+  message: Loading custom operator libraries can result in arbitrary code execution
+  languages:
+  - python
+  severity: ERROR
+  metadata:
+    category: security
+    cwe: 'CWE-676: Use of Potentially Dangerous Function'
+    subcategory:
+    - audit
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: HIGH
+    technology:
+    - tensorflow
+    description: Potential arbitrary code execution from `TensorFlow` library loading
+    references:
+    - https://www.tensorflow.org/api_docs/python/tf/load_library
+    - https://www.tensorflow.org/api_docs/python/tf/load_op_library
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/trailofbits.python.tensorflow-load-library.tensorflow-load-library
+    shortlink: https://sg.run/xp0j
+    semgrep.dev:
+      rule:
+        r_id: 43930
+        rv_id: 95119
+        rule_id: WAUgBJ
+        version_id: nWTxYYN
+        url: https://semgrep.dev/playground/r/nWTxYYN/trailofbits.python.tensorflow-load-library.tensorflow-load-library
+        origin: community
+  patterns:
+  - pattern-either:
+    - pattern: tensorflow.load_library(...)
+    - pattern: tensorflow.load_op_library(...)
+  - pattern-not: tensorflow.load_library("...")
+  - pattern-not: tensorflow.load_op_library("...")

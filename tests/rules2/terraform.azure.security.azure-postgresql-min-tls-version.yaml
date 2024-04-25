@@ -1,0 +1,55 @@
+rules:
+- id: terraform.azure.security.azure-postgresql-min-tls-version.azure-postgresql-min-tls-version
+  message: Ensure PostgreSQL is using the latest version of TLS encryption
+  patterns:
+  - pattern-either:
+    - pattern: |
+        "TLS1_2"
+    - pattern: |
+        "TLS1_1"
+    - pattern: |
+        "TLS1_0"
+  - pattern-inside: ssl_minimal_tls_version_enforced = ...
+  - pattern-inside: |
+      $RESOURCE "azurerm_postgresql_server" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      $RESOURCE "azurerm_postgresql_server" "..." {
+      ...
+      ssl_enforcement_enabled = true
+      ...
+      }
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-326: Inadequate Encryption Strength'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-postgresql-min-tls-version.azure-postgresql-min-tls-version
+    shortlink: https://sg.run/PyvN
+    semgrep.dev:
+      rule:
+        r_id: 24001
+        rv_id: 110911
+        rule_id: j2UYDL
+        version_id: 6xTvQJB
+        url: https://semgrep.dev/playground/r/6xTvQJB/terraform.azure.security.azure-postgresql-min-tls-version.azure-postgresql-min-tls-version
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

@@ -1,0 +1,52 @@
+rules:
+- id: csharp.lang.security.regular-expression-dos.regular-expression-dos-infinite-timeout.regular-expression-dos-infinite-timeout
+  severity: WARNING
+  languages:
+  - C#
+  metadata:
+    cwe:
+    - 'CWE-1333: Inefficient Regular Expression Complexity'
+    owasp: A01:2017 - Injection
+    references:
+    - https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
+    - https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.infinitematchtimeout
+    - https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.-ctor?view=net-6.0
+    category: security
+    technology:
+    - .net
+    confidence: MEDIUM
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Denial-of-Service (DoS)
+    source: https://semgrep.dev/r/csharp.lang.security.regular-expression-dos.regular-expression-dos-infinite-timeout.regular-expression-dos-infinite-timeout
+    shortlink: https://sg.run/NgRy
+    semgrep.dev:
+      rule:
+        r_id: 18227
+        rv_id: 109213
+        rule_id: GdUDBP
+        version_id: d6TrALz
+        url: https://semgrep.dev/playground/r/d6TrALz/csharp.lang.security.regular-expression-dos.regular-expression-dos-infinite-timeout.regular-expression-dos-infinite-timeout
+        origin: community
+  message: 'Specifying the regex timeout leaves the system vulnerable to a regex-based
+    Denial of Service (DoS) attack. Consider setting the timeout to a short amount
+    of time like 2 or 3 seconds. If you are sure you need an infinite timeout, double
+    check that your context meets the conditions outlined in the "Notes to Callers"
+    section at the bottom of this page: https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.-ctor?view=net-6.0'
+  patterns:
+  - pattern-inside: |
+      using System.Text.RegularExpressions;
+      ...
+  - pattern-either:
+    - pattern: new Regex(..., TimeSpan.InfiniteMatchTimeout)
+    - patterns:
+      - pattern: new Regex(..., TimeSpan.FromSeconds($TIME))
+      - metavariable-comparison:
+          metavariable: $TIME
+          comparison: $TIME > 5
+    - pattern: new Regex(..., TimeSpan.FromMinutes(...))
+    - pattern: new Regex(..., TimeSpan.FromHours(...))

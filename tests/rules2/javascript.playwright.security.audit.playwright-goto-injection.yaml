@@ -1,0 +1,50 @@
+rules:
+- id: javascript.playwright.security.audit.playwright-goto-injection.playwright-goto-injection
+  message: If unverified user data can reach the `goto` method it can result in Server-Side
+    Request Forgery vulnerabilities
+  metadata:
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    category: security
+    technology:
+    - playwright
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/javascript.playwright.security.audit.playwright-goto-injection.playwright-goto-injection
+    shortlink: https://sg.run/LwWY
+    semgrep.dev:
+      rule:
+        r_id: 9339
+        rv_id: 109962
+        rule_id: GdU7eP
+        version_id: e1T01Kp
+        url: https://semgrep.dev/playground/r/e1T01Kp/javascript.playwright.security.audit.playwright-goto-injection.playwright-goto-injection
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-inside: |
+      require('playwright');
+      ...
+  - pattern-not-inside: |
+      require('playwright');
+      ...
+      var $INPUT = "...";
+      ...
+      $PAGE.goto($INPUT,...)
+  - pattern: $PAGE.goto($INPUT,...)
+  - pattern-not: $PAGE.goto("...",...)

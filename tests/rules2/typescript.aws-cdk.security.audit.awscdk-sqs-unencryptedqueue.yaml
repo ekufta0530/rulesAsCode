@@ -1,0 +1,56 @@
+rules:
+- id: typescript.aws-cdk.security.audit.awscdk-sqs-unencryptedqueue.awscdk-sqs-unencryptedqueue
+  message: 'Queue $X is missing encryption at rest. Add "encryption: $Y.QueueEncryption.KMS"
+    or "encryption: $Y.QueueEncryption.KMS_MANAGED" to the queue props to enable encryption
+    at rest for the queue.'
+  metadata:
+    category: security
+    cwe:
+    - 'CWE-311: Missing Encryption of Sensitive Data'
+    technology:
+    - AWS-CDK
+    references:
+    - https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-data-protection.html
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A04:2021 - Insecure Design
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/typescript.aws-cdk.security.audit.awscdk-sqs-unencryptedqueue.awscdk-sqs-unencryptedqueue
+    shortlink: https://sg.run/d23P
+    semgrep.dev:
+      rule:
+        r_id: 15278
+        rv_id: 111071
+        rule_id: kxUwqO
+        version_id: xyTKpR8
+        url: https://semgrep.dev/playground/r/xyTKpR8/typescript.aws-cdk.security.audit.awscdk-sqs-unencryptedqueue.awscdk-sqs-unencryptedqueue
+        origin: community
+  languages:
+  - ts
+  severity: WARNING
+  pattern-either:
+  - patterns:
+    - pattern-inside: |
+        import {Queue} from '@aws-cdk/aws-sqs'
+        ...
+    - pattern: const $X = new Queue(...)
+    - pattern-not: |
+        const $X = new Queue(..., {..., encryption: QueueEncryption.KMS_MANAGED, ...})
+    - pattern-not: |
+        const $X = new Queue(..., {..., encryption: QueueEncryption.KMS, ...})
+  - patterns:
+    - pattern-inside: |
+        import * as $Y from '@aws-cdk/aws-sqs'
+        ...
+    - pattern: const $X = new $Y.Queue(...)
+    - pattern-not: |
+        const $X = new $Y.Queue(..., {..., encryption: $Y.QueueEncryption.KMS_MANAGED, ...})
+    - pattern-not: |
+        const $X = new $Y.Queue(..., {..., encryption: $Y.QueueEncryption.KMS, ...})

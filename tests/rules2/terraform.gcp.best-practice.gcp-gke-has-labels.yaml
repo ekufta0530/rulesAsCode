@@ -1,0 +1,36 @@
+rules:
+- id: terraform.gcp.best-practice.gcp-gke-has-labels.gcp-gke-has-labels
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_container_cluster" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "google_container_cluster" "..." {
+      ...
+      resource_labels = {
+          "..." = "..."
+      }
+      ...
+      }
+  message: Ensure Kubernetes Clusters are configured with Labels
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - gcp
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-gke-has-labels.gcp-gke-has-labels
+    shortlink: https://sg.run/Pvwz
+    semgrep.dev:
+      rule:
+        r_id: 33645
+        rv_id: 110944
+        rule_id: lBUopb
+        version_id: GxTv88W
+        url: https://semgrep.dev/playground/r/GxTv88W/terraform.gcp.best-practice.gcp-gke-has-labels.gcp-gke-has-labels
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

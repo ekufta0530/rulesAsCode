@@ -1,0 +1,32 @@
+rules:
+- id: dgryski.semgrep-go.wronglock.wrong-lock-unlock
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $M.Lock()
+        defer $M.RUnlock()
+    - pattern: |
+        $M.RLock()
+        defer $M.Unlock()
+    - pattern: |
+        $M.Lock()
+        defer $M.Lock()
+    - pattern: |
+        $M.RLock()
+        defer $M.RLock()
+  message: Wrong lock/unlock pair?
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.wronglock.wrong-lock-unlock
+    shortlink: https://sg.run/oxWx
+    semgrep.dev:
+      rule:
+        r_id: 8716
+        rv_id: 12007
+        rule_id: OrU3r3
+        version_id: 5PT8pX
+        url: https://semgrep.dev/playground/r/5PT8pX/dgryski.semgrep-go.wronglock.wrong-lock-unlock
+        origin: community

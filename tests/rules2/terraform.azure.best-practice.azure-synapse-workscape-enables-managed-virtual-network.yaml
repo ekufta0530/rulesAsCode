@@ -1,0 +1,34 @@
+rules:
+- id: terraform.azure.best-practice.azure-synapse-workscape-enables-managed-virtual-network.azure-synapse-workscape-enables-managed-virtual-network
+  message: Ensure that Azure Synapse workspaces enables managed virtual networks
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "azurerm_synapse_workspace" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_synapse_workspace" "..." {
+      ...
+      managed_virtual_network_enabled = true
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-synapse-workscape-enables-managed-virtual-network.azure-synapse-workscape-enables-managed-virtual-network
+    shortlink: https://sg.run/WRb4
+    semgrep.dev:
+      rule:
+        r_id: 23953
+        rv_id: 110857
+        rule_id: zdU8BN
+        version_id: pZT1LNq
+        url: https://semgrep.dev/playground/r/pZT1LNq/terraform.azure.best-practice.azure-synapse-workscape-enables-managed-virtual-network.azure-synapse-workscape-enables-managed-virtual-network
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

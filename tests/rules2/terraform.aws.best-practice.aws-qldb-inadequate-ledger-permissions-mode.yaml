@@ -1,0 +1,30 @@
+rules:
+- id: terraform.aws.best-practice.aws-qldb-inadequate-ledger-permissions-mode.aws-qldb-inadequate-ledger-permissions-mode
+  patterns:
+  - pattern: |
+      resource "aws_qldb_ledger" $ANYTHING {
+        ...
+        permissions_mode = "ALLOW_ALL"
+        ...
+      }
+  message: The AWS QLDB ledger permissions are too permissive. Consider using "'STANDARD'"
+    permissions mode if possible.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - aws
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.aws-qldb-inadequate-ledger-permissions-mode.aws-qldb-inadequate-ledger-permissions-mode
+    shortlink: https://sg.run/OyDB
+    semgrep.dev:
+      rule:
+        r_id: 17331
+        rv_id: 110705
+        rule_id: zdUn5p
+        version_id: K3TvG5v
+        url: https://semgrep.dev/playground/r/K3TvG5v/terraform.aws.best-practice.aws-qldb-inadequate-ledger-permissions-mode.aws-qldb-inadequate-ledger-permissions-mode
+        origin: community

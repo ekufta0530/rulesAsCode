@@ -1,0 +1,66 @@
+rules:
+- id: dgryski.semgrep-go.sprinterr.use-err-error
+  patterns:
+  - pattern-not: |
+      if err != nil {
+              ..., err = ...
+              <... fmt.Sprint(err) ...>
+      }
+  - pattern-not: |
+      if err != nil {
+              err = ...
+              <... fmt.Sprint(err) ...>
+      }
+  - pattern-either:
+    - pattern: |
+        if err != nil {
+                ...
+                <... fmt.Sprint(err) ...>
+        }
+    - pattern: |
+        if err == nil {
+                ...
+                return ...
+        }
+        ...
+        <...  fmt.Sprint(err) ...>
+    - pattern: |
+        if err != nil {
+                ...
+                <... fmt.Sprintf("%s", err) ...>
+        }
+    - pattern: |
+        if err == nil {
+                ...
+                return ...
+        }
+        ...
+        <...  fmt.Sprintf("%s", err) ...>
+    - pattern: |
+        if err != nil {
+                ...
+                <... fmt.Sprintf("%v", err) ...>
+        }
+    - pattern: |
+        if err == nil {
+                ...
+                return ...
+        }
+        ...
+        <...  fmt.Sprintf("%v", err) ...>
+  message: Use err.Error() instead
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.sprinterr.use-err-error
+    shortlink: https://sg.run/l2AB
+    semgrep.dev:
+      rule:
+        r_id: 8713
+        rv_id: 12001
+        rule_id: kxUk9d
+        version_id: gETYJQ
+        url: https://semgrep.dev/playground/r/gETYJQ/dgryski.semgrep-go.sprinterr.use-err-error
+        origin: community

@@ -1,0 +1,20 @@
+rules:
+- id: dgryski.semgrep-go.ioutil.deprecated-ioutil-discard
+  pattern: ioutil.Discard
+  fix: io.Discard
+  message: ioutil.Discard is deprecated
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.ioutil.deprecated-ioutil-discard
+    shortlink: https://sg.run/3rOb
+    semgrep.dev:
+      rule:
+        r_id: 14687
+        rv_id: 17274
+        rule_id: 3qUjDw
+        version_id: RGTqXZ
+        url: https://semgrep.dev/playground/r/RGTqXZ/dgryski.semgrep-go.ioutil.deprecated-ioutil-discard
+        origin: community

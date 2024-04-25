@@ -1,0 +1,27 @@
+rules:
+- id: generic.hugo.best-practice.invalid-base-url.invalid-base-url
+  patterns:
+  - pattern: baseURL = "..."
+  - pattern-not-regex: (.*http).*
+  severity: WARNING
+  message: The 'baseURL' is invalid. This may cause links to not work if deployed.
+    Include the scheme (e.g., http:// or https://).
+  languages:
+  - generic
+  metadata:
+    references:
+    - https://gohugo.io/
+    category: best-practice
+    technology:
+    - hugo
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/generic.hugo.best-practice.invalid-base-url.invalid-base-url
+    shortlink: https://sg.run/vzbR
+    semgrep.dev:
+      rule:
+        r_id: 9033
+        rv_id: 109341
+        rule_id: PeUZvd
+        version_id: zyTK8XK
+        url: https://semgrep.dev/playground/r/zyTK8XK/generic.hugo.best-practice.invalid-base-url.invalid-base-url
+        origin: community

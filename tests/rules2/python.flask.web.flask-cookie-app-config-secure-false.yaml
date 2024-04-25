@@ -1,0 +1,92 @@
+rules:
+- id: python.flask.web.flask-cookie-app-config-secure-false.flask-cookie-app-config-secure-false
+  message: Detected a cookie where the `Secure` flag is either missing or disabled.
+    The `Secure` cookie flag instructs the browser to forbid sending the cookie over
+    an insecure HTTP request. Set the `Secure` flag to `true` so the cookie will only
+    be sent over HTTPS.
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+    functional-categories:
+    - web::search::cookie-config::flask
+    - web::search::cookie-config::flask-jwt-extended
+    - web::search::cookie-config::flask-login
+    - web::search::cookie-config::flask-session
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+    technology:
+    - cookie
+    - cookies
+    - flask
+    - web
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/python.flask.web.flask-cookie-app-config-secure-false.flask-cookie-app-config-secure-false
+    shortlink: https://sg.run/kx1z1
+    semgrep.dev:
+      rule:
+        r_id: 116528
+        rv_id: 731978
+        rule_id: eqU04r4
+        version_id: vdT4ApP
+        url: https://semgrep.dev/playground/r/vdT4ApP/python.flask.web.flask-cookie-app-config-secure-false.flask-cookie-app-config-secure-false
+        origin: pro_rules
+  languages:
+  - python
+  fix: 'True'
+  options:
+    symbolic_propagation: true
+  patterns:
+  - patterns:
+    - pattern-either:
+      - pattern: $APP.config["$SESSION_COOKIE_SECURE"] = $FALSE
+      - pattern: $APP.config.$SESSION_COOKIE_SECURE = $FALSE
+      - patterns:
+        - pattern: |
+            $APP.config.$UPDATE(
+              ...,
+              $SESSION_COOKIE_SECURE = $FALSE,
+              ...
+            )
+        - pattern-not-inside: |
+            $APP.config.$UPDATE(
+                ...,
+                TESTING=True,
+                ...
+            )
+        - pattern-not-inside: |
+            $APP.config.$UPDATE(
+                ...,
+                DEBUG=True,
+                ...
+            )
+        - metavariable-regex:
+            metavariable: $UPDATE
+            regex: ^(update|from_mapping)$
+      - pattern: |
+          $OBJ = $CLASS()
+          ...
+          $OBJ.$SESSION_COOKIE_SECURE = $FALSE
+          ...
+          $APP.config.from_object($OBJ, ...)
+      - pattern: |
+          $SESSION_COOKIE_SECURE = $FALSE
+          ...
+          $APP.config.from_object(__name__)
+    - metavariable-regex:
+        metavariable: $SESSION_COOKIE_SECURE
+        regex: ^(SESSION|REMEMBER|JWT)_COOKIE_SECURE$
+    - metavariable-regex:
+        metavariable: $FALSE
+        regex: ^(False)$
+    - focus-metavariable: $FALSE

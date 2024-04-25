@@ -1,0 +1,43 @@
+rules:
+- id: php.wordpress-plugins.security.audit.wp-authorisation-checks-audit.wp-authorisation-checks-audit
+  patterns:
+  - pattern: $FUNCTION(...)
+  - metavariable-regex:
+      metavariable: $FUNCTION
+      regex: current_user_can|is_admin|is_user_logged_in|is_user_admin
+  message: These are some of the patterns used for authorisation. Look properly if
+    the authorisation is proper or not.
+  paths:
+    include:
+    - wp-content/plugins/**/*.php
+  languages:
+  - php
+  severity: WARNING
+  metadata:
+    category: security
+    confidence: LOW
+    likelihood: LOW
+    impact: MEDIUM
+    subcategory:
+    - audit
+    technology:
+    - Wordpress Plugins
+    references:
+    - https://github.com/wpscanteam/wpscan/wiki/WordPress-Plugin-Security-Testing-Cheat-Sheet#authorisation
+    owasp:
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-285: Improper Authorization'
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/php.wordpress-plugins.security.audit.wp-authorisation-checks-audit.wp-authorisation-checks-audit
+    shortlink: https://sg.run/DqeP
+    semgrep.dev:
+      rule:
+        r_id: 39196
+        rv_id: 110077
+        rule_id: WAU6YK
+        version_id: JdTNpj9
+        url: https://semgrep.dev/playground/r/JdTNpj9/php.wordpress-plugins.security.audit.wp-authorisation-checks-audit.wp-authorisation-checks-audit
+        origin: community

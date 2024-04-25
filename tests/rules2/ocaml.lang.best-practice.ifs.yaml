@@ -1,0 +1,22 @@
+rules:
+- id: ocaml.lang.best-practice.ifs.ocamllint-backwards-if
+  pattern: if $E then () else $E2
+  message: Backwards if. Rewrite the code as 'if not $E then $E2'.
+  languages:
+  - ocaml
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - ocaml
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/ocaml.lang.best-practice.ifs.ocamllint-backwards-if
+    shortlink: https://sg.run/b7Ov
+    semgrep.dev:
+      rule:
+        r_id: 9370
+        rv_id: 110008
+        rule_id: ZqU5AE
+        version_id: jQTgY5Q
+        url: https://semgrep.dev/playground/r/jQTgY5Q/ocaml.lang.best-practice.ifs.ocamllint-backwards-if
+        origin: community

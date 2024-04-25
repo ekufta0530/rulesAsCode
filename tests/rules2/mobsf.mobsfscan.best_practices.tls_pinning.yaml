@@ -1,0 +1,62 @@
+rules:
+- id: mobsf.mobsfscan.best_practices.tls_pinning.android_certificate_pinning
+  patterns:
+  - pattern-either:
+    - pattern: |
+        import com.toyberman.RNSslPinningPackage;
+    - pattern: |
+        import org.thoughtcrime.ssl.pinning;
+    - pattern: |
+        new PinningValidationReportTestBroadcastReceiver()
+    - pattern: |
+        new CertificatePinner.Builder()
+    - pattern: |
+        CertificatePinner.Builder()
+    - pattern: |
+        TrustKit.getInstance().getSSLSocketFactory(...)
+    - pattern: |
+        $X = $R.openRawResource(...);
+        ...
+        $KS = KeyStore.getInstance(...);
+        ...
+        $KS.load($X, ...);
+        ...
+        $T.init($KS);
+    - pattern: |
+        TrustKit.initializeWithNetworkSecurityConfiguration(...);
+    - pattern: |
+        OkHttp2Helper.getPinningInterceptor()
+    - pattern: |
+        OkHttp3Helper.getPinningInterceptor()
+    - pattern: |
+        new PinningHostnameVerifier(...)
+    - pattern: |
+        PinningHelper.getPinnedHttpsURLConnection
+    - pattern: |
+        $F.openRawResource(...);
+        ...
+        $X = new Picasso.Builder(...);
+  message: This app does not use a TLS/SSL certificate or public key pinning in code
+    to detect or prevent MITM attacks in secure communication channel. Please verify
+    if pinning is enabled in `network_security_config.xml`.
+  languages:
+  - java
+  severity: INFO
+  metadata:
+    cwe: cwe-295
+    owasp-mobile: m3
+    masvs: network-4
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05g-Testing-Network-Communication.md#testing-custom-certificate-stores-and-certificate-pinning-mstg-network-4
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.best_practices.tls_pinning.android_certificate_pinning
+    shortlink: https://sg.run/NXEp
+    semgrep.dev:
+      rule:
+        r_id: 43727
+        rv_id: 78331
+        rule_id: DbUL4y
+        version_id: YDT38v
+        url: https://semgrep.dev/playground/r/YDT38v/mobsf.mobsfscan.best_practices.tls_pinning.android_certificate_pinning
+        origin: community

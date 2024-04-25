@@ -1,0 +1,76 @@
+rules:
+- id: javascript.vm2.security.audit.vm2-code-injection.vm2-code-injection
+  message: Make sure that unverified user data can not reach `vm2`.
+  metadata:
+    owasp:
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    category: security
+    technology:
+    - vm2
+    cwe2022-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/javascript.vm2.security.audit.vm2-code-injection.vm2-code-injection
+    shortlink: https://sg.run/DoPG
+    semgrep.dev:
+      rule:
+        r_id: 9352
+        rv_id: 109980
+        rule_id: zdUk2g
+        version_id: A8T95lP
+        url: https://semgrep.dev/playground/r/A8T95lP/javascript.vm2.security.audit.vm2-code-injection.vm2-code-injection
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-inside: |
+      require('vm2');
+      ...
+  - pattern-not-inside: |
+      $CODE = "...";
+      ...
+  - pattern-not-inside: |
+      require('vm2');
+      ...
+      $CODE = new VMScript(...);
+      ...
+  - pattern-either:
+    - pattern: |
+        $VM = new VM(...);
+        ...
+        $VM.run($CODE,...);
+    - pattern: |
+        new VM(...).run($CODE,...);
+    - pattern: |
+        $VM = new NodeVM(...);
+        ...
+        $VM.run($CODE,...);
+    - pattern: |
+        new NodeVM(...).run($CODE,...);
+    - pattern: |
+        new VMScript($CODE,...);
+  - pattern-not: |
+      $VM = new VM(...);
+      ...
+      $VM.run("...",...);
+  - pattern-not: |
+      $VM = new NodeVM(...);
+      ...
+      $VM.run("...",...);
+  - pattern-not: |
+      (new VM(...)).run("...",...);
+  - pattern-not: |
+      (new NodeVM(...)).run("...",...);
+  - pattern-not: new VMScript("...",...);

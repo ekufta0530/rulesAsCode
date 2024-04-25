@@ -1,0 +1,31 @@
+rules:
+- id: ajinabraham.njsscan.xss.xss_serialize_js.xss_serialize_javascript
+  patterns:
+  - pattern-inside: |
+      $S = require('serialize-javascript')
+      ...
+  - pattern-not-inside: escape(...)
+  - pattern-not-inside: encodeURI(...)
+  - pattern: |
+      $S(..., {unsafe: true})
+  message: Untrusted user input reaching `serialize-javascript` with `unsafe` attribute
+    can cause Cross Site Scripting (XSS).
+  severity: WARNING
+  languages:
+  - javascript
+  metadata:
+    owasp-web: a1
+    cwe: cwe-80
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.xss.xss_serialize_js.xss_serialize_javascript
+    shortlink: https://sg.run/0qOv
+    semgrep.dev:
+      rule:
+        r_id: 43710
+        rv_id: 78314
+        rule_id: ZqUJ1W
+        version_id: gETbnl
+        url: https://semgrep.dev/playground/r/gETbnl/ajinabraham.njsscan.xss.xss_serialize_js.xss_serialize_javascript
+        origin: community

@@ -1,0 +1,48 @@
+rules:
+- id: ajinabraham.njsscan.headers.header_helmet_disabled.helmet_feature_disabled
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $HELMET(..., {frameguard: false}, ...)
+    - pattern: |
+        $HELMET(..., {contentSecurityPolicy: false}, ...)
+    - pattern: |
+        $HELMET(..., {permittedCrossDomainPolicies: false}, ...)
+    - pattern: |
+        $HELMET(..., {dnsPrefetchControl: false}, ...)
+    - pattern: |
+        $HELMET(..., {expectCt: false}, ...)
+    - pattern: |
+        $HELMET(..., {featurePolicy: false}, ...)
+    - pattern: |
+        $HELMET(..., {hsts: false}, ...)
+    - pattern: |
+        $HELMET(..., {ieNoOpen: false}, ...)
+    - pattern: |
+        $HELMET(..., {noSniff: false}, ...)
+    - pattern: |
+        $HELMET(..., {hidePoweredBy: false}, ...)
+    - pattern: |
+        $HELMET(..., {referrerPolicy: false}, ...)
+    - pattern: |
+        $HELMET(..., {xssFilter: false}, ...)
+  message: One or more Security Response header is explicitly disabled in Helmet.
+  languages:
+  - javascript
+  severity: WARNING
+  metadata:
+    owasp-web: a6
+    cwe: cwe-693
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.headers.header_helmet_disabled.helmet_feature_disabled
+    shortlink: https://sg.run/xpNg
+    semgrep.dev:
+      rule:
+        r_id: 43674
+        rv_id: 78278
+        rule_id: 3qUgKz
+        version_id: RGTXre
+        url: https://semgrep.dev/playground/r/RGTXre/ajinabraham.njsscan.headers.header_helmet_disabled.helmet_feature_disabled
+        origin: community

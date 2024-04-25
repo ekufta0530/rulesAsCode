@@ -1,0 +1,48 @@
+rules:
+- id: python.lang.security.audit.insecure-transport.urllib.insecure-request-object-ftp.insecure-request-object-ftp
+  message: Detected a 'urllib.request.Request()' object using an insecure transport
+    protocol, 'ftp://'. This connection will not be encrypted. Consider using SFTP
+    instead. urllib does not support SFTP natively, so consider using a library which
+    supports SFTP.
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    references:
+    - https://docs.python.org/3/library/urllib.request.html#urllib.request.Request
+    category: security
+    technology:
+    - urllib
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/python.lang.security.audit.insecure-transport.urllib.insecure-request-object-ftp.insecure-request-object-ftp
+    shortlink: https://sg.run/l2Py
+    semgrep.dev:
+      rule:
+        r_id: 9657
+        rv_id: 110400
+        rule_id: 2ZUbWA
+        version_id: WrTW3Wo
+        url: https://semgrep.dev/playground/r/WrTW3Wo/python.lang.security.audit.insecure-transport.urllib.insecure-request-object-ftp.insecure-request-object-ftp
+        origin: community
+  severity: WARNING
+  languages:
+  - python
+  pattern-either:
+  - pattern: urllib.request.Request("=~/^[Ff][Tt][Pp]://.*/", ...)
+  - pattern: |
+      $URL = "=~/^[Ff][Tt][Pp]://.*/"
+      ...
+      urllib.request.Request($URL, ...)
+  - pattern: |-
+      def $FUNC(..., $URL = "=~/^[Ff][Tt][Pp]://.*/", ...):
+        ...
+        urllib.request.Request($URL, ...)

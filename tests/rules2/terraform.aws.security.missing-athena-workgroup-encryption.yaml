@@ -1,0 +1,47 @@
+rules:
+- id: terraform.aws.security.missing-athena-workgroup-encryption.missing-athena-workgroup-encryption
+  patterns:
+  - pattern: resource "aws_athena_workgroup" $ANYTHING {...}
+  - pattern-not-inside: |
+      resource "aws_athena_workgroup" $ANYTHING {
+        ...
+        encryption_configuration {...}
+        ...
+      }
+  message: 'The AWS Athena Workgroup is unencrypted. Encryption protects query results
+    in your workgroup. To enable, add: `encryption_configuration { encryption_option
+    = "SSE_KMS" kms_key_arn =  aws_kms_key.example.arn }` within `result_configuration
+    { }` in your resource block,  where `encryption_option` is your chosen encryption
+    method and `kms_key_arn`  is your KMS key ARN.'
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    technology:
+    - aws
+    - terraform
+    category: security
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.aws.security.missing-athena-workgroup-encryption.missing-athena-workgroup-encryption
+    shortlink: https://sg.run/kzro
+    semgrep.dev:
+      rule:
+        r_id: 15828
+        rv_id: 110802
+        rule_id: wdUljO
+        version_id: BjTXpKK
+        url: https://semgrep.dev/playground/r/BjTXpKK/terraform.aws.security.missing-athena-workgroup-encryption.missing-athena-workgroup-encryption
+        origin: community

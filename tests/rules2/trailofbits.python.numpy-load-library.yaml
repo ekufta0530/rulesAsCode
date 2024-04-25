@@ -1,0 +1,35 @@
+rules:
+- id: trailofbits.python.numpy-load-library.numpy-load-library
+  message: Loading custom operator libraries can result in arbitrary code execution
+  languages:
+  - python
+  severity: ERROR
+  metadata:
+    category: security
+    cwe: 'CWE-676: Use of Potentially Dangerous Function'
+    subcategory:
+    - audit
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: HIGH
+    technology:
+    - numpy
+    description: Potential arbitrary code execution from `NumPy` library loading
+    references:
+    - https://numpy.org/doc/stable/reference/routines.ctypeslib.html#numpy.ctypeslib.load_library
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/trailofbits.python.numpy-load-library.numpy-load-library
+    shortlink: https://sg.run/NXkL
+    semgrep.dev:
+      rule:
+        r_id: 43927
+        rv_id: 95108
+        rule_id: AbUxDq
+        version_id: rxTykkg
+        url: https://semgrep.dev/playground/r/rxTykkg/trailofbits.python.numpy-load-library.numpy-load-library
+        origin: community
+  patterns:
+  - pattern: numpy.ctypeslib.load_library(...)
+  - pattern-not: numpy.ctypeslib.load_library("...", "...")

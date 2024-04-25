@@ -1,0 +1,39 @@
+rules:
+- id: dgryski.semgrep-go.hostport.sprintf-host-port
+  pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern: fmt.Sprintf("%s:%s", $NET, $XX)
+      - pattern: fmt.Sprintf("%s:%d", $NET, $XX)
+      - pattern: fmt.Sprintf("%s:%s", $XX, $NET)
+      - pattern: fmt.Sprintf("%s:%d", $XX, $NET)
+      - pattern: $NET = fmt.Sprintf("%s:%d", ..., ...)
+      - pattern: $NET = fmt.Sprintf("%s:%s", ..., ...)
+    - metavariable-regex:
+        metavariable: $NET
+        regex: ((?i).*(port|addr|host|listen|bind))|((?i)^ip$)|(ip[A-Z0-9].*|.*(Ip)$|.*(Ip)[A-Z0-9].*)
+  - patterns:
+    - pattern: fmt.Sprintf($XX, $NET)
+    - metavariable-regex:
+        metavariable: $XX
+        regex: '"%s:[0-9]+"'
+    - metavariable-regex:
+        metavariable: $NET
+        regex: ((?i).*(port|addr|host|listen|bind))|((?i)^ip$)|(ip[A-Z0-9].*|.*(Ip)$|.*(Ip)[A-Z0-9].*)
+  message: |
+    use net.JoinHostPort instead of fmt.Sprintf($XX, $NET)
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.hostport.sprintf-host-port
+    shortlink: https://sg.run/DoN2
+    semgrep.dev:
+      rule:
+        r_id: 8696
+        rv_id: 26155
+        rule_id: KxUbPZ
+        version_id: K3TGRQ
+        url: https://semgrep.dev/playground/r/K3TGRQ/dgryski.semgrep-go.hostport.sprintf-host-port
+        origin: community

@@ -1,0 +1,37 @@
+rules:
+- id: yaml.semgrep.unsatisfiable.unsatisfiable-rule
+  message: You can not use 'pattern' $A and 'pattern-not' $A together; this will always
+    be empty.
+  severity: ERROR
+  languages:
+  - yaml
+  patterns:
+  - pattern-inside: 'patterns: [...]'
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          - pattern: $A
+          ...
+      - pattern: |
+          - pattern-not: $A
+    - patterns:
+      - pattern-inside: |
+          - pattern-not: $A
+          ...
+      - pattern: |
+          - pattern: $A
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.unsatisfiable.unsatisfiable-rule
+    shortlink: https://sg.run/70qk
+    semgrep.dev:
+      rule:
+        r_id: 11082
+        rv_id: 111188
+        rule_id: x8UW6o
+        version_id: JdTNve1
+        url: https://semgrep.dev/playground/r/JdTNve1/yaml.semgrep.unsatisfiable.unsatisfiable-rule
+        origin: community

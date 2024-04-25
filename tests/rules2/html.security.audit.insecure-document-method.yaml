@@ -1,0 +1,55 @@
+rules:
+- id: html.security.audit.insecure-document-method.insecure-document-method
+  message: Detected the use of an inner/outerHTML assignment.  This can introduce
+    a Cross-Site-Scripting (XSS) vulnerability if this  comes from user-provided input.
+    If you have to use a dangerous web API,  consider using a sanitization library
+    such as DOMPurify to sanitize  the HTML before it is assigned.
+  metadata:
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    category: security
+    technology:
+    - browser
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/html.security.audit.insecure-document-method.insecure-document-method
+    shortlink: https://sg.run/v4q4
+    semgrep.dev:
+      rule:
+        r_id: 48733
+        rv_id: 109651
+        rule_id: DbU414
+        version_id: yeTR2EB
+        url: https://semgrep.dev/playground/r/yeTR2EB/html.security.audit.insecure-document-method.insecure-document-method
+        origin: community
+  languages:
+  - html
+  severity: WARNING
+  patterns:
+  - pattern-inside: |
+      <script ...>$...A</script>
+  - metavariable-pattern:
+      metavariable: $...A
+      language: javascript
+      patterns:
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern: $X. ... .innerHTML = ...
+            - pattern: $X. ... .outerHTML = ...
+          - pattern-not: $X. ... .$V = "..."
+      - focus-metavariable: $X

@@ -1,0 +1,21 @@
+rules:
+- id: dgryski.semgrep-go.unixnano.not-before
+  patterns:
+  - pattern: $T1.UnixNano() >= $T2.UnixNano()
+  message: |
+    unless checking for wall clock inconsistencies, use !$T1.Before($T2)
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.unixnano.not-before
+    shortlink: https://sg.run/ZeNA
+    semgrep.dev:
+      rule:
+        r_id: 10979
+        rv_id: 12004
+        rule_id: kxURpQ
+        version_id: 44T2gj
+        url: https://semgrep.dev/playground/r/44T2gj/dgryski.semgrep-go.unixnano.not-before
+        origin: community

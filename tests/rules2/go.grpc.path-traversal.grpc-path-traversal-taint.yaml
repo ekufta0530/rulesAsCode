@@ -1,0 +1,179 @@
+rules:
+- id: go.grpc.path-traversal.grpc-path-traversal-taint.grpc-path-traversal-taint
+  message: The application builds a file path from potentially untrusted data, which
+    can lead to a path traversal vulnerability. An attacker can manipulate the path
+    which the application uses to access files. If the application does not validate
+    user input and sanitize file paths, sensitive files such as configuration or user
+    data can be accessed, potentially creating or overwriting files. To prevent this
+    vulnerability, validate and sanitize any input that is used to create references
+    to file paths. Also, enforce strict file access controls. For example, choose
+    privileges allowing public-facing applications to access only the required files.
+    In Go, it is possible to sanitize user input and mitigate path traversal by using
+    the built-in `filepath.Clean` function.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path
+      Traversal'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - file::sink::file-access::archive/zip
+    - file::sink::file-access::io/fs
+    - file::sink::file-access::net/http
+    - file::sink::file-access::os
+    - net::source::remote-procedure-call::grpc
+    owasp:
+    - A01:2021 - Broken Access Control
+    - A05:2017 - Broken Access Control
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    - https://owasp.org/www-community/attacks/Path_Traversal
+    - https://portswigger.net/web-security/file-path-traversal
+    technology:
+    - go
+    - grpc
+    - grpc-go
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Path Traversal
+    source: https://semgrep.dev/r/go.grpc.path-traversal.grpc-path-traversal-taint.grpc-path-traversal-taint
+    shortlink: https://sg.run/jLwn
+    semgrep.dev:
+      rule:
+        r_id: 58421
+        rv_id: 731869
+        rule_id: 4bU410
+        version_id: rxT2Jyl
+        url: https://semgrep.dev/playground/r/rxT2Jyl/go.grpc.path-traversal.grpc-path-traversal-taint.grpc-path-traversal-taint
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-inside: |
+        import "google.golang.org/grpc"
+        ...
+    - pattern-inside: |
+        import $PROTOBUF "$IMPORTPATH"
+        ...
+    - pattern-inside: |
+        type $SERVER struct {
+            ...
+        }
+        ...
+    - pattern: |
+        func ($NAME *$SERVER) $FUNCNAME(..., $PARAM *$PROTOBUF.$FIELD, ...) {
+            ...
+        }
+    - focus-metavariable: $PARAM
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |
+        import "net/http"
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern: http.FileSystem.$FUNC($F, $INPUT)
+        - metavariable-regex:
+            metavariable: $FUNC
+            regex: ^(Open|Dir)$
+      - patterns:
+        - pattern-inside: |
+            $DIR := http.Dir(...)
+            ...
+        - pattern: $DIR.Open($INPUT)
+    - focus-metavariable: $INPUT
+  - patterns:
+    - pattern-inside: |
+        import "os"
+        ...
+    - pattern: os.$FUNC($INPUT, ...)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Create|CreateTemp|NewFile|Open|OpenFile)$
+    - focus-metavariable: $INPUT
+  - patterns:
+    - pattern-inside: |
+        import "io/fs"
+        ...
+    - pattern: fs.$FUNC($FS, $INPUT, ...)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Glob|ReadFile|WalkDir)$
+    - focus-metavariable: $INPUT
+  - patterns:
+    - pattern-inside: |
+        import "archive/zip"
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern-inside: |
+                $W := zip.NewWriter(...)
+                ...
+            - pattern: $W.$FUNC($INPUT)
+          - patterns:
+            - pattern-inside: |
+                $W, $ERR := zip.NewWriter(...)
+                ...
+            - pattern: $W.$FUNC($INPUT)
+          - pattern: |
+              ($W : *zip.Writer).$FUNC($INPUT)
+        - metavariable-regex:
+            metavariable: $FUNC
+            regex: ^(Create)$
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern-inside: |
+                $R := zip.NewReader(...)
+                ...
+            - pattern: $R.$FUNC($INPUT)
+          - patterns:
+            - pattern-inside: |
+                $R, $ERR := zip.NewReader(...)
+                ...
+            - pattern: $R.$FUNC($INPUT)
+          - pattern: |
+              ($R : *zip.Reader).$FUNC($INPUT)
+        - metavariable-regex:
+            metavariable: $FUNC
+            regex: ^(Open)$
+        - focus-metavariable: $INPUT
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import "path"
+          ...
+      - pattern-inside: |
+          import "path/filepath"
+          ...
+    - patterns:
+      - pattern-either:
+        - pattern: $P.Join("/", ..., $INPUT, ...)
+        - patterns:
+          - pattern: $P.$SANFUNC($INPUT)
+          - metavariable-regex:
+              metavariable: $SANFUNC
+              regex: ^(Abs|Base|Clean|Dir|Ext)$
+    - metavariable-regex:
+        metavariable: $P
+        regex: ^(path|filepath)$
+    - focus-metavariable: $INPUT
+  - patterns:
+    - pattern-inside: |
+        import "io/fs"
+        ...
+    - pattern: fs.ValidPath(...)

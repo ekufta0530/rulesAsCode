@@ -1,0 +1,33 @@
+rules:
+- id: terraform.aws.best-practice.missing-cloudwatch-log-group-retention.missing-cloudwatch-log-group-retention
+  patterns:
+  - patterns:
+    - pattern: resource "aws_cloudwatch_log_group" $ANYTHING {...}
+    - pattern-not-inside: |
+        resource "aws_cloudwatch_log_group" $ANYTHING {
+          ...
+          retention_in_days = ...
+          ...
+        }
+  message: The AWS CloudWatch Log group is missing log retention time. By default,
+    logs are retained indefinitely. Add `retention_in_days = <integer>` to your resource
+    block.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    technology:
+    - aws
+    - terraform
+    category: best-practice
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.missing-cloudwatch-log-group-retention.missing-cloudwatch-log-group-retention
+    shortlink: https://sg.run/Nw1G
+    semgrep.dev:
+      rule:
+        r_id: 15827
+        rv_id: 110719
+        rule_id: kxU6wJ
+        version_id: rxTy421
+        url: https://semgrep.dev/playground/r/rxTy421/terraform.aws.best-practice.missing-cloudwatch-log-group-retention.missing-cloudwatch-log-group-retention
+        origin: community

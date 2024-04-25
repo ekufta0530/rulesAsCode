@@ -1,0 +1,66 @@
+rules:
+- id: trailofbits.go.missing-unlock-before-return.missing-unlock-before-return
+  message: Missing mutex unlock (`$T` variable) before returning from a function.  This
+    could result in panics resulting from double lock operations
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    category: security
+    cwe: 'CWE-667: Improper Locking'
+    subcategory:
+    - vuln
+    confidence: MEDIUM
+    likelihood: HIGH
+    impact: MEDIUM
+    technology:
+    - --no-technology--
+    description: Missing `mutex` unlock before returning from a function
+    references:
+    - https://pkg.go.dev/sync#Mutex
+    - https://blog.trailofbits.com/2020/06/09/how-to-check-if-a-mutex-is-locked-in-go/
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/trailofbits.go.missing-unlock-before-return.missing-unlock-before-return
+    shortlink: https://sg.run/18Bk
+    semgrep.dev:
+      rule:
+        r_id: 14222
+        rv_id: 733071
+        rule_id: L1U5Gz
+        version_id: 6xTEwrB
+        url: https://semgrep.dev/playground/r/6xTEwrB/trailofbits.go.missing-unlock-before-return.missing-unlock-before-return
+        origin: community
+  patterns:
+  - pattern-either:
+    - pattern: panic(...)
+    - pattern: return ...
+  - metavariable-pattern:
+      metavariable: $T
+      patterns:
+      - pattern: |
+          ($T : sync.Mutex)
+  - pattern-inside: |
+      $T.Lock()
+      ...
+  - pattern-not-inside: |
+      $T.Unlock()
+      ...
+  - pattern-not-inside: |
+      defer $T.Unlock()
+      ...
+  - pattern-not-inside: |
+      defer func(...) {
+        ...
+        $T.Unlock()
+        ...
+      }(...)
+      ...
+  - pattern-not-inside: "$FOO(..., ..., func(...) { \n    ... \n})\n"
+  - pattern-not-inside: |
+      return func(...) {
+          ...
+          $T.Unlock()
+          ...
+      }

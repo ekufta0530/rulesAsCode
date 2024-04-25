@@ -1,0 +1,86 @@
+rules:
+- id: java.spring.log-http-headers.log-request-headers
+  message: The application stores potentially sensitive information in log files.
+    This could lead to a vulnerability, if an attacker can gain access to logs and
+    then use the sensitive information to perform further attacks. When dealing with
+    HTTP requests, sensitive data could be, for instance, JWT tokens or other session
+    identifiers. To prevent this vulnerability review the type of information being
+    logged. Sensitive information can be identified and filtered or obfuscated before
+    calling logging functions.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-532: Insertion of Sensitive Information into Log File'
+    functional-categories:
+    - log::sink::log::commons-logging
+    - web::source::cookie::Spring
+    - web::source::header::Spring
+    owasp:
+    - A09:2021 - Security Logging and Monitoring Failures
+    references:
+    - https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures
+    technology:
+    - Spring
+    - java
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/java.spring.log-http-headers.log-request-headers
+    shortlink: https://sg.run/Z14p
+    semgrep.dev:
+      rule:
+        r_id: 71979
+        rv_id: 735033
+        rule_id: yyUrPJ
+        version_id: YDTA15n
+        url: https://semgrep.dev/playground/r/YDTA15n/java.spring.log-http-headers.log-request-headers
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: $RET $METHOD(..., @$REQ(...) String $SOURCE, ...) {...}
+      - pattern: $RET $METHOD(..., @$REQ String $SOURCE, ...) {...}
+    - metavariable-regex:
+        metavariable: $REQ
+        regex: (RequestHeader|CookieValue)
+    - focus-metavariable: $SOURCE
+  - patterns:
+    - pattern: (org.springframework.http.HttpRequest $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getHeaders|getCookies)
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - patterns:
+    - pattern: (org.apache.commons.logging.Log $LOGGER).$METHOD($SINK)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (info|warn|error|debug|trace|fatal|log)
+    - focus-metavariable: $SINK
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)

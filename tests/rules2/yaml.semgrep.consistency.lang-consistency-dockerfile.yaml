@@ -1,0 +1,29 @@
+rules:
+- fix: dockerfile
+  id: yaml.semgrep.consistency.lang-consistency-dockerfile.lang-consistency-dockerfile
+  languages:
+  - yaml
+  message: Found '$X' in language config which diverges from semgrep.dev normalization.
+    Please use 'dockerfile' instead.
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.consistency.lang-consistency-dockerfile.lang-consistency-dockerfile
+    shortlink: https://sg.run/4Dn5
+    semgrep.dev:
+      rule:
+        r_id: 18288
+        rv_id: 111147
+        rule_id: DbUGvg
+        version_id: RGTDR9Q
+        url: https://semgrep.dev/playground/r/RGTDR9Q/yaml.semgrep.consistency.lang-consistency-dockerfile.lang-consistency-dockerfile
+        origin: community
+  patterns:
+  - pattern: $X
+  - pattern-inside: 'languages: ...'
+  - metavariable-regex:
+      metavariable: $X
+      regex: ^(docker)$
+  severity: WARNING

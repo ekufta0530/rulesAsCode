@@ -1,0 +1,62 @@
+rules:
+- id: swift.lang.ns.nscoding.swift-nscoding
+  message: The application was found to use nscoding, which is not considered secure.
+    When decoding serialized objects, it is not possible to determine what they are,
+    until post-decoding. `NSSecureCoding` should be used in place of nscoding, and
+    secure serialization and deserialization should be used in all cases where such
+    functionality is required.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    functional-categories:
+    - deserialization::sink::load-object::lang
+    masvs:
+    - 'MASVS-CODE-4: The app validates and sanitizes all untrusted inputs'
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://mas.owasp.org/MASVS/controls/MASVS-CODE-4/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/swift.lang.ns.nscoding.swift-nscoding
+    shortlink: https://sg.run/BXWx
+    semgrep.dev:
+      rule:
+        r_id: 66495
+        rv_id: 112028
+        rule_id: 7KU9Br
+        version_id: jQTgyxv
+        url: https://semgrep.dev/playground/r/jQTgyxv/swift.lang.ns.nscoding.swift-nscoding
+        origin: pro_rules
+  languages:
+  - swift
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          class $CLASS: NSCoding {
+            ...
+          }
+      - pattern: |
+          func $FUNC(with $X: NSCoder) {
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(init|encode)$
+      - focus-metavariable:
+        - $FUNC

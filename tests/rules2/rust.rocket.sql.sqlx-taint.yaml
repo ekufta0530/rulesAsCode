@@ -1,0 +1,459 @@
+rules:
+- id: rust.rocket.sql.sqlx-taint.sqlx-taint
+  message: Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - db::sink::sql-or-nosql-query::rocket_db_pools
+    - db::sink::sql-or-nosql-query::sqlx
+    - web::source::cookie::rocket
+    - web::source::form-data::rocket
+    - web::source::header::rocket
+    - web::source::http-body::rocket
+    - web::source::http-params::rocket
+    - web::source::url-path-params::rocket
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://docs.rs/sqlx/latest/sqlx/
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - mysql
+    - postgres
+    - rocket
+    - rust
+    - sqlx
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/rust.rocket.sql.sqlx-taint.sqlx-taint
+    shortlink: https://sg.run/07Nw
+    semgrep.dev:
+      rule:
+        r_id: 63210
+        rv_id: 229353
+        rule_id: QrUx5j
+        version_id: gET6d5G
+        url: https://semgrep.dev/playground/r/gET6d5G/rust.rocket.sql.sqlx-taint.sqlx-taint
+        origin: pro_rules
+  languages:
+  - rust
+  mode: taint
+  pattern-sources:
+  - label: INPUT
+    pattern-either:
+    - patterns:
+      - pattern: $PARAM
+      - pattern-either:
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : rocket::request::Form<$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : rocket::http::Cookies, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &rocket::http::CookieJar<'$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : rocket::serde::json::Json<$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : String, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &str, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &RawStr, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &OsStr, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : OsString, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<String>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<&str>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<&RawStr>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<&OsStr>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<OsString>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<rocket::request::Form<$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<rocket::http::Cookies>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&rocket::http::CookieJar<'$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<rocket::serde::json::Json<$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<String>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&str>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&RawStr>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&OsStr>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<OsString>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<String>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<&str>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<&RawStr>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<&OsStr>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<OsString>>, ...) {
+              ...
+            }
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(get|put|post|delete|head|patch|options)$
+    - patterns:
+      - pattern: $PARAM
+      - pattern-either:
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : $TYPE, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : $TYPE<$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : $TYPE<'$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &$TYPE, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &$TYPE<$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : &$TYPE<'$T>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<$TYPE>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<$TYPE<$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<$TYPE<'$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<&$TYPE>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<&$TYPE<$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Vec<&$TYPE<'$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<$TYPE>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<$TYPE<$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<$TYPE<'$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&$TYPE>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&$TYPE<$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<&$TYPE<'$T>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<$TYPE>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<$TYPE<$T>>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<$TYPE<'$T>>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<&$TYPE>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<&$TYPE<$T>>>, ...) {
+              ...
+            }
+        - pattern-inside: |
+            #[$METHOD($...ROUTE)]
+            fn $FUNC(..., $PARAM : Option<Vec<&$TYPE<'$T>>>, ...) {
+              ...
+            }
+      - pattern-inside: |
+          struct $TYPE { ... };
+          ...
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ^(get|put|post|delete|head|patch|options)$
+  - label: REQUEST
+    patterns:
+    - pattern-either:
+      - pattern-inside: |
+          fn $FUNC(..., $REQ : &'r rocket::Request<'_>, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FUNC(..., $REQ : &'r rocket::request::Request<'_>, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FUNC(..., $REQ : &rocket::Request, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FUNC(..., $REQ : &rocket::request::Request, ...) {
+            ...
+          }
+  - label: REQ_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: $R.path()
+      - pattern: $R.query()
+      - pattern: $R.map_path()
+      - pattern: $R.clear_query()
+      - pattern: $R.cookies()
+      - pattern: $R.headers()
+      - pattern: $R.query_value
+  - label: CONCAT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          "..." + ...
+      - pattern: '... + "..."'
+      - pattern: $STR.push_str(...)
+      - pattern: format!(...)
+      - pattern: std::fmt::format(...)
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - pattern: $TO.push_str($FROM)
+    to: $TO
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern: $TO.$FUNC(..., $FROM)
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(insert_str|replace_range)$
+    to: $TO
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern: $FROM.$FUNC(&$TO)
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+    to: $TO
+  - from: $FROM
+    patterns:
+    - pattern: $TO = $FROM.into()
+    to: $TO
+  - from: $FROM
+    patterns:
+    - pattern: $TO = std::from_utf8($FROM)
+    to: $TO
+  - from: $FROM
+    patterns:
+    - pattern: |
+        let $TO = if let $SOME = $FROM {
+          ...
+        } else {
+          ...
+        };
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $QUERY
+    - pattern-either:
+      - pattern: sqlx::query($QUERY,...)
+      - pattern: sqlx::query_with($QUERY,...)
+      - pattern: sqlx::query_as($QUERY,...)
+      - pattern: sqlx::query_as_with($QUERY,...)
+      - pattern: sqlx::query_scalar($QUERY,...)
+      - pattern: sqlx::query_scalar_with($QUERY,...)
+      - pattern: sqlx::QueryBuilder::new($QUERY,...)
+      - pattern: |
+          ($QB: sqlx::QueryBuilder<$T>).push($QUERY,...)
+      - patterns:
+        - pattern-either:
+          - pattern: $Q.push($QUERY,...)
+          - pattern: $Q. ... .push($QUERY,...)
+        - pattern-either:
+          - pattern-inside: |
+              let $Q = sqlx::QueryBuilder::new(...);
+              ...
+          - pattern-inside: |
+              let $Q = sqlx::QueryBuilder::new(...). ...;
+              ...
+      - pattern: |
+          ($P: sqlx::Pool<$T>).prepare($QUERY,...)
+      - pattern: |
+          ($P: sqlx::Pool<$T>).prepare_with($QUERY,...)
+      - pattern: |
+          ($P: sqlx::pool::Pool<$T>).prepare($QUERY,...)
+      - pattern: |
+          ($P: sqlx::pool::Pool<$T>).prepare_with($QUERY,...)
+      - pattern: |
+          ($P: sqlx::pool::PoolConnection<$T>).prepare($QUERY,...)
+      - pattern: |
+          ($P: sqlx::pool::PoolConnection<$T>).prepare_with($QUERY,...)
+      - pattern: |
+          ($C: sqlx::Connection).prepare($QUERY,...)
+      - pattern: |
+          ($C: sqlx::Connection).prepare_with($QUERY,...)
+      - pattern: |
+          ($C: rocket_db_pools::Connection<$T>).prepare($QUERY,...)
+      - pattern: |
+          ($C: rocket_db_pools::Connection<$T>).prepare_with($QUERY,...)
+    requires: (INPUT and CONCAT) or (REQUEST and REQ_INPUT and CONCAT)

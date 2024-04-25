@@ -1,0 +1,46 @@
+rules:
+- id: php.lang.security.curl-ssl-verifypeer-off.curl-ssl-verifypeer-off
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $ARG = $IS_VERIFIED;
+        ...
+        curl_setopt(..., CURLOPT_SSL_VERIFYPEER, $ARG);
+    - pattern: curl_setopt(..., CURLOPT_SSL_VERIFYPEER, $IS_VERIFIED)
+  - metavariable-regex:
+      metavariable: $IS_VERIFIED
+      regex: 0|false|null
+  message: SSL verification is disabled but should not be (currently CURLOPT_SSL_VERIFYPEER=
+    $IS_VERIFIED)
+  metadata:
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    references:
+    - https://www.saotn.org/dont-turn-off-curlopt_ssl_verifypeer-fix-php-configuration/
+    category: security
+    technology:
+    - php
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: LOW
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/php.lang.security.curl-ssl-verifypeer-off.curl-ssl-verifypeer-off
+    shortlink: https://sg.run/PJqv
+    semgrep.dev:
+      rule:
+        r_id: 9389
+        rv_id: 110035
+        rule_id: 0oU5Xg
+        version_id: GxTv6eX
+        url: https://semgrep.dev/playground/r/GxTv6eX/php.lang.security.curl-ssl-verifypeer-off.curl-ssl-verifypeer-off
+        origin: community
+  languages:
+  - php
+  severity: ERROR

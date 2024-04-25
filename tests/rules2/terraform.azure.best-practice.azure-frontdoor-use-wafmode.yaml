@@ -1,0 +1,35 @@
+rules:
+- id: terraform.azure.best-practice.azure-frontdoor-use-wafmode.azure-frontdoor-use-wafmode
+  message: "Ensure that Azure Front Door uses WAF and configured in \u201CDetection\u201D\
+    \ or \u201CPrevention\u201D modes"
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "azurerm_frontdoor_firewall_policy" "..." {
+      ...
+      policy_settings {
+        ...
+        enabled = false
+        ...
+      }
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-frontdoor-use-wafmode.azure-frontdoor-use-wafmode
+    shortlink: https://sg.run/XAgK
+    semgrep.dev:
+      rule:
+        r_id: 23920
+        rv_id: 110824
+        rule_id: gxUxPz
+        version_id: w8T9DkO
+        url: https://semgrep.dev/playground/r/w8T9DkO/terraform.azure.best-practice.azure-frontdoor-use-wafmode.azure-frontdoor-use-wafmode
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

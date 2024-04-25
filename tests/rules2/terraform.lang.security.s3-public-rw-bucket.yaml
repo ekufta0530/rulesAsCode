@@ -1,0 +1,38 @@
+rules:
+- id: terraform.lang.security.s3-public-rw-bucket.s3-public-rw-bucket
+  pattern: acl = "public-read-write"
+  languages:
+  - hcl
+  severity: ERROR
+  message: S3 bucket with public read-write access detected.
+  metadata:
+    references:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket#acl
+    - https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
+    cwe:
+    - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+    category: security
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A01:2021 - Broken Access Control
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/terraform.lang.security.s3-public-rw-bucket.s3-public-rw-bucket
+    shortlink: https://sg.run/0nok
+    semgrep.dev:
+      rule:
+        r_id: 9754
+        rv_id: 111066
+        rule_id: 6JUqvn
+        version_id: rxTy4nj
+        url: https://semgrep.dev/playground/r/rxTy4nj/terraform.lang.security.s3-public-rw-bucket.s3-public-rw-bucket
+        origin: community

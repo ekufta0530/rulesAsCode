@@ -1,0 +1,36 @@
+rules:
+- id: terraform.azure.best-practice.azure-appservice-https-20-enabled.azure-appservice-https-20-enabled
+  message: Ensure that HTTP Version is the latest if used to run the web app
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      site_config {
+        http2_enabled = true
+      }
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_app_service" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-appservice-https-20-enabled.azure-appservice-https-20-enabled
+    shortlink: https://sg.run/ANDp
+    semgrep.dev:
+      rule:
+        r_id: 23906
+        rv_id: 110810
+        rule_id: NbUdZz
+        version_id: 6xTvQyW
+        url: https://semgrep.dev/playground/r/6xTvQyW/terraform.azure.best-practice.azure-appservice-https-20-enabled.azure-appservice-https-20-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

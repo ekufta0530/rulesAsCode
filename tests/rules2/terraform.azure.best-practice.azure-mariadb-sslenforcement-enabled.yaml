@@ -1,0 +1,34 @@
+rules:
+- id: terraform.azure.best-practice.azure-mariadb-sslenforcement-enabled.azure-mariadb-sslenforcement-enabled
+  message: Ensure Enforce SSL connection is set to Enabled for MariaDB servers
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_mariadb_server" "..." {
+      ...
+      ssl_enforcement_enabled = true
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_mariadb_server" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-mariadb-sslenforcement-enabled.azure-mariadb-sslenforcement-enabled
+    shortlink: https://sg.run/kPp7
+    semgrep.dev:
+      rule:
+        r_id: 23928
+        rv_id: 110832
+        rule_id: ReUkpL
+        version_id: ExTjA19
+        url: https://semgrep.dev/playground/r/ExTjA19/terraform.azure.best-practice.azure-mariadb-sslenforcement-enabled.azure-mariadb-sslenforcement-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

@@ -1,12 +1,12 @@
 **WIP** 
 
-Requirements:
+### Requirements:
 - Update rules via pull requests/ code workflow
 - Have repository of rules accessible in github with all Pro, Private, OSS and Community rules as desired
 - Pull upstream changes to rules when Semgrep makes changes 
 - Be able to publish rules to semgrep registry so `semgrep ci` will work when run. Eliminate clobbering on Semgrep private registry.
 
-Context: 
+### Context: 
 
 The big issue we are solving is the clobbering of the rules when a rule is uploaded via `semgrep publish`. In the Semgrep backend, rules are stored in a database with a rule identifier. This is something like `go.lang.security.injection.open-redirect.open-redirect` . This exact syntax is represented in the (Semgrep Registry)[https://semgrep.dev/r?q=go.lang.security.injection.open-redirect.open-redirect] but is not apparent in the rule editor where it looks like a simple folder structure. This is just a design from UX to make it easy to find the rules you are looking to edit.
 
@@ -69,3 +69,6 @@ This should meet the requirements for being able to make changes to the rules vi
 Next, the 
 Likely solution is to create a new branch from these upstream rules and then compare changes to merge. 
 
+## Limitations
+
+Assigning policies easily to rules. The policies API is a focus for the semgrep team q2 2024. This will offer the best solution. Solution in meantime may be to output accessible links for any new rules. 

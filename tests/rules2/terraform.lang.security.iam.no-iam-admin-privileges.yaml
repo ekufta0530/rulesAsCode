@@ -1,0 +1,106 @@
+rules:
+- id: terraform.lang.security.iam.no-iam-admin-privileges.no-iam-admin-privileges
+  pattern-either:
+  - patterns:
+    - pattern-inside: |
+        resource $TYPE "..." {
+          ...
+          policy = jsonencode({
+            ...
+            Statement = [
+              ...
+            ]
+            ...
+          })
+          ...
+        }
+    - pattern-not-inside: |
+        resource $TYPE "..." {
+          ...
+          policy = jsonencode({
+            ...
+            Statement = [
+              ...,
+              {... Effect = "Deny" ...},
+              ...
+            ]
+            ...
+          })
+          ...
+        }
+    - patterns:
+      - pattern: |
+          {..., Action = "*", ...}
+      - pattern: |
+          {..., Resource = "*", ...}
+    - metavariable-pattern:
+        metavariable: $TYPE
+        pattern-either:
+        - pattern: |
+            "aws_iam_role_policy"
+        - pattern: |
+            "aws_iam_policy"
+        - pattern: |
+            "aws_iam_user_policy"
+        - pattern: |
+            "aws_iam_group_policy"
+  - patterns:
+    - pattern-inside: |
+        data aws_iam_policy_document "..." {
+          ...
+          statement {
+            ...
+          }
+          ...
+        }
+    - pattern-not-inside: |
+        data aws_iam_policy_document "..." {
+          ...
+          statement {
+            ...
+            effect = "Deny"
+            ...
+          }
+          ...
+        }
+    - patterns:
+      - pattern: |
+          {..., resources = ["*"], ...}
+      - pattern: |
+          {..., actions = ["*"], ...}
+  message: IAM policies that allow full "*-*" admin privileges violates the principle
+    of least privilege. This allows an attacker to take full control over all AWS
+    account resources. Instead, give each user more fine-grained control with only
+    the privileges they need. $TYPE
+  metadata:
+    references:
+    - https://github.com/bridgecrewio/checkov/blob/master/checkov/terraform/checks/data/aws/AdminPolicyDocument.py
+    category: security
+    cwe:
+    - 'CWE-269: Improper Privilege Management'
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A04:2021 - Insecure Design
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.lang.security.iam.no-iam-admin-privileges.no-iam-admin-privileges
+    shortlink: https://sg.run/oY0N
+    semgrep.dev:
+      rule:
+        r_id: 13560
+        rv_id: 111054
+        rule_id: NbUNDX
+        version_id: l4T46ZP
+        url: https://semgrep.dev/playground/r/l4T46ZP/terraform.lang.security.iam.no-iam-admin-privileges.no-iam-admin-privileges
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

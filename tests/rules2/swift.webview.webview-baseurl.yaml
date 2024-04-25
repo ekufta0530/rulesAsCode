@@ -1,0 +1,49 @@
+rules:
+- id: swift.webview.webview-baseurl.swift-webview-config-base-url
+  message: UIWebView instances were observed where the baseURL is misconfigured as
+    nil, which allows for origin abuse within the webview. In order to remove the
+    effective origin, the application should explicitly set the baseURL to `about:blank`
+    or similar.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-272: Least Privilege Violation'
+    functional-categories:
+    - mobile::search::privacy-controls-and-permissions::lang
+    masvs:
+    - 'MASVS-PLATFORM-2: The app uses WebViews securely'
+    references:
+    - https://mas.owasp.org/MASVS/controls/MASVS-PLATFORM-2/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.webview.webview-baseurl.swift-webview-config-base-url
+    shortlink: https://sg.run/GrY6
+    semgrep.dev:
+      rule:
+        r_id: 66504
+        rv_id: 112037
+        rule_id: 5rUDqY
+        version_id: xyTKpop
+        url: https://semgrep.dev/playground/r/xyTKpop/swift.webview.webview-baseurl.swift-webview-config-base-url
+        origin: pro_rules
+  languages:
+  - swift
+  patterns:
+  - pattern-inside: |
+      $U = UIWebView(...)
+      ...
+  - pattern-either:
+    - pattern-inside: |
+        $U.loadHTMLString(..., baseURL: nil,...)
+    - pattern-inside: |
+        $U.load(..., baseURL: nil,...)

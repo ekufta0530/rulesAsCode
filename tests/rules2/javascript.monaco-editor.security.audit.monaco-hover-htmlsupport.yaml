@@ -1,0 +1,59 @@
+rules:
+- id: javascript.monaco-editor.security.audit.monaco-hover-htmlsupport.monaco-hover-htmlsupport
+  message: If user input reaches `HoverProvider` while `supportHml` is set to `true`
+    it may introduce an XSS vulnerability. Do not produce HTML for hovers with dynamically
+    generated input.
+  metadata:
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://github.com/microsoft/monaco-editor/issues/801
+    category: security
+    technology:
+    - monaco
+    - monaco-editor
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/javascript.monaco-editor.security.audit.monaco-hover-htmlsupport.monaco-hover-htmlsupport
+    shortlink: https://sg.run/Jx7R
+    semgrep.dev:
+      rule:
+        r_id: 14402
+        rv_id: 109954
+        rule_id: zdUYQb
+        version_id: yeTR21L
+        url: https://semgrep.dev/playground/r/yeTR21L/javascript.monaco-editor.security.audit.monaco-hover-htmlsupport.monaco-hover-htmlsupport
+        origin: community
+  languages:
+  - typescript
+  - javascript
+  severity: WARNING
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        import "monaco-editor"
+        ...
+    - pattern-inside: |
+        require("monaco-editor")
+        ...
+  - pattern-either:
+    - pattern: |
+        {value: $VAL, supportHtml: true}
+    - pattern: |
+        {value: $VAL, isTrusted: true}
+  - pattern-inside: |
+      {range: $R, contents: [...]}
+  - pattern-not: |
+      {..., value: "...", ...}

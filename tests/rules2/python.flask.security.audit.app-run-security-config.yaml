@@ -1,0 +1,43 @@
+rules:
+- id: python.flask.security.audit.app-run-security-config.avoid_using_app_run_directly
+  patterns:
+  - pattern-not-inside: |
+      if __name__ == '__main__':
+        ...
+  - pattern-not-inside: |
+      def $X(...):
+        ...
+  - pattern: app.run(...)
+  message: top-level app.run(...) is ignored by flask. Consider putting app.run(...)
+    behind a guard, like inside a function
+  metadata:
+    cwe:
+    - 'CWE-668: Exposure of Resource to Wrong Sphere'
+    owasp:
+    - A01:2021 - Broken Access Control
+    category: security
+    technology:
+    - flask
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/python.flask.security.audit.app-run-security-config.avoid_using_app_run_directly
+    shortlink: https://sg.run/vz5b
+    semgrep.dev:
+      rule:
+        r_id: 9533
+        rv_id: 110249
+        rule_id: 8GUjdX
+        version_id: o5Tglnv
+        url: https://semgrep.dev/playground/r/o5Tglnv/python.flask.security.audit.app-run-security-config.avoid_using_app_run_directly
+        origin: community
+  languages:
+  - python
+  severity: WARNING

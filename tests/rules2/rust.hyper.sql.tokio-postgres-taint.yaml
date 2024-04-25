@@ -1,0 +1,208 @@
+rules:
+- id: rust.hyper.sql.tokio-postgres-taint.tokio-postgres-taint
+  message: Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - db::sink::sql-or-nosql-query::actix_web
+    - db::sink::sql-or-nosql-query::deadpool_postgres
+    - db::sink::sql-or-nosql-query::rocket_db_pools
+    - db::sink::sql-or-nosql-query::tokio_postgres
+    - web::source::header::hyper
+    - web::source::http-body::hyper
+    - web::source::http-params::hyper
+    - web::source::url-path-params::hyper
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://docs.rs/tokio-postgres/latest/tokio_postgres/
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - hyper
+    - rust
+    - tokio-postgres
+    - tokio_postgres
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/rust.hyper.sql.tokio-postgres-taint.tokio-postgres-taint
+    shortlink: https://sg.run/R9RN
+    semgrep.dev:
+      rule:
+        r_id: 63205
+        rv_id: 229346
+        rule_id: EwUzld
+        version_id: d6TqXbL
+        url: https://semgrep.dev/playground/r/d6TqXbL/rust.hyper.sql.tokio-postgres-taint.tokio-postgres-taint
+        origin: pro_rules
+  languages:
+  - rust
+  mode: taint
+  pattern-sources:
+  - label: REQUEST
+    patterns:
+    - pattern: $REQ
+    - pattern-either:
+      - pattern-inside: |
+          fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Incoming>, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Body>, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FN_NAME(..., $REQ: hyper::Request<hyper::Body>, ...) {
+            ...
+          }
+  - label: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: $R.body()
+      - pattern: $R.body_mut()
+      - pattern: $R.into_body()
+      - pattern: $R.headers
+      - pattern: $R.headers_mut()
+      - pattern: $R.query()
+      - pattern: $R.path()
+      - pattern: $R.path_and_query()
+      - pattern: $R.collect()
+  - label: CONCAT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          "..." + ...
+      - pattern: '... + "..."'
+      - pattern: $STR.push_str(...)
+      - pattern: format!(...)
+      - pattern: std::fmt::format(...)
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - pattern: $TO.push_str($FROM)
+    to: $TO
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern: $TO.$FUNC(..., $FROM)
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(insert_str|replace_range)$
+    to: $TO
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern: $FROM.$FUNC(&$TO)
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+    to: $TO
+  - from: $FROM
+    patterns:
+    - pattern: $TO = $FROM.into()
+    to: $TO
+  - from: $FROM
+    patterns:
+    - pattern: $TO = std::from_utf8($FROM)
+    to: $TO
+  - from: $FROM
+    patterns:
+    - pattern: |
+        let $TO = if let $SOME = $FROM {
+          ...
+        } else {
+          ...
+        };
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $QUERY
+    - pattern-either:
+      - pattern-either:
+        - pattern: |
+            ($CLIENT: tokio_postgres::Client).prepare($QUERY, ...)
+        - pattern: |
+            ($CLIENT: tokio_postgres::Client).prepare_typed($QUERY, ...)
+        - pattern: |
+            ($CLIENT: tokio_postgres::Client).simple_query($QUERY, ...)
+        - pattern: |
+            ($CLIENT: tokio_postgres::Client).batch_execute($QUERY, ...)
+      - pattern-either:
+        - pattern: |
+            ($CLIENT: deadpool_postgres::Client).prepare($QUERY, ...)
+        - pattern: |
+            ($CLIENT: deadpool_postgres::Client).prepare_typed($QUERY, ...)
+        - pattern: |
+            ($CLIENT: deadpool_postgres::Client).simple_query($QUERY, ...)
+        - pattern: |
+            ($CLIENT: deadpool_postgres::Client).batch_execute($QUERY, ...)
+      - pattern-either:
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<tokio_postgres::Client>).prepare($QUERY, ...)
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<tokio_postgres::Client>).prepare_typed($QUERY, ...)
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<tokio_postgres::Client>).simple_query($QUERY, ...)
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<tokio_postgres::Client>).batch_execute($QUERY, ...)
+      - pattern-either:
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<deadpool_postgres::Client>).prepare($QUERY, ...)
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<deadpool_postgres::Client>).prepare_typed($QUERY, ...)
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<deadpool_postgres::Client>).simple_query($QUERY, ...)
+        - pattern: |
+            ($CLIENT: actix_web::web::Data<deadpool_postgres::Client>).batch_execute($QUERY, ...)
+      - pattern-either:
+        - pattern: |
+            ($CLIENT: rocket_db_pools::Connection<$T>).prepare($QUERY, ...)
+        - pattern: |
+            ($CLIENT: rocket_db_pools::Connection<$T>).prepare_typed($QUERY, ...)
+        - pattern: |
+            ($CLIENT: rocket_db_pools::Connection<$T>).simple_query($QUERY, ...)
+        - pattern: |
+            ($CLIENT: rocket_db_pools::Connection<$T>).batch_execute($QUERY, ...)
+      - patterns:
+        - pattern-either:
+          - pattern: $CLIENT.prepare($QUERY, ...)
+          - pattern: $CLIENT.prepare_typed($QUERY, ...)
+          - pattern: $CLIENT.simple_query($QUERY, ...)
+          - pattern: $CLIENT.batch_execute($QUERY, ...)
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                let $CLIENT = $GET;
+                ...
+            - pattern-inside: |
+                let ($CLIENT, $Y) = $GET;
+                ...
+          - metavariable-pattern:
+              metavariable: $GET
+              patterns:
+              - pattern-either:
+                - pattern: |
+                    ($POOL: deadpool_postgres::Pool)
+                - pattern: |
+                    ($POOL: actix_web::web::Data<Pool>)
+                - pattern: tokio_postgres::connect
+    requires: REQUEST and USER_INPUT and CONCAT

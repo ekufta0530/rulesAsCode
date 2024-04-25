@@ -1,0 +1,39 @@
+rules:
+- id: mobsf.mobsfscan.crypto.cbc_static_iv.cbc_static_iv
+  patterns:
+  - pattern-either:
+    - pattern: |
+        byte[] $X = {...};
+        ...
+        $Y =  new IvParameterSpec($X, ...);
+        ...
+        $C.getInstance("=~/AES/CBC.*/i");
+    - pattern: |
+        byte[] $X = "...".$FUNC(...);
+        ...
+        $Y =  new IvParameterSpec($X, ...);
+        ...
+        $C.getInstance("=~/AES/CBC.*/i");
+  message: The IV for AES CBC mode should be random. A static IV makes the ciphertext
+    vulnerable to Chosen Plaintext Attack.
+  languages:
+  - java
+  severity: ERROR
+  metadata:
+    cwe: cwe-329
+    owasp-mobile: m5
+    masvs: crypto-5
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x04g-Testing-Cryptography.md#predictable-initialization-vector
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.crypto.cbc_static_iv.cbc_static_iv
+    shortlink: https://sg.run/egDb
+    semgrep.dev:
+      rule:
+        r_id: 43732
+        rv_id: 78336
+        rule_id: lBUYwL
+        version_id: 2KTD6R
+        url: https://semgrep.dev/playground/r/2KTD6R/mobsf.mobsfscan.crypto.cbc_static_iv.cbc_static_iv
+        origin: community

@@ -1,0 +1,51 @@
+rules:
+- id: terraform.lang.security.elastic-search-encryption-at-rest.elastic-search-encryption-at-rest
+  patterns:
+  - pattern: |
+      resource
+  - pattern-not-inside: |
+      resource "aws_elasticsearch_domain" "..."{
+        ...
+        encrypt_at_rest{
+          ...
+          enabled = true
+          ...
+        }
+        ...
+      }
+  - pattern-inside: |
+      resource "aws_elasticsearch_domain" "..." {...}
+  languages:
+  - hcl
+  message: Encryption at rest is not enabled for the elastic search domain resource
+  severity: WARNING
+  metadata:
+    category: security
+    cwe:
+    - 'CWE-311: Missing Encryption of Sensitive Data'
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A04:2021 - Insecure Design
+    references:
+    - https://owasp.org/Top10/A04_2021-Insecure_Design
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.lang.security.elastic-search-encryption-at-rest.elastic-search-encryption-at-rest
+    shortlink: https://sg.run/B4Yb
+    semgrep.dev:
+      rule:
+        r_id: 9751
+        rv_id: 111053
+        rule_id: qNUo2d
+        version_id: qkT2BON
+        url: https://semgrep.dev/playground/r/qkT2BON/terraform.lang.security.elastic-search-encryption-at-rest.elastic-search-encryption-at-rest
+        origin: community

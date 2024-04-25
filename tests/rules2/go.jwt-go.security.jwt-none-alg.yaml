@@ -1,0 +1,51 @@
+rules:
+- id: go.jwt-go.security.jwt-none-alg.jwt-go-none-algorithm
+  message: Detected use of the 'none' algorithm in a JWT token. The 'none' algorithm
+    assumes the integrity of the token has already been verified. This would allow
+    a malicious actor to forge a JWT token that will automatically be verified. Do
+    not explicitly use the 'none' algorithm. Instead, use an algorithm such as 'HS256'.
+  metadata:
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    source-rule-url: https://semgrep.dev/blog/2020/hardcoded-secrets-unverified-tokens-and-other-common-jwt-mistakes/
+    category: security
+    technology:
+    - jwt
+    confidence: HIGH
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/go.jwt-go.security.jwt-none-alg.jwt-go-none-algorithm
+    shortlink: https://sg.run/Gej1
+    semgrep.dev:
+      rule:
+        r_id: 9092
+        rv_id: 378644
+        rule_id: 5rUOWQ
+        version_id: 0bT59Rk
+        url: https://semgrep.dev/playground/r/0bT59Rk/go.jwt-go.security.jwt-none-alg.jwt-go-none-algorithm
+        origin: community
+  languages:
+  - go
+  severity: ERROR
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        import "github.com/golang-jwt/jwt"
+        ...
+    - pattern-inside: |
+        import "github.com/dgrijalva/jwt-go"
+        ...
+  - pattern-either:
+    - pattern: |
+        jwt.SigningMethodNone
+    - pattern: jwt.UnsafeAllowNoneSignatureType

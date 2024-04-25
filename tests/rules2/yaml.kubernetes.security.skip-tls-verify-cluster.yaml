@@ -1,0 +1,41 @@
+rules:
+- id: yaml.kubernetes.security.skip-tls-verify-cluster.skip-tls-verify-cluster
+  pattern: |
+    cluster:
+      ...
+      insecure-skip-tls-verify: true
+  message: 'Cluster is disabling TLS certificate verification when communicating with
+    the server. This makes your HTTPS connections insecure. Remove the ''insecure-skip-tls-verify:
+    true'' key to secure communication.'
+  metadata:
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    references:
+    - https://kubernetes.io/docs/reference/config-api/client-authentication.v1beta1/#client-authentication-k8s-io-v1beta1-Cluster
+    category: security
+    technology:
+    - kubernetes
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/yaml.kubernetes.security.skip-tls-verify-cluster.skip-tls-verify-cluster
+    shortlink: https://sg.run/okyn
+    semgrep.dev:
+      rule:
+        r_id: 10116
+        rv_id: 111141
+        rule_id: zdUyWx
+        version_id: 3ZTkrWd
+        url: https://semgrep.dev/playground/r/3ZTkrWd/yaml.kubernetes.security.skip-tls-verify-cluster.skip-tls-verify-cluster
+        origin: community
+  languages:
+  - yaml
+  severity: WARNING

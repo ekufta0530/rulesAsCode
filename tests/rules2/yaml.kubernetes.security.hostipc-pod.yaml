@@ -1,0 +1,40 @@
+rules:
+- id: yaml.kubernetes.security.hostipc-pod.hostipc-pod
+  patterns:
+  - pattern-inside: |
+      spec:
+        ...
+  - pattern: |
+      hostIPC: true
+  message: Pod is sharing the host IPC namespace. This allows container processes
+    to communicate with processes on the host which reduces isolation and bypasses
+    container protection models. Remove the 'hostIPC' key to disable this functionality.
+  metadata:
+    cwe:
+    - 'CWE-693: Protection Mechanism Failure'
+    references:
+    - https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces
+    category: security
+    technology:
+    - kubernetes
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/yaml.kubernetes.security.hostipc-pod.hostipc-pod
+    shortlink: https://sg.run/nqGO
+    semgrep.dev:
+      rule:
+        r_id: 10236
+        rv_id: 111130
+        rule_id: nJUYPE
+        version_id: e1T03bQ
+        url: https://semgrep.dev/playground/r/e1T03bQ/yaml.kubernetes.security.hostipc-pod.hostipc-pod
+        origin: community
+  languages:
+  - yaml
+  severity: WARNING

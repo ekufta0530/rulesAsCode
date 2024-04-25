@@ -1,0 +1,46 @@
+rules:
+- id: java.spring.security.audit.spring-actuator-non-health-enabled.spring-actuator-dangerous-endpoints-enabled
+  patterns:
+  - pattern: management.endpoints.web.exposure.include=$...ACTUATORS
+  - metavariable-comparison:
+      metavariable: $...ACTUATORS
+      comparison: not str($...ACTUATORS) in ["health","*"]
+  message: Spring Boot Actuators "$...ACTUATORS" are enabled. Depending on the actuators,
+    this can pose a significant security risk. Please double-check if the actuators
+    are needed and properly secured.
+  severity: WARNING
+  languages:
+  - generic
+  options:
+    generic_ellipsis_max_span: 0
+  metadata:
+    cwe:
+    - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+    owasp:
+    - A01:2021 - Broken Access Control
+    references:
+    - https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-exposing-endpoints
+    - https://medium.com/walmartglobaltech/perils-of-spring-boot-actuators-misconfiguration-185c43a0f785
+    - https://blog.maass.xyz/spring-actuator-security-part-1-stealing-secrets-using-spring-actuators
+    category: security
+    technology:
+    - spring
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/java.spring.security.audit.spring-actuator-non-health-enabled.spring-actuator-dangerous-endpoints-enabled
+    shortlink: https://sg.run/5g23
+    semgrep.dev:
+      rule:
+        r_id: 32291
+        rv_id: 109774
+        rule_id: wdUWrZ
+        version_id: JdTNp0W
+        url: https://semgrep.dev/playground/r/JdTNp0W/java.spring.security.audit.spring-actuator-non-health-enabled.spring-actuator-dangerous-endpoints-enabled
+        origin: community

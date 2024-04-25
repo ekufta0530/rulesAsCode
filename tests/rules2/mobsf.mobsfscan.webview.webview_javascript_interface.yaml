@@ -1,0 +1,31 @@
+rules:
+- id: mobsf.mobsfscan.webview.webview_javascript_interface.webview_javascript_interface
+  patterns:
+  - pattern-either:
+    - pattern: |
+        addJavascriptInterface(...)
+    - pattern: |
+        $W.addJavascriptInterface(...)
+  message: Ensure that javascript interface is implemented securely. Execution of
+    user controlled code in WebView is a  critical Security issue.
+  languages:
+  - java
+  severity: WARNING
+  metadata:
+    cwe: cwe-749
+    owasp-mobile: m1
+    masvs: platform-7
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05h-Testing-Platform-Interaction.md#determining-whether-java-objects-are-exposed-through-webviews-mstg-platform-7
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.webview.webview_javascript_interface.webview_javascript_interface
+    shortlink: https://sg.run/D0LY
+    semgrep.dev:
+      rule:
+        r_id: 43752
+        rv_id: 78356
+        rule_id: X5Up0Y
+        version_id: LjT1pg
+        url: https://semgrep.dev/playground/r/LjT1pg/mobsf.mobsfscan.webview.webview_javascript_interface.webview_javascript_interface
+        origin: community

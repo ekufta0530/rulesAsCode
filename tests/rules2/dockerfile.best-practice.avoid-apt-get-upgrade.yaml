@@ -1,0 +1,28 @@
+rules:
+- id: dockerfile.best-practice.avoid-apt-get-upgrade.avoid-apt-get-upgrade
+  message: Packages in base containers should be up-to-date, removing the need to
+    upgrade or dist-upgrade. If a package is out of date, contact the maintainers.
+  languages:
+  - dockerfile
+  severity: WARNING
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3005
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3005
+    category: best-practice
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.best-practice.avoid-apt-get-upgrade.avoid-apt-get-upgrade
+    shortlink: https://sg.run/XWPA
+    semgrep.dev:
+      rule:
+        r_id: 20120
+        rv_id: 109227
+        rule_id: 10U43Y
+        version_id: GxTv6BJ
+        url: https://semgrep.dev/playground/r/GxTv6BJ/dockerfile.best-practice.avoid-apt-get-upgrade.avoid-apt-get-upgrade
+        origin: community
+  pattern-either:
+  - pattern: RUN ... apt-get upgrade ...
+  - pattern: RUN ... apt-get dist-upgrade ...

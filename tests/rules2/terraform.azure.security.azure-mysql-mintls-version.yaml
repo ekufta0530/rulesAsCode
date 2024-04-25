@@ -1,0 +1,47 @@
+rules:
+- id: terraform.azure.security.azure-mysql-mintls-version.azure-mysql-mintls-version
+  message: Ensure MySQL is using the latest version of TLS encryption
+  patterns:
+  - pattern-either:
+    - pattern: |
+        "TLS1_0"
+    - pattern: |
+        "TLS1_1"
+  - pattern-inside: ssl_minimal_tls_version_enforced = ...
+  - pattern-inside: |
+      $RESOURCE "azurerm_mysql_server" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-326: Inadequate Encryption Strength'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-mysql-mintls-version.azure-mysql-mintls-version
+    shortlink: https://sg.run/WR44
+    semgrep.dev:
+      rule:
+        r_id: 23997
+        rv_id: 110907
+        rule_id: zdU8NN
+        version_id: K3TvGjD
+        url: https://semgrep.dev/playground/r/K3TvGjD/terraform.azure.security.azure-mysql-mintls-version.azure-mysql-mintls-version
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

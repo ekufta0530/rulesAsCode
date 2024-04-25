@@ -1,0 +1,48 @@
+rules:
+- id: terraform.aws.best-practice.aws-s3-bucket-versioning-not-enabled.aws-s3-bucket-versioning-not-enabled
+  patterns:
+  - pattern: |
+      resource "aws_s3_bucket" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_s3_bucket" $ANYTHING {
+        ...
+        versioning {
+          ...
+          enabled = true
+          ...
+        }
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_s3_bucket" $ANYTHING {
+        ...
+        versioning {
+          ...
+          enabled = var.$X
+          ...
+        }
+        ...
+      }
+  message: Ensure that Amazon S3 bucket versioning is not enabled. Consider using
+    versioning if you don't have alternative backup mechanism.
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - aws
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.aws-s3-bucket-versioning-not-enabled.aws-s3-bucket-versioning-not-enabled
+    shortlink: https://sg.run/Zj2D
+    semgrep.dev:
+      rule:
+        r_id: 17335
+        rv_id: 110709
+        rule_id: j2UQKO
+        version_id: 6xTvQEq
+        url: https://semgrep.dev/playground/r/6xTvQEq/terraform.aws.best-practice.aws-s3-bucket-versioning-not-enabled.aws-s3-bucket-versioning-not-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

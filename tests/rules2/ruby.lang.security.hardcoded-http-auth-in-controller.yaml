@@ -1,0 +1,47 @@
+rules:
+- id: ruby.lang.security.hardcoded-http-auth-in-controller.hardcoded-http-auth-in-controller
+  patterns:
+  - pattern-inside: |
+      class $CONTROLLER < ApplicationController
+        ...
+        http_basic_authenticate_with ..., :password => "$SECRET", ...
+      end
+  - focus-metavariable: $SECRET
+  message: Detected hardcoded password used in basic authentication in a controller
+    class. Including this password in version control could expose this credential.
+    Consider refactoring to use environment variables or configuration files.
+  severity: WARNING
+  metadata:
+    cwe:
+    - 'CWE-798: Use of Hard-coded Credentials'
+    owasp:
+    - A07:2021 - Identification and Authentication Failures
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
+    source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/docs/warning_types/basic_auth/index.markdown
+    category: security
+    technology:
+    - ruby
+    - secrets
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Hard-coded Secrets
+    source: https://semgrep.dev/r/ruby.lang.security.hardcoded-http-auth-in-controller.hardcoded-http-auth-in-controller
+    shortlink: https://sg.run/6r0w
+    semgrep.dev:
+      rule:
+        r_id: 9715
+        rv_id: 110525
+        rule_id: X5UZWK
+        version_id: vdTY8p2
+        url: https://semgrep.dev/playground/r/vdTY8p2/ruby.lang.security.hardcoded-http-auth-in-controller.hardcoded-http-auth-in-controller
+        origin: community
+  languages:
+  - ruby

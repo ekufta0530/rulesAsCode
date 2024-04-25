@@ -1,0 +1,64 @@
+rules:
+- id: swift.commoncrypto.insecure-crypto-algorithm-blowfish.insecure-crypto-algorithm-blowfish
+  message: 'The use of the insecure Blowfish encryption algorithm was detected. Blowfish
+    uses a 64-bit block size that makes it vulnerable to birthday attacks, and is
+    therefore considered unfit for purpose. '
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    functional-categories:
+    - crypto::search::asymmetric-algorithm::CommonCrypto
+    masvs:
+    - 'MSTG-CRYPTO-4: The app does not use cryptographic protocols or algorithms that
+      are widely considered deprecated for security purposes.'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+    - https://crypto.stackexchange.com/questions/87278/why-dont-we-use-blowfish-if-it-hasnt-been-cracked
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-algorithm-blowfish.insecure-crypto-algorithm-blowfish
+    shortlink: https://sg.run/Wd2A
+    semgrep.dev:
+      rule:
+        r_id: 59709
+        rv_id: 111992
+        rule_id: 2ZUyjz
+        version_id: QkTWwO0
+        url: https://semgrep.dev/playground/r/QkTWwO0/swift.commoncrypto.insecure-crypto-algorithm-blowfish.insecure-crypto-algorithm-blowfish
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          CCAlgorithm(kCCAlgorithmBlowfish)
+      - pattern: |
+          CCAlgorithm(6)
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          CCCrypt($A, $ALG, ...)
+      - pattern: |
+          CCCryptorCreate($A, $ALG, ...)
+      - pattern: |
+          CCCryptorCreateFromData($A, $ALG, ...)
+    - focus-metavariable: $ALG

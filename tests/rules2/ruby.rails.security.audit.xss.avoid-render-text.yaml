@@ -1,0 +1,45 @@
+rules:
+- id: ruby.rails.security.audit.xss.avoid-render-text.avoid-render-text
+  metadata:
+    source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_render_inline.rb
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    references:
+    - https://brakemanpro.com/2017/09/08/cross-site-scripting-in-rails#inline-renders---even-worse-than-xss
+    category: security
+    technology:
+    - rails
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/ruby.rails.security.audit.xss.avoid-render-text.avoid-render-text
+    shortlink: https://sg.run/70Kv
+    semgrep.dev:
+      rule:
+        r_id: 9738
+        rv_id: 110578
+        rule_id: 3qUBk4
+        version_id: QkTWw6p
+        url: https://semgrep.dev/playground/r/QkTWw6p/ruby.rails.security.audit.xss.avoid-render-text.avoid-render-text
+        origin: community
+  message: '''render text: ...'' actually sets the content-type to ''text/html''.
+    If external data can reach here, this exposes your application to cross-site scripting
+    (XSS) attacks. Instead, use ''render plain: ...'' to render non-HTML text.'
+  languages:
+  - ruby
+  severity: WARNING
+  pattern: 'render text: ...'
+  fix-regex:
+    regex: 'text:'
+    replacement: 'plain:'

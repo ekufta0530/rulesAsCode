@@ -1,0 +1,119 @@
+rules:
+- id: cpp.lang.security.filesystem.file-stat-before-action.file-stat-before-action
+  message: A check is done with `stat` and then the file is used. There is no guarantee
+    that the status of the file has not changed since the call to `stat` which may
+    allow attackers to bypass permission checks.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - C
+    - C++
+    - FIO45-C
+    - L2
+    cwe:
+    - 'CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition'
+    functional-categories:
+    - file::sink::file-access
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/FIO45-C.+Avoid+TOCTOU+race+conditions+while+accessing+files
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/cpp.lang.security.filesystem.file-stat-before-action.file-stat-before-action
+    shortlink: https://sg.run/2ZDn5
+    semgrep.dev:
+      rule:
+        r_id: 114763
+        rv_id: 257374
+        rule_id: kxUdDxY
+        version_id: kbTjK75
+        url: https://semgrep.dev/playground/r/kbTjK75/cpp.lang.security.filesystem.file-stat-before-action.file-stat-before-action
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: |
+          if ( <... $STAT($SRC, ...) == 0 ...> ) {
+            ...
+            $ACTION(..., $SRC, ...);
+            ...
+          }
+      - metavariable-pattern:
+          metavariable: $STAT
+          patterns:
+          - pattern-either:
+            - pattern: stat
+            - pattern: _stat
+            - pattern: lstat
+            - pattern: _lstat
+    - patterns:
+      - pattern: |
+          if ( <... $FSTAT($DIRFD, $SRC, ...) == 0 ...> ) {
+            ...
+            $ACTION(..., $SRC, ...);
+            ...
+          }
+      - metavariable-pattern:
+          metavariable: $FSTAT
+          patterns:
+          - pattern-either:
+            - pattern: fstatat
+            - pattern: _fstatat
+  - metavariable-pattern:
+      metavariable: $ACTION
+      patterns:
+      - pattern-either:
+        - pattern: fopen
+        - pattern: freopen
+        - pattern: remove
+        - pattern: rename
+        - pattern: access
+        - pattern: open
+        - pattern: stat
+        - pattern: lstat
+        - pattern: unlink
+        - pattern: mkdir
+        - pattern: rmdir
+        - pattern: chdir
+        - pattern: folly::readFile
+        - pattern: folly::writeFile
+        - pattern: folly::writeFileAtomic
+        - pattern: folly::writeFileAtomicNoThrow
+        - pattern: folly::File
+        - patterns:
+          - pattern: $Y.open
+          - focus-metavariable: $SRC
+        - patterns:
+          - pattern-either:
+            - pattern: $BFS::file_size
+            - pattern: $BFS::create_directory
+            - pattern: $BFS::create_directories
+            - pattern: $BFS::remove
+            - pattern: $BFS::remove_all
+            - pattern: $BFS::rename
+            - pattern: $BFS::copy_file
+            - pattern: $BFS::copy
+            - pattern: $BFS::copy_directory
+            - pattern: $BFS::resize_file
+            - pattern: $BFS::last_write_time
+            - pattern: $BFS::permissions
+            - pattern: $BFS::symlink_status
+            - pattern: $BFS::create_symlink
+            - pattern: $BFS::create_hard_link
+            - pattern: $BFS::read_symlink
+          - metavariable-regex:
+              metavariable: $BFS
+              regex: ^((boost::)?filesystem)$
+  - focus-metavariable: $ACTION

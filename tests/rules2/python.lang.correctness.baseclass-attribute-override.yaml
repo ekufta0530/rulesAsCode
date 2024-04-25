@@ -1,0 +1,43 @@
+rules:
+- id: python.lang.correctness.baseclass-attribute-override.baseclass-attribute-override
+  message: Class $C inherits from both `$A` and `$B` which both have a method named
+    `$F`; one of these methods will be overwritten.
+  languages:
+  - python
+  severity: WARNING
+  patterns:
+  - pattern-inside: |
+      class $A(...):
+        ...
+        def $F(...):
+          ...
+        ...
+      ...
+  - pattern-inside: |
+      class $B(...):
+        ...
+        def $F(...):
+          ...
+        ...
+      ...
+  - pattern: |
+      class $C(..., $A, ..., $B, ...):
+        ...
+  - focus-metavariable: $C
+  metadata:
+    category: correctness
+    references:
+    - https://docs.python.org/3/tutorial/classes.html#multiple-inheritance
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.correctness.baseclass-attribute-override.baseclass-attribute-override
+    shortlink: https://sg.run/Roze
+    semgrep.dev:
+      rule:
+        r_id: 9593
+        rv_id: 110326
+        rule_id: qNUjq2
+        version_id: nWTxPqk
+        url: https://semgrep.dev/playground/r/nWTxPqk/python.lang.correctness.baseclass-attribute-override.baseclass-attribute-override
+        origin: community

@@ -1,0 +1,58 @@
+rules:
+- id: terraform.gcp.security.gcp-compute-project-os-login.gcp-compute-project-os-login
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_compute_project_metadata" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "google_compute_project_metadata" "..." {
+      ...
+      metadata = {
+          enable-oslogin = "True"
+      }
+      ...
+      }
+  - pattern-not-inside: |
+      resource "google_compute_project_metadata" "..." {
+      ...
+      metadata = {
+          enable-oslogin = True
+      }
+      ...
+      }
+  message: "Ensure oslogin is enabled for a Project\t"
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-compute-project-os-login.gcp-compute-project-os-login
+    shortlink: https://sg.run/YZdo
+    semgrep.dev:
+      rule:
+        r_id: 32314
+        rv_id: 110982
+        rule_id: DbUwl7
+        version_id: QkTWwGG
+        url: https://semgrep.dev/playground/r/QkTWwGG/terraform.gcp.security.gcp-compute-project-os-login.gcp-compute-project-os-login
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

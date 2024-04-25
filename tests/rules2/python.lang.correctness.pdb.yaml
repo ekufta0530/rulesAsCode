@@ -1,0 +1,25 @@
+rules:
+- id: python.lang.correctness.pdb.pdb-remove
+  pattern-either:
+  - pattern: pdb.$X(...)
+  - pattern: pdb.Pdb.$X(...)
+  message: pdb is an interactive debugging tool and you may have forgotten to remove
+    it before committing your code
+  languages:
+  - python
+  severity: WARNING
+  metadata:
+    category: correctness
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.correctness.pdb.pdb-remove
+    shortlink: https://sg.run/Kl0X
+    semgrep.dev:
+      rule:
+        r_id: 9599
+        rv_id: 110340
+        rule_id: ReUgv3
+        version_id: A8T95bw
+        url: https://semgrep.dev/playground/r/A8T95bw/python.lang.correctness.pdb.pdb-remove
+        origin: community

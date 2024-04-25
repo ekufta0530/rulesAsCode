@@ -1,0 +1,217 @@
+rules:
+- id: csharp.dotnet-core.code-injection.compile-taint.compile-taint
+  message: The application might dynamically evaluate untrusted input, which can lead
+    to a code injection vulnerability. An attacker can execute arbitrary code, potentially
+    gaining complete control of the system. To prevent this vulnerability, avoid executing
+    code containing user input. If this is unavoidable, validate and sanitize the
+    input, and use safe alternatives for evaluating user input.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    cwe2020-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - code::sink::eval
+    - web::source::header::ASP.NET
+    - web::source::http-body::ASP.NET
+    - web::source::http-params::ASP.NET
+    - web::source::url-path-params::ASP.NET
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - .NET
+    - api
+    - compiler
+    - csharp
+    - dotnet
+    - mvc
+    - roslyn
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/csharp.dotnet-core.code-injection.compile-taint.compile-taint
+    shortlink: https://sg.run/22d8
+    semgrep.dev:
+      rule:
+        r_id: 72563
+        rv_id: 229172
+        rule_id: JDUj2L
+        version_id: RGTeJEw
+        url: https://semgrep.dev/playground/r/RGTeJEw/csharp.dotnet-core.code-injection.compile-taint.compile-taint
+        origin: pro_rules
+  languages:
+  - csharp
+  mode: taint
+  options:
+    interfile: true
+  pattern-sources:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          using Microsoft.AspNetCore.Mvc;
+          ...
+      - pattern: |
+          public $TYPE $NAME(..., $X $VAR,...) {
+            ...
+          }
+      - pattern-not: |
+          [NonAction]
+          public $TYPE $NAME(..., $X $VAR,...) {
+            ...
+          }
+      - pattern-not: |
+          public $TYPE $NAME(..., [FromServices] $X $VAR, ...){
+            ...
+          }
+      - focus-metavariable: $VAR
+      - metavariable-pattern:
+          metavariable: $X
+          patterns:
+          - pattern-not-regex: (int|long|float|double|bool|Guid)
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                class $CN : Controller {...}
+            - pattern-inside: |
+                class $CN : ControllerBase {...}
+          - pattern-not-inside: |
+              [NonController]
+              class $CN : $T {...}
+        - patterns:
+          - pattern-inside: class $CN {...}
+          - pattern-not-inside: |
+              [NonController]
+              class $CN {...}
+          - metavariable-regex:
+              metavariable: $CN
+              regex: .*Controller
+        - pattern-inside: |
+            [Controller]
+            class $CN {...}
+        - pattern-inside: |
+            [ApiController]
+            class $CN {...}
+    - patterns:
+      - pattern-inside: |
+          using Microsoft.AspNetCore.Mvc;
+          ...
+      - focus-metavariable: $VAR
+      - pattern-either:
+        - pattern-inside: $TYPE $NAME(..., [FromBody] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromForm] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromHeader] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromQuery] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromRoute] $T $VAR, ...) { ... }
+        - pattern-inside: (..., [FromBody] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromForm] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromHeader] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromQuery] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromRoute] $T $VAR, ...) => { ... }
+    - patterns:
+      - pattern-either:
+        - pattern: HttpContext.Request.Query
+        - pattern: HttpContext.Request.QueryString
+        - pattern: HttpContext.Request.Headers
+        - pattern: HttpContext.Request.RouteValues
+        - pattern: HttpContext.Request.Body
+        - pattern: HttpContext.Request.BodyReader
+        - pattern: HttpContext.Request.Form
+        - pattern: $X.HttpContext.Request.Query
+        - pattern: $X.HttpContext.Request.QueryString
+        - pattern: $X.HttpContext.Request.Headers
+        - pattern: $X.HttpContext.Request.RouteValues
+        - pattern: $X.HttpContext.Request.Body
+        - pattern: $X.HttpContext.Request.BodyReader
+        - pattern: $X.HttpContext.Request.Form
+        - pattern: (HttpContext $C).Request.Query
+        - pattern: (HttpContext $C).Request.QueryString
+        - pattern: (HttpContext $C).Request.Headers
+        - pattern: (HttpContext $C).Request.RouteValues
+        - pattern: (HttpContext $C).Request.Body
+        - pattern: (HttpContext $C).Request.BodyReader
+        - pattern: (HttpContext $C).Request.Form
+        - pattern: (HttpRequest $R).Query
+        - pattern: (HttpRequest $R).QueryString
+        - pattern: (HttpRequest $R).Headers
+        - pattern: (HttpRequest $R).RouteValues
+        - pattern: (HttpRequest $R).Body
+        - pattern: (HttpRequest $R).BodyReader
+        - pattern: (HttpRequest $R).Form
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern-either:
+        - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+        - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+        - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+        - patterns:
+          - pattern-either:
+            - pattern: $TO.Append(..., $FROM,...)
+            - pattern: $TO.AppendLine(..., $FROM,...)
+            - pattern: $TO.AppendFormat(..., $FROM,...)
+            - pattern: $TO.AppendJoin(..., $FROM,...)
+            - pattern: $TO.Replace(..., $FROM,...)
+            - pattern: $TO.Insert(..., $FROM,...)
+          - pattern-either:
+            - pattern-inside: |
+                var $TO = new StringBuilder(...);
+                ...
+            - pattern-inside: |
+                $TO = new StringBuilder(...);
+                ...
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $CODE
+    - pattern-inside: |
+        using Microsoft.CodeAnalysis.CSharp.Scripting;
+        ...
+    - pattern-either:
+      - pattern: CSharpScript.Create<$T>($CODE, ...)
+      - pattern: CSharpScript.Create($CODE, ...)
+      - pattern: CSharpScript.RunAsync<$T>($CODE,...)
+      - pattern: CSharpScript.RunAsync($CODE, ...)
+      - pattern: CSharpScript.EvaluateAsync<$T>($CODE, ...)
+      - pattern: CSharpScript.EvaluateAsync($CODE, ...)
+  pattern-sanitizers:
+  - patterns:
+    - pattern: Convert.$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (ToBase64CharArray|ToBase64String|ToBoolean|ToDateTime|ToDecimal|ToDouble|ToInt16|ToInt32|ToInt64|ToSByte|ToSingle|ToUInt16|ToUInt32|ToUInt64)
+  - patterns:
+    - pattern-either:
+      - pattern: $INT.Parse(...)
+      - pattern: $INT.TryParse(...)
+      - pattern: $INT.TryParseExact(...)
+    - metavariable-regex:
+        metavariable: $INT
+        regex: (Int32|Int128|Int16|Int64|IntPtr|Boolean|Decimal|Double|Guid|DateTime|Single|SByte|UInt128|UInt16|UInt32|UInt64|UIntPtr)
+  - patterns:
+    - pattern-either:
+      - pattern: (int $NUM)
+      - pattern: (long $NUM)
+      - pattern: (float $NUM)
+      - pattern: (double $NUM)
+      - pattern: (bool $NUM)
+      - pattern: (Guid $NUM)
+      - pattern: var $X = (int) ...;
+      - pattern: var $X = (long) ...;
+      - pattern: var $X = (float) ...;
+      - pattern: var $X = (double) ...;
+      - pattern: var $X = (bool) ...;
+      - pattern: var $X = (Guid) ...;

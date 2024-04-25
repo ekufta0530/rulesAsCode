@@ -1,0 +1,65 @@
+rules:
+- id: generic.dockerfile.correctness.multiple-cmd-instructions.multiple-cmd-instructions
+  patterns:
+  - pattern-either:
+    - pattern: |
+        CMD ...
+        ...
+        CMD ...
+    - pattern: |
+        CMD [...]
+        ...
+        CMD [...]
+    - pattern: |
+        CMD [...]
+        ...
+        CMD ...
+    - pattern: |
+        CMD ...
+        ...
+        CMD [...]
+  - pattern-not-inside: |
+      CMD ...
+      ...
+      FROM $IMAGE
+      ...
+      CMD ...
+  - pattern-not: |
+      HEALTHCHECK $CMD
+      ...
+      CMD ...
+  - pattern-not: |
+      HEALTHCHECK $CMD
+      ...
+      CMD [...]
+  - pattern-not: |
+      CMD ...
+      ...
+      HEALTHCHECK $CMD
+  - pattern-not: |
+      CMD [...]
+      ...
+      HEALTHCHECK $CMD
+  message: Multiple CMD instructions were found. Only the last one will take effect.
+  languages:
+  - dockerfile
+  severity: ERROR
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL4003
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL4003
+    - https://kapeli.com/cheat_sheets/Dockerfile.docset/Contents/Resources/Documents/index#//dash_ref_Instructions/Entry/CMD/0
+    category: correctness
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/generic.dockerfile.correctness.multiple-cmd-instructions.multiple-cmd-instructions
+    shortlink: https://sg.run/rd1A
+    semgrep.dev:
+      rule:
+        r_id: 9025
+        rv_id: 109334
+        rule_id: EwU2O4
+        version_id: 0bTLl6d
+        url: https://semgrep.dev/playground/r/0bTLl6d/generic.dockerfile.correctness.multiple-cmd-instructions.multiple-cmd-instructions
+        origin: community

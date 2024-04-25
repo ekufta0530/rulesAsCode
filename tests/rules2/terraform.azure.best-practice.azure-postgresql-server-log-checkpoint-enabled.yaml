@@ -1,0 +1,36 @@
+rules:
+- id: terraform.azure.best-practice.azure-postgresql-server-log-checkpoint-enabled.azure-postgresql-server-log-checkpoint-enabled
+  message: Ensure server parameter log_checkpoints is set to ON for PostgreSQL Database
+    Server
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "azurerm_postgresql_configuration" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_postgresql_configuration" "..." {
+      ...
+      name = "log_checkpoints"
+      value = "on"
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-postgresql-server-log-checkpoint-enabled.azure-postgresql-server-log-checkpoint-enabled
+    shortlink: https://sg.run/78PZ
+    semgrep.dev:
+      rule:
+        r_id: 23938
+        rv_id: 110842
+        rule_id: JDUpn5
+        version_id: 5PTde98
+        url: https://semgrep.dev/playground/r/5PTde98/terraform.azure.best-practice.azure-postgresql-server-log-checkpoint-enabled.azure-postgresql-server-log-checkpoint-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

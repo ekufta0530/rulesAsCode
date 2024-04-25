@@ -1,0 +1,44 @@
+rules:
+- id: java.lang.security.audit.xss.jsp.use-escapexml.use-escapexml
+  message: Detected an Expression Language segment that does not escape output. This
+    is dangerous because if any data in this expression can be controlled externally,
+    it is a cross-site scripting vulnerability. Instead, use the 'escapeXml' function
+    from the JSTL taglib. See https://www.tutorialspoint.com/jsp/jstl_function_escapexml.htm
+    for more information.
+  metadata:
+    owasp:
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-116: Improper Encoding or Escaping of Output'
+    references:
+    - https://www.tutorialspoint.com/jsp/jstl_function_escapexml.htm
+    - https://stackoverflow.com/a/4948856
+    - https://stackoverflow.com/a/3180202
+    category: security
+    technology:
+    - jsp
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Encoding
+    source: https://semgrep.dev/r/java.lang.security.audit.xss.jsp.use-escapexml.use-escapexml
+    shortlink: https://sg.run/Yv2o
+    semgrep.dev:
+      rule:
+        r_id: 9214
+        rv_id: 109747
+        rule_id: yyUn7e
+        version_id: 2KTzryY
+        url: https://semgrep.dev/playground/r/2KTzryY/java.lang.security.audit.xss.jsp.use-escapexml.use-escapexml
+        origin: community
+  pattern-regex: \$\{(?!.*escapeXml).*\}
+  paths:
+    include:
+    - '*.jsp'
+  languages:
+  - regex
+  severity: WARNING

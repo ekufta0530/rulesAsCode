@@ -1,0 +1,31 @@
+rules:
+- id: bash.lang.best-practice.iteration-over-ls-output.iteration-over-ls-output
+  patterns:
+  - pattern: |
+      for $VAR in $LIST; do
+        ...
+      done
+  - pattern: |
+      $(ls ...)
+  message: Iterating over ls output is fragile. Use globs, e.g. 'dir/*' instead of
+    '$(ls dir)'.
+  metadata:
+    references:
+    - https://github.com/koalaman/shellcheck/wiki/SC2045
+    category: best-practice
+    technology:
+    - bash
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/bash.lang.best-practice.iteration-over-ls-output.iteration-over-ls-output
+    shortlink: https://sg.run/AXoB
+    semgrep.dev:
+      rule:
+        r_id: 14806
+        rv_id: 108996
+        rule_id: zdUYO9
+        version_id: 2KTzr3L
+        url: https://semgrep.dev/playground/r/2KTzr3L/bash.lang.best-practice.iteration-over-ls-output.iteration-over-ls-output
+        origin: community
+  severity: WARNING
+  languages:
+  - bash

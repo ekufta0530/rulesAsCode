@@ -1,0 +1,53 @@
+rules:
+- id: javascript.express.security.audit.possible-user-input-redirect.unknown-value-in-redirect
+  message: It looks like '$UNK' is read from user input and it is used to as a redirect.
+    Ensure '$UNK' is not externally controlled, otherwise this is an open redirect.
+  metadata:
+    owasp:
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-601: URL Redirection to Untrusted Site (''Open Redirect'')'
+    asvs:
+      section: V5 Validation, Sanitization and Encoding
+      control_id: 5.5.1 Insecue Redirect
+      control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x13-V5-Validation-Sanitization-Encoding.md#v51-input-validation
+      version: '4'
+    category: security
+    technology:
+    - express
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Open Redirect
+    source: https://semgrep.dev/r/javascript.express.security.audit.possible-user-input-redirect.unknown-value-in-redirect
+    shortlink: https://sg.run/OPv2
+    semgrep.dev:
+      rule:
+        r_id: 9275
+        rv_id: 109851
+        rule_id: gxU12X
+        version_id: 1QTOY1R
+        url: https://semgrep.dev/playground/r/1QTOY1R/javascript.express.security.audit.possible-user-input-redirect.unknown-value-in-redirect
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        $UNK = query.$B;
+        ...
+    - pattern-inside: |
+        $UNK = $A.query.$B;
+        ...
+    - pattern-inside: |
+        $UNK = req.$SOMETHING;
+        ...
+  - pattern: $RES.redirect(..., <... $UNK ...>, ...)

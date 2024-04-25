@@ -1,0 +1,26 @@
+rules:
+- id: dockerfile.best-practice.avoid-dnf-update.avoid-dnf-update
+  severity: INFO
+  languages:
+  - dockerfile
+  message: Packages in base images should be up-to-date, removing the need for 'dnf
+    update'. If packages are out-of-date, consider contacting the base image maintainer.
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3039
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3039
+    category: best-practice
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.best-practice.avoid-dnf-update.avoid-dnf-update
+    shortlink: https://sg.run/jBJA
+    semgrep.dev:
+      rule:
+        r_id: 20121
+        rv_id: 109228
+        rule_id: 9AUAq5
+        version_id: RGTDk9w
+        url: https://semgrep.dev/playground/r/RGTDk9w/dockerfile.best-practice.avoid-dnf-update.avoid-dnf-update
+        origin: community
+  pattern: dnf update

@@ -1,0 +1,122 @@
+rules:
+- id: typescript.typescript.node.security.node-rsa-weak-key.node-rsa-weak-key
+  message: Use of RSA-$BITS, which is considered weak. Based on NIST standards, RSA
+    keys should be at least 2048 bits.
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: MEDIUM
+    confidence: HIGH
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    asvs:
+      section: V6 Stored Cryptography Verification Requirements
+      control_id: 6.2.5 Insecure Algorithm
+      control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x14-V6-Cryptography.md#v62-algorithms
+      version: '4'
+    cwe:
+    - 'CWE-326: Inadequate Encryption Strength'
+    functional-categories:
+    - crypto::search::key-length::nodejs.crypto
+    - crypto::search::key-length::node-rsa
+    - crypto::search::key-length::node-forge
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#algorithms
+    technology:
+    - nodejs
+    - cryptography
+    - crypto
+    - rsa
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/typescript.typescript.node.security.node-rsa-weak-key.node-rsa-weak-key
+    shortlink: https://sg.run/BpDR
+    semgrep.dev:
+      rule:
+        r_id: 28095
+        rv_id: 112062
+        rule_id: pKU0JR
+        version_id: K3TvG00
+        url: https://semgrep.dev/playground/r/K3TvG00/typescript.typescript.node.security.node-rsa-weak-key.node-rsa-weak-key
+        origin: pro_rules
+  languages:
+  - javascript
+  - typescript
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            import $CRYPTO from "crypto"
+            ...
+        - pattern-inside: |
+            import { ..., $CRYPTO,... } from "crypto"
+            ...
+        - pattern-inside: |
+            import * as $CRYPTO from "crypto"
+            ...
+        - pattern-inside: |
+            $CRYPTO = require("crypto")
+            ...
+      - pattern-either:
+        - pattern-inside: |
+            $CRYPTO. ... .$FUNC("rsa", {
+              modulusLength: $BITS,
+            })
+        - pattern-inside: |
+            $UTIL. ... .promisify($CRYPTO.$FUNC)("rsa", {
+                modulusLength: $BITS,
+            })
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            import $CRYPTO from "node-rsa"
+            ...
+        - pattern-inside: |
+            import { ..., $CRYPTO,... } from "node-rsa"
+            ...
+        - pattern-inside: |
+            import * as $CRYPTO from "node-rsa"
+            ...
+        - pattern-inside: |
+            $CRYPTO = require("node-rsa")
+            ...
+      - pattern-either:
+        - pattern: |
+            new $CRYPTO({b: $BITS});
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            import $CRYPTO from "node-forge"
+            ...
+        - pattern-inside: |
+            import { ..., $CRYPTO,... } from "node-forge"
+            ...
+        - pattern-inside: |
+            import * as $CRYPTO from "node-forge"
+            ...
+        - pattern-inside: |
+            $CRYPTO = require("node-forge")
+            ...
+      - pattern-either:
+        - pattern-inside: |
+            $FORGE = $CRYPTO.pki
+            ...
+        - pattern-inside: |
+            $FORGE = $CRYPTO.pki.rsa
+            ...
+      - pattern-either:
+        - pattern: |
+            $FORGE.rsa.$FUNC($BITS)
+        - pattern: |
+            $FORGE.$FUNC({bits:$BITS})
+  - focus-metavariable: $BITS
+  - metavariable-comparison:
+      metavariable: $BITS
+      comparison: $BITS < 2048

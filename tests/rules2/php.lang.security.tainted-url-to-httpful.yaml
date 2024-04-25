@@ -1,0 +1,73 @@
+rules:
+- id: php.lang.security.tainted-url-to-httpful.tainted-url-to-httpful
+  message: Untrusted input might be used to build an HTTP request, which can lead
+    to a Server-side request forgery (SSRF) vulnerability. SSRF allows an attacker
+    to send crafted requests from the server side to other internal or external systems.
+    SSRF can lead to unauthorized access to sensitive data and, in some cases, allow
+    the attacker to control applications or systems that trust the vulnerable service.
+    To prevent this vulnerability, avoid allowing user input to craft the base request.
+    Instead, treat it as part of the path or query parameter and encode it appropriately.
+    When user input is necessary to prepare the HTTP request, perform strict input
+    validation. Additionally, whenever possible, use allowlists to only interact with
+    expected, trusted domains.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - web::source::url-path-params::lang
+    - web::sink::http-request::httpful
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+    - https://github.com/nategood/httpful
+    technology:
+    - php
+    - httpful
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/php.lang.security.tainted-url-to-httpful.tainted-url-to-httpful
+    shortlink: https://sg.run/4K4l
+    semgrep.dev:
+      rule:
+        r_id: 27200
+        rv_id: 111777
+        rule_id: eqUygr
+        version_id: w8T9DON
+        url: https://semgrep.dev/playground/r/w8T9DON/php.lang.security.tainted-url-to-httpful.tainted-url-to-httpful
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: $_REQUEST
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_FILES
+      - pattern: $_COOKIE
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          \Httpful\Request::$METHOD($URL, ...);
+      - pattern-inside: |
+          Httpful\Request::$METHOD($URL, ...);
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (get)|(post)|(getQuick)|(put)|(patch)|(delete)|(head)|(options)
+    - pattern: $URL

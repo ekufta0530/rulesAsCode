@@ -1,0 +1,45 @@
+rules:
+- id: javascript.serialize-javascript.security.audit.unsafe-serialize-javascript.unsafe-serialize-javascript
+  message: '`serialize-javascript` used with `unsafe` parameter, this could be vulnerable
+    to XSS.'
+  metadata:
+    owasp:
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-80: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic
+      XSS)'
+    category: security
+    technology:
+    - serialize-javascript
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/javascript.serialize-javascript.security.audit.unsafe-serialize-javascript.unsafe-serialize-javascript
+    shortlink: https://sg.run/Ro6N
+    semgrep.dev:
+      rule:
+        r_id: 9349
+        rv_id: 109977
+        rule_id: YGURez
+        version_id: 5PTdAGB
+        url: https://semgrep.dev/playground/r/5PTdAGB/javascript.serialize-javascript.security.audit.unsafe-serialize-javascript.unsafe-serialize-javascript
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-inside: |
+      $S = require('serialize-javascript');
+      ...
+  - pattern-not-inside: escape(...)
+  - pattern-not-inside: encodeURI(...)
+  - pattern: |
+      $S(..., {unsafe: true});

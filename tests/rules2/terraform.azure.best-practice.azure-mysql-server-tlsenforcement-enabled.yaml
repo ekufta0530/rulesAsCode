@@ -1,0 +1,34 @@
+rules:
+- id: terraform.azure.best-practice.azure-mysql-server-tlsenforcement-enabled.azure-mysql-server-tlsenforcement-enabled
+  message: Ensure Enforce SSL connection is set to Enabled for MySQL servers
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "azurerm_mysql_server" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_mysql_server" "..." {
+      ...
+      ssl_enforcement_enabled = true
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-mysql-server-tlsenforcement-enabled.azure-mysql-server-tlsenforcement-enabled
+    shortlink: https://sg.run/eE2b
+    semgrep.dev:
+      rule:
+        r_id: 23932
+        rv_id: 110836
+        rule_id: WAUQ8R
+        version_id: gET3OeZ
+        url: https://semgrep.dev/playground/r/gET3OeZ/terraform.azure.best-practice.azure-mysql-server-tlsenforcement-enabled.azure-mysql-server-tlsenforcement-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

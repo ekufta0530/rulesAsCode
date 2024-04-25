@@ -1,0 +1,40 @@
+rules:
+- id: bash.lang.security.ifs-tampering.ifs-tampering
+  languages:
+  - bash
+  severity: WARNING
+  message: The special variable IFS affects how splitting takes place when expanding
+    unquoted variables. Don't set it globally. Prefer a dedicated utility such as
+    'cut' or 'awk' if you need to split input data. If you must use 'read', set IFS
+    locally using e.g. 'IFS="," read -a my_array'.
+  pattern: IFS=...
+  metadata:
+    cwe:
+    - 'CWE-20: Improper Input Validation'
+    category: security
+    technology:
+    - bash
+    confidence: LOW
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Validation
+    source: https://semgrep.dev/r/bash.lang.security.ifs-tampering.ifs-tampering
+    shortlink: https://sg.run/Q9pq
+    semgrep.dev:
+      rule:
+        r_id: 14842
+        rv_id: 109000
+        rule_id: WAUy9q
+        version_id: 9lTdW5W
+        url: https://semgrep.dev/playground/r/9lTdW5W/bash.lang.security.ifs-tampering.ifs-tampering
+        origin: community

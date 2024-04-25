@@ -1,0 +1,47 @@
+rules:
+- id: terraform.azure.security.azure-datalake-store-encryption.azure-datalake-store-encryption
+  message: Ensure that Data Lake Store accounts enables encryption
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_data_lake_store" "..." {
+      ...
+      encryption_state = "Enabled"
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_data_lake_store" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-datalake-store-encryption.azure-datalake-store-encryption
+    shortlink: https://sg.run/Ldvr
+    semgrep.dev:
+      rule:
+        r_id: 23983
+        rv_id: 110893
+        rule_id: 5rUArP
+        version_id: 0bTLele
+        url: https://semgrep.dev/playground/r/0bTLele/terraform.azure.security.azure-datalake-store-encryption.azure-datalake-store-encryption
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

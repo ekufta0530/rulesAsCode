@@ -1,0 +1,145 @@
+rules:
+- id: rust.hyper.path-traversal.tainted-path.tainted-path
+  message: The application builds a file path from potentially untrusted data, which
+    can lead to a path traversal vulnerability. An attacker can manipulate the path
+    which the application uses to access files. If the application does not validate
+    user input and sanitize file paths, sensitive files such as configuration or user
+    data can be accessed, potentially creating or overwriting files. To prevent this
+    vulnerability, validate and sanitize any input that is used to create references
+    to file paths. Also, enforce strict file access controls. For example, choose
+    privileges allowing public-facing applications to access only the required files.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path
+      Traversal'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - file::sink::file-access::rocket
+    - file::sink::file-access::std::fs
+    - file::sink::file-access::std::os
+    - file::sink::file-access::std::path
+    - file::sink::file-access::tempfile
+    - file::sink::file-access::tokio
+    - web::source::header::hyper
+    - web::source::http-body::hyper
+    - web::source::http-params::hyper
+    - web::source::url-path-params::hyper
+    owasp:
+    - A01:2021 - Broken Access Control
+    - A05:2017 - Broken Access Control
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    - https://owasp.org/www-community/attacks/Path_Traversal
+    - https://portswigger.net/web-security/file-path-traversal
+    technology:
+    - hyper
+    - rocket
+    - rust
+    - std::fs
+    - std::os
+    - std::path
+    - tokio
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Path Traversal
+    source: https://semgrep.dev/r/rust.hyper.path-traversal.tainted-path.tainted-path
+    shortlink: https://sg.run/oOwd
+    semgrep.dev:
+      rule:
+        r_id: 66116
+        rv_id: 731993
+        rule_id: 2ZUxKZ
+        version_id: GxTzK7D
+        url: https://semgrep.dev/playground/r/GxTzK7D/rust.hyper.path-traversal.tainted-path.tainted-path
+        origin: pro_rules
+  languages:
+  - rust
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - label: REQUEST
+    patterns:
+    - pattern: $REQ
+    - pattern-either:
+      - pattern-inside: |
+          fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Incoming>, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FN_NAME(..., $REQ: hyper::Request<hyper::body::Body>, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $FN_NAME(..., $REQ: hyper::Request<hyper::Body>, ...) {
+            ...
+          }
+  - label: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: $R.body()
+      - pattern: $R.body_mut()
+      - pattern: $R.into_body()
+      - pattern: $R.headers
+      - pattern: $R.headers_mut()
+      - pattern: $R.query()
+      - pattern: $R.path()
+      - pattern: $R.path_and_query()
+      - pattern: $R.collect()
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $PATH
+    - pattern-either:
+      - pattern: std::fs::File::open($PATH,...)
+      - pattern: std::fs::File::create($PATH,...)
+      - pattern: std::fs::File::create_new($PATH,...)
+      - pattern: std::fs::File::$METHOD(...). ... .open($PATH,...)
+      - pattern: std::fs::read($PATH,...)
+      - pattern: std::fs::read_dir($PATH,...)
+      - pattern: std::fs::read_link($PATH,...)
+      - pattern: std::fs::read_to_string($PATH,...)
+      - pattern: std::fs::copy($PATH,...)
+      - pattern: std::fs::hard_link($PATH,...)
+      - pattern: std::fs::soft_link($PATH,...)
+      - pattern: std::os::unix::fs::symlink($PATH,...)
+      - pattern: std::path::Path::new($PATH,...)
+      - pattern: std::path::Path::new(...).join($PATH,...)
+      - pattern: |
+          ($P: std::path::Path).join($PATH,...)
+      - pattern: std::path::PathBuf::from($PATH,...)
+      - pattern: std::path::PathBuf::new(...).push($PATH,...)
+      - pattern: |
+          ($P: std::path::PathBuf).push($PATH,...)
+      - pattern: tokio::fs::File::open($PATH,...)
+      - pattern: tokio::fs::File::create($PATH,...)
+      - pattern: tokio::fs::read($PATH,...)
+      - pattern: tokio::fs::read_dir($PATH,...)
+      - pattern: tokio::fs::read_link($PATH,...)
+      - pattern: tokio::fs::read_to_string($PATH,...)
+      - pattern: tokio::fs::copy($PATH,...)
+      - pattern: tokio::fs::hard_link($PATH,...)
+      - pattern: tokio::fs::soft_link($PATH,...)
+      - pattern: rocket::response::NamedFile::open($PATH, ...)
+      - pattern: rocket::fs::NamedFile::open($PATH, ...)
+      - patterns:
+        - pattern: |
+            ($T : rocket::fs::TempFile).$SAVE(...)
+        - metavariable-regex:
+            metavariable: $SAVE
+            regex: ^(persist_to|copy_to|move_copy_to)$
+      - patterns:
+        - pattern: |
+            ($T : tempfile::NamedTempFile).$SAVE(...)
+        - metavariable-regex:
+            metavariable: $SAVE
+            regex: ^(persist|persist_noclobber)$
+    requires: REQUEST and USER_INPUT

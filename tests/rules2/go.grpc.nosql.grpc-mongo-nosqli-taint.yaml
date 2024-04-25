@@ -1,0 +1,98 @@
+rules:
+- id: go.grpc.nosql.grpc-mongo-nosqli-taint.grpc-mongo-nosqli-taint
+  message: Untrusted input might be used to build a database query, which can lead
+    to a NoSQL injection vulnerability. An attacker can execute malicious NoSQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. Make sure all user input is validated and sanitized,
+    and avoid using tainted user input to construct NoSQL statements if possible.
+    Ideally, avoid raw queries and instead use parameterized queries.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-943: Improper Neutralization of Special Elements in Data Query Logic'
+    functional-categories:
+    - db::sink::sql-or-nosql-query::mongo
+    - db::source::sql-or-nosql-query::mongo
+    - net::source::remote-procedure-call::grpc
+    owasp:
+    - A01:2017 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - grpc
+    - grpc-go
+    - mongo
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Improper Validation
+    source: https://semgrep.dev/r/go.grpc.nosql.grpc-mongo-nosqli-taint.grpc-mongo-nosqli-taint
+    shortlink: https://sg.run/vDn8
+    semgrep.dev:
+      rule:
+        r_id: 59533
+        rv_id: 229224
+        rule_id: PeU4PJ
+        version_id: l4Tlkog
+        url: https://semgrep.dev/playground/r/l4Tlkog/go.grpc.nosql.grpc-mongo-nosqli-taint.grpc-mongo-nosqli-taint
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - label: USER_INPUT
+    patterns:
+    - pattern-inside: |
+        import "google.golang.org/grpc"
+        ...
+    - pattern-inside: |
+        import $PROTOBUF "$IMPORTPATH"
+        ...
+    - pattern-inside: |
+        type $SERVER struct {
+            ...
+        }
+        ...
+    - pattern: |
+        func ($NAME *$SERVER) $FUNCNAME(..., $PARAM *$PROTOBUF.$FIELD, ...) {
+            ...
+        }
+    - focus-metavariable: $PARAM
+  - label: MONGO_CONNECT
+    pattern: mongo.Connect(...)
+  - label: MONGO_DB
+    pattern: $CLIENT.Database(...)
+    requires: MONGO_CONNECT
+  - label: MONGO_COLL
+    pattern: $DB.Collection(...)
+    requires: MONGO_DB
+  - label: MONGO_COLL
+    pattern-either:
+    - pattern: |
+        ($COLL : *mongo.Collection)
+    - pattern: |
+        ($COLL : mongo.Collection)
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern: $FROM.$FUNC(&$TO)
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |
+        import "go.mongodb.org/mongo-driver/mongo"
+        ...
+    - pattern: $COLL.$FUNC(...)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Aggregate|BulkWrite|CountDocuments|DeleteMany|DeleteOne|Disctinct|Drop|EstimatedDocumentCount|Find|FindOne|FindeOneAndDelete|FindOneAndReplace|FindOneAndUpdate|InsertMany|InsertOne|ReplaceOne|UpdateByID|UpdateMany|UpdateOne|Watch)$
+    requires: MONGO_COLL and USER_INPUT

@@ -1,0 +1,24 @@
+rules:
+- id: ocaml.lang.best-practice.string.ocamllint-useless-sprintf
+  pattern-either:
+  - pattern: Printf.sprintf "..."
+  - pattern: Printf.sprintf "%s" $S
+  message: Useless sprintf
+  languages:
+  - ocaml
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - ocaml
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/ocaml.lang.best-practice.string.ocamllint-useless-sprintf
+    shortlink: https://sg.run/vzl0
+    semgrep.dev:
+      rule:
+        r_id: 9377
+        rv_id: 110015
+        rule_id: QrUzO6
+        version_id: kbTdxGD
+        url: https://semgrep.dev/playground/r/kbTdxGD/ocaml.lang.best-practice.string.ocamllint-useless-sprintf
+        origin: community

@@ -1,0 +1,32 @@
+rules:
+- id: trailofbits.generic.ssh-disable-host-key-checking.ssh-disable-host-key-checking
+  message: Found `ssh` command disabling host key checking
+  languages:
+  - generic
+  severity: WARNING
+  metadata:
+    category: security
+    subcategory:
+    - audit
+    technology:
+    - shell
+    cwe: 'CWE-295: Improper Certificate Validation'
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: HIGH
+    references:
+    - https://man7.org/linux/man-pages/man1/ssh.1.html
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/trailofbits.generic.ssh-disable-host-key-checking.ssh-disable-host-key-checking
+    shortlink: https://sg.run/2ZWd8
+    semgrep.dev:
+      rule:
+        r_id: 113219
+        rv_id: 253289
+        rule_id: qNU2R9X
+        version_id: 8KT42rO
+        url: https://semgrep.dev/playground/r/8KT42rO/trailofbits.generic.ssh-disable-host-key-checking.ssh-disable-host-key-checking
+        origin: community
+  pattern: ssh ... StrictHostKeyChecking=no

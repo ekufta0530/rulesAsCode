@@ -1,0 +1,36 @@
+rules:
+- id: terraform.azure.best-practice.azure-appgateway-enables-waf.azure-appgateway-enables-waf
+  message: Ensure that Application Gateway enables WAF
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_application_gateway" "..." {
+      ...
+      waf_configuration {
+        enabled = true
+      }
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_application_gateway" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-appgateway-enables-waf.azure-appgateway-enables-waf
+    shortlink: https://sg.run/5eKA
+    semgrep.dev:
+      rule:
+        r_id: 23903
+        rv_id: 110807
+        rule_id: yyU2O0
+        version_id: qkT2BpO
+        url: https://semgrep.dev/playground/r/qkT2BpO/terraform.azure.best-practice.azure-appgateway-enables-waf.azure-appgateway-enables-waf
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

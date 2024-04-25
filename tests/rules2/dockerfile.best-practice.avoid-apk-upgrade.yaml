@@ -1,0 +1,26 @@
+rules:
+- id: dockerfile.best-practice.avoid-apk-upgrade.avoid-apk-upgrade
+  languages:
+  - dockerfile
+  message: Packages in base images should be up-to-date, removing the need for 'apk
+    upgrade'. If packages are out-of-date, consider contacting the base image maintainer.
+  severity: INFO
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3017
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3017
+    category: best-practice
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.best-practice.avoid-apk-upgrade.avoid-apk-upgrade
+    shortlink: https://sg.run/2kg5
+    semgrep.dev:
+      rule:
+        r_id: 20119
+        rv_id: 109226
+        rule_id: j2UwDz
+        version_id: 5PTdAEE
+        url: https://semgrep.dev/playground/r/5PTdAEE/dockerfile.best-practice.avoid-apk-upgrade.avoid-apk-upgrade
+        origin: community
+  pattern: RUN ... apk upgrade ...

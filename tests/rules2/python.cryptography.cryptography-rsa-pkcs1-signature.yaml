@@ -1,0 +1,64 @@
+rules:
+- id: python.cryptography.cryptography-rsa-pkcs1-signature.cryptography-rsa-pkcs1-signature
+  message: The implementation of the PKCS1 v1.5 padding scheme in the `cryptography`
+    package is vulnerable to timing attacks. The RSA decryption raises an exception
+    on failure, which takes a different amount of time than returning a value upon
+    success. This is not considered secure and it is not recommended that PKCS1v15
+    is used in new applications. OAEP should be preferred for encryption and PSS should
+    be preferred for signatures.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    functional-categories:
+    - crypto::search::asymmetric-algorithm::cryptography
+    owasp:
+    - A02:2021 - Cryptographic Failures
+    - A03:2017 - Sensitive Data Exposure
+    references:
+    - https://cryptography.io/en/latest/hazmat/primitives/asymmetric/dsa/
+    - https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15
+    - https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    - https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/04-Testing_for_Weak_Encryption
+    - https://words.filippo.io/dispatches/dsa/
+    technology:
+    - crypto
+    - cryptography
+    - cryptography.hazmat
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/python.cryptography.cryptography-rsa-pkcs1-signature.cryptography-rsa-pkcs1-signature
+    shortlink: https://sg.run/Pewb0
+    semgrep.dev:
+      rule:
+        r_id: 116501
+        rv_id: 731967
+        rule_id: ReUDE34
+        version_id: 1QT5wbR
+        url: https://semgrep.dev/playground/r/1QT5wbR/python.cryptography.cryptography-rsa-pkcs1-signature.cryptography-rsa-pkcs1-signature
+        origin: pro_rules
+  languages:
+  - python
+  fix: cryptography.hazmat.primitives.asymmetric.padding.PSS(mgf=cryptography.hazmat.primitives.asymmetric.padding.MGF1(hashes.SHA256()),salt_length=cryptography.hazmat.primitives.asymmetric.padding.PSS.MAX_LENGTH)
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - pattern: $KEY.sign($MSG, $PKCS1, $HASH)
+    - pattern: |
+        $PADDING = $PKCS1
+        ...
+        $KEY.sign($MSG, $PADDING, $HASH)
+  - metavariable-pattern:
+      metavariable: $PKCS1
+      patterns:
+      - pattern: cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15(...)
+  - focus-metavariable: $PKCS1

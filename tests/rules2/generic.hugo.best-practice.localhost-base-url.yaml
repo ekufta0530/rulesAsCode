@@ -1,0 +1,27 @@
+rules:
+- id: generic.hugo.best-practice.localhost-base-url.localhost-base-url
+  patterns:
+  - pattern: baseURL = "..."
+  - pattern-regex: .*(localhost|127\.0\.0\.1).*
+  severity: WARNING
+  message: The 'baseURL' is set to localhost. This may cause links to not work if
+    deployed.
+  languages:
+  - generic
+  metadata:
+    references:
+    - https://gohugo.io/
+    category: best-practice
+    technology:
+    - hugo
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/generic.hugo.best-practice.localhost-base-url.localhost-base-url
+    shortlink: https://sg.run/dKD5
+    semgrep.dev:
+      rule:
+        r_id: 9034
+        rv_id: 109342
+        rule_id: JDUybz
+        version_id: pZT1yqk
+        url: https://semgrep.dev/playground/r/pZT1yqk/generic.hugo.best-practice.localhost-base-url.localhost-base-url
+        origin: community

@@ -1,0 +1,98 @@
+rules:
+- id: java.servlets.security.nosql-injection-servlets.nosql-injection-servlets
+  message: Untrusted input might be used to build a database query, which can lead
+    to a NoSQL injection vulnerability. An attacker can execute malicious NoSQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. Make sure all user input is validated and sanitized,
+    and avoid if possible to use it to construct the NoSQL statement.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe: 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    functional-categories:
+    - web::source::cookie::Servlet
+    - web::source::http-params::Servlet
+    - web::source::http-body::Servlet
+    - web::source::header::Servlet
+    - web::source::url-path-params::Servlet
+    - db::sink::sql-or-nosql-query::mongodb
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
+    - https://owasp.org/www-community/attacks/SQL_Injection
+    technology:
+    - sql
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/java.servlets.security.nosql-injection-servlets.nosql-injection-servlets
+    shortlink: https://sg.run/dq1E
+    semgrep.dev:
+      rule:
+        r_id: 46834
+        rv_id: 111595
+        rule_id: kxUv65
+        version_id: RGTDR8A
+        url: https://semgrep.dev/playground/r/RGTDR8A/java.servlets.security.nosql-injection-servlets.nosql-injection-servlets
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    taint_assume_safe_numbers: true
+    taint_assume_safe_booleans: true
+  pattern-sources:
+  - label: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          (HttpServletRequest $REQ).$REQFUNC(...)
+      - pattern: "(ServletRequest $REQ).$REQFUNC(...) \n"
+    - metavariable-regex:
+        metavariable: $REQFUNC
+        regex: ^(getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)$
+  - label: CONCAT
+    requires: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: $X + $SOURCE
+      - pattern: $SOURCE + $X
+      - pattern: (StringBuilder $STRB).append($SOURCE)
+      - pattern: String.format("...", ..., $SOURCE, ...)
+      - pattern: String.join("...", ..., $SOURCE, ...)
+      - pattern: (String $STR).concat($SOURCE)
+      - pattern: $SOURCE.concat(...)
+      - pattern: $X += SOURCE
+      - pattern: $SOURCE += $X
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $CLIENT = new MongoClient(...);
+          ...
+      - pattern-inside: |
+          $CLIENT = new Mongo(...);
+          ...
+    - pattern-either:
+      - patterns:
+        - pattern: |
+            (BasicDBObject $DBO).$QUERYFUNC($COMMAND, $INPUT)
+        - metavariable-regex:
+            metavariable: $QUERYFUNC
+            regex: ^(append|put)$
+      - pattern: |
+          new BasicDBObject($COMMAND, $INPUT)
+    - focus-metavariable: $INPUT
+    requires: CONCAT
+  pattern-sanitizers:
+  - pattern: (boolean $X)

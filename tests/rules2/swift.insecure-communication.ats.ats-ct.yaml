@@ -1,0 +1,95 @@
+rules:
+- id: swift.insecure-communication.ats.ats-ct.ATS-consider-ct
+  message: The application's App Transport Security (ATS) configuration does not leverage
+    the Certificate Transparency option. By opting in for Certificate Transparency
+    (CT), rogue CA or compromised CA issued certificates may be identified and blocked,
+    creating a more reliably secure TLS channel.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cwe: 'CWE-295: Improper Certificate Validation'
+    masvs:
+    - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+      best practices.'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A07:2021 - Identification and Authentication Failures
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+    - https://certificate.transparency.dev/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-ct.ATS-consider-ct
+    shortlink: https://sg.run/dbpX
+    semgrep.dev:
+      rule:
+        r_id: 60534
+        rv_id: 112014
+        rule_id: nJU3p4
+        version_id: BjTXpA0
+        url: https://semgrep.dev/playground/r/BjTXpA0/swift.insecure-communication.ats.ats-ct.ATS-consider-ct
+        origin: pro_rules
+  languages:
+  - xml
+  options:
+    symbolic_propagation: true
+  paths:
+    include:
+    - Info.plist
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: |
+          <dict>
+          ...
+          <key>$DOMAIN</key>
+          <dict>
+          ...
+            <key>NSRequiresCertificateTransparency</key>
+            <false/>
+          ...
+          </dict>
+          ...
+          </dict>
+      - focus-metavariable: $DOMAIN
+    - patterns:
+      - pattern: |
+          <dict>
+          ...
+          <key>NSExceptionDomains</key>
+          <dict>
+            ...
+            <key>$DOMAIN</key>
+            <dict>
+            ...
+            </dict>
+            ...
+          </dict>
+          ...
+          </dict>
+      - focus-metavariable: $DOMAIN
+      - pattern-not-inside: |
+          <dict>
+          ...
+          <key>NSExceptionDomains</key>
+          <dict>
+            ...
+            <key>$DOMAIN</key>
+            <dict>
+            ...
+            <key>NSRequiresCertificateTransparency</key>
+            ...
+            </dict>
+            ...
+          </dict>
+          ...
+          </dict>

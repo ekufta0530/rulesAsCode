@@ -1,0 +1,37 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-wnsprintf.microsoft-banned-list-wnsprintf
+  message: 'wnsprintf is a banned function: no null-termination. Alternatives are
+    StringCbPrintf, StringCbPrintf_l, StringCbPrintf_lEx, StringCbPrintfEx, StringCchPrintf,
+    StringCchPrintfEx'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-wnsprintf.microsoft-banned-list-wnsprintf
+    shortlink: https://sg.run/10BDx
+    semgrep.dev:
+      rule:
+        r_id: 114866
+        rv_id: 257477
+        rule_id: x8UK8jD
+        version_id: xyTALJ7
+        url: https://semgrep.dev/playground/r/xyTALJ7/cpp.lang.security.misc.microsoft-banned-list-wnsprintf.microsoft-banned-list-wnsprintf
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: wnsprintf(...)

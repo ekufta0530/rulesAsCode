@@ -1,0 +1,54 @@
+rules:
+- id: swift.biometrics-and-auth.acl-changes.keychain-acl-allows-biometry-changes
+  message: The application was observed to store keychain items that leverage biometric
+    protection, but allow for biometry changes. This means that an attacker with knowledge
+    of the victim's passcode or the ability to guess the passcode - can register their
+    own biometrics, and bypass this keychain authentication mechanism within the app.
+    The application should store keychain entries with `biometryCurrentSet` rather
+    than `biometryAny` or `userPresence`.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe: 'CWE-305: Authentication Bypass by Primary Weakness'
+    functional-categories:
+    - mobile::search::auth-and-biometrics::lang
+    masvs:
+    - 'MASVS-AUTH-2: The app performs local authentication securely according to the
+      platform best practices.'
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06f-testing-local-authentication
+    - https://shirazkhan030.medium.com/biometric-authentication-in-ios-6c53c54f17df
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.biometrics-and-auth.acl-changes.keychain-acl-allows-biometry-changes
+    shortlink: https://sg.run/NGyn
+    semgrep.dev:
+      rule:
+        r_id: 60527
+        rv_id: 111979
+        rule_id: wdUYKP
+        version_id: w8T9DoQ
+        url: https://semgrep.dev/playground/r/w8T9DoQ/swift.biometrics-and-auth.acl-changes.keychain-acl-allows-biometry-changes
+        origin: pro_rules
+  languages:
+  - swift
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern: "SecAccessControlCreateWithFlags(\n  $ARG1, \n  $ARG2,\n  $X,\n  $ERR)\n"
+  - focus-metavariable:
+    - $X
+  - pattern-either:
+    - pattern: |
+        .userPresence
+    - pattern: |
+        .biometryAny

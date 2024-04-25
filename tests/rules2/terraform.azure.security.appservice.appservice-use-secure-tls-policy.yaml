@@ -1,0 +1,44 @@
+rules:
+- id: terraform.azure.security.appservice.appservice-use-secure-tls-policy.appservice-use-secure-tls-policy
+  message: Detected an AppService that was not configured to use TLS 1.2. Add `site_config.min_tls_version
+    = "1.2"` in your resource block.
+  patterns:
+  - pattern: min_tls_version = $ANYTHING
+  - pattern-inside: |
+      resource "azurerm_app_service" "$NAME" {
+        ...
+      }
+  - pattern-not-inside: min_tls_version = "1.2"
+  metadata:
+    cwe:
+    - 'CWE-326: Inadequate Encryption Strength'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service#min_tls_version
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.appservice.appservice-use-secure-tls-policy.appservice-use-secure-tls-policy
+    shortlink: https://sg.run/AXRp
+    semgrep.dev:
+      rule:
+        r_id: 15106
+        rv_id: 110869
+        rule_id: YGUDbZ
+        version_id: xyTKpq7
+        url: https://semgrep.dev/playground/r/xyTKpq7/terraform.azure.security.appservice.appservice-use-secure-tls-policy.appservice-use-secure-tls-policy
+        origin: community
+  languages:
+  - hcl
+  severity: ERROR

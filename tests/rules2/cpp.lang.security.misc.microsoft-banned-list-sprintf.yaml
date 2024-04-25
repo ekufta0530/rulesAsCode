@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-sprintf.microsoft-banned-list-sprintf
+  message: 'sprintf is a banned function: limited error detection. Alternatives are
+    sprintf_s'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-sprintf.microsoft-banned-list-sprintf
+    shortlink: https://sg.run/eq2Pd
+    semgrep.dev:
+      rule:
+        r_id: 114832
+        rv_id: 257443
+        rule_id: WAUW83K
+        version_id: WrTlzxr
+        url: https://semgrep.dev/playground/r/WrTlzxr/cpp.lang.security.misc.microsoft-banned-list-sprintf.microsoft-banned-list-sprintf
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: sprintf(...)

@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-_wsplitpath.microsoft-banned-list-_wsplitpath
+  message: '_wsplitpath is a banned function: no bounds checking. Alternatives are
+    _wsplitpath_s'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_wsplitpath.microsoft-banned-list-_wsplitpath
+    shortlink: https://sg.run/qNo4e
+    semgrep.dev:
+      rule:
+        r_id: 114812
+        rv_id: 257423
+        rule_id: v8UYX8L
+        version_id: vdTprkK
+        url: https://semgrep.dev/playground/r/vdTprkK/cpp.lang.security.misc.microsoft-banned-list-_wsplitpath.microsoft-banned-list-_wsplitpath
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: _wsplitpath(...)

@@ -1,0 +1,41 @@
+rules:
+- id: php.lang.security.exec-use.exec-use
+  patterns:
+  - pattern: $FUNC(...);
+  - pattern-not: $FUNC('...', ...);
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: exec|passthru|proc_open|popen|shell_exec|system|pcntl_exec
+  message: Executing non-constant commands. This can lead to command injection.
+  metadata:
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    references:
+    - https://github.com/FloeDesignTechnologies/phpcs-security-audit/blob/master/Security/Sniffs/BadFunctions/SystemExecFunctionsSniff.php
+    category: security
+    technology:
+    - php
+    owasp:
+    - A03:2021 - Injection
+    cwe2022-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/php.lang.security.exec-use.exec-use
+    shortlink: https://sg.run/5Q1j
+    semgrep.dev:
+      rule:
+        r_id: 9391
+        rv_id: 110038
+        rule_id: qNUjye
+        version_id: BjTXrZP
+        url: https://semgrep.dev/playground/r/BjTXrZP/php.lang.security.exec-use.exec-use
+        origin: community
+  languages:
+  - php
+  severity: ERROR

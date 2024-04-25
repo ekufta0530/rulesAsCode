@@ -1,0 +1,43 @@
+rules:
+- id: terraform.gcp.security.gcp-cloud-storage-logging.gcp-cloud-storage-logging
+  patterns:
+  - pattern: |
+      resource "google_storage_bucket" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: "resource \"google_storage_bucket\" $ANYTHING {\n  ...\n \
+      \ logging {\n      log_bucket = ...\n  }          \n  ...\n}\n"
+  message: Ensure bucket logs access.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    owasp:
+    - A10:2017 - Insufficient Logging & Monitoring
+    - A09:2021 - Security Logging and Monitoring Failures
+    cwe:
+    - 'CWE-778: Insufficient Logging'
+    technology:
+    - terraform
+    - gcp
+    category: security
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: LOW
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Insufficient Logging
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-cloud-storage-logging.gcp-cloud-storage-logging
+    shortlink: https://sg.run/5g5D
+    semgrep.dev:
+      rule:
+        r_id: 32303
+        rv_id: 110971
+        rule_id: gxUrdg
+        version_id: O9TNdpn
+        url: https://semgrep.dev/playground/r/O9TNdpn/terraform.gcp.security.gcp-cloud-storage-logging.gcp-cloud-storage-logging
+        origin: community

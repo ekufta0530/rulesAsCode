@@ -1,0 +1,73 @@
+rules:
+- id: swift.commoncrypto.hardcoded-realm.swift-hardcoded-realm-key
+  message: The application was observed to contain a hardcoded encryption key for
+    use with the Realm database. An attacker that obtains this key via reverse engineering
+    or access to source code will be able to re-use this key to encrypt or decrypt
+    Realm data. Cryptographic keys should be unique, and randomly generated per user,
+    per client.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-321: Use of Hard-coded Cryptographic Key'
+    functional-categories:
+    - crypto::search::secret::CommonCrypto
+    masvs:
+    - 'MASVS-STORAGE-1: The app securely stores sensitive data'
+    owasp:
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://ali-akhtar.medium.com/realm-custom-configuration-and-encryption-realmswift-part-3-f991f090ae22
+    - https://mas.owasp.org/MASVS/controls/MASVS-STORAGE-1/
+    - https://mas.owasp.org/MASVS/controls/MASVS-CRYPTO-1/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/swift.commoncrypto.hardcoded-realm.swift-hardcoded-realm-key
+    shortlink: https://sg.run/P4Lp
+    semgrep.dev:
+      rule:
+        r_id: 66489
+        rv_id: 111988
+        rule_id: eqUkev
+        version_id: 7ZTgnyW
+        url: https://semgrep.dev/playground/r/7ZTgnyW/swift.commoncrypto.hardcoded-realm.swift-hardcoded-realm-key
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          "...".data(...)
+      - pattern: |
+          Data(bytes:[$Y,...])
+      - pattern: |
+          Data(base64Encoded: "...")
+      - patterns:
+        - pattern-inside: |
+            $KEYDATA = [$Y,...]
+            ...
+        - pattern: |
+            Data(bytes: $KEYDATA)
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          Realm.Configuration(...,encryptionKey: $KEY,...)
+      - pattern: |
+          $CONFIG = Realm.Configuration(...)
+          ...
+          $CONFIG.encryptionKey = $KEY
+    - focus-metavariable: $KEY

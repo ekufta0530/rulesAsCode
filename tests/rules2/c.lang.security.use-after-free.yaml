@@ -1,0 +1,44 @@
+rules:
+- id: c.lang.security.use-after-free.use-after-free
+  patterns:
+  - pattern-either:
+    - pattern: $VAR->$ACCESSOR
+    - pattern: (*$VAR).$ACCESSOR
+    - pattern: $VAR[$NUM]
+  - pattern-inside: free($VAR); ...
+  - pattern-not-inside: $VAR = NULL; ...
+  - pattern-not-inside: free($VAR); ... $VAR = malloc(...); ...
+  message: Variable '$VAR' was used after being freed. This can lead to undefined
+    behavior.
+  metadata:
+    cwe:
+    - 'CWE-416: Use After Free'
+    references:
+    - https://cwe.mitre.org/data/definitions/416.html
+    - https://ctf-wiki.github.io/ctf-wiki/pwn/linux/glibc-heap/use_after_free/
+    category: security
+    technology:
+    - c
+    confidence: LOW
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/c.lang.security.use-after-free.use-after-free
+    shortlink: https://sg.run/gL6e
+    semgrep.dev:
+      rule:
+        r_id: 8841
+        rv_id: 257631
+        rule_id: KxUb9l
+        version_id: LjT2q2X
+        url: https://semgrep.dev/playground/r/LjT2q2X/c.lang.security.use-after-free.use-after-free
+        origin: community
+  languages:
+  - c
+  severity: WARNING

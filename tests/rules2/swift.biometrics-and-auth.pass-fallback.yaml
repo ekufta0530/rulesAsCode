@@ -1,0 +1,53 @@
+rules:
+- id: swift.biometrics-and-auth.pass-fallback.keychain-passcode-fallback
+  message: The application was observed to store keychain items that leverage user
+    authentication but allow the passcode fallback. Biometric modalities are considered
+    more secure than 4 or 6 digit pincodes on iOS, and should be preferred over the
+    passcode.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe: 'CWE-272: Least Privilege Violation'
+    functional-categories:
+    - mobile::search::auth-and-biometrics::lang
+    masvs:
+    - 'MASVS-AUTH-3: The app secures sensitive operations with additional authentication.'
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06f-testing-local-authentication
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.biometrics-and-auth.pass-fallback.keychain-passcode-fallback
+    shortlink: https://sg.run/vEkn
+    semgrep.dev:
+      rule:
+        r_id: 60533
+        rv_id: 111985
+        rule_id: ZqUb3Y
+        version_id: ZRTQpZq
+        url: https://semgrep.dev/playground/r/ZRTQpZq/swift.biometrics-and-auth.pass-fallback.keychain-passcode-fallback
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - pattern-either:
+    - pattern: |
+        .userPresence
+    - pattern: |
+        .devicePasscode
+  pattern-sinks:
+  - patterns:
+    - pattern: "SecAccessControlCreateWithFlags(\n  $ARG1, \n  $ARG2,\n  $X,\n  $ERR)\n"
+    - focus-metavariable:
+      - $X

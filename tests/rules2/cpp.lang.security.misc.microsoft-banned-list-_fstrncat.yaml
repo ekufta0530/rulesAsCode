@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-_fstrncat.microsoft-banned-list-_fstrncat
+  message: '_fstrncat is a banned function: legacy 16-bit far pointer implementation.
+    Alternatives are StringCbCatN, StringCbCatNEx, StringCchCatN, StringCchCatNEx'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_fstrncat.microsoft-banned-list-_fstrncat
+    shortlink: https://sg.run/ZqL3n
+    semgrep.dev:
+      rule:
+        r_id: 114779
+        rv_id: 257390
+        rule_id: 4bUR9lL
+        version_id: 44TAyoP
+        url: https://semgrep.dev/playground/r/44TAyoP/cpp.lang.security.misc.microsoft-banned-list-_fstrncat.microsoft-banned-list-_fstrncat
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: _fstrncat(...)

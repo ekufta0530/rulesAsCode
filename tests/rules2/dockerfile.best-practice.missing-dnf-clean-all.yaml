@@ -1,0 +1,30 @@
+rules:
+- id: dockerfile.best-practice.missing-dnf-clean-all.missing-dnf-clean-all
+  severity: WARNING
+  languages:
+  - dockerfile
+  patterns:
+  - pattern: RUN ... dnf ...
+  - pattern-not-inside: RUN ... && dnf clean all
+  - pattern-not-inside: RUN ... && \ dnf clean all
+  message: This dnf command does not end with '&& dnf clean all'. Running 'dnf clean
+    all' will remove cached data and reduce package size. (This must be performed
+    in the same RUN step.)
+  metadata:
+    source-rule-url: https://github.com/hadolint/hadolint/wiki/DL3038
+    references:
+    - https://github.com/hadolint/hadolint/wiki/DL3038
+    category: best-practice
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.best-practice.missing-dnf-clean-all.missing-dnf-clean-all
+    shortlink: https://sg.run/w460
+    semgrep.dev:
+      rule:
+        r_id: 20129
+        rv_id: 109236
+        rule_id: OrUvE4
+        version_id: l4T4v1g
+        url: https://semgrep.dev/playground/r/l4T4v1g/dockerfile.best-practice.missing-dnf-clean-all.missing-dnf-clean-all
+        origin: community

@@ -1,0 +1,80 @@
+rules:
+- id: go.net.csrf.gorilla-csrf.go-net-http-route-without-gorilla-csrf-protection.go-net-http-route-without-gorilla-csrf-protection
+  message: 'The application does not appear to verify inbound requests which can lead
+    to a Cross-site request forgery (CSRF) vulnerability. If the application uses
+    cookie-based authentication, an attacker can trick users into sending authenticated
+    HTTP requests without their knowledge from any arbitrary domain they visit. To
+    prevent this vulnerability start by identifying if the framework or library leveraged
+    has built-in features or offers plugins for CSRF protection. CSRF tokens should
+    be unique and securely random. The `Synchronizer Token` or `Double Submit Cookie`
+    patterns with defense-in-depth mechanisms such as the `sameSite` cookie flag can
+    help prevent CSRF. For more information, see: [Cross-site request forgery prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)'
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    functional-categories:
+    - web::search::csrf-config::gorilla
+    - web::search::csrf-config::net/http
+    owasp:
+    - A01:2021 - Broken Access Control
+    - A05:2017 - Broken Access Control
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+    - https://github.com/gorilla/csrf
+    technology:
+    - go
+    - gorilla
+    - go-net/http
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/go.net.csrf.gorilla-csrf.go-net-http-route-without-gorilla-csrf-protection.go-net-http-route-without-gorilla-csrf-protection
+    shortlink: https://sg.run/KJjL
+    semgrep.dev:
+      rule:
+        r_id: 36755
+        rv_id: 111499
+        rule_id: ReU91p
+        version_id: 0bTLeY7
+        url: https://semgrep.dev/playground/r/0bTLeY7/go.net.csrf.gorilla-csrf.go-net-http-route-without-gorilla-csrf-protection.go-net-http-route-without-gorilla-csrf-protection
+        origin: pro_rules
+  languages:
+  - go
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-inside: |
+      import "github.com/gorilla/csrf"
+      ...
+  - pattern-inside: |
+      import "net/http"
+      ...
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-not: $HTTP.$LISTEN($ADDR, ..., <... csrf.Protect(...)(...) ...>)
+        - pattern: $HTTP.$LISTEN($ADDR, ...)
+      - patterns:
+        - pattern-inside: |
+            $HTTP := http.NewServeMux()
+            ...
+        - pattern-not: $HTTP.$LISTEN($ADDR, ..., <... csrf.Protect(...)(...) ...>)
+        - pattern: $HTTP.$LISTEN($ADDR, ...)
+    - metavariable-regex:
+        metavariable: $LISTEN
+        regex: ^(ListenAndServe(TLS)?|Handle)$
+    - metavariable-pattern:
+        metavariable: $HTTP
+        pattern-either:
+        - pattern: http
+        - pattern: |
+            ($HTTP : http.ServeMux)
+        - pattern: |
+            ($HTTP : *http.ServeMux)

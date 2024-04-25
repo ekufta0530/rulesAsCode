@@ -1,0 +1,63 @@
+rules:
+- id: javascript.browser.security.insufficient-postmessage-origin-validation.insufficient-postmessage-origin-validation
+  message: No validation of origin is done by the addEventListener API. It may be
+    possible to exploit this flaw to perform Cross Origin attacks such as Cross-Site
+    Scripting(XSS).
+  metadata:
+    owasp:
+    - A08:2021 - Software and Data Integrity Failures
+    cwe:
+    - 'CWE-345: Insufficient Verification of Data Authenticity'
+    category: security
+    technology:
+    - browser
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    references:
+    - https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/javascript.browser.security.insufficient-postmessage-origin-validation.insufficient-postmessage-origin-validation
+    shortlink: https://sg.run/gL9x
+    semgrep.dev:
+      rule:
+        r_id: 9241
+        rv_id: 109818
+        rule_id: BYUN0X
+        version_id: vdTYNlP
+        url: https://semgrep.dev/playground/r/vdTYNlP/javascript.browser.security.insufficient-postmessage-origin-validation.insufficient-postmessage-origin-validation
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  pattern-either:
+  - patterns:
+    - pattern: |
+        window.addEventListener('message', $FUNC, ...)
+    - metavariable-pattern:
+        patterns:
+        - pattern: |
+            function($OBJ) { ... }
+        - pattern-not: |
+            function($OBJ) { ... if (<... $OBJ.origin ...>) { ... } ... }
+        metavariable: $FUNC
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          function $FNAME($OBJ) { $CONTEXT }
+          ...
+      - pattern-inside: |
+          $FNAME = (...) => { $CONTEXT }
+          ...
+    - pattern: |
+        window.addEventListener('message', $FNAME,...)
+    - metavariable-pattern:
+        patterns:
+        - pattern-not: |
+            ... if (<... $OBJ.origin ...>) { ... } ...
+        metavariable: $CONTEXT

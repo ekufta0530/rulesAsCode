@@ -1,0 +1,52 @@
+rules:
+- id: terraform.gcp.security.gcp-artifact-registry-private-repo-iam-binding.gcp-artifact-registry-private-repo-iam-binding
+  patterns:
+  - pattern: resource
+  - pattern-either:
+    - pattern-inside: |
+        resource "google_artifact_registry_repository_iam_binding" "..." {
+        ...
+        members = [ ..., "allAuthenticatedUsers", ...]
+        ...
+        }
+    - pattern-inside: |
+        resource "google_artifact_registry_repository_iam_binding" "..." {
+        ...
+        members = [ ..., "allUsers", ...]
+        ...
+        }
+  message: "Ensure that Artifact Registry repositories are not anonymously or publicly\
+    \ accessible\t"
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-artifact-registry-private-repo-iam-binding.gcp-artifact-registry-private-repo-iam-binding
+    shortlink: https://sg.run/Bq35
+    semgrep.dev:
+      rule:
+        r_id: 32295
+        rv_id: 110963
+        rule_id: v8ULgW
+        version_id: 9lTd55g
+        url: https://semgrep.dev/playground/r/9lTd55g/terraform.gcp.security.gcp-artifact-registry-private-repo-iam-binding.gcp-artifact-registry-private-repo-iam-binding
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

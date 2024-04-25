@@ -1,0 +1,50 @@
+rules:
+- id: csharp.lang.correctness.regioninfo.regioninfo-interop.correctness-regioninfo-interop
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $WRITER.Write($RI);
+    - pattern: |
+        $WRITER.WriteAsync($RI);
+    - pattern: |
+        $WRITER.WriteLine($RI);
+    - pattern: |
+        $WRITER.WriteLineAsync($RI);
+  - pattern-inside: |
+      RegionInfo $RI = new RegionInfo($REGION);
+      ...
+      using($PIPESTREAM $P = ...){
+        ...
+      }
+  - metavariable-regex:
+      metavariable: $REGION
+      regex: ^"\w{2}"$
+  - metavariable-regex:
+      metavariable: $PIPESTREAM
+      regex: (Anonymous|Named)Pipe(Server|Client)Stream
+  message: Potential inter-process write of RegionInfo $RI via $PIPESTREAM $P that
+    was instantiated with a two-character culture code $REGION.  Per .NET documentation,
+    if you want to persist a RegionInfo object or communicate it between processes,
+    you should instantiate it by using a full culture name rather than a two-letter
+    ISO region code.
+  languages:
+  - csharp
+  severity: WARNING
+  metadata:
+    references:
+    - https://docs.microsoft.com/en-us/dotnet/api/system.globalization.regioninfo.twoletterisoregionname?view=net-6.0#remarks
+    technology:
+    - .net
+    category: correctness
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/csharp.lang.correctness.regioninfo.regioninfo-interop.correctness-regioninfo-interop
+    shortlink: https://sg.run/2AvL
+    semgrep.dev:
+      rule:
+        r_id: 18219
+        rv_id: 109191
+        rule_id: 8GUGnq
+        version_id: qkT2xLd
+        url: https://semgrep.dev/playground/r/qkT2xLd/csharp.lang.correctness.regioninfo.regioninfo-interop.correctness-regioninfo-interop
+        origin: community

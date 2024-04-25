@@ -1,0 +1,58 @@
+rules:
+- id: python.correctness.suppressed-exception-handling-finally-break.suppressed-exception-handling-finally-break
+  patterns:
+  - pattern-either:
+    - pattern: |
+        try:
+          ...
+        except $EXCEPTION:
+          ...
+        finally:
+          ...
+          break
+    - pattern: |
+        try:
+          ...
+        except $EXCEPTION:
+          ...
+        finally:
+          ...
+          continue
+    - pattern: |
+        try:
+          ...
+        except $EXCEPTION:
+          ...
+        finally:
+          ...
+          return ...
+    - pattern: |
+        try:
+          ...
+          return ...
+        finally:
+          ...
+          return ...
+  message: Having a `break`, `continue`, or `return` in a `finally` block will cause
+    strange behaviors, like exceptions not being caught.
+  metadata:
+    references:
+    - https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
+    - https://www.python.org/dev/peps/pep-0601/#rejection-note
+    category: correctness
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.correctness.suppressed-exception-handling-finally-break.suppressed-exception-handling-finally-break
+    shortlink: https://sg.run/xXvL
+    semgrep.dev:
+      rule:
+        r_id: 18274
+        rv_id: 110147
+        rule_id: BYUe8k
+        version_id: 6xTvJd8
+        url: https://semgrep.dev/playground/r/6xTvJd8/python.correctness.suppressed-exception-handling-finally-break.suppressed-exception-handling-finally-break
+        origin: community
+  languages:
+  - python
+  severity: WARNING

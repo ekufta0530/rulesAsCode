@@ -1,0 +1,33 @@
+rules:
+- id: yaml.semgrep.duplicate-id.duplicate-id
+  message: The 'id' field $X was used multiple times. The 'id' field needs to be unique.
+  severity: ERROR
+  languages:
+  - yaml
+  patterns:
+  - pattern-inside: 'rules: [..., $RULE, ...]'
+  - pattern-inside: |
+      ...
+      - id: $X
+        ...
+      ...
+      - id: $X
+        ...
+      ...
+  - pattern: |
+      id: $X
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.duplicate-id.duplicate-id
+    shortlink: https://sg.run/wxEN
+    semgrep.dev:
+      rule:
+        r_id: 11073
+        rv_id: 111157
+        rule_id: j2UqPW
+        version_id: 6xTvQWQ
+        url: https://semgrep.dev/playground/r/6xTvQWQ/yaml.semgrep.duplicate-id.duplicate-id
+        origin: community

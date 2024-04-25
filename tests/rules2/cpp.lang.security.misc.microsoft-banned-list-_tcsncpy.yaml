@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-_tcsncpy.microsoft-banned-list-_tcsncpy
+  message: '_tcsncpy is a banned function: limited error detection. Alternatives are
+    StringCbCopyN, StringCbCopyNEx, StringCchCopyN, StringCchCopyNEx'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-_tcsncpy.microsoft-banned-list-_tcsncpy
+    shortlink: https://sg.run/5rKRD
+    semgrep.dev:
+      rule:
+        r_id: 114803
+        rv_id: 257414
+        rule_id: yyUROZP
+        version_id: yeTBkLx
+        url: https://semgrep.dev/playground/r/yeTBkLx/cpp.lang.security.misc.microsoft-banned-list-_tcsncpy.microsoft-banned-list-_tcsncpy
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: _tcsncpy(...)

@@ -1,0 +1,34 @@
+rules:
+- id: dockerfile.best-practice.prefer-copy-over-add.prefer-copy-over-add
+  severity: INFO
+  languages:
+  - dockerfile
+  message: The ADD command will accept and include files from a URL and automatically
+    extract archives. This potentially exposes the container to a man-in-the-middle
+    attack or other attacks if a malicious actor can tamper with the source archive.
+    Since ADD can have this and other unexpected side effects, the use of the more
+    explicit COPY command is preferred.
+  metadata:
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
+    category: best-practice
+    technology:
+    - dockerfile
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/dockerfile.best-practice.prefer-copy-over-add.prefer-copy-over-add
+    shortlink: https://sg.run/EzoA
+    semgrep.dev:
+      rule:
+        r_id: 20137
+        rv_id: 109244
+        rule_id: L1Uz9O
+        version_id: jQTgYJ5
+        url: https://semgrep.dev/playground/r/jQTgYJ5/dockerfile.best-practice.prefer-copy-over-add.prefer-copy-over-add
+        origin: community
+  patterns:
+  - pattern: |
+      ADD $FROM $TO
+  - metavariable-regex:
+      metavariable: $FROM
+      regex: (^[A-Za-z]+:\/\/|.*[.](gz|bz2|zip|tar)$)
+  - focus-metavariable: $FROM

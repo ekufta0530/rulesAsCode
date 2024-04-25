@@ -1,0 +1,37 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-wsprintfa.microsoft-banned-list-wsprintfa
+  message: 'wsprintfA is a banned function: no null-termination. Alternatives are
+    StringCbPrintf, StringCbPrintf_l, StringCbPrintf_lEx, StringCbPrintfEx, StringCchPrintf,
+    StringCchPrintfEx'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-wsprintfa.microsoft-banned-list-wsprintfa
+    shortlink: https://sg.run/r6o81
+    semgrep.dev:
+      rule:
+        r_id: 114869
+        rv_id: 257480
+        rule_id: v8UYX0g
+        version_id: vdTprW6
+        url: https://semgrep.dev/playground/r/vdTprW6/cpp.lang.security.misc.microsoft-banned-list-wsprintfa.microsoft-banned-list-wsprintfa
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: wsprintfA(...)

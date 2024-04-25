@@ -1,0 +1,66 @@
+rules:
+- id: javascript.express.security.audit.express-libxml-vm-noent.express-libxml-vm-noent
+  message: Detected use of parseXml() function with the `noent` field set to `true`.
+    This can lead to an XML External Entities (XXE) attack if untrusted data is passed
+    into it.
+  metadata:
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+    owasp:
+    - A04:2017 - XML External Entities (XXE)
+    - A05:2021 - Security Misconfiguration
+    cwe:
+    - 'CWE-611: Improper Restriction of XML External Entity Reference'
+    category: security
+    technology:
+    - express
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - XML Injection
+    source: https://semgrep.dev/r/javascript.express.security.audit.express-libxml-vm-noent.express-libxml-vm-noent
+    shortlink: https://sg.run/n8Ag
+    semgrep.dev:
+      rule:
+        r_id: 22080
+        rv_id: 109843
+        rule_id: 2ZUY52
+        version_id: YDTp2dO
+        url: https://semgrep.dev/playground/r/YDTp2dO/javascript.express.security.audit.express-libxml-vm-noent.express-libxml-vm-noent
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-either:
+        - pattern: $VM.runInContext("$CMD", ...)
+        - pattern: $VM.runInNewContext("$CMD", ...)
+        - pattern: $VM.runInThisContext("$CMD", ...)
+        - pattern: $VM.compileFunction("$CMD", ...)
+      - metavariable-pattern:
+          metavariable: $CMD
+          language: typescript
+          pattern-either:
+          - pattern: |
+              $LIBXML.parseXml($DATA, {..., noent: true, ...}, ...)
+          - patterns:
+            - pattern-inside: |
+                $OPTS = {..., noent: true, ...}
+                ...
+            - pattern: $LIBXML.parseXml( $DATA, $OPTS )
+    - pattern: |
+        $LIBXML.parseXml($DATA, {..., noent: true, ...}, ...)
+    - patterns:
+      - pattern-inside: |
+          $OPTS = {..., noent: true, ...}
+          ...
+      - pattern: $LIBXML.parseXml( $DATA, $OPTS )

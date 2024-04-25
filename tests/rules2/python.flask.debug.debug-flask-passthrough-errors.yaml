@@ -1,0 +1,46 @@
+rules:
+- id: python.flask.debug.debug-flask-passthrough-errors.debug-flask-passthrough-errors
+  message: The application is running debug code or has debug mode enabled. This may
+    expose sensitive information, like stack traces and environment variables, to
+    attackers. It may also modify application behavior, potentially enabling attackers
+    to bypass restrictions. To remediate this finding, ensure that the application's
+    debug code and debug mode are disabled or removed from the production environment.
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-489: Active Debug Code'
+    functional-categories:
+    - debug::search::active-debug-code
+    references:
+    - https://flask.palletsprojects.com/en/3.0.x/debugging/
+    technology:
+    - flask
+    - python
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Active Debug Code
+    source: https://semgrep.dev/r/python.flask.debug.debug-flask-passthrough-errors.debug-flask-passthrough-errors
+    shortlink: https://sg.run/qNeyR
+    semgrep.dev:
+      rule:
+        r_id: 116512
+        rv_id: 731971
+        rule_id: oqUgL2X
+        version_id: bZTzgKy
+        url: https://semgrep.dev/playground/r/bZTzgKy/python.flask.debug.debug-flask-passthrough-errors.debug-flask-passthrough-errors
+        origin: pro_rules
+  languages:
+  - python
+  options:
+    interfile: true
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - pattern: flask.Flask(...).run(..., passthrough_errors=True, ...)
+    - pattern: flask.Flask(...).passthrough_errors = True

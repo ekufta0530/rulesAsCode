@@ -1,0 +1,64 @@
+rules:
+- id: java.micronaut.audit.cookies.missing-secure.missing-secure
+  message: Detected a cookie where the `Secure` flag is either missing or disabled.
+    The `Secure` cookie flag instructs the browser to forbid sending the cookie over
+    an insecure HTTP request. Set the `Secure` flag to `true` so the cookie will only
+    be sent over HTTPS.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+    functional-categories:
+    - web::search::cookie-config::Micronaut
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+    technology:
+    - cookies
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/java.micronaut.audit.cookies.missing-secure.missing-secure
+    shortlink: https://sg.run/3qWpe
+    semgrep.dev:
+      rule:
+        r_id: 115943
+        rv_id: 524268
+        rule_id: WAUW8vl
+        version_id: nWTrrNG
+        url: https://semgrep.dev/playground/r/nWTrrNG/java.micronaut.audit.cookies.missing-secure.missing-secure
+        origin: pro_rules
+  languages:
+  - java
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: io.micronaut.http.cookie.Cookie.of(...)
+      - pattern-not-inside: io.micronaut.http.cookie.Cookie.of(...). ... .secure(...)
+      - pattern-not-inside: $C = io.micronaut.http.cookie.Cookie.of(...). ...
+    - patterns:
+      - pattern-either:
+        - pattern: new io.micronaut.http.cookie.Cookie(...)
+        - pattern: new io.micronaut.http.netty.cookies.NettyCookie(...)
+        - pattern: new io.micronaut.http.simple.cookies.SimpleCookie(...)
+      - pattern-not-inside: new $COOKIE_TYPE(...). ... .secure(...)
+      - pattern-not-inside: $C = new $COOKIE_TYPE(...)
+    - patterns:
+      - focus-metavariable: $C
+      - pattern-either:
+        - pattern: (io.micronaut.http.cookie.Cookie $C) = new $COOKIE_TYPE(...);
+        - pattern: (io.micronaut.http.netty.cookies.NettyCookie $C) = new $COOKIE_TYPE(...);
+        - pattern: (io.micronaut.http.simple.cookies.SimpleCookie $C) = new $COOKIE_TYPE(...);
+        - pattern: $C = io.micronaut.http.cookie.Cookie.of(...). ...;
+      - pattern-not-inside: $C = $REQ.getCookies(...). ...;
+      - pattern-not-inside: $C = $NEW. ... .secure(...). ...;
+      - pattern-not-inside: |
+          ...
+          $C.secure(...);

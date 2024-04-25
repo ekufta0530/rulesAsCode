@@ -1,0 +1,90 @@
+rules:
+- id: trailofbits.go.nil-check-after-call.nil-check-after-call
+  message: Potential `$FOO` nil dereference when `$BAR` is called
+  languages:
+  - go
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-253: Incorrect Check of Function Return Value'
+    subcategory:
+    - vuln
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: MEDIUM
+    technology:
+    - --no-technology--
+    description: Possible nil dereferences
+    references:
+    - https://blog.trailofbits.com/2019/11/07/attacking-go-vr-ttps/
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/trailofbits.go.nil-check-after-call.nil-check-after-call
+    shortlink: https://sg.run/05g5
+    semgrep.dev:
+      rule:
+        r_id: 11754
+        rv_id: 95084
+        rule_id: L1Ur2r
+        version_id: PkTJkk5
+        url: https://semgrep.dev/playground/r/PkTJkk5/trailofbits.go.nil-check-after-call.nil-check-after-call
+        origin: community
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $FOO.$BAR(...)
+        ...
+        if $FOO != nil { ... }
+    - pattern: |
+        $FOO.$BAR(...)
+        ...
+        if $FOO == nil { ... }
+    - pattern: |
+        $FUNC(..., $FOO.$BAR(...), ...)
+        ...
+        if $FOO != nil { ... }
+    - pattern: |
+        $FUNC(..., $FOO.$BAR(...), ...)
+        ...
+        if $FOO == nil { ... }
+  - pattern-not: |
+      $FOO.$BAR(...)
+      ...
+      $FOO = ...
+      ...
+      if $FOO != nil { ... }
+  - pattern-not: |
+      $FOO.$BAR(...)
+      ...
+      ..., $FOO, ... = ...
+      ...
+      if $FOO == nil { ... }
+  - pattern-not: |
+      $FOO.$BAR(...)
+      ...
+      ..., $FOO, ... = ...
+      ...
+      if $FOO != nil { ... }
+  - pattern-not: |
+      $FOO.$BAR(...)
+      ...
+      $FOO = ...
+      ...
+      if $FOO == nil { ... }
+  - pattern-not: |
+      ..., $FOO = $FOO.$BAR(...)
+      ...
+      if $FOO == nil { ... }
+  - pattern-not: |
+      ..., $FOO = $FOO.$BAR(...)
+      ...
+      if $FOO != nil { ... }
+  - pattern-not: |
+      $FOO = $FOO.$BAR(...)
+      ...
+      if $FOO == nil { ... }
+  - pattern-not: |
+      $FOO = $FOO.$BAR(...)
+      ...
+      if $FOO != nil { ... }

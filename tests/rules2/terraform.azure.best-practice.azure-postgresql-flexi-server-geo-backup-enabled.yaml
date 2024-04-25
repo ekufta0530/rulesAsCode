@@ -1,0 +1,34 @@
+rules:
+- id: terraform.azure.best-practice.azure-postgresql-flexi-server-geo-backup-enabled.azure-postgresql-flexi-server-geo-backup-enabled
+  message: Ensure that PostgreSQL Flexible server enables geo-redundant backups
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_postgresql_flexible_server" "..." {
+      ...
+      geo_redundant_backup_enabled = true
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_postgresql_flexible_server" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-postgresql-flexi-server-geo-backup-enabled.azure-postgresql-flexi-server-geo-backup-enabled
+    shortlink: https://sg.run/Z3LD
+    semgrep.dev:
+      rule:
+        r_id: 23935
+        rv_id: 110839
+        rule_id: qNUxOl
+        version_id: 44TR6ZA
+        url: https://semgrep.dev/playground/r/44TR6ZA/terraform.azure.best-practice.azure-postgresql-flexi-server-geo-backup-enabled.azure-postgresql-flexi-server-geo-backup-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

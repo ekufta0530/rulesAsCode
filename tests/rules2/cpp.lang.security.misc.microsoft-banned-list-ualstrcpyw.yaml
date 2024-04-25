@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-ualstrcpyw.microsoft-banned-list-ualstrcpyw
+  message: 'ualstrcpyW is a banned function: no bounds checking. Alternatives are
+    strcpy_s, StringCbCopy, StringCbCopyEx, StringCchCopy, StringCchCopyEx, strlcpy'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-ualstrcpyw.microsoft-banned-list-ualstrcpyw
+    shortlink: https://sg.run/YGL3o
+    semgrep.dev:
+      rule:
+        r_id: 114858
+        rv_id: 257469
+        rule_id: 10UO2yQ
+        version_id: 1QTb8gA
+        url: https://semgrep.dev/playground/r/1QTb8gA/cpp.lang.security.misc.microsoft-banned-list-ualstrcpyw.microsoft-banned-list-ualstrcpyw
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: ualstrcpyW(...)

@@ -1,0 +1,184 @@
+rules:
+- id: javascript.express.mysql.express-mysql-sqli.express-mysql-sqli
+  message: Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions.
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::express
+    - web::source::http-params::express
+    - web::source::http-body::express
+    - web::source::header::express
+    - web::source::url-path-params::express
+    - db::sink::sql-or-nosql-query::mysql
+    - db::sink::sql-or-nosql-query::mysql2
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://sequelize.org/docs/v6/core-concepts/raw-queries/#replacements
+    technology:
+    - express
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/javascript.express.mysql.express-mysql-sqli.express-mysql-sqli
+    shortlink: https://sg.run/306W
+    semgrep.dev:
+      rule:
+        r_id: 28087
+        rv_id: 111669
+        rule_id: 0oUKZo
+        version_id: 1QTO7Bj
+        url: https://semgrep.dev/playground/r/1QTO7Bj/javascript.express.mysql.express-mysql-sqli.express-mysql-sqli
+        origin: pro_rules
+  languages:
+  - javascript
+  - typescript
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: function ... ($REQ, $RES) {...}
+      - pattern-inside: function ... ($REQ, $RES, $NEXT) {...}
+      - patterns:
+        - pattern-either:
+          - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES) {...})
+          - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, $NEXT) {...})
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(get|post|put|head|delete|options)$
+    - pattern-either:
+      - pattern: $REQ.query
+      - pattern: $REQ.body
+      - pattern: $REQ.params
+      - pattern: $REQ.cookies
+      - pattern: $REQ.headers
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          ({ $REQ }: Request,$RES: Response, $NEXT: NextFunction) =>
+          {...}
+      - pattern-inside: |
+          ({ $REQ }: Request,$RES: Response) => {...}
+    - focus-metavariable: $REQ
+    - pattern-either:
+      - pattern: params
+      - pattern: query
+      - pattern: cookies
+      - pattern: headers
+      - pattern: body
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $MYSQL = require('$IMPORT')
+          ...
+      - pattern-inside: |
+          $MYSQL = require('$IMPORT').$FUNC(...)
+          ...
+      - pattern-inside: |
+          import $MYSQL from '$IMPORT'
+          ...
+      - pattern-inside: |
+          import { ..., $MYSQL, ... } from '$IMPORT'
+          ...
+      - pattern-inside: |
+          import $MYSQL,{ ... } from '$IMPORT'
+          ...
+      - pattern-inside: |
+          import * as $MYSQL from '$IMPORT'
+          ...
+    - metavariable-regex:
+        metavariable: $IMPORT
+        regex: ^(mysql|mysql2)
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: |
+              $CONN = $MYSQL. ...
+              ...
+          - pattern-inside: |
+              $CONN = await $MYSQL. ...
+              ...
+          - patterns:
+            - pattern-inside: |
+                $POOL = $MYSQL. ...
+                ...
+            - pattern-inside: |
+                $CONN = $POOL. ...
+                ...
+          - patterns:
+            - pattern-inside: |
+                $POOL = await $MYSQL. ...
+                ...
+            - pattern-inside: |
+                $CONN = await $POOL. ...
+                ...
+        - pattern: |
+            $CONN. ... .$QUERY($SINK, ...)
+      - pattern: |
+          $MYSQL. ... .$QUERY($SINK, ...)
+      - patterns:
+        - pattern-inside: |
+            $CONN.getConnection(function(..., $F,...) {
+              ...
+            })
+        - pattern: $F.$QUERY($SINK,...)
+    - pattern-not: $X. ... .$QUERY({...,sql:'...',...},...)
+    - pattern-not: $X. ... .$QUERY('...',...)
+    - metavariable-regex:
+        metavariable: $QUERY
+        regex: ^(query|execute)$
+    - focus-metavariable: $SINK
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern: parseInt(...)
+      - pattern: Number.parseInt(...)
+      - pattern: $MYSQL. ... .escape(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          $ESCAPE = require('$IMPORT'). ... .escape
+          ...
+    - metavariable-regex:
+        metavariable: $IMPORT
+        regex: ^(mysql|mysql2)
+    - pattern-either:
+      - pattern: $ESCAPE(...)
+      - pattern: $ESCAPE.apply(...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import { ...,$ESCAPE, ... } from 'mysql2'
+          ...
+    - metavariable-pattern:
+        metavariable: $ESCAPE
+        patterns:
+        - pattern-either:
+          - pattern: escape(...)
+          - pattern: escape.apply(...)
+          - pattern: escapeId(...)
+  - patterns:
+    - pattern: $THIS. ... .$HASH(...)
+    - metavariable-regex:
+        metavariable: $HASH
+        regex: (hash|md5|sha1|sha256)

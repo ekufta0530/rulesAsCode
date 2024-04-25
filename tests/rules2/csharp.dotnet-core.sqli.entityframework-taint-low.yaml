@@ -1,0 +1,141 @@
+rules:
+- id: csharp.dotnet-core.sqli.entityframework-taint-low.entityframework-taint-low
+  message: Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - db::sink::sql-or-nosql-query::EntityFramework
+    - web::source::header::ASP.NET
+    - web::source::http-body::ASP.NET
+    - web::source::http-params::ASP.NET
+    - web::source::url-path-params::ASP.NET
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - .NET
+    - api
+    - csharp
+    - dotnet
+    - ef
+    - entity
+    - entity framework
+    - mvc
+    - sql
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/csharp.dotnet-core.sqli.entityframework-taint-low.entityframework-taint-low
+    shortlink: https://sg.run/R6qe
+    semgrep.dev:
+      rule:
+        r_id: 71149
+        rv_id: 229188
+        rule_id: JDUx9N
+        version_id: jQTld15
+        url: https://semgrep.dev/playground/r/jQTld15/csharp.dotnet-core.sqli.entityframework-taint-low.entityframework-taint-low
+        origin: pro_rules
+  languages:
+  - csharp
+  mode: taint
+  options:
+    interfile: true
+  pattern-sources:
+  - patterns:
+    - focus-metavariable: $VAR
+    - metavariable-pattern:
+        metavariable: $T
+        patterns:
+        - pattern-not-regex: (int|long|float|double|bool|Guid)
+    - pattern-either:
+      - pattern-inside: IActionResult $FN(..., $T $VAR, ...) {...}
+      - pattern-inside: Task<IActionResult> $FN(..., $T $VAR, ...) {...}
+      - pattern-inside: ActionResult<$TYPE> $FN(..., $T $VAR, ...) {...}
+      - pattern-inside: Task<ActionResult<$TYPE>> $FN(..., $T $VAR, ...) {...}
+      - pattern-inside: $X.MapGet($ROUTE, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.MapPost($ROUTE, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.MapPut($ROUTE, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.MapDelete($ROUTE, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.MapPatch($ROUTE, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.MapMethods($ROUTE, $M, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.Map($ROUTE, (..., $T $VAR, ...) => {...})
+      - pattern-inside: $X.MapFallback($ROUTE, (..., $T $VAR, ...) => {...})
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern-either:
+        - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+        - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+        - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+        - patterns:
+          - pattern-either:
+            - pattern: $TO.Append(..., $FROM,...)
+            - pattern: $TO.AppendLine(..., $FROM,...)
+            - pattern: $TO.AppendFormat(..., $FROM,...)
+            - pattern: $TO.AppendJoin(..., $FROM,...)
+            - pattern: $TO.Replace(..., $FROM,...)
+            - pattern: $TO.Insert(..., $FROM,...)
+          - pattern-either:
+            - pattern-inside: |
+                var $TO = new StringBuilder(...);
+                ...
+            - pattern-inside: |
+                $TO = new StringBuilder(...);
+                ...
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $QUERY
+    - pattern: $X.FromSqlRaw($QUERY, ...)
+  pattern-sanitizers:
+  - patterns:
+    - pattern: Convert.$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (ToBase64CharArray|ToBase64String|ToBoolean|ToDateTime|ToDecimal|ToDouble|ToInt16|ToInt32|ToInt64|ToSByte|ToSingle|ToUInt16|ToUInt32|ToUInt64)
+  - patterns:
+    - pattern-either:
+      - pattern: $INT.Parse(...)
+      - pattern: $INT.TryParse(...)
+      - pattern: $INT.TryParseExact(...)
+    - metavariable-regex:
+        metavariable: $INT
+        regex: (Int32|Int128|Int16|Int64|IntPtr|Boolean|Decimal|Double|Guid|DateTime|Single|SByte|UInt128|UInt16|UInt32|UInt64|UIntPtr)
+  - patterns:
+    - pattern-either:
+      - pattern: (int $NUM)
+      - pattern: (long $NUM)
+      - pattern: (float $NUM)
+      - pattern: (double $NUM)
+      - pattern: (bool $NUM)
+      - pattern: (Guid $NUM)
+      - pattern: var $X = (int) ...;
+      - pattern: var $X = (long) ...;
+      - pattern: var $X = (float) ...;
+      - pattern: var $X = (double) ...;
+      - pattern: var $X = (bool) ...;
+      - pattern: var $X = (Guid) ...;

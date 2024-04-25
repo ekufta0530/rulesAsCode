@@ -1,0 +1,171 @@
+rules:
+- id: python.pyramid.deserialization.tainted-torch-pickle-pyramid.tainted-torch-pickle-pyramid
+  message: 'The application may convert user-controlled data into an object, which
+    can lead to an insecure deserialization vulnerability. An attacker can create
+    a malicious serialized object, pass it to the application, and take advantage
+    of the deserialization process to perform Denial-of-service (DoS), Remote code
+    execution (RCE), or bypass access control measures. To prevent this vulnerability,
+    leverage data formats such as JSON or XML as safer alternatives. If you need to
+    deserialize user input in a specific format, consider digitally signing the data
+    before serialization to prevent tampering. For more information, see: [Deserialization
+    prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+    A number of functions and packages in the `torch` module rely on the `pickle`
+    module and should not be used to unpackage data from untrusted sources.'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - deserialization::sink::load-object::torch
+    - web::source::cookie::pyramid
+    - web::source::http-params::pyramid
+    - web::source::http-body::pyramid
+    - web::source::header::pyramid
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://portswigger.net/web-security/deserialization
+    - https://blog.trailofbits.com/2021/03/15/never-a-dill-moment-exploiting-machine-learning-pickle-files/
+    - https://pytorch.org/docs/stable/generated/torch.load.html
+    - https://pytorch.org/docs/stable/_modules/torch/distributed/distributed_c10d.html#broadcast_object_list:~:text=.BytesIO()-,_pickler,-(f)
+    - https://docs.python.org/3/library/pickle.html
+    - https://davidhamann.de/2020/04/05/exploiting-python-pickle/
+    technology:
+    - python
+    - torch
+    - pyramid
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/python.pyramid.deserialization.tainted-torch-pickle-pyramid.tainted-torch-pickle-pyramid
+    shortlink: https://sg.run/bYWZ
+    semgrep.dev:
+      rule:
+        r_id: 44970
+        rv_id: 111897
+        rule_id: bwUPLR
+        version_id: GxTv8X0
+        url: https://semgrep.dev/playground/r/GxTv8X0/python.pyramid.deserialization.tainted-torch-pickle-pyramid.tainted-torch-pickle-pyramid
+        origin: pro_rules
+  languages:
+  - python
+  mode: taint
+  pattern-sources:
+  - pattern-either:
+    - patterns:
+      - pattern: |
+          def $HANDLER($EVENT, context):
+            ...
+      - focus-metavariable: $EVENT
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            @rest_framework.decorators.api_view(...)
+            def $FUNC(..., $REQ, ...):
+              ...
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                class $VIEW(..., rest_framework.views.APIView, ...):
+                  ...
+            - pattern-inside: "class $VIEW(..., rest_framework.generics.GenericAPIView,\
+                \ ...):\n  ...                              \n"
+          - pattern-inside: |
+              def $METHOD(self, $REQ, ...):
+                ...
+          - metavariable-regex:
+              metavariable: $METHOD
+              regex: (get|post|put|patch|delete|head)
+      - pattern-either:
+        - patterns:
+          - pattern: $REQ.$FUNCTION(...)
+          - metavariable-regex:
+              metavariable: $FUNCTION
+              regex: ^(get_signed_cookie|read|readline|readlines|__iter__)$
+        - patterns:
+          - pattern-either:
+            - pattern: $REQ.$PROPERTY
+            - pattern: $REQ.$PROPERTY[...]
+            - pattern: $REQ.$PROPERTY.get(...)
+          - metavariable-regex:
+              metavariable: $PROPERTY
+              regex: ^(body|content_type|data|DATA|query_params|QUERY_PARAMS|GET|POST|COOKIES|FILES|headers|stream)$
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - patterns:
+              - pattern: flask.request.$FUNCTION(...)
+              - metavariable-regex:
+                  metavariable: $FUNCTION
+                  regex: ^(from_values|get_data|get_json)$
+            - patterns:
+              - pattern-either:
+                - pattern: flask.request.$PROPERTY
+                - pattern: flask.request.$PROPERTY[...]
+                - pattern: flask.request.$PROPERTY.get(...)
+              - metavariable-regex:
+                  metavariable: $PROPERTY
+                  regex: ^(args|cookies|data|files|form|full_path|headers|input_stream|json|path|stream|values|view_args)$
+        - patterns:
+          - pattern: |
+              @$APP.route(...)
+              def $FUNC(..., $PARAM, ...):
+                ...
+          - focus-metavariable: $PARAM
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            class $SERVER(..., http.server.BaseHTTPRequestHandler, ...):
+              ...
+        - pattern-inside: |
+            class $SERVER(..., http.server.StreamRequestHandler, ...):
+              ...
+        - pattern-inside: |
+            class $SERVER(..., http.server.DatagramRequestHandler, ...):
+              ...
+      - pattern-either:
+        - pattern: self.$PROPERTY
+        - pattern: self.$PROPERTY.get(...)
+        - pattern: self.$PROPERTY[...]
+      - metavariable-regex:
+          metavariable: $PROPERTY
+          regex: ^(command|headers|rfile|wfile|responses|requestline|path)$
+    - patterns:
+      - pattern-inside: |
+          @pyramid.view.view_config( ... )
+          def $VIEW($REQ):
+            ...
+      - pattern-either:
+        - patterns:
+          - pattern: $REQ.$FUNCTION(...)
+          - metavariable-regex:
+              metavariable: $FUNCTION
+              regex: ^(as_bytes|make_tempfile)$
+        - patterns:
+          - pattern-either:
+            - pattern: $REQ.$PROPERTY
+            - pattern: $REQ.$PROPERTY[...]
+            - pattern: $REQ.$PROPERTY.get(...)
+          - metavariable-regex:
+              metavariable: $PROPERTY
+              regex: ^(GET|POST|accept|body|body_file|body_file_raw|body_file_seekable|cache_control|cookies|headers|json|json_body|params|pragma|query_string|referer|referrer|text|urlargs|urlvars)$
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $SINK
+    - pattern-either:
+      - pattern: torch.load($SINK, ...)
+      - pattern: torch.package.PackageImporter($SINK, ...)
+      - pattern: torch.distributed.broadcast_object_list($SINK,...)
+      - pattern: torch.distributed.all_gather_object($OUT, $SINK,...)
+      - pattern: torch.distributed.gather_object($SINK,...)
+      - pattern: torch.distributed.scatter_object_list($OUT, $SINK, ...)

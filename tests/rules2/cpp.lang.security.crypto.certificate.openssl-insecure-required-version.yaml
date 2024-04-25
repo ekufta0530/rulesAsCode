@@ -1,0 +1,60 @@
+rules:
+- id: cpp.lang.security.crypto.certificate.openssl-insecure-required-version.openssl-insecure-required-version
+  message: Detected use of an insecure SSL/TLS algorithm. This could allow an attacker
+    to peform a man-in-the-middle-attack. Applications should prefer a secure algorithm
+    such as TLS 1.2 or 1.3.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    functional-categories:
+    - crypto::search::config
+    owasp:
+    - A02:2021 - Cryptographic Failures
+    - A03:2017 - Sensitive Data Exposure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    technology:
+    - cpp
+    - openssl
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/cpp.lang.security.crypto.certificate.openssl-insecure-required-version.openssl-insecure-required-version
+    shortlink: https://sg.run/6Jq86
+    semgrep.dev:
+      rule:
+        r_id: 114759
+        rv_id: 731841
+        rule_id: yyURO2P
+        version_id: 0bTrYxP
+        url: https://semgrep.dev/playground/r/0bTrYxP/cpp.lang.security.crypto.certificate.openssl-insecure-required-version.openssl-insecure-required-version
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern: $MIN_MAX($CTX, $VERSION)
+  - metavariable-pattern:
+      metavariable: $MIN_MAX
+      patterns:
+      - pattern-either:
+        - pattern: SSL_CTX_set_min_proto_version
+        - pattern: SSL_CTX_set_max_proto_version
+  - metavariable-pattern:
+      metavariable: $VERSION
+      patterns:
+      - pattern-either:
+        - pattern: SSL2_VERSION
+        - pattern: SSL3_VERSION
+        - pattern: TLS1_VERSION
+        - pattern: TLS1_1_VERSION

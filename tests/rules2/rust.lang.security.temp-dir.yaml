@@ -1,0 +1,36 @@
+rules:
+- id: rust.lang.security.temp-dir.temp-dir
+  message: "temp_dir should not be used for security operations. From the docs: 'The\
+    \ temporary directory may be shared among users, or between processes with different\
+    \ privileges; thus, the creation of any files or directories in the temporary\
+    \ directory must use a secure method to create a uniquely named file. Creating\
+    \ a file or directory with a fixed or predictable name may result in \u201Cinsecure\
+    \ temporary file\u201D security vulnerabilities.'"
+  pattern: std::env::temp_dir()
+  metadata:
+    references:
+    - https://doc.rust-lang.org/stable/std/env/fn.temp_dir.html
+    technology:
+    - rust
+    category: security
+    cwe: 'CWE-807: Reliance on Untrusted Inputs in a Security Decision'
+    confidence: HIGH
+    likelihood: LOW
+    impact: LOW
+    subcategory: audit
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/rust.lang.security.temp-dir.temp-dir
+    shortlink: https://sg.run/qzEO
+    semgrep.dev:
+      rule:
+        r_id: 40112
+        rv_id: 110621
+        rule_id: oqU5AO
+        version_id: kbTdL8R
+        url: https://semgrep.dev/playground/r/kbTdL8R/rust.lang.security.temp-dir.temp-dir
+        origin: community
+  languages:
+  - rust
+  severity: INFO

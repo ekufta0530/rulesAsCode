@@ -1,0 +1,49 @@
+rules:
+- id: trailofbits.yaml.ansible.apt-unencrypted-url.apt-unencrypted-url
+  message: Found apt deb with unencrypted URL (e.g. HTTP, FTP, etc.)
+  languages:
+  - yaml
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+    subcategory:
+    - audit
+    technology:
+    - ansible
+    - apt
+    confidence: HIGH
+    likelihood: HIGH
+    impact: HIGH
+    references:
+    - https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html#parameter-deb
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/trailofbits.yaml.ansible.apt-unencrypted-url.apt-unencrypted-url
+    shortlink: https://sg.run/NbW3L
+    semgrep.dev:
+      rule:
+        r_id: 113227
+        rv_id: 253298
+        rule_id: BYUXkQb
+        version_id: RGTevLG
+        url: https://semgrep.dev/playground/r/RGTevLG/trailofbits.yaml.ansible.apt-unencrypted-url.apt-unencrypted-url
+        origin: community
+  patterns:
+  - pattern-inside: |
+      $APT:
+        ...
+  - metavariable-pattern:
+      metavariable: $APT
+      pattern-either:
+      - pattern: apt
+      - pattern: ansible.builtin.apt
+  - pattern: '$KEY: ''$VALUE'''
+  - metavariable-pattern:
+      metavariable: $KEY
+      pattern-either:
+      - pattern: deb
+  - metavariable-regex:
+      metavariable: $VALUE
+      regex: (?i)^(http|ftp)://.*

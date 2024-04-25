@@ -1,0 +1,26 @@
+rules:
+- id: dgryski.semgrep-go.http-ctx-goroutine.http-request-go-context
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $CTX := ($R : *http.Request).Context()
+        ...
+        go $F($CTX, ...)
+    - pattern: |
+        go $F(($R : *http.Request).Context(), ...)
+  message: passing an http-request scoped Context to a goroutine
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.http-ctx-goroutine.http-request-go-context
+    shortlink: https://sg.run/Bq6R
+    semgrep.dev:
+      rule:
+        r_id: 31307
+        rv_id: 37642
+        rule_id: KxUg7A
+        version_id: kbTee9
+        url: https://semgrep.dev/playground/r/kbTee9/dgryski.semgrep-go.http-ctx-goroutine.http-request-go-context
+        origin: community

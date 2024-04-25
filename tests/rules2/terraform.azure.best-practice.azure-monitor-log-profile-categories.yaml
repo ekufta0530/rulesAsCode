@@ -1,0 +1,38 @@
+rules:
+- id: terraform.azure.best-practice.azure-monitor-log-profile-categories.azure-monitor-log-profile-categories
+  message: Ensure audit profile captures all the activities
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_monitor_log_profile" "..." {
+      ...
+      categories = [
+      "Action",
+      "Delete",
+      "Write",
+      ]
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_monitor_log_profile" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-monitor-log-profile-categories.azure-monitor-log-profile-categories
+    shortlink: https://sg.run/w2JY
+    semgrep.dev:
+      rule:
+        r_id: 23929
+        rv_id: 110833
+        rule_id: AbU5q2
+        version_id: 7ZTgnbO
+        url: https://semgrep.dev/playground/r/7ZTgnbO/terraform.azure.best-practice.azure-monitor-log-profile-categories.azure-monitor-log-profile-categories
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

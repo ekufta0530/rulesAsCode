@@ -1,0 +1,34 @@
+rules:
+- id: terraform.azure.best-practice.azure-securitycenter-standard-pricing.azure-securitycenter-standard-pricing
+  message: Ensure that standard pricing tier is selected
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Standard"
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-securitycenter-standard-pricing.azure-securitycenter-standard-pricing
+    shortlink: https://sg.run/Gpzp
+    semgrep.dev:
+      rule:
+        r_id: 23948
+        rv_id: 110852
+        rule_id: qNUxvx
+        version_id: l4T46xp
+        url: https://semgrep.dev/playground/r/l4T46xp/terraform.azure.best-practice.azure-securitycenter-standard-pricing.azure-securitycenter-standard-pricing
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

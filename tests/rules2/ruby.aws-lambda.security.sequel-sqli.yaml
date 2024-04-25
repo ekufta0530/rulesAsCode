@@ -1,0 +1,60 @@
+rules:
+- id: ruby.aws-lambda.security.sequel-sqli.sequel-sqli
+  languages:
+  - ruby
+  message: 'Detected SQL statement that is tainted by `event` object. This could lead
+    to SQL injection if the variable is user-controlled and not properly sanitized.
+    In order to prevent SQL injection, use parameterized queries or prepared statements
+    instead. You can use parameterized statements like so: `DB[''select * from items
+    where name = ?'', name]`'
+  mode: taint
+  metadata:
+    references:
+    - https://github.com/jeremyevans/sequel#label-Arbitrary+SQL+queries
+    category: security
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    technology:
+    - aws-lambda
+    - sequel
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/ruby.aws-lambda.security.sequel-sqli.sequel-sqli
+    shortlink: https://sg.run/n9vY
+    semgrep.dev:
+      rule:
+        r_id: 18280
+        rv_id: 110503
+        rule_id: lBUy2N
+        version_id: K3TvGzQ
+        url: https://semgrep.dev/playground/r/K3TvGzQ/ruby.aws-lambda.security.sequel-sqli.sequel-sqli
+        origin: community
+  pattern-sinks:
+  - patterns:
+    - pattern: $QUERY
+    - pattern-either:
+      - pattern: DB[$QUERY,...]
+      - pattern: DB.run($QUERY,...)
+    - pattern-inside: |
+        require 'sequel'
+        ...
+  pattern-sources:
+  - patterns:
+    - pattern: event
+    - pattern-inside: |
+        def $HANDLER(event, context)
+          ...
+        end
+  severity: WARNING

@@ -1,0 +1,104 @@
+rules:
+- id: java.servlets.security.tainted-cmd-from-http-request-deepsemgrep.tainted-cmd-from-http-request-deepsemgrep
+  message: 'Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent this
+    vulnerability, avoid executing OS commands with user input. If this is unavoidable,
+    validate and sanitize the input, and use safe methods for executing the commands.
+    For more information, see: [Java command injection prevention](https://semgrep.dev/docs/cheat-sheets/java-command-injection/)'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - os::sink::os-command-or-thread
+    - web::source::cookie::Servlet
+    - web::source::header::Servlet
+    - web::source::http-body::Servlet
+    - web::source::http-params::Servlet
+    - web::source::url-path-params::Servlet
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/java.servlets.security.tainted-cmd-from-http-request-deepsemgrep.tainted-cmd-from-http-request-deepsemgrep
+    shortlink: https://sg.run/dGW0
+    semgrep.dev:
+      rule:
+        r_id: 40134
+        rv_id: 742795
+        rule_id: 7KUYkp
+        version_id: 3ZT68n8
+        url: https://semgrep.dev/playground/r/3ZT68n8/java.servlets.security.tainted-cmd-from-http-request-deepsemgrep.tainted-cmd-from-http-request-deepsemgrep
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: (ServletRequest $REQ).$METHOD(...)
+      - pattern: (HttpServletRequest $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString|getPathInfo)
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: Runtime.getRuntime(...).$EXEC($CMD,...)
+      - pattern: (Runtime $R).$EXEC($CMD,...)
+    - metavariable-regex:
+        metavariable: $EXEC
+        regex: (exec|loadLibrary|load)
+    - focus-metavariable: $CMD
+  - patterns:
+    - pattern-either:
+      - pattern: new ProcessBuilder($CMD,...)
+      - pattern: new ProcessBuilder(...). ... .command($CMD,...)
+      - pattern: (ProcessBuilder $P). ... .command($CMD,...)
+    - focus-metavariable: $CMD
+  - patterns:
+    - pattern-either:
+      - pattern: new ProcessBuilder($SH, "-c", $CMD,...)
+      - pattern: new ProcessBuilder(...). ... .command($SH, "-c", $CMD,...)
+      - pattern: (ProcessBuilder $P). ... .command($SH, "-c", $CMD,...)
+    - metavariable-regex:
+        metavariable: $SH
+        regex: .*\/?(bash|csh|dash|fish|ksh|tcsh|sh|zsh)\"?$
+    - focus-metavariable: $CMD
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)

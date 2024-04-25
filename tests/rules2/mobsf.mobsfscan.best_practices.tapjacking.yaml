@@ -1,0 +1,30 @@
+rules:
+- id: mobsf.mobsfscan.best_practices.tapjacking.android_detect_tapjacking
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $F.setFilterTouchesWhenObscured(true);
+  message: This app does not have capabilities to prevent tapjacking attacks. An attacker
+    can hijack the user's taps and tricks him into performing some critical operations
+    that he did not intend to.
+  languages:
+  - java
+  severity: INFO
+  metadata:
+    cwe: cwe-200
+    owasp-mobile: m1
+    masvs: platform-9
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05h-Testing-Platform-Interaction.md#testing-for-overlay-attacks-mstg-platform-9
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.best_practices.tapjacking.android_detect_tapjacking
+    shortlink: https://sg.run/rqjn
+    semgrep.dev:
+      rule:
+        r_id: 43725
+        rv_id: 78329
+        rule_id: AbUx1o
+        version_id: qkT0KQ
+        url: https://semgrep.dev/playground/r/qkT0KQ/mobsf.mobsfscan.best_practices.tapjacking.android_detect_tapjacking
+        origin: community

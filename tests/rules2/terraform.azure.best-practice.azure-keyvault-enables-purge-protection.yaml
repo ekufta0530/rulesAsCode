@@ -1,0 +1,33 @@
+rules:
+- id: terraform.azure.best-practice.azure-keyvault-enables-purge-protection.azure-keyvault-enables-purge-protection
+  message: Ensure that key vault enables purge protection
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_key_vault" "..." {
+      ...
+      purge_protection_enabled = true
+      }
+  - pattern-inside: |
+      resource "azurerm_key_vault" "..." {
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-keyvault-enables-purge-protection.azure-keyvault-enables-purge-protection
+    shortlink: https://sg.run/ykGx
+    semgrep.dev:
+      rule:
+        r_id: 23924
+        rv_id: 110828
+        rule_id: PeU1zN
+        version_id: vdTY8v6
+        url: https://semgrep.dev/playground/r/vdTY8v6/terraform.azure.best-practice.azure-keyvault-enables-purge-protection.azure-keyvault-enables-purge-protection
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

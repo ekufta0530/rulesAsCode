@@ -1,0 +1,45 @@
+rules:
+- id: terraform.aws.best-practice.missing-autoscaling-group-tags.missing-autoscaling-group-tags
+  patterns:
+  - patterns:
+    - patterns:
+      - pattern: resource "aws_autoscaling_group" $ANYTHING {...}
+      - pattern-not-inside: |
+          resource "aws_autoscaling_group" $ANYTHING {
+            ...
+            tag {...}
+            ...
+          }
+    - patterns:
+      - pattern: resource "aws_autoscaling_group" $ANYTHING {...}
+      - pattern-not-inside: |
+          resource "aws_autoscaling_group" $ANYTHING {
+            ...
+            tags = concat(...)
+            ...
+          }
+  message: |-
+    There are missing tags for an AWS Auto Scaling group. Tags help track costs, allow for filtering for Auto Scaling groups, help with access control, and aid in organizing AWS resources. Add: `tag {
+      key = "key"
+      value = "value"
+      propagate_at_launch = boolean
+    }` See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group for more details.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    technology:
+    - aws
+    - terraform
+    category: best-practice
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.missing-autoscaling-group-tags.missing-autoscaling-group-tags
+    shortlink: https://sg.run/ryY1
+    semgrep.dev:
+      rule:
+        r_id: 15825
+        rv_id: 110713
+        rule_id: bwUz8r
+        version_id: 2KTz3L7
+        url: https://semgrep.dev/playground/r/2KTz3L7/terraform.aws.best-practice.missing-autoscaling-group-tags.missing-autoscaling-group-tags
+        origin: community

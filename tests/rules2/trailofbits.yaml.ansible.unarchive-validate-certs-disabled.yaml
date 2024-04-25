@@ -1,0 +1,49 @@
+rules:
+- id: trailofbits.yaml.ansible.unarchive-validate-certs-disabled.unarchive-validate-certs-disabled
+  message: Found unarchive download with SSL verification disabled
+  languages:
+  - yaml
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-295: Improper Certificate Validation'
+    subcategory:
+    - audit
+    technology:
+    - ansible
+    confidence: HIGH
+    likelihood: HIGH
+    impact: HIGH
+    references:
+    - https://docs.ansible.com/ansible/latest/collections/ansible/builtin/unarchive_module.html#parameter-validate_certs
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/trailofbits.yaml.ansible.unarchive-validate-certs-disabled.unarchive-validate-certs-disabled
+    shortlink: https://sg.run/ZqByA
+    semgrep.dev:
+      rule:
+        r_id: 113235
+        rv_id: 253306
+        rule_id: 6JUv2A4
+        version_id: l4TlPRP
+        url: https://semgrep.dev/playground/r/l4TlPRP/trailofbits.yaml.ansible.unarchive-validate-certs-disabled.unarchive-validate-certs-disabled
+        origin: community
+  patterns:
+  - pattern-inside: |
+      $UNARCHIVE:
+        ...
+  - metavariable-pattern:
+      metavariable: $UNARCHIVE
+      pattern-either:
+      - pattern: unarchive
+      - pattern: ansible.builtin.unarchive
+  - pattern: '$KEY: $VALUE'
+  - metavariable-pattern:
+      metavariable: $KEY
+      pattern-either:
+      - pattern: validate_certs
+  - metavariable-pattern:
+      metavariable: $VALUE
+      pattern-either:
+      - pattern: 'false'

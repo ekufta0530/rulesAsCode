@@ -1,0 +1,69 @@
+rules:
+- id: terraform.gcp.security.gcp-dns-key-specs-rsasha1.gcp-dns-key-specs-rsasha1
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_dns_managed_zone" "..." {
+      ...
+      dnssec_config {
+          ...
+          default_key_specs {
+              ...
+              algorithm  = "rsasha1"
+              key_type   = "zoneSigning"
+              ...
+          }
+          ...
+      }
+      ...
+      }
+  - pattern-inside: |
+      resource "google_dns_managed_zone" "..." {
+      ...
+      dnssec_config {
+          ...
+          default_key_specs {
+              ...
+              algorithm  = "rsasha1"
+              key_type   = "keySigning"
+              ...
+          }
+          ...
+      }
+      ...
+      }
+  message: "Ensure that RSASHA1 is not used for the zone-signing and key-signing keys\
+    \ in Cloud DNS DNSSEC\t"
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-326: Inadequate Encryption Strength'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-dns-key-specs-rsasha1.gcp-dns-key-specs-rsasha1
+    shortlink: https://sg.run/bKKW
+    semgrep.dev:
+      rule:
+        r_id: 33670
+        rv_id: 110997
+        rule_id: 7KUZZb
+        version_id: l4T46Jb
+        url: https://semgrep.dev/playground/r/l4T46Jb/terraform.gcp.security.gcp-dns-key-specs-rsasha1.gcp-dns-key-specs-rsasha1
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

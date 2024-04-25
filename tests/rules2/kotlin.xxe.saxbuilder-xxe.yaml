@@ -1,0 +1,93 @@
+rules:
+- id: kotlin.xxe.saxbuilder-xxe.saxbuilder-xxe
+  message: 'The application is using an XML parser that has not been safely configured.
+    This might lead to XML External Entity (XXE) vulnerabilities when parsing user-controlled
+    input. An attacker can include document type definitions (DTDs) which can interact
+    with internal or external hosts. XXE can lead to other vulnerabilities, such as
+    Local File Inclusion (LFI), Remote Code Execution (RCE), and Server-side request
+    forgery (SSRF), depending on the application configuration. An attacker can also
+    use DTDs to expand recursively, leading to a Denial-of-Service (DoS) attack, also
+    known as a `Billion Laughs Attack`. The XML parser $PARSER is not securely configured.
+    The current configuration allows for XXE attacks. It is our recommendation to
+    secure this parser against XXE attacks by configuring $PARSER with `$PARSER.setFeature(http://apache.org/xml/features/disallow-doctype-decl,
+    true)`. Alternatively, the following configurations also provide protection against
+    XXE attacks. `$PARSER.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "")` `$PARSER.setFeature("http://xml.org/sax/features/external-general-entities",
+    false)` `$PARSER.setExpandEntities(false)` It is also possible to use one of the
+    constructor parameters that will result in a more secure parser by default: `new
+    SAXBuilder(XMLReaders.DTDVALIDATING)` or `new SAXBuilder(XMLReaders.XSDVALIDATING)`.
+    The best defense against XXE is to have an XML parser that supports disabling
+    DTDs. Limiting the use of external entities from the start can prevent the parser
+    from being used to process untrusted XML files. Reducing dependencies on external
+    resources is also a good practice for performance reasons. It is difficult to
+    guarantee that even a trusted XML file on your server or during transmission has
+    not been tampered with by a malicious third-party. For more information, see:
+    [Java XXE prevention](https://semgrep.dev/docs/cheat-sheets/java-xxe/)'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-776: Improper Restriction of Recursive Entity References in DTDs (''XML
+      Entity Expansion'')'
+    functional-categories:
+    - xml::sink::xml-parser::jdom2
+    owasp:
+    - A04:2017 - XML External Entities (XXE)
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://blog.sonarsource.com/secure-xml-processor/
+    - https://blog.sonarsource.com/understanding-xxe-vulnerabilities/
+    - https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+    - https://cwe.mitre.org/data/definitions/776.html
+    - https://docs.oracle.com/en/java/javase/13/security/java-api-xml-processing-jaxp-security-guide.html#GUID-D97A1F1D-8DDF-4D19-A7E5-99099F27346E
+    - https://github.com/returntocorp/java-xxe-research
+    - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+    - https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-2755
+    - https://semgrep.dev/blog/2022/xml-security-in-java
+    - https://semgrep.dev/docs/cheat-sheets/java-xxe/
+    technology:
+    - kotlin
+    - xml
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - XML Injection
+    source: https://semgrep.dev/r/kotlin.xxe.saxbuilder-xxe.saxbuilder-xxe
+    shortlink: https://sg.run/Zd0W
+    semgrep.dev:
+      rule:
+        r_id: 59579
+        rv_id: 229320
+        rule_id: 5rUWDP
+        version_id: DkTqlvb
+        url: https://semgrep.dev/playground/r/DkTqlvb/kotlin.xxe.saxbuilder-xxe.saxbuilder-xxe
+        origin: pro_rules
+  languages:
+  - kotlin
+  patterns:
+  - pattern: $PARSER = SAXBuilder(...)
+  - pattern-not: $PARSER = SAXBuilder(XMLReaders.DTDVALIDATING)
+  - pattern-not: $PARSER = SAXBuilder(XMLReaders.XSDVALIDATING)
+  - pattern-not-inside: |
+      $PARSER = SAXBuilder(...)
+      ...
+      $PARSER.setExpandEntities(false)
+  - pattern-not-inside: |
+      $PARSER = SAXBuilder(...)
+      ...
+      $PARSER.setFeature("http://xml.org/sax/features/external-general-entities", false)
+  - pattern-not-inside: |
+      $PARSER = SAXBuilder(...)
+      ...
+      $PARSER.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+  - pattern-not-inside: |
+      $PARSER = SAXBuilder(...)
+      ...
+      $PARSER.setProperty("=~/.*accessExternalDTD.*/", "")
+  - pattern-not-inside: |
+      $PARSER = SAXBuilder(...)
+      ...
+      $PARSER.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)

@@ -1,0 +1,30 @@
+rules:
+- id: typescript.react.best-practice.react-legacy-component.react-legacy-component
+  patterns:
+  - pattern: |
+      $METHOD(...) {
+        ...
+      }
+  - metavariable-regex:
+      metavariable: $METHOD
+      regex: componentWillMount|componentWillReceiveProps|componentWillUpdate
+  message: Legacy component lifecycle was detected - $METHOD.
+  languages:
+  - typescript
+  - javascript
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - react
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/typescript.react.best-practice.react-legacy-component.react-legacy-component
+    shortlink: https://sg.run/plK3
+    semgrep.dev:
+      rule:
+        r_id: 9762
+        rv_id: 111082
+        rule_id: 9AUOdB
+        version_id: gET3Oro
+        url: https://semgrep.dev/playground/r/gET3Oro/typescript.react.best-practice.react-legacy-component.react-legacy-component
+        origin: community

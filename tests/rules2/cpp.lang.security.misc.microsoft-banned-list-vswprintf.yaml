@@ -1,0 +1,35 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-vswprintf.microsoft-banned-list-vswprintf
+  message: vswprintf is a banned function. Alternatives are vswprintf_s
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-vswprintf.microsoft-banned-list-vswprintf
+    shortlink: https://sg.run/zdRLl
+    semgrep.dev:
+      rule:
+        r_id: 114861
+        rv_id: 257472
+        rule_id: r6Uy1Ab
+        version_id: rxToOPE
+        url: https://semgrep.dev/playground/r/rxToOPE/cpp.lang.security.misc.microsoft-banned-list-vswprintf.microsoft-banned-list-vswprintf
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: vswprintf(...)

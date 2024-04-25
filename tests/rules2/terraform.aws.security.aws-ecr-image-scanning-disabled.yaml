@@ -1,0 +1,54 @@
+rules:
+- id: terraform.aws.security.aws-ecr-image-scanning-disabled.aws-ecr-image-scanning-disabled
+  patterns:
+  - pattern: |
+      resource "aws_ecr_repository" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_ecr_repository" $ANYTHING {
+        ...
+        image_scanning_configuration {
+          ...
+          scan_on_push = true
+          ...
+        }
+        ...
+      }
+  message: The ECR repository has image scans disabled. Repository image scans should
+    be enabled to ensure vulnerable software can be discovered and remediated as soon
+    as possible.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    references:
+    - https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository#image_scanning_configuration
+    - https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/
+    category: security
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A09:2021 - Security Logging and Monitoring Failures
+    cwe:
+    - 'CWE-223: Omission of Security-relevant Information'
+    subcategory:
+    - audit
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/terraform.aws.security.aws-ecr-image-scanning-disabled.aws-ecr-image-scanning-disabled
+    shortlink: https://sg.run/dBg5
+    semgrep.dev:
+      rule:
+        r_id: 48634
+        rv_id: 110752
+        rule_id: 0oUREK
+        version_id: YDTpnlR
+        url: https://semgrep.dev/playground/r/YDTpnlR/terraform.aws.security.aws-ecr-image-scanning-disabled.aws-ecr-image-scanning-disabled
+        origin: community

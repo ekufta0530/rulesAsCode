@@ -1,0 +1,34 @@
+rules:
+- id: terraform.gcp.best-practice.gcp-gke-nodepool-auto-repair-enabled.gcp-gke-nodepool-auto-repair-enabled
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_container_node_pool" "..." {
+      ...
+      management {
+        ...
+        auto_repair  = false
+        ...
+      }
+      ...
+      }
+  message: Ensure 'Automatic node repair' is enabled for Kubernetes Clusters
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - gcp
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-gke-nodepool-auto-repair-enabled.gcp-gke-nodepool-auto-repair-enabled
+    shortlink: https://sg.run/54g0
+    semgrep.dev:
+      rule:
+        r_id: 33647
+        rv_id: 110946
+        rule_id: 6JUGRB
+        version_id: A8T9XXx
+        url: https://semgrep.dev/playground/r/A8T9XXx/terraform.gcp.best-practice.gcp-gke-nodepool-auto-repair-enabled.gcp-gke-nodepool-auto-repair-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

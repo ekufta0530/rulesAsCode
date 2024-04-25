@@ -1,0 +1,35 @@
+rules:
+- id: c.lang.security.insecure-use-scanf-fn.insecure-use-scanf-fn
+  pattern: scanf(...)
+  message: Avoid using 'scanf()'. This function, when used improperly, does not consider
+    buffer boundaries and can lead to buffer overflows. Use 'fgets()' instead for
+    reading input.
+  metadata:
+    cwe:
+    - 'CWE-676: Use of Potentially Dangerous Function'
+    references:
+    - http://sekrit.de/webdocs/c/beginners-guide-away-from-scanf.html
+    category: security
+    technology:
+    - c
+    confidence: LOW
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/c.lang.security.insecure-use-scanf-fn.insecure-use-scanf-fn
+    shortlink: https://sg.run/nd1g
+    semgrep.dev:
+      rule:
+        r_id: 8836
+        rv_id: 109011
+        rule_id: AbUzPd
+        version_id: d6TrAvO
+        url: https://semgrep.dev/playground/r/d6TrAvO/c.lang.security.insecure-use-scanf-fn.insecure-use-scanf-fn
+        origin: community
+  languages:
+  - c
+  severity: WARNING

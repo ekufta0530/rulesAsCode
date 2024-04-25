@@ -1,0 +1,47 @@
+rules:
+- id: terraform.gcp.security.gcp-dataflow-job-encrypted-with-cmk.gcp-dataflow-job-encrypted-with-cmk
+  patterns:
+  - pattern: |
+      resource "google_dataflow_job" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "google_dataflow_job" $ANYTHING {
+        ...
+        kms_key_name = ...
+        ...
+      }
+  message: Ensure data flow jobs are encrypted with Customer Supplied Encryption Keys
+    (CSEK)
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - gcp
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-dataflow-job-encrypted-with-cmk.gcp-dataflow-job-encrypted-with-cmk
+    shortlink: https://sg.run/Xbd4
+    semgrep.dev:
+      rule:
+        r_id: 32320
+        rv_id: 110988
+        rule_id: PeUe4w
+        version_id: GxTv8kW
+        url: https://semgrep.dev/playground/r/GxTv8kW/terraform.gcp.security.gcp-dataflow-job-encrypted-with-cmk.gcp-dataflow-job-encrypted-with-cmk
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

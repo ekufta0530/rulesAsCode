@@ -1,0 +1,32 @@
+rules:
+- id: yaml.semgrep.metadata-references.metadata-references
+  message: The references in rule metadata should always be a list, even if there's
+    only one.
+  severity: ERROR
+  languages:
+  - json
+  - yaml
+  patterns:
+  - pattern-inside: |
+      rules: ...
+  - pattern-inside: |
+      metadata: ...
+  - pattern: |
+      references: ...
+  - pattern-not: |
+      references: [...]
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.metadata-references.metadata-references
+    shortlink: https://sg.run/dgbX
+    semgrep.dev:
+      rule:
+        r_id: 11078
+        rv_id: 111175
+        rule_id: bwUOye
+        version_id: vdTY8dl
+        url: https://semgrep.dev/playground/r/vdTY8dl/yaml.semgrep.metadata-references.metadata-references
+        origin: community

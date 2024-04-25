@@ -1,0 +1,59 @@
+rules:
+- id: terraform.azure.security.azure-instance-extensions.azure-instance-extensions
+  message: Ensure Virtual Machine Extensions are not Installed
+  patterns:
+  - pattern: resource
+  - pattern-either:
+    - pattern-inside: |
+        resource "azurerm_linux_virtual_machine" "..." {
+        ...
+        }
+    - pattern-inside: |
+        resource "azurerm_windows_virtual_machine" "..." {
+        ...
+        }
+  - pattern-not-inside: |
+      resource "azurerm_linux_virtual_machine" "..." {
+      ...
+      allow_extension_operations = false
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_windows_virtual_machine" "..." {
+      ...
+      allow_extension_operations = false
+      ...
+      }
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.azure.security.azure-instance-extensions.azure-instance-extensions
+    shortlink: https://sg.run/32nr
+    semgrep.dev:
+      rule:
+        r_id: 23987
+        rv_id: 110897
+        rule_id: BYUrJd
+        version_id: YDTpn2k
+        url: https://semgrep.dev/playground/r/YDTpn2k/terraform.azure.security.azure-instance-extensions.azure-instance-extensions
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

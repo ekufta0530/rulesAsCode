@@ -1,0 +1,35 @@
+rules:
+- id: terraform.gcp.best-practice.gcp-mysql-local-in-file-off.gcp-mysql-local-in-file-off
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_sql_database_instance" "..." {
+        ...
+        database_flags {
+          ...
+          name  = "local_infile"
+          value = "on"
+          ...
+        }
+        ...
+      }
+  message: Ensure MySQL database 'local_infile' flag is set to 'off'
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - gcp
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.gcp.best-practice.gcp-mysql-local-in-file-off.gcp-mysql-local-in-file-off
+    shortlink: https://sg.run/0XZj
+    semgrep.dev:
+      rule:
+        r_id: 33654
+        rv_id: 110953
+        rule_id: 10U3El
+        version_id: l4T466b
+        url: https://semgrep.dev/playground/r/l4T466b/terraform.gcp.best-practice.gcp-mysql-local-in-file-off.gcp-mysql-local-in-file-off
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

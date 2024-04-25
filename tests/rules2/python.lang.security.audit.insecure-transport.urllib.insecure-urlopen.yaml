@@ -1,0 +1,49 @@
+rules:
+- id: python.lang.security.audit.insecure-transport.urllib.insecure-urlopen.insecure-urlopen
+  message: Detected 'urllib.urlopen()' using 'http://'. This request will not be encrypted.
+    Use 'https://' instead.
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    references:
+    - https://docs.python.org/3/library/urllib.request.html#urllib.request.urlopen
+    category: security
+    technology:
+    - urllib
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/python.lang.security.audit.insecure-transport.urllib.insecure-urlopen.insecure-urlopen
+    shortlink: https://sg.run/oxB9
+    semgrep.dev:
+      rule:
+        r_id: 9660
+        rv_id: 110403
+        rule_id: 10UKgW
+        version_id: qkT2B2X
+        url: https://semgrep.dev/playground/r/qkT2B2X/python.lang.security.audit.insecure-transport.urllib.insecure-urlopen.insecure-urlopen
+        origin: community
+  severity: WARNING
+  languages:
+  - python
+  fix-regex:
+    regex: '[Hh][Tt][Tt][Pp]://'
+    replacement: https://
+  pattern-either:
+  - pattern: urllib.request.urlopen("=~/[Hh][Tt][Tt][Pp]://.*/", ...)
+  - pattern: |
+      $URL = "=~/[Hh][Tt][Tt][Pp]://.*/"
+      ...
+      urllib.request.urlopen($URL, ...)
+  - pattern: |
+      def $FUNC(..., $URL = "=~/[Hh][Tt][Tt][Pp]://.*/", ...):
+        ...
+        urllib.request.urlopen($URL, ...)

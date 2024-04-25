@@ -1,0 +1,37 @@
+rules:
+- id: go.lang.best-practice.hidden-goroutine.hidden-goroutine
+  patterns:
+  - pattern-not: |
+      func $FUNC(...) {
+        go func() {
+          ...
+        }(...)
+        $MORE
+      }
+  - pattern: |
+      func $FUNC(...) {
+        go func() {
+          ...
+        }(...)
+      }
+  message: Detected a hidden goroutine. Function invocations are expected to synchronous,
+    and this function will execute asynchronously because all it does is call a goroutine.
+    Instead, remove the internal goroutine and call the function using 'go'.
+  languages:
+  - go
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - go
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/go.lang.best-practice.hidden-goroutine.hidden-goroutine
+    shortlink: https://sg.run/DopW
+    semgrep.dev:
+      rule:
+        r_id: 9096
+        rv_id: 109586
+        rule_id: BYUNq6
+        version_id: 5PTdA22
+        url: https://semgrep.dev/playground/r/5PTdA22/go.lang.best-practice.hidden-goroutine.hidden-goroutine
+        origin: community

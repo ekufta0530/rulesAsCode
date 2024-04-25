@@ -1,0 +1,43 @@
+rules:
+- id: java.servlets.security.no-direct-response-writer-deepsemgrep.no-direct-response-writer-deepsemgrep
+  message: This rule is deprecated
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: MEDIUM
+    confidence: MEDIUM
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://www3.ntu.edu.sg/home/ehchua/programming/java/JavaServerFaces.html
+    technology:
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/java.servlets.security.no-direct-response-writer-deepsemgrep.no-direct-response-writer-deepsemgrep
+    shortlink: https://sg.run/eR0L
+    semgrep.dev:
+      rule:
+        r_id: 40132
+        rv_id: 111593
+        rule_id: nJUwvz
+        version_id: 5PTdeQy
+        url: https://semgrep.dev/playground/r/5PTdeQy/java.servlets.security.no-direct-response-writer-deepsemgrep.no-direct-response-writer-deepsemgrep
+        origin: pro_rules
+  languages:
+  - java
+  patterns:
+  - pattern: a()
+  - pattern: b()

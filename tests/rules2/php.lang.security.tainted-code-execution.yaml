@@ -1,0 +1,83 @@
+rules:
+- id: php.lang.security.tainted-code-execution.tainted-code-execution
+  message: The application might dynamically evaluate untrusted input, which can lead
+    to a code injection vulnerability. An attacker can execute arbitrary code, potentially
+    gaining complete control of the system. To prevent this vulnerability, avoid executing
+    code containing user input. If this is unavoidable, validate and sanitize the
+    input, and use safe alternatives for evaluating user input.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    cwe2022-top25: true
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - web::source::url-path-params::lang
+    - code::sink::eval
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/www-community/attacks/Code_Injection
+    - https://stackoverflow.com/questions/3115559/exploitable-php-functions
+    - https://github.com/FloeDesignTechnologies/phpcs-security-audit/blob/master/Security/Sniffs/BadFunctions/NoEvalsSniff.php
+    technology:
+    - php
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/php.lang.security.tainted-code-execution.tainted-code-execution
+    shortlink: https://sg.run/Ap88
+    semgrep.dev:
+      rule:
+        r_id: 27194
+        rv_id: 111771
+        rule_id: bwU5RR
+        version_id: 9lTd5xy
+        url: https://semgrep.dev/playground/r/9lTd5xy/php.lang.security.tainted-code-execution.tainted-code-execution
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: $_REQUEST
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_FILES
+      - pattern: $_COOKIE
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: eval(...)
+      - pattern: assert(...)
+      - patterns:
+        - pattern: create_function($ARGS, $COMMAND)
+        - focus-metavariable: $COMMAND
+      - patterns:
+        - pattern: preg_replace($REPLACE, $CODE, ...);
+        - metavariable-regex:
+            metavariable: $REPLACE
+            regex: ('|")/.*/e('|")
+        - focus-metavariable: $CODE
+      - patterns:
+        - pattern-either:
+          - pattern-inside: |
+              $FUNC = new ReflectionFunction($FUNC_NAME);
+              ...
+              $FUNC->invoke(...);
+          - pattern-inside: |
+              $FUNC = new ReflectionFunction($FUNC_NAME);
+              ...
+              $FUNC->invokeArgs(...);
+        - pattern: $FUNC_NAME
+  pattern-sanitizers:
+  - pattern: escapeshellarg(...)

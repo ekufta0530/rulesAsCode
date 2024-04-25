@@ -1,0 +1,55 @@
+rules:
+- patterns:
+  - pattern-either:
+    - pattern: |
+        provisioner "remote-exec" {
+            ...
+        }
+    - pattern: |
+        provisioner "local-exec" {
+            ...
+        }
+  - pattern-inside: |
+      resource "aws_instance" "..." {
+          ...
+      }
+  id: terraform.aws.security.aws-provisioner-exec.aws-provisioner-exec
+  message: Provisioners are a tool of last resort and should be avoided where possible.
+    Provisioner behavior cannot be mapped by Terraform as part of a plan, and execute
+    arbitrary shell commands by design.
+  languages:
+  - terraform
+  severity: WARNING
+  metadata:
+    category: security
+    owasp:
+    - A03:2021 - Injection
+    - A01:2017 - Injection
+    cwe:
+    - 'CWE-77: Improper Neutralization of Special Elements used in a Command (''Command
+      Injection'')'
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    subcategory:
+    - guardrail
+    confidence: HIGH
+    likelihood: HIGH
+    impact: MEDIUM
+    technology:
+    - terraform
+    references:
+    - https://developer.hashicorp.com/terraform/language/resources/provisioners/remote-exec
+    - https://developer.hashicorp.com/terraform/language/resources/provisioners/local-exec
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    - Other
+    source: https://semgrep.dev/r/terraform.aws.security.aws-provisioner-exec.aws-provisioner-exec
+    shortlink: https://sg.run/7EjQ
+    semgrep.dev:
+      rule:
+        r_id: 70982
+        rv_id: 110784
+        rule_id: EwUxO1
+        version_id: JdTNvlx
+        url: https://semgrep.dev/playground/r/JdTNvlx/terraform.aws.security.aws-provisioner-exec.aws-provisioner-exec
+        origin: community

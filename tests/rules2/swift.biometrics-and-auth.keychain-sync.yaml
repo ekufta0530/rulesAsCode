@@ -1,0 +1,64 @@
+rules:
+- id: swift.biometrics-and-auth.keychain-sync.keychain-device-sync
+  message: 'The application was observed to store keychain items with the synchronization
+    type `kSecAttrSynchronizableAny` meaning that the data will be synced to all of
+    the users other authenticated iOS, iPadOS, and MacOS devices. Unless necessary,
+    the application should avoid over-distribution of sensitive data, as this increases
+    the attack surface for which an attacker may gain access to the data. '
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe: 'CWE-272: Least Privilege Violation'
+    functional-categories:
+    - mobile::search::storage::lang
+    masvs:
+    - 'MASVS-STORAGE-1: The app securely stores sensitive data.'
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06f-testing-local-authentication
+    - https://shirazkhan030.medium.com/biometric-authentication-in-ios-6c53c54f17df
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.biometrics-and-auth.keychain-sync.keychain-device-sync
+    shortlink: https://sg.run/wElN
+    semgrep.dev:
+      rule:
+        r_id: 60529
+        rv_id: 111981
+        rule_id: OrU1Xz
+        version_id: O9TNdbN
+        url: https://semgrep.dev/playground/r/O9TNdbN/swift.biometrics-and-auth.keychain-sync.keychain-device-sync
+        origin: pro_rules
+  languages:
+  - swift
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          $QUERY = $ATTRIBS
+          ...
+      - metavariable-pattern:
+          metavariable: $ATTRIBS
+          patterns:
+          - pattern-regex: |
+              kSecAttrSynchronizable as String: kCFBooleanTrue.*
+      - pattern-not-inside: |
+          ...
+          $QUERY[kSecAttrSynchronizable as String] = kCFBooleanFalse
+          ...
+    - patterns:
+      - pattern-inside: |
+          $QUERY[kSecAttrSynchronizable as String] = kCFBooleanTrue
+          ...
+  - pattern-inside: |
+      SecItemAdd($QUERY, ...)

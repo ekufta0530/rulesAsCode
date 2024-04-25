@@ -1,0 +1,34 @@
+rules:
+- id: gitlab.bandit.B502.B503
+  patterns:
+  - pattern-either:
+    - pattern: ssl.PROTOCOL_SSLv2
+    - pattern: ssl.PROTOCOL_SSLv3
+    - pattern: ssl.PROTOCOL_TLSv1
+    - pattern: ssl.PROTOCOL_TLSv1_1
+    - pattern: pyOpenSSL.SSL.SSLv2_METHOD
+    - pattern: pyOpenSSL.SSL.SSLv23_METHOD
+    - pattern: pyOpenSSL.SSL.SSLv3_METHOD
+    - pattern: pyOpenSSL.SSL.TLSv1_METHOD
+    - pattern: pyOpenSSL.SSL.TLSv1_1_METHOD
+  message: |
+    An insecure SSL version was detected. TLS versions 1.0, 1.1, and all SSL versions
+    are considered weak encryption and are deprecated.
+    Use 'ssl.PROTOCOL_TLSv1_2' or higher.
+  metadata:
+    cwe: 'CWE-326: Inadequate Encryption Strength'
+    owasp: 'A3: Sensitive Data Exposure'
+    license: MIT
+    source: https://semgrep.dev/r/gitlab.bandit.B502.B503
+    shortlink: https://sg.run/plRe
+    semgrep.dev:
+      rule:
+        r_id: 11562
+        rv_id: 13295
+        rule_id: ReUPvG
+        version_id: 1QTeld
+        url: https://semgrep.dev/playground/r/1QTeld/gitlab.bandit.B502.B503
+        origin: community
+  severity: WARNING
+  languages:
+  - python

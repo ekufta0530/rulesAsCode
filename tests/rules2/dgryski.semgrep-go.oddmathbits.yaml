@@ -1,0 +1,24 @@
+rules:
+- id: dgryski.semgrep-go.oddmathbits.odd-bits-leadingzeros
+  patterns:
+  - pattern-either:
+    - pattern: 64 - bits.LeadingZeros64($X)
+    - pattern: 32 - bits.LeadingZeros32($X)
+    - pattern: 16 - bits.LeadingZeros16($X)
+    - pattern: 8 - bits.LeadingZeros8($X)
+  message: Odd bits.LeadingZeros() expression should perhaps be bits.Len()
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.oddmathbits.odd-bits-leadingzeros
+    shortlink: https://sg.run/Bkdv
+    semgrep.dev:
+      rule:
+        r_id: 8707
+        rv_id: 11995
+        rule_id: 10UK09
+        version_id: ZRTgG9
+        url: https://semgrep.dev/playground/r/ZRTgG9/dgryski.semgrep-go.oddmathbits.odd-bits-leadingzeros
+        origin: community

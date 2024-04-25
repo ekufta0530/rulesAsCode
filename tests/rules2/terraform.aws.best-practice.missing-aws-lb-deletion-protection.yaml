@@ -1,0 +1,41 @@
+rules:
+- id: terraform.aws.best-practice.missing-aws-lb-deletion-protection.missing-aws-lb-deletion-protection
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        resource "aws_alb" "..." {
+        ...
+        }
+    - pattern-inside: |
+        resource "aws_lb" "..." {
+        ...
+        }
+  - pattern-not-inside: |
+      resource $ANYLB $ANYTHING {
+        ...
+        enable_deletion_protection = true
+        ...
+      }
+  message: The AWS LoadBalancer deletion protection is not enabled.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    category: best-practice
+    references:
+    - https://aws.amazon.com/what-is/load-balancing/#seo-faq-pairs#benefits-lb
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb
+    technology:
+    - terraform
+    - aws
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.missing-aws-lb-deletion-protection.missing-aws-lb-deletion-protection
+    shortlink: https://sg.run/L3Kr
+    semgrep.dev:
+      rule:
+        r_id: 17339
+        rv_id: 110716
+        rule_id: r6U2Yo
+        version_id: 1QTO75Y
+        url: https://semgrep.dev/playground/r/1QTO75Y/terraform.aws.best-practice.missing-aws-lb-deletion-protection.missing-aws-lb-deletion-protection
+        origin: community

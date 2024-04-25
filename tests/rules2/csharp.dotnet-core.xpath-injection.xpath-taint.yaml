@@ -1,0 +1,249 @@
+rules:
+- id: csharp.dotnet-core.xpath-injection.xpath-taint.xpath-taint
+  message: XPath queries are constructed dynamically on user-controlled input. This
+    could lead to XPath injection if variables passed into the evaluate or compile
+    commands are not properly sanitized. Xpath injection could lead to unauthorized
+    access to sensitive information in XML documents. Thoroughly sanitize user input
+    or use parameterized XPath queries if you can.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-643: Improper Neutralization of Data within XPath Expressions (''XPath
+      Injection'')'
+    functional-categories:
+    - web::source::header::ASP.NET
+    - web::source::http-body::ASP.NET
+    - web::source::http-params::ASP.NET
+    - web::source::url-path-params::ASP.NET
+    - xml::sink::xpath
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - .NET
+    - api
+    - csharp
+    - dotnet
+    - mvc
+    - xml
+    - xpath
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - XPath Injection
+    source: https://semgrep.dev/r/csharp.dotnet-core.xpath-injection.xpath-taint.xpath-taint
+    shortlink: https://sg.run/W2q4
+    semgrep.dev:
+      rule:
+        r_id: 73409
+        rv_id: 229201
+        rule_id: 8GUZdg
+        version_id: d6TqX7z
+        url: https://semgrep.dev/playground/r/d6TqX7z/csharp.dotnet-core.xpath-injection.xpath-taint.xpath-taint
+        origin: pro_rules
+  languages:
+  - csharp
+  mode: taint
+  options:
+    interfile: true
+  pattern-sources:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          using Microsoft.AspNetCore.Mvc;
+          ...
+      - pattern: |
+          public $TYPE $NAME(..., $X $VAR,...) {
+            ...
+          }
+      - pattern-not: |
+          [NonAction]
+          public $TYPE $NAME(..., $X $VAR,...) {
+            ...
+          }
+      - pattern-not: |
+          public $TYPE $NAME(..., [FromServices] $X $VAR, ...){
+            ...
+          }
+      - focus-metavariable: $VAR
+      - metavariable-pattern:
+          metavariable: $X
+          patterns:
+          - pattern-not-regex: (int|long|float|double|bool|Guid)
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                class $CN : Controller {...}
+            - pattern-inside: |
+                class $CN : ControllerBase {...}
+          - pattern-not-inside: |
+              [NonController]
+              class $CN : $T {...}
+        - patterns:
+          - pattern-inside: class $CN {...}
+          - pattern-not-inside: |
+              [NonController]
+              class $CN {...}
+          - metavariable-regex:
+              metavariable: $CN
+              regex: .*Controller
+        - pattern-inside: |
+            [Controller]
+            class $CN {...}
+        - pattern-inside: |
+            [ApiController]
+            class $CN {...}
+    - patterns:
+      - pattern-inside: |
+          using Microsoft.AspNetCore.Mvc;
+          ...
+      - focus-metavariable: $VAR
+      - pattern-either:
+        - pattern-inside: $TYPE $NAME(..., [FromBody] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromForm] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromHeader] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromQuery] $T $VAR, ...) { ... }
+        - pattern-inside: $TYPE $NAME(..., [FromRoute] $T $VAR, ...) { ... }
+        - pattern-inside: (..., [FromBody] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromForm] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromHeader] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromQuery] $T $VAR, ...) => { ... }
+        - pattern-inside: (..., [FromRoute] $T $VAR, ...) => { ... }
+    - patterns:
+      - pattern-either:
+        - pattern: HttpContext.Request.Query
+        - pattern: HttpContext.Request.QueryString
+        - pattern: HttpContext.Request.Headers
+        - pattern: HttpContext.Request.RouteValues
+        - pattern: HttpContext.Request.Body
+        - pattern: HttpContext.Request.BodyReader
+        - pattern: HttpContext.Request.Form
+        - pattern: $X.HttpContext.Request.Query
+        - pattern: $X.HttpContext.Request.QueryString
+        - pattern: $X.HttpContext.Request.Headers
+        - pattern: $X.HttpContext.Request.RouteValues
+        - pattern: $X.HttpContext.Request.Body
+        - pattern: $X.HttpContext.Request.BodyReader
+        - pattern: $X.HttpContext.Request.Form
+        - pattern: (HttpContext $C).Request.Query
+        - pattern: (HttpContext $C).Request.QueryString
+        - pattern: (HttpContext $C).Request.Headers
+        - pattern: (HttpContext $C).Request.RouteValues
+        - pattern: (HttpContext $C).Request.Body
+        - pattern: (HttpContext $C).Request.BodyReader
+        - pattern: (HttpContext $C).Request.Form
+        - pattern: (HttpRequest $R).Query
+        - pattern: (HttpRequest $R).QueryString
+        - pattern: (HttpRequest $R).Headers
+        - pattern: (HttpRequest $R).RouteValues
+        - pattern: (HttpRequest $R).Body
+        - pattern: (HttpRequest $R).BodyReader
+        - pattern: (HttpRequest $R).Form
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern-either:
+        - pattern: (StringBuilder $TO).Append(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendLine(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendFormat(..., $FROM,...)
+        - pattern: (StringBuilder $TO).AppendJoin(..., $FROM,...)
+        - pattern: (StringBuilder $TO).Replace(..., $FROM,...)
+        - pattern: (StringBuilder $TO).Insert(..., $FROM,...)
+        - patterns:
+          - pattern-either:
+            - pattern: $TO.Append(..., $FROM,...)
+            - pattern: $TO.AppendLine(..., $FROM,...)
+            - pattern: $TO.AppendFormat(..., $FROM,...)
+            - pattern: $TO.AppendJoin(..., $FROM,...)
+            - pattern: $TO.Replace(..., $FROM,...)
+            - pattern: $TO.Insert(..., $FROM,...)
+          - pattern-either:
+            - pattern-inside: |
+                var $TO = new StringBuilder(...);
+                ...
+            - pattern-inside: |
+                $TO = new StringBuilder(...);
+                ...
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $QUERY
+    - pattern-either:
+      - pattern: XPathExpression.Compile($QUERY,...)
+      - patterns:
+        - pattern-either:
+          - pattern: ($XMLTYPE $NODE).Compile($QUERY,...)
+          - pattern: ($XMLTYPE $NODE).Evaluate($QUERY,...)
+          - pattern: ($XMLTYPE $NODE).Select($QUERY,...)
+          - pattern: ($XMLTYPE $NODE).SelectNodes($QUERY,...)
+          - pattern: ($XMLTYPE $NODE).SelectSingleNode($QUERY,...)
+        - metavariable-regex:
+            metavariable: $XMLTYPE
+            regex: (?i)^(xml|xpath)
+      - patterns:
+        - pattern-either:
+          - pattern: $NODE.Compile($QUERY,...)
+          - pattern: $NODE.Evaluate($QUERY,...)
+          - pattern: $NODE.Select($QUERY,...)
+          - pattern: $NODE.SelectNodes($QUERY,...)
+          - pattern: $NODE.SelectSingleNode($QUERY,...)
+        - pattern-either:
+          - patterns:
+            - pattern-either:
+              - pattern-inside: |
+                  var $NODE = new $XMLTYPE(...);
+                  ...
+              - pattern-inside: |
+                  $NODE = new $XMLTYPE(...);
+                  ...
+            - metavariable-regex:
+                metavariable: $XMLTYPE
+                regex: (?i)^(xml|xpath)
+          - pattern-inside: |
+              var $NODE = $DOC.CreateNavigator(...);
+              ...
+          - pattern-inside: |
+              $NODE = $DOC.CreateNavigator(...);
+              ...
+          - pattern-inside: |
+              var $NODE = $DOC.DocumentElement;
+              ...
+          - pattern-inside: |
+              $NODE = $DOC.DocumentElement;
+              ...
+  pattern-sanitizers:
+  - patterns:
+    - pattern: Convert.$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (ToBase64CharArray|ToBase64String|ToBoolean|ToDateTime|ToDecimal|ToDouble|ToInt16|ToInt32|ToInt64|ToSByte|ToSingle|ToUInt16|ToUInt32|ToUInt64)
+  - patterns:
+    - pattern-either:
+      - pattern: $INT.Parse(...)
+      - pattern: $INT.TryParse(...)
+      - pattern: $INT.TryParseExact(...)
+    - metavariable-regex:
+        metavariable: $INT
+        regex: (Int32|Int128|Int16|Int64|IntPtr|Boolean|Decimal|Double|Guid|DateTime|Single|SByte|UInt128|UInt16|UInt32|UInt64|UIntPtr)
+  - patterns:
+    - pattern-either:
+      - pattern: (int $NUM)
+      - pattern: (long $NUM)
+      - pattern: (float $NUM)
+      - pattern: (double $NUM)
+      - pattern: (bool $NUM)
+      - pattern: (Guid $NUM)
+      - pattern: var $X = (int) ...;
+      - pattern: var $X = (long) ...;
+      - pattern: var $X = (float) ...;
+      - pattern: var $X = (double) ...;
+      - pattern: var $X = (bool) ...;
+      - pattern: var $X = (Guid) ...;

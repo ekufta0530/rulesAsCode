@@ -1,0 +1,52 @@
+rules:
+- id: dgryski.semgrep-go.sortslice.bad-sort-slice-function
+  patterns:
+  - pattern-either:
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$I] < $SLICE[$I]
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$J] < $SLICE[$I]
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$I].$FIELD < $SLICE[$I].$FIELD
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$J].$FIELD < $SLICE[$J].$FIELD
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$I] > $SLICE[$I]
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$J] > $SLICE[$I]
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$I].$FIELD > $SLICE[$I].$FIELD
+        })
+    - pattern: |
+        sort.Slice($SLICE, func($I, $J int) bool {
+            return $SLICE[$J].$FIELD > $SLICE[$J].$FIELD
+        })
+  message: Maybe bad sort.Slice() less function
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.sortslice.bad-sort-slice-function
+    shortlink: https://sg.run/qx3R
+    semgrep.dev:
+      rule:
+        r_id: 8712
+        rv_id: 12000
+        rule_id: NbUkED
+        version_id: 8KTxAw
+        url: https://semgrep.dev/playground/r/8KTxAw/dgryski.semgrep-go.sortslice.bad-sort-slice-function
+        origin: community

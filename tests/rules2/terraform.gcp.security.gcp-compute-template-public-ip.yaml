@@ -1,0 +1,48 @@
+rules:
+- id: terraform.gcp.security.gcp-compute-template-public-ip.gcp-compute-template-public-ip
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_compute_instance_template" "..." {
+      ...
+      network_interface {
+        ...
+        network = "default"
+        ...
+      }
+      ...
+      }
+  message: "Ensure that Compute instances do not have public IP addresses\t"
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-compute-template-public-ip.gcp-compute-template-public-ip
+    shortlink: https://sg.run/2e4q
+    semgrep.dev:
+      rule:
+        r_id: 32319
+        rv_id: 110987
+        rule_id: lBUpk3
+        version_id: 5PTdeo3
+        url: https://semgrep.dev/playground/r/5PTdeo3/terraform.gcp.security.gcp-compute-template-public-ip.gcp-compute-template-public-ip
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

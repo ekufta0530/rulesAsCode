@@ -1,0 +1,94 @@
+rules:
+- id: java.lang.security.audit.url-rewriting.url-rewriting
+  message: URL rewriting has significant security risks. Since session ID appears
+    in the URL, it may be easily seen by third parties.
+  metadata:
+    cwe:
+    - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+    owasp:
+    - A01:2021 - Broken Access Control
+    source-rule-url: https://find-sec-bugs.github.io/bugs.htm#URL_REWRITING
+    category: security
+    technology:
+    - java
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/java.lang.security.audit.url-rewriting.url-rewriting
+    shortlink: https://sg.run/3x7b
+    semgrep.dev:
+      rule:
+        r_id: 9187
+        rv_id: 109742
+        rule_id: 0oU5j3
+        version_id: YDTp2WQ
+        url: https://semgrep.dev/playground/r/YDTp2WQ/java.lang.security.audit.url-rewriting.url-rewriting
+        origin: community
+  severity: WARNING
+  languages:
+  - java
+  pattern-either:
+  - pattern: |
+      $X $METHOD(...,HttpServletResponse $RES,...) {
+        ...
+        $RES.encodeURL(...);
+        ...
+      }
+  - pattern: |
+      $X $METHOD(...,HttpServletResponse $RES,...) {
+        ...
+        $RES.encodeUrl(...);
+        ...
+      }
+  - pattern: |
+      $X $METHOD(...,HttpServletResponse $RES,...) {
+        ...
+        $RES.encodeRedirectURL(...);
+        ...
+      }
+  - pattern: |
+      $X $METHOD(...,HttpServletResponse $RES,...) {
+        ...
+        $RES.encodeRedirectUrl(...);
+        ...
+      }
+  - pattern: |
+      $X $METHOD(...) {
+        ...
+        HttpServletResponse $RES = ...;
+        ...
+        $RES.encodeURL(...);
+        ...
+      }
+  - pattern: |
+      $X $METHOD(...) {
+        ...
+        HttpServletResponse $RES = ...;
+        ...
+        $RES.encodeUrl(...);
+        ...
+      }
+  - pattern: |
+      $X $METHOD(...) {
+        ...
+        HttpServletResponse $RES = ...;
+        ...
+        $RES.encodeRedirectURL(...);
+        ...
+      }
+  - pattern: |-
+      $X $METHOD(...) {
+        ...
+        HttpServletResponse $RES = ...;
+        ...
+        $RES.encodeRedirectUrl(...);
+        ...
+      }

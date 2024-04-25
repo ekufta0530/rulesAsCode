@@ -1,0 +1,87 @@
+rules:
+- id: cpp.lang.security.strings.missing-nul-cpp-string-memcpy.missing-nul-cpp-string-memcpy
+  message: The number of bytes copied from `$STR` does not include the NUL terminator.
+    This can lead to an out-of-bounds read and information disclosure. One extra byte
+    should be added to the length to ensure that the NUL terminator is copied.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - C
+    - C++
+    - L1
+    - STR31-C
+    cwe:
+    - 'CWE-125: Out-of-bounds Read'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - memory::sink::buffer-overflow
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/STR31-C.+Guarantee+that+storage+for+strings+has+sufficient+space+for+character+data+and+the+null+terminator
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/cpp.lang.security.strings.missing-nul-cpp-string-memcpy.missing-nul-cpp-string-memcpy
+    shortlink: https://sg.run/Ewq4L
+    semgrep.dev:
+      rule:
+        r_id: 114881
+        rv_id: 257492
+        rule_id: PeUJzRY
+        version_id: PkTWJ5Z
+        url: https://semgrep.dev/playground/r/PkTWJ5Z/cpp.lang.security.strings.missing-nul-cpp-string-memcpy.missing-nul-cpp-string-memcpy
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        $TYPE $DEST[$DIM] = ...;
+        ...
+    - pattern-inside: |
+        $TYPE $DEST[$DIM];
+        ...
+    - pattern-inside: |
+        $TYPE *$DEST = ...;
+        ...
+  - patterns:
+    - pattern-either:
+      - pattern: $MEMFUNC($DEST, $STR.c_str(), strlen($STR.c_str()))
+      - pattern: $MEMFUNC($DEST, $STR.c_str(), $STR.size())
+      - pattern: $MEMFUNC($DEST, $STR.c_str(), $STR.length())
+      - pattern: |
+          $LEN = strlen($STR.c_str());
+          ...
+          $MEMFUNC($DEST, $STR.c_str(), $LEN);
+      - pattern: |
+          $LEN = $STR.size();
+          ...
+          $MEMFUNC($DEST, $STR.c_str(), $LEN);
+      - pattern: |
+          $LEN = $STR.length();
+          ...
+          $MEMFUNC($DEST, $STR.c_str(), $LEN);
+    - metavariable-pattern:
+        metavariable: $MEMFUNC
+        patterns:
+        - pattern-either:
+          - pattern: memcpy
+          - pattern: wmemcpy
+          - pattern: memmove
+          - pattern: wmemmove
+          - pattern: std::memcpy
+          - pattern: std::wmemcpy
+          - pattern: std::memmove
+          - pattern: std::wmemmove
+    - focus-metavariable: $MEMFUNC

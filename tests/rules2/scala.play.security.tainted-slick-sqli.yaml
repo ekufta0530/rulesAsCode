@@ -1,0 +1,82 @@
+rules:
+- id: scala.play.security.tainted-slick-sqli.tainted-slick-sqli
+  mode: taint
+  metadata:
+    references:
+    - https://scala-slick.org/doc/3.3.3/sql.html#splicing-literal-values
+    - https://scala-slick.org/doc/3.2.0/sql-to-slick.html#non-optimal-sql-code
+    category: security
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    technology:
+    - scala
+    - slick
+    - play
+    confidence: HIGH
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: HIGH
+    impact: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/scala.play.security.tainted-slick-sqli.tainted-slick-sqli
+    shortlink: https://sg.run/k9K2
+    semgrep.dev:
+      rule:
+        r_id: 18328
+        rv_id: 110643
+        rule_id: GdUDWO
+        version_id: A8T9XGO
+        url: https://semgrep.dev/playground/r/A8T9XGO/scala.play.security.tainted-slick-sqli.tainted-slick-sqli
+        origin: community
+  message: Detected a tainted SQL statement. This could lead to SQL injection if variables
+    in the SQL statement are not properly sanitized. Avoid using using user input
+    for generating SQL strings.
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: $REQ
+        - pattern-either:
+          - pattern-inside: "Action {\n  $REQ: Request[$T] => \n    ...\n}\n"
+          - pattern-inside: "Action(...) {\n  $REQ: Request[$T] => \n    ...\n}\n"
+          - pattern-inside: "Action.async {\n  $REQ: Request[$T] => \n    ...\n}\n"
+          - pattern-inside: "Action.async(...) {\n  $REQ: Request[$T] => \n    ...\n\
+              }\n"
+      - patterns:
+        - pattern: $PARAM
+        - pattern-either:
+          - pattern-inside: |
+              def $CTRL(..., $PARAM: $TYPE, ...) = Action {
+                ...
+              }
+          - pattern-inside: |
+              def $CTRL(..., $PARAM: $TYPE, ...) = Action(...) {
+                ...
+              }
+          - pattern-inside: |
+              def $CTRL(..., $PARAM: $TYPE, ...) = Action.async {
+                ...
+              }
+          - pattern-inside: |
+              def $CTRL(..., $PARAM: $TYPE, ...) = Action.async(...) {
+                ...
+              }
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: $MODEL.overrideSql(...)
+      - pattern: sql"..."
+    - pattern-inside: |
+        import slick.$DEPS
+        ...
+  severity: ERROR
+  languages:
+  - scala

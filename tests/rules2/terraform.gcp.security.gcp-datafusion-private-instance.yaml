@@ -1,0 +1,48 @@
+rules:
+- id: terraform.gcp.security.gcp-datafusion-private-instance.gcp-datafusion-private-instance
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_data_fusion_instance" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "google_data_fusion_instance" "..." {
+      ...
+      private_instance = true
+      ...
+      }
+  message: Ensure Data fusion instances are private
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-datafusion-private-instance.gcp-datafusion-private-instance
+    shortlink: https://sg.run/2ggL
+    semgrep.dev:
+      rule:
+        r_id: 33663
+        rv_id: 110990
+        rule_id: OrUEEn
+        version_id: A8T9Xgx
+        url: https://semgrep.dev/playground/r/A8T9Xgx/terraform.gcp.security.gcp-datafusion-private-instance.gcp-datafusion-private-instance
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

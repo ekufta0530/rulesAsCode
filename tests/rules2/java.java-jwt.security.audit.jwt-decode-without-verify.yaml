@@ -1,0 +1,50 @@
+rules:
+- id: java.java-jwt.security.audit.jwt-decode-without-verify.java-jwt-decode-without-verify
+  message: Detected the decoding of a JWT token without a verify step. JWT tokens
+    must be verified before use, otherwise the token's integrity is unknown. This
+    means a malicious actor could forge a JWT token with any claims. Call '.verify()'
+    before using the token.
+  metadata:
+    cwe:
+    - 'CWE-345: Insufficient Verification of Data Authenticity'
+    owasp:
+    - A08:2021 - Software and Data Integrity Failures
+    source-rule-url: https://semgrep.dev/blog/2020/hardcoded-secrets-unverified-tokens-and-other-common-jwt-mistakes/
+    category: security
+    technology:
+    - jwt
+    confidence: MEDIUM
+    references:
+    - https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/java.java-jwt.security.audit.jwt-decode-without-verify.java-jwt-decode-without-verify
+    shortlink: https://sg.run/Bk95
+    semgrep.dev:
+      rule:
+        r_id: 9151
+        rv_id: 109667
+        rule_id: pKUOE9
+        version_id: 8KTQ96B
+        url: https://semgrep.dev/playground/r/8KTQ96B/java.java-jwt.security.audit.jwt-decode-without-verify.java-jwt-decode-without-verify
+        origin: community
+  languages:
+  - java
+  severity: WARNING
+  patterns:
+  - pattern: |
+      com.auth0.jwt.JWT.decode(...);
+  - pattern-not-inside: |-
+      class $CLASS {
+        ...
+        $RETURNTYPE $FUNC (...) {
+          ...
+          $VERIFIER.verify(...);
+          ...
+        }
+      }

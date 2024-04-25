@@ -1,0 +1,28 @@
+rules:
+- id: ajinabraham.njsscan.good.good_anti_csrf.anti_csrf_control
+  patterns:
+  - pattern-inside: |
+      $CSRUF = require('csurf')
+      ...
+  - pattern-either:
+    - pattern: $X = csrf(...)
+    - pattern: $X = csurf(...)
+    - pattern: $APP.use(csrf(...))
+    - pattern: $APP.use(csurf(...))
+  message: This application has anti CSRF protection which prevents cross site request
+    forgery attacks.
+  languages:
+  - javascript
+  severity: INFO
+  metadata:
+    license: LGPL-3.0-or-later
+    source: https://semgrep.dev/r/ajinabraham.njsscan.good.good_anti_csrf.anti_csrf_control
+    shortlink: https://sg.run/BDJ2
+    semgrep.dev:
+      rule:
+        r_id: 43651
+        rv_id: 52383
+        rule_id: X5Upew
+        version_id: 9lTGe8
+        url: https://semgrep.dev/playground/r/9lTGe8/ajinabraham.njsscan.good.good_anti_csrf.anti_csrf_control
+        origin: community

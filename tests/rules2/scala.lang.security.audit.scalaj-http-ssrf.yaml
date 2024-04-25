@@ -1,0 +1,56 @@
+rules:
+- id: scala.lang.security.audit.scalaj-http-ssrf.scalaj-http-ssrf
+  patterns:
+  - pattern: Http($URL)
+  - pattern-inside: |
+      import scalaj.http.$HTTP
+      ...
+  - pattern-either:
+    - pattern-inside: |
+        def $FUNC(..., $URL: $T, ...) = $A {
+          ...
+        }
+    - pattern-inside: |
+        def $FUNC(..., $URL: $T, ...) = {
+          ...
+        }
+  message: A parameter being passed directly into `Http` most likely lead to SSRF.
+    This could allow an attacker to send data to their own server, potentially exposing
+    sensitive data sent with this request. They could also probe internal servers
+    or other resources that the server runnig this code can access. Do not allow arbitrary
+    hosts. Instead, create an allowlist for approved hosts hardcode the correct host.
+  metadata:
+    cwe:
+    - 'CWE-918: Server-Side Request Forgery (SSRF)'
+    owasp:
+    - A10:2021 - Server-Side Request Forgery (SSRF)
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html
+    - https://github.com/scalaj/scalaj-http#simplified-http
+    category: security
+    technology:
+    - scala
+    - scalaj-http
+    confidence: LOW
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Server-Side Request Forgery (SSRF)
+    source: https://semgrep.dev/r/scala.lang.security.audit.scalaj-http-ssrf.scalaj-http-ssrf
+    shortlink: https://sg.run/OgjB
+    semgrep.dev:
+      rule:
+        r_id: 18431
+        rv_id: 110636
+        rule_id: AbU3xA
+        version_id: 3ZTkrEx
+        url: https://semgrep.dev/playground/r/3ZTkrEx/scala.lang.security.audit.scalaj-http-ssrf.scalaj-http-ssrf
+        origin: community
+  languages:
+  - scala
+  severity: WARNING

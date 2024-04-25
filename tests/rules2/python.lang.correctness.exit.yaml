@@ -1,0 +1,29 @@
+rules:
+- id: python.lang.correctness.exit.use-sys-exit
+  languages:
+  - python
+  message: Detected use of `exit`. Use `sys.exit` over the python shell `exit` built-in.
+    `exit` is a helper for the interactive shell and may not be available on all Python
+    implementations.
+  patterns:
+  - pattern: exit($X)
+  - pattern-not: sys.exit($X)
+  severity: WARNING
+  fix: sys.exit($X)
+  metadata:
+    category: correctness
+    technology:
+    - python
+    references:
+    - https://stackoverflow.com/questions/6501121/difference-between-exit-and-sys-exit-in-python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.correctness.exit.use-sys-exit
+    shortlink: https://sg.run/Do5o
+    semgrep.dev:
+      rule:
+        r_id: 9596
+        rv_id: 110337
+        rule_id: JDUygy
+        version_id: 5PTdAnj
+        url: https://semgrep.dev/playground/r/5PTdAnj/python.lang.correctness.exit.use-sys-exit
+        origin: community

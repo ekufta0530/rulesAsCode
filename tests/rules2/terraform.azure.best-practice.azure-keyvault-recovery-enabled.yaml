@@ -1,0 +1,35 @@
+rules:
+- id: terraform.azure.best-practice.azure-keyvault-recovery-enabled.azure-keyvault-recovery-enabled
+  message: Ensure the key vault is recoverable https://docs.bridgecrew.io/docs/ensure-the-key-vault-is-recoverable
+  patterns:
+  - pattern: |
+      resource "azurerm_key_vault" "..." {
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_key_vault" "..." {
+      ...
+      purge_protection_enabled = true
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://docs.bridgecrew.io/docs/ensure-the-key-vault-is-recoverable
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-keyvault-recovery-enabled.azure-keyvault-recovery-enabled
+    shortlink: https://sg.run/bgzp
+    semgrep.dev:
+      rule:
+        r_id: 23926
+        rv_id: 110830
+        rule_id: 5rUAqD
+        version_id: ZRTQper
+        url: https://semgrep.dev/playground/r/ZRTQper/terraform.azure.best-practice.azure-keyvault-recovery-enabled.azure-keyvault-recovery-enabled
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-wcscpy.microsoft-banned-list-wcscpy
+  message: 'wcscpy is a banned function: no bounds checking. Alternatives are wcscpy_s,
+    StringCbCopy, StringCbCopyEx, StringCchCopy, StringCchCopyEx, wcslcpy'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-wcscpy.microsoft-banned-list-wcscpy
+    shortlink: https://sg.run/2ZDWq
+    semgrep.dev:
+      rule:
+        r_id: 114863
+        rv_id: 257474
+        rule_id: NbU3Zzv
+        version_id: NdT9DnP
+        url: https://semgrep.dev/playground/r/NdT9DnP/cpp.lang.security.misc.microsoft-banned-list-wcscpy.microsoft-banned-list-wcscpy
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: wcscpy(...)

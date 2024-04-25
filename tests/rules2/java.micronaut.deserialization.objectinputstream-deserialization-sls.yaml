@@ -1,0 +1,103 @@
+rules:
+- id: java.micronaut.deserialization.objectinputstream-deserialization-sls.objectinputstream-deserialization-sls
+  message: 'The application may convert user-controlled data into an object, which
+    can lead to an insecure deserialization vulnerability. An attacker can create
+    a malicious serialized object, pass it to the application, and take advantage
+    of the deserialization process to perform Denial-of-service (DoS), Remote code
+    execution (RCE), or bypass access control measures. To prevent this vulnerability,
+    leverage data formats such as JSON or XML as safer alternatives. If you need to
+    deserialize user input in a specific format, consider digitally signing the data
+    before serialization to prevent tampering. For more information, see: [Deserialization
+    prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+    We do not recommend deserializing untrusted data with the `ObjectInputStream`.
+    If you must, you can try overriding the `ObjectInputStream#resolveClass()` method
+    or using a safe replacement for the generic `readObject()` method.'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - deserialization::sink::load-object::apache.commons
+    - deserialization::sink::load-object::java.io
+    - serverless::source::function-params::Micronaut
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures
+    technology:
+    - AWS
+    - Azure
+    - GCP
+    - Micronaut
+    - java
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/java.micronaut.deserialization.objectinputstream-deserialization-sls.objectinputstream-deserialization-sls
+    shortlink: https://sg.run/JDzxo
+    semgrep.dev:
+      rule:
+        r_id: 116490
+        rv_id: 734989
+        rule_id: 7KUgKvw
+        version_id: YDTA1Bn
+        url: https://semgrep.dev/playground/r/YDTA1Bn/java.micronaut.deserialization.objectinputstream-deserialization-sls.objectinputstream-deserialization-sls
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - patterns:
+    - focus-metavariable: $INPUT
+    - pattern: $TYPE execute($I $INPUT, ...) {...}
+    - pattern-inside: class $CL extends io.micronaut.function.aws.MicronautRequestHandler<$I,
+        $O> {...}
+  - patterns:
+    - focus-metavariable: $INPUT
+    - pattern: $TYPE accept($I $INPUT, ...) {...}
+    - pattern-inside: class $CL extends io.micronaut.gcp.function.GoogleFunctionInitializer
+        {...}
+  - patterns:
+    - focus-metavariable: $INPUT
+    - pattern: |
+        @FunctionName(...)
+        $TYPE $NAME($I $INPUT, ...) {...}
+    - pattern-inside: class $CL extends io.micronaut.azure.function.AzureFunction
+        {...}
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $IN
+    - pattern-either:
+      - pattern: new ObjectInputStream($IN, ...)
+      - pattern: new java.io.ObjectInputStream($IN, ...)
+      - pattern: new org.apache.commons.io.input.ClassLoaderObjectInputStream($CL,
+          $IN, ...)
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)

@@ -1,0 +1,42 @@
+rules:
+- id: swift.lang.forbidden.forbidden-ios-api.swift-forbidden-ios-apis
+  message: APIs (namely ptrace) were identified which are forbidden from iOS appstore
+    applications. The application should avoid calling such APIs, as this may result
+    in a blocker during app store review.
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://mas.owasp.org/MASVS/10-MASVS-CODE/
+    technology:
+    - ios
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/swift.lang.forbidden.forbidden-ios-api.swift-forbidden-ios-apis
+    shortlink: https://sg.run/RJLg
+    semgrep.dev:
+      rule:
+        r_id: 66493
+        rv_id: 112026
+        rule_id: nJU49y
+        version_id: 2KTz3qG
+        url: https://semgrep.dev/playground/r/2KTz3qG/swift.lang.forbidden.forbidden-ios-api.swift-forbidden-ios-apis
+        origin: pro_rules
+  languages:
+  - swift
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - pattern: |
+        ptrace(...)
+    - pattern: |
+        dlsym(..., "ptrace")

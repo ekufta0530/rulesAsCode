@@ -1,0 +1,31 @@
+rules:
+- id: mobsf.mobsfscan.crypto.weak_ciphers.weak_cipher
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $C.getInstance("=~/des|desede|rc2|rc4|blowfish/i", ...);
+    - pattern: |
+        $C = new NullCipher();
+  message: Weak encryption algorithm identified. This algorithm is vulnerable to cryptographic
+    attacks.
+  severity: ERROR
+  languages:
+  - java
+  metadata:
+    cwe: cwe-327
+    owasp-mobile: m5
+    masvs: crypto-4
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x04g-Testing-Cryptography.md#identifying-insecure-andor-deprecated-cryptographic-algorithms-mstg-crypto-4
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.crypto.weak_ciphers.weak_cipher
+    shortlink: https://sg.run/EKZw
+    semgrep.dev:
+      rule:
+        r_id: 43737
+        rv_id: 78341
+        rule_id: ReUdZD
+        version_id: yeT6dQ
+        url: https://semgrep.dev/playground/r/yeT6dQ/mobsf.mobsfscan.crypto.weak_ciphers.weak_cipher
+        origin: community

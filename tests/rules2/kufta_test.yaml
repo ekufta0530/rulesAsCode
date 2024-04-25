@@ -1,0 +1,22 @@
+rules:
+- id: kufta_test.secure-flag-not-set
+  languages:
+  - Java
+  patterns:
+  - pattern: $RESPONSE.addCookie($COOKIE);
+  - pattern-not-inside: |
+      $COOKIE.setSecure(true);
+      ...
+  message: Match found
+  severity: WARNING
+  metadata:
+    source: https://semgrep.dev/r/kufta_test.secure-flag-not-set
+    shortlink: https://sg.run/r6qr6
+    semgrep.dev:
+      rule:
+        r_id: 128569
+        rv_id: 741930
+        rule_id: 0oULZqL
+        version_id: 3ZT68Ll
+        url: https://semgrep.dev/playground/r/3ZT68Ll/kufta_test.secure-flag-not-set
+        origin: custom

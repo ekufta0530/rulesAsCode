@@ -1,0 +1,38 @@
+rules:
+- id: terraform.azure.best-practice.azure-defenderon-appservices.azure-defenderon-appservices
+  message: Ensure that Azure Defender is set to On for App Service
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Standard"
+      resource_type = "AppServices"
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_security_center_subscription_pricing" "..." {
+      ...
+      tier = "Free"
+      resource_type = "AppServices"
+      ...
+      }
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - azure
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.azure.best-practice.azure-defenderon-appservices.azure-defenderon-appservices
+    shortlink: https://sg.run/KeL7
+    semgrep.dev:
+      rule:
+        r_id: 23911
+        rv_id: 110815
+        rule_id: eqU1eG
+        version_id: X0TQ2AG
+        url: https://semgrep.dev/playground/r/X0TQ2AG/terraform.azure.best-practice.azure-defenderon-appservices.azure-defenderon-appservices
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

@@ -1,0 +1,172 @@
+rules:
+- id: cpp.lang.security.memory.unvalidated-array-index.unvalidated-array-index
+  message: Externally controlled data is used to index a fixed-size array, `$BUFFER`.
+    This could lead to an out-of-bounds read or write, triggering memory corruption.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - ARR30-C
+    - C
+    - C++
+    - L2
+    cwe:
+    - 'CWE-120: Buffer Copy without Checking Size of Input (''Classic Buffer Overflow'')'
+    functional-categories:
+    - memory::sink::buffer-overflow
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/ARR30-C.+Do+not+form+or+use+out-of-bounds+pointers+or+array+subscripts
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/cpp.lang.security.memory.unvalidated-array-index.unvalidated-array-index
+    shortlink: https://sg.run/eq2El
+    semgrep.dev:
+      rule:
+        r_id: 114776
+        rv_id: 257387
+        rule_id: gxU3Px8
+        version_id: gETAZqK
+        url: https://semgrep.dev/playground/r/gETAZqK/cpp.lang.security.memory.unvalidated-array-index.unvalidated-array-index
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  mode: taint
+  min-version: 1.59.0
+  options:
+    commutative_boolop: true
+    interfile: true
+    symmetric_eq: true
+  pattern-sources:
+  - patterns:
+    - pattern: |
+        int main(int $ARGC, $ARGV_TY $ARGV, $ENVP_TY $ENVP) {
+          ...
+        }
+    - focus-metavariable: $ENVP
+  - patterns:
+    - pattern: |
+        int main(int $ARGC, $ARGV_TY $ARGV, ...) {
+          ...
+        }
+    - focus-metavariable: $ARGV
+  - pattern-either:
+    - pattern: getenv(...)
+    - pattern: std::getenv(...)
+    - pattern: readline()
+  - by-side-effect: only
+    patterns:
+    - pattern-either:
+      - pattern: gets($SRC)
+      - pattern: fread($SRC, ...)
+      - pattern: fgets($SRC, ...)
+      - pattern: getline($SRC, ...)
+      - pattern: getdelim($SRC, ...)
+      - pattern: read($S_OR_FP, $SRC, ...)
+      - pattern: msgrcv($QID, $SRC, ...)
+    - focus-metavariable: $SRC
+  - pattern: gets(...)
+  - by-side-effect: only
+    patterns:
+    - pattern-either:
+      - pattern: $X.get($SRC, ...)
+      - pattern: $X.getline($SRC, ...)
+      - pattern: $X.read($SRC, ...)
+      - pattern: $X.readsome($SRC, ...)
+    - metavariable-type:
+        metavariable: $X
+        types:
+        - basic_ifstream<$TYPE>
+        - std::basic_ifstream<$TYPE>
+        - ifstream
+        - std::ifstream
+        - wifstream
+        - std::wifstream
+        - basic_ofstream<$TYPE>
+        - std::basic_ofstream<$TYPE>
+        - ofstream
+        - std::ofstream
+        - wofstream
+        - std::wofstream
+        - basic_fstream<$TYPE>
+        - std::basic_fstream<$TYPE>
+        - fstream
+        - std::fstream
+        - wfstream
+        - std::wfstream
+        - basic_filebuf<$TYPE>
+        - std::basic_filebuf<$TYPE>
+        - filebuf
+        - std::filebuf
+        - wfilebuf
+        - std::wfilebuf
+    - focus-metavariable: $SRC
+  - by-side-effect: only
+    patterns:
+    - pattern-either:
+      - pattern: recv($S, $SRC, ...)
+      - pattern: recvfrom($S, $SRC, ...)
+      - pattern: recvmsg($S, $SRC, ...)
+      - patterns:
+        - pattern: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $SRC)
+        - pattern-not: curl_easy_setopt($CURL, CURLOPT_WRITEDATA, $CURL)
+    - focus-metavariable: $SRC
+  - pattern: mysql_fetch_row(...)
+  - by-side-effect: only
+    patterns:
+    - pattern: mysql_fetch_row_nonblocking($RESULT, &$ROW)
+    - focus-metavariable: $ROW
+  - patterns:
+    - pattern: $WT->body()
+    - metavariable-type:
+        metavariable: $WT
+        types:
+        - Wt::Http::Message*
+        - Http::Message*
+        - Wt::Mail::Message*
+        - Mail::Message*
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |
+        $TY $BUFFER[$SIZE];
+        ...
+    - pattern-either:
+      - pattern: $BUFFER[$INDEX]
+      - pattern: '*($BUFFER + $INDEX)'
+      - pattern: '*($BUFFER + $INDEX + $RHS)'
+      - pattern: '*($BUFFER + $INDEX - $RHS)'
+    - focus-metavariable: $INDEX
+  - patterns:
+    - pattern-inside: |
+        $TY $BUFFER[$SIZE] = $EXPR;
+        ...
+    - pattern-either:
+      - pattern: $BUFFER[$INDEX]
+      - pattern: '*($BUFFER + $INDEX)'
+      - pattern: '*($BUFFER + $INDEX + $RHS)'
+      - pattern: '*($BUFFER + $INDEX - $RHS)'
+    - focus-metavariable: $INDEX
+  pattern-sanitizers:
+  - by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: $INDEX < $EXPR
+      - pattern: $INDEX > $EXPR
+      - pattern: $INDEX <= $EXPR
+      - pattern: $INDEX >= $EXPR
+      - pattern: $INDEX == $EXPR
+      - pattern: $INDEX != $EXPR
+      - pattern: '!$INDEX'
+      - pattern: strlen($INDEX)
+      - pattern: strnlen($INDEX, ...)
+      - pattern: wcslen($INDEX)
+      - pattern: wcsnlen($INDEX, ...)
+    - focus-metavariable: $INDEX

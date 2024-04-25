@@ -1,0 +1,105 @@
+rules:
+- id: java.servlets.security.xxe.tainted-schemafactory-xxe-servlet.tainted-schemafactory-xxe-servlet
+  message: 'The application is using an XML parser that has not been safely configured.
+    This might lead to XML External Entity (XXE) vulnerabilities when parsing user-controlled
+    input. An attacker can include document type definitions (DTDs) which can interact
+    with internal or external hosts. XXE can lead to other vulnerabilities, such as
+    Local File Inclusion (LFI), Remote Code Execution (RCE), and Server-side request
+    forgery (SSRF), depending on the application configuration. An attacker can also
+    use DTDs to expand recursively, leading to a Denial-of-Service (DoS) attack, also
+    known as a Billion Laughs Attack. It is our recommendation to secure this parser
+    against XXE attacks by configuring the parser with `factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,
+    true)`. Alternatively, enabling both of the following configurations also provides
+    protection against XXE attacks. `factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,
+    "")` and `factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")`. For more
+    information, see: [Java XXE prevention](https://semgrep.dev/docs/cheat-sheets/java-xxe/)'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-611: Improper Restriction of XML External Entity Reference'
+    - 'CWE-776: Improper Restriction of Recursive Entity References in DTDs (''XML
+      Entity Expansion'')'
+    functional-categories:
+    - web::source::cookie::Servlet
+    - web::source::http-params::Servlet
+    - web::source::http-body::Servlet
+    - web::source::header::Servlet
+    - xml::sink::xml-parser::javax.xml
+    owasp:
+    - A04:2017 - XML External Entities (XXE)
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://semgrep.dev/blog/2022/xml-security-in-java
+    - https://semgrep.dev/docs/cheat-sheets/java-xxe/
+    - https://docs.oracle.com/en/java/javase/13/security/java-api-xml-processing-jaxp-security-guide.html#GUID-D97A1F1D-8DDF-4D19-A7E5-99099F27346E
+    - https://github.com/semgrep/java-xxe-research
+    - https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+    - https://rules.sonarsource.com/java/type/Vulnerability/RSPEC-2755
+    - https://blog.sonarsource.com/secure-xml-processor/
+    - https://blog.sonarsource.com/understanding-xxe-vulnerabilities/
+    - https://cwe.mitre.org/data/definitions/776.html
+    - https://cwe.mitre.org/data/definitions/611.html
+    - https://cwe.mitre.org/data/definitions/827.html
+    technology:
+    - java
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - XML Injection
+    source: https://semgrep.dev/r/java.servlets.security.xxe.tainted-schemafactory-xxe-servlet.tainted-schemafactory-xxe-servlet
+    shortlink: https://sg.run/kRj7
+    semgrep.dev:
+      rule:
+        r_id: 43772
+        rv_id: 115238
+        rule_id: 8GU07r
+        version_id: qkT2OA5
+        url: https://semgrep.dev/playground/r/qkT2OA5/java.servlets.security.xxe.tainted-schemafactory-xxe-servlet.tainted-schemafactory-xxe-servlet
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  pattern-sources:
+  - label: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          (HttpServletRequest $REQ).$REQFUNC(...)
+      - pattern: "(ServletRequest $REQ).$REQFUNC(...) \n"
+    - metavariable-regex:
+        metavariable: $REQFUNC
+        regex: ^(getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString)$
+  - label: SCHEMAFACTORY
+    patterns:
+    - pattern-either:
+      - pattern: (SchemaFactory $FACTORY)
+  - label: FSP
+    by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: $FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      - pattern: $FACTORY.setFeature("=~/.*secure-processing.*/", true);
+    - focus-metavariable: $FACTORY
+  - label: EXTERNAL_SCHEMA
+    by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: $FACTORY.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+      - pattern: $FACTORY.setProperty("=~/.*accessExternalSchema.*/", "");
+    - focus-metavariable: $FACTORY
+  - label: DTD
+    by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: $FACTORY.setProperty("=~/.*accessExternalDTD.*/", "");
+      - pattern: $FACTORY.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+    - focus-metavariable: $FACTORY
+  pattern-sinks:
+  - requires: (USER_INPUT and SCHEMAFACTORY) and not (FSP or (DTD and EXTERNAL_SCHEMA))
+    patterns:
+    - pattern: (SchemaFactory $FACTORY).newSchema(...)

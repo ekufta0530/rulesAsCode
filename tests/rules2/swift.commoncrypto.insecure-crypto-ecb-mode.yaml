@@ -1,0 +1,64 @@
+rules:
+- id: swift.commoncrypto.insecure-crypto-ecb-mode.insecure-crypto-ecb-mode
+  message: 'Symmetric cryptographic operations were identified that use Electronic
+    Code Book (ECB) mode. ECB mode is considered insecure as identical plaintext blocks
+    encrypt to identical ciphertexts revealing patterns in the data. Use stronger,
+    better alternatives such as AES-GCM or ChaChaPoly. '
+  severity: WARNING
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    functional-categories:
+    - crypto::search::mode::CommonCrypto
+    masvs:
+    - 'MSTG-CRYPTO-3: The app uses cryptographic primitives that are appropriate for
+      the particular use-case, configured with parameters that adhere to industry
+      best practices.'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://mobile-security.gitbook.io/masvs/security-requirements/0x08-v3-cryptography_verification_requirements
+    - https://crypto.stackexchange.com/questions/20941/why-shouldnt-i-use-ecb-encryption
+    - https://medium.com/asecuritysite-when-bob-met-alice/surely-no-one-uses-ecb-mode-in-aes-332ed90f29d0
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/swift.commoncrypto.insecure-crypto-ecb-mode.insecure-crypto-ecb-mode
+    shortlink: https://sg.run/ld5j
+    semgrep.dev:
+      rule:
+        r_id: 59713
+        rv_id: 111996
+        rule_id: 9AUrwO
+        version_id: JdTNvjn
+        url: https://semgrep.dev/playground/r/JdTNvjn/swift.commoncrypto.insecure-crypto-ecb-mode.insecure-crypto-ecb-mode
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - patterns:
+    - pattern: |
+        kCCOptionECBMode
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          CCCrypt($A, $ALG, $OPTS, ...)
+      - pattern: |
+          CCCryptorCreate($A, $ALG, $OPTS, ...)
+      - pattern: |
+          CCCryptorCreateFromData($A, $ALG, $OPTS, ...)
+    - focus-metavariable: $OPTS

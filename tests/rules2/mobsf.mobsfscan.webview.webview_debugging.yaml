@@ -1,0 +1,33 @@
+rules:
+- id: mobsf.mobsfscan.webview.webview_debugging.webview_debugging
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $WB.setWebContentsDebuggingEnabled(true);
+    - pattern: |
+        $X = true;
+        ...
+        $WB.setWebContentsDebuggingEnabled($X);
+  message: Remote WebView debugging is enabled. This allows an attacker with debugging
+    access to interact with the webview and steal or corrupt data.
+  languages:
+  - java
+  severity: ERROR
+  metadata:
+    cwe: cwe-489
+    owasp-mobile: m1
+    masvs: resilience-2
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md#testing-anti-debugging-detection-mstg-resilience-2
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.webview.webview_debugging.webview_debugging
+    shortlink: https://sg.run/G3Zp
+    semgrep.dev:
+      rule:
+        r_id: 43748
+        rv_id: 78352
+        rule_id: oqUPpl
+        version_id: ZRTLyo
+        url: https://semgrep.dev/playground/r/ZRTLyo/mobsf.mobsfscan.webview.webview_debugging.webview_debugging
+        origin: community

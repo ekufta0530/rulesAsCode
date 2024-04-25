@@ -1,0 +1,31 @@
+rules:
+- id: yaml.semgrep.duplicate-pattern.duplicate-pattern
+  message: Two identical pattern clauses were detected. This will cause Semgrep to
+    run the same pattern twice. Remove one of the duplicate pattern clauses.
+  severity: ERROR
+  languages:
+  - yaml
+  patterns:
+  - pattern-inside: 'rules: [..., $RULE, ...]'
+  - pattern-inside: |
+      - pattern: $X
+      ...
+      - pattern: $X
+      ...
+  - pattern: |
+      pattern: $X
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.duplicate-pattern.duplicate-pattern
+    shortlink: https://sg.run/xYE0
+    semgrep.dev:
+      rule:
+        r_id: 11074
+        rv_id: 250908
+        rule_id: 10UZG6
+        version_id: bZTRGg4
+        url: https://semgrep.dev/playground/r/bZTRGg4/yaml.semgrep.duplicate-pattern.duplicate-pattern
+        origin: community

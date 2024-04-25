@@ -1,0 +1,28 @@
+rules:
+- id: solidity.performance.use-multiple-require.use-multiple-require
+  message: Using multiple require statements is cheaper than using && multiple check
+    combinations.  There are more advantages, such as easier to read code and better
+    coverage reports.
+  metadata:
+    references:
+    - https://code4rena.com/reports/2023-01-ondo#g-15-splitting-require-statements-that-use--saves-gas---saves-8-gas-per-
+    category: performance
+    technology:
+    - solidity
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/solidity.performance.use-multiple-require.use-multiple-require
+    shortlink: https://sg.run/vGA0
+    semgrep.dev:
+      rule:
+        r_id: 67633
+        rv_id: 110660
+        rule_id: j2UXKq
+        version_id: 9lTd5RQ
+        url: https://semgrep.dev/playground/r/9lTd5RQ/solidity.performance.use-multiple-require.use-multiple-require
+        origin: community
+  patterns:
+  - pattern: |
+      require (<... $X && $Y ...>, ...);
+  languages:
+  - solidity
+  severity: INFO

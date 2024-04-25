@@ -1,0 +1,75 @@
+rules:
+- id: java.lang.security.httpservlet-path-traversal.httpservlet-path-traversal
+  metadata:
+    cwe:
+    - 'CWE-22: Improper Limitation of a Pathname to a Restricted Directory (''Path
+      Traversal'')'
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    source-rule-url: https://find-sec-bugs.github.io/bugs.htm#PATH_TRAVERSAL_IN
+    references:
+    - https://www.owasp.org/index.php/Path_Traversal
+    category: security
+    technology:
+    - java
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: HIGH
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Path Traversal
+    source: https://semgrep.dev/r/java.lang.security.httpservlet-path-traversal.httpservlet-path-traversal
+    shortlink: https://sg.run/oxXN
+    semgrep.dev:
+      rule:
+        r_id: 9160
+        rv_id: 109758
+        rule_id: NbUk7X
+        version_id: xyTKZP1
+        url: https://semgrep.dev/playground/r/xyTKZP1/java.lang.security.httpservlet-path-traversal.httpservlet-path-traversal
+        origin: community
+  message: Detected a potential path traversal. A malicious actor could control the
+    location of this file, to include going backwards in the directory with '../'.
+    To address this, ensure that user-controlled variables in file paths are sanitized.
+    You may also consider using a utility method such as org.apache.commons.io.FilenameUtils.getName(...)
+    to only retrieve the file name from the path.
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          (HttpServletRequest $REQ)
+      - patterns:
+        - pattern-inside: |
+            (javax.servlet.http.Cookie[] $COOKIES) = (HttpServletRequest $REQ).getCookies(...);
+            ...
+            for (javax.servlet.http.Cookie $COOKIE: $COOKIES) {
+              ...
+            }
+        - pattern: |
+            $COOKIE.getValue(...)
+      - patterns:
+        - pattern-inside: |
+            $TYPE[] $VALS = (HttpServletRequest $REQ).$GETFUNC(...);
+            ...
+        - pattern: |
+            $PARAM = $VALS[$INDEX];
+  pattern-sanitizers:
+  - pattern: org.apache.commons.io.FilenameUtils.getName(...)
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          (java.io.File $FILE) = ...
+      - pattern: |
+          (java.io.FileOutputStream $FOS) = ...
+      - pattern: |
+          new java.io.FileInputStream(...)
+  severity: ERROR
+  languages:
+  - java

@@ -1,0 +1,46 @@
+rules:
+- id: ajinabraham.njsscan.ssrf.ssrf_wkhtmltopdf.wkhtmltopdf_ssrf
+  patterns:
+  - pattern-inside: |
+      require('wkhtmltopdf')
+      ...
+  - pattern-either:
+    - pattern-inside: function ($REQ, $RES, ...) {...}
+    - pattern-inside: function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: $X = function $FUNC($REQ, $RES, ...) {...}
+    - pattern-inside: var $X = function $FUNC($REQ, $RES, ...) {...};
+    - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, ...) {...})
+  - pattern-either:
+    - pattern: |
+        $INP = <... $REQ.$VAR ...>;
+        ...
+        wkhtmltopdf(<... $INP ...>, ...)
+    - pattern: |
+        $INP = <... $REQ.$VAR.$FOO ...>;
+        ...
+        wkhtmltopdf(<... $INP ...>, ...)
+    - pattern: |
+        wkhtmltopdf(<... $REQ.$VAR ...>, ...)
+    - pattern: |
+        wkhtmltopdf(<... $REQ.$VAR.$FOO ...>, ...)
+  message: User controlled URL reached to `wkhtmltopdf` can result in Server Side
+    Request Forgery (SSRF).
+  languages:
+  - javascript
+  severity: ERROR
+  metadata:
+    owasp-web: a1
+    cwe: cwe-918
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.ssrf.ssrf_wkhtmltopdf.wkhtmltopdf_ssrf
+    shortlink: https://sg.run/RxEe
+    semgrep.dev:
+      rule:
+        r_id: 43693
+        rv_id: 78297
+        rule_id: pKUJv1
+        version_id: yeT65Q
+        url: https://semgrep.dev/playground/r/yeT65Q/ajinabraham.njsscan.ssrf.ssrf_wkhtmltopdf.wkhtmltopdf_ssrf
+        origin: community

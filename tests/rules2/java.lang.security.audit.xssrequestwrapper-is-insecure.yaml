@@ -1,0 +1,51 @@
+rules:
+- id: java.lang.security.audit.xssrequestwrapper-is-insecure.xssrequestwrapper-is-insecure
+  metadata:
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    source-rule-url: https://find-sec-bugs.github.io/bugs.htm#XSS_REQUEST_WRAPPER
+    category: security
+    technology:
+    - java
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/java.lang.security.audit.xssrequestwrapper-is-insecure.xssrequestwrapper-is-insecure
+    shortlink: https://sg.run/J96Q
+    semgrep.dev:
+      rule:
+        r_id: 9190
+        rv_id: 109750
+        rule_id: lBU9Gj
+        version_id: 1QTOY6y
+        url: https://semgrep.dev/playground/r/1QTOY6y/java.lang.security.audit.xssrequestwrapper-is-insecure.xssrequestwrapper-is-insecure
+        origin: community
+  message: It looks like you're using an implementation of XSSRequestWrapper from
+    dzone. (https://www.javacodegeeks.com/2012/07/anti-cross-site-scripting-xss-filter.html)
+    The XSS filtering in this code is not secure and can be bypassed by malicious
+    actors. It is recommended to use a stack that automatically escapes in your view
+    or templates instead of filtering yourself.
+  severity: WARNING
+  languages:
+  - java
+  pattern-either:
+  - pattern: |
+      class XSSRequestWrapper extends HttpServletRequestWrapper {
+        ...
+      }
+  - pattern: |-
+      $P = $X.compile("</script>", $X.CASE_INSENSITIVE);
+      $V = $P.matcher(...).replaceAll("");

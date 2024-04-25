@@ -1,0 +1,50 @@
+rules:
+- id: problem-based-packs.insecure-transport.ruby-stdlib.net-http-request.net-http-request
+  message: Checks for requests sent to http:// URLs. This is dangerous as the server
+    is attempting to connect to a website that does not encrypt traffic with TLS.
+    Instead, only send requests to https:// URLs.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+    owasp: A03:2017 - Sensitive Data Exposure
+    references:
+    - https://ruby-doc.org/stdlib-2.6.5/libdoc/net/http/rdoc/Net/
+    subcategory:
+    - vuln
+    technology:
+    - ruby
+    vulnerability: Insecure Transport
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/problem-based-packs.insecure-transport.ruby-stdlib.net-http-request.net-http-request
+    shortlink: https://sg.run/vz6Y
+    semgrep.dev:
+      rule:
+        r_id: 9433
+        rv_id: 110121
+        rule_id: gxU1lE
+        version_id: vdTYNP7
+        url: https://semgrep.dev/playground/r/vdTYNP7/problem-based-packs.insecure-transport.ruby-stdlib.net-http-request.net-http-request
+        origin: community
+  languages:
+  - ruby
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $URI = URI('=~/[hH][tT][tT][pP]://.*/')
+        ...
+        Net::HTTP::$FUNC.new $URI
+    - pattern: |
+        $URI = URI('=~/[hH][tT][tT][pP]://.*/')
+        ...
+        Net::HTTP.$FUNC($URI, ...)
+    - pattern: |
+        Net::HTTP.$FUNC(URI('=~/[hH][tT][tT][pP]://.*/'), ...)
+  - metavariable-regex:
+      metavariable: $FUNC
+      regex: ([gG]et|post_form|[pP]ost|get_response|get_print|Head|Patch|Put|Proppatch|Lock|Unlock|Options|Propfind|Delete|Move|Copy|Trace|Mkcol)

@@ -1,0 +1,36 @@
+rules:
+- id: cpp.lang.security.misc.microsoft-banned-list-lstrcatna.microsoft-banned-list-lstrcatna
+  message: 'lstrcatnA is a banned function: limited error detection. Alternatives
+    are StringCbCat, StringCbCatEx, StringCchCat, StringCchCatEx'
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    references:
+    - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/cpp.lang.security.misc.microsoft-banned-list-lstrcatna.microsoft-banned-list-lstrcatna
+    shortlink: https://sg.run/zdRWl
+    semgrep.dev:
+      rule:
+        r_id: 114817
+        rv_id: 257428
+        rule_id: 7KUgBn5
+        version_id: 7ZT1z7G
+        url: https://semgrep.dev/playground/r/7ZT1z7G/cpp.lang.security.misc.microsoft-banned-list-lstrcatna.microsoft-banned-list-lstrcatna
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  pattern: lstrcatnA(...)

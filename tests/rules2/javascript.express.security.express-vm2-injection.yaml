@@ -1,0 +1,94 @@
+rules:
+- id: javascript.express.security.express-vm2-injection.express-vm2-injection
+  message: Make sure that unverified user data can not reach `vm2`.
+  metadata:
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    category: security
+    technology:
+    - express
+    cwe2022-top25: true
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/javascript.express.security.express-vm2-injection.express-vm2-injection
+    shortlink: https://sg.run/1GWv
+    semgrep.dev:
+      rule:
+        r_id: 12822
+        rv_id: 109876
+        rule_id: WAUPXJ
+        version_id: 5PTdAgp
+        url: https://semgrep.dev/playground/r/5PTdAgp/javascript.express.security.express-vm2-injection.express-vm2-injection
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: function ... ($REQ, $RES) {...}
+      - pattern-inside: function ... ($REQ, $RES, $NEXT) {...}
+      - patterns:
+        - pattern-either:
+          - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES) {...})
+          - pattern-inside: $APP.$METHOD(..., function $FUNC($REQ, $RES, $NEXT) {...})
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(get|post|put|head|delete|options)$
+    - pattern-either:
+      - pattern: $REQ.query
+      - pattern: $REQ.body
+      - pattern: $REQ.params
+      - pattern: $REQ.cookies
+      - pattern: $REQ.headers
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          ({ $REQ }: Request,$RES: Response, $NEXT: NextFunction) =>
+          {...}
+      - pattern-inside: |
+          ({ $REQ }: Request,$RES: Response) => {...}
+    - focus-metavariable: $REQ
+    - pattern-either:
+      - pattern: params
+      - pattern: query
+      - pattern: cookies
+      - pattern: headers
+      - pattern: body
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |
+        require('vm2')
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: |
+              $VM = new VM(...)
+              ...
+          - pattern-inside: |
+              $VM = new NodeVM(...)
+              ...
+        - pattern: |
+            $VM.run(...)
+      - pattern: |
+          new VM(...).run(...)
+      - pattern: |
+          new NodeVM(...).run(...)
+      - pattern: |
+          new VMScript(...)
+      - pattern: |
+          new VM(...)
+      - pattern: new NodeVM(...)

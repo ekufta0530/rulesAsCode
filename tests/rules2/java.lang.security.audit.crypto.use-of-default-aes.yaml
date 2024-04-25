@@ -1,0 +1,73 @@
+rules:
+- id: java.lang.security.audit.crypto.use-of-default-aes.use-of-default-aes
+  pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import javax;
+          ...
+    - pattern-either:
+      - pattern: javax.crypto.Cipher.getInstance("AES")
+      - pattern: (javax.crypto.Cipher $CIPHER).getInstance("AES")
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import javax.*;
+          ...
+      - pattern-inside: |
+          import javax.crypto;
+          ...
+    - pattern-either:
+      - pattern: crypto.Cipher.getInstance("AES")
+      - pattern: (crypto.Cipher $CIPHER).getInstance("AES")
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import javax.crypto.*;
+          ...
+      - pattern-inside: |
+          import javax.crypto.Cipher;
+          ...
+    - pattern-either:
+      - pattern: Cipher.getInstance("AES")
+      - pattern: (Cipher $CIPHER).getInstance("AES")
+  metadata:
+    functional-categories:
+    - crypto::search::mode::javax.crypto
+    cwe:
+    - 'CWE-327: Use of a Broken or Risky Cryptographic Algorithm'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    category: security
+    technology:
+    - java
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    - https://googleprojectzero.blogspot.com/2022/10/rc4-is-still-considered-harmful.html
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/java.lang.security.audit.crypto.use-of-default-aes.use-of-default-aes
+    shortlink: https://sg.run/nzKO
+    semgrep.dev:
+      rule:
+        r_id: 48736
+        rv_id: 109705
+        rule_id: KxUB7Z
+        version_id: jQTgYWy
+        url: https://semgrep.dev/playground/r/jQTgYWy/java.lang.security.audit.crypto.use-of-default-aes.use-of-default-aes
+        origin: community
+  message: 'Use of AES with no settings detected. By default, java.crypto.Cipher uses
+    ECB mode. ECB doesn''t  provide message confidentiality and is not semantically
+    secure so should not be used. Instead, use a strong, secure cipher: java.crypto.Cipher.getInstance("AES/CBC/PKCS7PADDING").
+    See https://owasp.org/www-community/Using_the_Java_Cryptographic_Extensions for
+    more information.'
+  severity: WARNING
+  languages:
+  - java

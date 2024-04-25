@@ -1,0 +1,55 @@
+rules:
+- id: swift.biometrics-and-auth.keychain-always-accessible.keychain-accessible-always
+  message: The application was observed to store keychain items with the accessibility
+    type `kSecAttrAccessibleAlways` meaning that the data is not sufficiently protected
+    at rest. Ideally, the application should use `kSecAttrAccessibleWhenUnlocked`
+    to configure the data to be accessible only when the user has unlocked the screen.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe: 'CWE-272: Least Privilege Violation'
+    functional-categories:
+    - mobile::search::storage::lang
+    masvs:
+    - 'MASVS-STORAGE-1: The app securely stores sensitive data.'
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06f-testing-local-authentication
+    - https://blog.elcomsoft.com/2020/08/extracting-and-decrypting-ios-keychain-physical-logical-and-cloud-options-explored/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.biometrics-and-auth.keychain-always-accessible.keychain-accessible-always
+    shortlink: https://sg.run/kEwO
+    semgrep.dev:
+      rule:
+        r_id: 60528
+        rv_id: 111980
+        rule_id: x8U6qE
+        version_id: xyTKp5L
+        url: https://semgrep.dev/playground/r/xyTKp5L/swift.biometrics-and-auth.keychain-always-accessible.keychain-accessible-always
+        origin: pro_rules
+  languages:
+  - swift
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          $QUERY = <... kSecAttrAccessibleAlways ...>
+          ...
+    - patterns:
+      - pattern-inside: |
+          ...
+          $QUERY[kSecAttrAccessible as String] = kSecAttrAccessibleAlways
+          ...
+  - pattern-inside: |
+      SecItemAdd($QUERY, ...)

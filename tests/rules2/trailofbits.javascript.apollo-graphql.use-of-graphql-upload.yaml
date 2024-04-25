@@ -1,0 +1,39 @@
+rules:
+- id: trailofbits.javascript.apollo-graphql.use-of-graphql-upload.use-of-graphql-upload
+  languages:
+  - js
+  - ts
+  message: 'The Apollo GraphQL server is using the graphql-upload library. This library
+    allows file uploads using POSTs with content-type: multipart/form-data, which
+    can enable to CSRF attacks. Ensure that you are enabling CSRF protection if you
+    really need to use graphql-upload .'
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    subcategory:
+    - vuln
+    confidence: LOW
+    likelihood: MEDIUM
+    impact: MEDIUM
+    technology:
+    - graphql
+    - apollo-graphql-server
+    description: Use of the graphql-upload library
+    references:
+    - https://github.com/apollographql/apollo-server/security/advisories/GHSA-2p3c-p3qw-69r4
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/trailofbits.javascript.apollo-graphql.use-of-graphql-upload.use-of-graphql-upload
+    shortlink: https://sg.run/xE20
+    semgrep.dev:
+      rule:
+        r_id: 60574
+        rv_id: 95094
+        rule_id: eqUB1Q
+        version_id: K3Tv44w
+        url: https://semgrep.dev/playground/r/K3Tv44w/trailofbits.javascript.apollo-graphql.use-of-graphql-upload.use-of-graphql-upload
+        origin: community
+  patterns:
+  - pattern: app.use(graphqlUploadExpress());

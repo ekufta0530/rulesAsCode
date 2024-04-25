@@ -1,0 +1,45 @@
+rules:
+- id: python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
+  message: Detected a segment of a Flask template where autoescaping is explicitly
+    disabled with '| safe' filter. This allows rendering of raw HTML in this segment.
+    Ensure no user data is rendered here, otherwise this is a cross-site scripting
+    (XSS) vulnerability.
+  metadata:
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://flask.palletsprojects.com/en/1.1.x/security/#cross-site-scripting-xss
+    category: security
+    technology:
+    - flask
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
+    shortlink: https://sg.run/W8og
+    semgrep.dev:
+      rule:
+        r_id: 9553
+        rv_id: 110284
+        rule_id: oqUenz
+        version_id: BjTXrYG
+        url: https://semgrep.dev/playground/r/BjTXrYG/python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
+        origin: community
+  languages:
+  - regex
+  paths:
+    include:
+    - '*.html'
+  severity: WARNING
+  pattern-regex: '{{.*?\|\s*safe(\s*}})?'

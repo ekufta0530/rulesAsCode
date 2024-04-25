@@ -1,0 +1,44 @@
+rules:
+- id: ruby.lang.security.create-with.create-with
+  patterns:
+  - pattern-not: |
+      $FUNC.create_with($PARAMSB.permit(...))
+  - pattern: |
+      $FUNC.create_with($PARAMSA)
+  message: Checks for strong parameter bypass through usage of create_with. Create_with
+    bypasses strong parameter protection, which could allow attackers to set arbitrary
+    attributes on models. To fix this vulnerability, either remove all create_with
+    calls or use the permit function to specify tags that are allowed to be set.
+  metadata:
+    cwe:
+    - 'CWE-915: Improperly Controlled Modification of Dynamically-Determined Object
+      Attributes'
+    references:
+    - https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_create_with.rb
+    - https://groups.google.com/g/rubyonrails-security/c/M4chq5Sb540/m/CC1Fh0Y_NWwJ
+    category: security
+    technology:
+    - ruby
+    owasp:
+    - A08:2021 - Software and Data Integrity Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mass Assignment
+    source: https://semgrep.dev/r/ruby.lang.security.create-with.create-with
+    shortlink: https://sg.run/0nLk
+    semgrep.dev:
+      rule:
+        r_id: 9710
+        rv_id: 110515
+        rule_id: 6JUqbn
+        version_id: 9lTd5op
+        url: https://semgrep.dev/playground/r/9lTd5op/ruby.lang.security.create-with.create-with
+        origin: community
+  languages:
+  - ruby
+  severity: ERROR

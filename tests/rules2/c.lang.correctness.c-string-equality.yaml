@@ -1,0 +1,30 @@
+rules:
+- id: c.lang.correctness.c-string-equality.c-string-equality
+  patterns:
+  - pattern: (char *$X) == (char *$Y)
+  - metavariable-comparison:
+      metavariable: $X
+      comparison: $X != 0
+  - metavariable-comparison:
+      metavariable: $Y
+      comparison: $Y != 0
+  message: Using == on char* performs pointer comparison, use strcmp instead
+  fix: strcmp($X, $Y) == 0
+  languages:
+  - c
+  severity: ERROR
+  metadata:
+    category: correctness
+    technology:
+    - c
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/c.lang.correctness.c-string-equality.c-string-equality
+    shortlink: https://sg.run/kX2O
+    semgrep.dev:
+      rule:
+        r_id: 8828
+        rv_id: 109001
+        rule_id: QrUz35
+        version_id: yeTR2ZZ
+        url: https://semgrep.dev/playground/r/yeTR2ZZ/c.lang.correctness.c-string-equality.c-string-equality
+        origin: community

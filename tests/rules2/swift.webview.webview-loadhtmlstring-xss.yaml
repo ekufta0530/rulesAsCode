@@ -1,0 +1,67 @@
+rules:
+- id: swift.webview.webview-loadhtmlstring-xss.swift-webview-xss
+  message: Potential cross site scripting (XSS) occurs due to untrusted input being
+    loaded into a WebView. The impact of such issues can vary depending on the features,
+    permissions and exposure of data & functionality that the WebView contains. For
+    example, in some applications the presence of JavaScript bridges may allow for
+    the instrumentation of application code, and potentially arbitrary code execution
+    in the context of the app. In other instances, it may be possible to manipulate
+    the DOM to redraw the UI and phish users, or conduct other typical XSS attacks.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - CWE-79:Improper Neutralization of Input During Web Page Generation ('Cross-site
+      Scripting')
+    functional-categories:
+    - mobile::search::privacy-controls-and-permissions::lang
+    - mobile::sink::html-webpage::lang
+    - mobile::source::user-input-fields::lang
+    masvs:
+    - 'MASVS-CODE-4: The app validates and sanitizes all untrusted inputs.'
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    references:
+    - https://developer.apple.com/library/archive/documentation/Security/Conceptual/SecureCodingGuide/Articles/ValidatingInput.html
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.webview.webview-loadhtmlstring-xss.swift-webview-xss
+    shortlink: https://sg.run/WBvE
+    semgrep.dev:
+      rule:
+        r_id: 66509
+        rv_id: 112042
+        rule_id: DbU0k4
+        version_id: ZRTQprW
+        url: https://semgrep.dev/playground/r/ZRTQprW/swift.webview.webview-loadhtmlstring-xss.swift-webview-xss
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          String(contentsOf: (URL: $U), ...)
+      - pattern: |
+          $OBJ.text()
+      - pattern: |
+          (UITextField: $X).text
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          (WKWebView: $W).loadHTMLString($X, ...)
+      - pattern: |
+          (UIWebView: $W).loadHTMLString($X, ...)
+    - focus-metavariable: $X

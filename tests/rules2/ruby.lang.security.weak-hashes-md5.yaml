@@ -1,0 +1,46 @@
+rules:
+- id: ruby.lang.security.weak-hashes-md5.weak-hashes-md5
+  message: Should not use md5 to generate hashes. md5 is proven to be vulnerable through
+    the use of brute-force attacks. Could also result in collisions, leading to potential
+    collision attacks. Use SHA256 or other hashing functions instead.
+  metadata:
+    cwe:
+    - 'CWE-328: Use of Weak Hash'
+    references:
+    - https://www.ibm.com/support/pages/security-bulletin-vulnerability-md5-signature-and-hash-algorithm-affects-sterling-integrator-and-sterling-file-gateway-cve-2015-7575
+    category: security
+    technology:
+    - ruby
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Insecure Hashing Algorithm
+    source: https://semgrep.dev/r/ruby.lang.security.weak-hashes-md5.weak-hashes-md5
+    shortlink: https://sg.run/O1re
+    semgrep.dev:
+      rule:
+        r_id: 9731
+        rv_id: 110544
+        rule_id: nJUYxZ
+        version_id: DkT6Ypw
+        url: https://semgrep.dev/playground/r/DkT6Ypw/ruby.lang.security.weak-hashes-md5.weak-hashes-md5
+        origin: community
+  languages:
+  - ruby
+  severity: WARNING
+  pattern-either:
+  - pattern: Digest::MD5.base64digest $X
+  - pattern: Digest::MD5.hexdigest $X
+  - pattern: Digest::MD5.digest $X
+  - pattern: Digest::MD5.new
+  - pattern: OpenSSL::Digest::MD5.base64digest $X
+  - pattern: OpenSSL::Digest::MD5.hexdigest $X
+  - pattern: OpenSSL::Digest::MD5.digest $X
+  - pattern: OpenSSL::Digest::MD5.new

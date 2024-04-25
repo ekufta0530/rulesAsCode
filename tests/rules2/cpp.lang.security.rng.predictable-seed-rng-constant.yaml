@@ -1,0 +1,82 @@
+rules:
+- id: cpp.lang.security.rng.predictable-seed-rng-constant.predictable-seed-rng-constant
+  message: The seed value of a Pseudo Random Number Generator (PRNG) is a constant
+    value. Do not use values from this PRNG to derive a secrets, such as passwords
+    or cryptographic keys.
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cert:
+    - C
+    - C++
+    - L1
+    - MSC51-CPP
+    cwe:
+    - 'CWE-337: Predictable Seed in Pseudo-Random Number Generator (PRNG)'
+    owasp:
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    - https://wiki.sei.cmu.edu/confluence/display/cplusplus/MSC51-CPP.+Ensure+your+random+number+generator+is+properly+seeded
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/cpp.lang.security.rng.predictable-seed-rng-constant.predictable-seed-rng-constant
+    shortlink: https://sg.run/v8PLl
+    semgrep.dev:
+      rule:
+        r_id: 114877
+        rv_id: 257488
+        rule_id: gxU3PBD
+        version_id: gETA3ZZ
+        url: https://semgrep.dev/playground/r/gETA3ZZ/cpp.lang.security.rng.predictable-seed-rng-constant.predictable-seed-rng-constant
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  min-version: 1.59.0
+  patterns:
+  - pattern-either:
+    - pattern: |
+        $ENGINE_CTOR $VAR(...);
+        ...
+        $VAR.seed($VAL);
+    - pattern: |
+        $ENGINE_CTOR $VAR;
+        ...
+        $VAR.seed($VAL);
+  - metavariable-pattern:
+      metavariable: $ENGINE_CTOR
+      patterns:
+      - pattern-either:
+        - pattern: minstd_rand0
+        - pattern: std::minstd_rand0
+        - pattern: minstd_rand
+        - pattern: std::minstd_rand
+        - pattern: mt19937
+        - pattern: std::mt19937
+        - pattern: mt19937_64
+        - pattern: std::mt19937_64
+        - pattern: ranlux24_base
+        - pattern: std::ranlux24_base
+        - pattern: ranlux48_base
+        - pattern: std::ranlux48_base
+        - pattern: ranlux24
+        - pattern: std::ranlux24
+        - pattern: ranlux48
+        - pattern: std::ranlux48
+        - pattern: knuth_b
+        - pattern: std::knuth_b
+        - pattern: default_random_engine
+        - pattern: std::default_random_engine
+  - metavariable-comparison:
+      comparison: int($VAL) >= 0 or int($VAL) <= 0
+      metavariable: $VAL
+  - focus-metavariable: $VAL

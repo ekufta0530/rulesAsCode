@@ -1,0 +1,31 @@
+rules:
+- id: rust.lang.security.ssl-verify-none.ssl-verify-none
+  message: SSL verification disabled, this allows for MitM attacks
+  pattern: $BUILDER.set_verify(openssl::ssl::SSL_VERIFY_NONE)
+  metadata:
+    references:
+    - https://docs.rs/openssl/latest/openssl/ssl/struct.SslContextBuilder.html#method.set_verify
+    technology:
+    - openssl
+    category: security
+    cwe: 'CWE-295: Improper Certificate Validation'
+    confidence: HIGH
+    likelihood: LOW
+    impact: MEDIUM
+    subcategory: vuln
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/rust.lang.security.ssl-verify-none.ssl-verify-none
+    shortlink: https://sg.run/K2Pn
+    semgrep.dev:
+      rule:
+        r_id: 40111
+        rv_id: 110620
+        rule_id: 6JU0Bl
+        version_id: NdT3oYk
+        url: https://semgrep.dev/playground/r/NdT3oYk/rust.lang.security.ssl-verify-none.ssl-verify-none
+        origin: community
+  languages:
+  - rust
+  severity: WARNING

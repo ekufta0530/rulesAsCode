@@ -1,0 +1,28 @@
+rules:
+- id: yaml.semgrep.metadata-subcategory.metadata-subcategory
+  patterns:
+  - pattern-inside: "rules: \n  ...\n"
+  - pattern-inside: "metadata: \n  ...\n  category: security\n  ...\n"
+  - pattern-not-inside: "metadata: \n  ...\n  subcategory: $VALUE\n"
+  message: This Semgrep rule is missing a valid 'subcategory' field in the 'metadata'.
+    which should be either audit, vuln, or guardrail. For more information visit  https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/
+  languages:
+  - yaml
+  severity: WARNING
+  metadata:
+    references:
+    - https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.metadata-subcategory.metadata-subcategory
+    shortlink: https://sg.run/lqr9
+    semgrep.dev:
+      rule:
+        r_id: 39213
+        rv_id: 111177
+        rule_id: bwU4XB
+        version_id: ZRTQpWY
+        url: https://semgrep.dev/playground/r/ZRTQpWY/yaml.semgrep.metadata-subcategory.metadata-subcategory
+        origin: community

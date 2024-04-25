@@ -1,0 +1,62 @@
+rules:
+- id: php.laravel.security.laravel-cookie-secure-set.laravel-cookie-secure-set
+  patterns:
+  - pattern: |
+      'cookie'
+  - pattern-inside: |
+      return [
+        ...,
+        'cookie' => env(...),
+        ...
+      ];
+  - pattern-not-inside: |
+      return [
+        ...,
+        'secure' => true,
+        ...
+      ];
+  - pattern-not-inside: |
+      return [
+        ...,
+        'secure' => env('$NAME', $DEFAULT),
+        ...
+      ];
+  paths:
+    include:
+    - '*session.php'
+  message: 'Found a configuration file where the secure attribute is not set to ''true''.
+    Setting ''secure'' to ''true'' prevents the client from transmitting the cookie
+    over unencrypted channels and therefore prevents cookies from being stolen through
+    man in the middle attacks. '
+  languages:
+  - php
+  severity: ERROR
+  metadata:
+    category: security
+    cwe:
+    - 'CWE-614: Sensitive Cookie in HTTPS Session Without ''Secure'' Attribute'
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    technology:
+    - php
+    - laravel
+    references:
+    - https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Laravel_Cheat_Sheet.md
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/php.laravel.security.laravel-cookie-secure-set.laravel-cookie-secure-set
+    shortlink: https://sg.run/GXnG
+    semgrep.dev:
+      rule:
+        r_id: 23092
+        rv_id: 110069
+        rule_id: j2UzE5
+        version_id: 7ZTgoyq
+        url: https://semgrep.dev/playground/r/7ZTgoyq/php.laravel.security.laravel-cookie-secure-set.laravel-cookie-secure-set
+        origin: community

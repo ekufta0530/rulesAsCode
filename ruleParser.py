@@ -1,5 +1,13 @@
 import os
 import yaml
+import requests
+
+# Semgrep token with API access
+token = os.environ.get("SEMGREP_APP_TOKEN")
+
+# Test options
+output_dir = './tests/rules3'
+test_limit = 20
 
 def represent_multiline_string(dumper, data):
     if '\n' in data:
@@ -8,50 +16,40 @@ def represent_multiline_string(dumper, data):
 
 yaml.add_representer(str, represent_multiline_string)
 
-# Function to save each rule as a separate YAML file, using the id for the filename, and ensure it's valid YAML
+def fetch_yaml_from_endpoint(url, headers):
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return yaml.safe_load(response.text)
+    else:
+        raise Exception(f"Failed to fetch data: {response.status_code}")
+
 def save_rule_files(rules, output_dir, limit=None):
     for i, rule in enumerate(rules):
         if limit is not None and i >= limit:
             break
-        # Extract the id and modify it for filename usage
         rule_id = rule.get('id', f'rule_{i+1}')
-        print(f"Processing rule {i+1} with ID: {rule_id}")  # Debug: show the rule ID being processed
-
-        # Create filename by removing the last segment after the last dot
         rule_filename = '.'.join(rule_id.split('.')[:-1]) + '.yaml'
-        print(f"Generated filename: {rule_filename}")  # Debug: show the generated filename
-
-        # Prepare the file path and save the file
         rule_path = os.path.join(output_dir, rule_filename)
         with open(rule_path, 'w') as file:
-            # Wrap the rule in a 'rules' list to ensure valid YAML output
             yaml.dump({'rules': [rule]}, file, default_flow_style=False, sort_keys=False)
-        print(f"Saved file at: {rule_path}")  # Debug: confirm the file save location
+        print(f"Saved {rule_filename}")
 
-# Load the YAML file to get the rules
-def load_yaml(file_path):
-    with open(file_path, 'r') as file:
-        data = yaml.safe_load(file)
-    print("YAML data loaded successfully.")  # Debug: confirm data load
-    return data
-
-# Main function to process the YAML file and save rules
-def process_and_save_rules(file_path, output_dir):
-    # Load rules from file
-    rules_data = load_yaml(file_path)
-
-    # Create the output directory if it doesn't exist
+def process_and_save_rules(rules_data, output_dir, limit=None):
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Output directory created/verified at {output_dir}")  # Debug: confirm directory setup
+    save_rule_files(rules_data['rules'], output_dir, limit=limit)
 
-    # Save all rules into separate files
-    save_rule_files(rules_data['rules'], output_dir)
+# URL to the ruleset YAML data. Pulls down everything you have access to
+url = 'https://semgrep.dev/c/r/all'
 
-# Path to the YAML file containing the rules
-file_path = '/Users/erickufta/Projects/rulesAsCode/semgrepRules.yaml'
+# Authorization header
+headers = {
+    'Authorization': f'Bearer {token}'
+}
 
-# Output directory to store individual rule files
-output_dir = '/Users/erickufta/Projects/rulesAsCode/rules'
-
-# Process the rules and save to files
-process_and_save_rules(file_path, output_dir)
+# Fetching rules and process them
+try:
+    rules_data = fetch_yaml_from_endpoint(url, headers)
+    process_and_save_rules(rules_data, output_dir, limit=test_limit)
+    print("Processing completed successfully.")
+except Exception as e:
+    print(f"An error occurred: {e}")

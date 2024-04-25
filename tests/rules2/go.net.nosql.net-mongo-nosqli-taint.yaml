@@ -1,0 +1,95 @@
+rules:
+- id: go.net.nosql.net-mongo-nosqli-taint.net-mongo-nosqli-taint
+  message: Untrusted input might be used to build a database query, which can lead
+    to a NoSQL injection vulnerability. An attacker can execute malicious NoSQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. Make sure all user input is validated and sanitized,
+    and avoid using tainted user input to construct NoSQL statements if possible.
+    Ideally, avoid raw queries and instead use parameterized queries.
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-943: Improper Neutralization of Special Elements in Data Query Logic'
+    functional-categories:
+    - db::sink::sql-or-nosql-query::mongo
+    - db::source::sql-or-nosql-query::mongo
+    - web::source::cookie::net/http
+    - web::source::form-data::net/http
+    - web::source::header::net/http
+    - web::source::http-body::net/http
+    - web::source::http-params::net/http
+    - web::source::session-properties::net/http
+    - web::source::url-path-params::net/http
+    owasp:
+    - A01:2017 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - go-net/http
+    - mongo
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Improper Validation
+    source: https://semgrep.dev/r/go.net.nosql.net-mongo-nosqli-taint.net-mongo-nosqli-taint
+    shortlink: https://sg.run/ddx6
+    semgrep.dev:
+      rule:
+        r_id: 59534
+        rv_id: 229234
+        rule_id: JDU095
+        version_id: 9lTerqB
+        url: https://semgrep.dev/playground/r/9lTerqB/go.net.nosql.net-mongo-nosqli-taint.net-mongo-nosqli-taint
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - label: USER_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: |
+          ($REQ : http.Request).$FIELD
+      - pattern: |
+          ($REQ : *http.Request).$FIELD
+    - metavariable-regex:
+        metavariable: $FIELD
+        regex: ^(BasicAuth|Body|Cookie|Cookies|Form|FormValue|GetBody|Host|Header|MultipartReader|ParseForm|ParseMultipartForm|PostForm|PostFormValue|Referer|RequestURI|Trailer|TransferEncoding|URL|UserAgent)$
+  - label: MONGO_CONNECT
+    pattern: mongo.Connect(...)
+  - label: MONGO_DB
+    pattern: $CLIENT.Database(...)
+    requires: MONGO_CONNECT
+  - label: MONGO_COLL
+    pattern: $DB.Collection(...)
+    requires: MONGO_DB
+  - label: MONGO_COLL
+    pattern-either:
+    - pattern: |
+        ($COLL : *mongo.Collection)
+    - pattern: |
+        ($COLL : mongo.Collection)
+  pattern-propagators:
+  - from: $FROM
+    patterns:
+    - patterns:
+      - pattern: $FROM.$FUNC(&$TO)
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(Decode|DecodeBytes|UnmarshalBSON|All)$
+    to: $TO
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: |
+        import "go.mongodb.org/mongo-driver/mongo"
+        ...
+    - pattern: $COLL.$FUNC(...)
+    - metavariable-regex:
+        metavariable: $FUNC
+        regex: ^(Aggregate|BulkWrite|CountDocuments|DeleteMany|DeleteOne|Disctinct|Drop|EstimatedDocumentCount|Find|FindOne|FindeOneAndDelete|FindOneAndReplace|FindOneAndUpdate|InsertMany|InsertOne|ReplaceOne|UpdateByID|UpdateMany|UpdateOne|Watch)$
+    requires: MONGO_COLL and USER_INPUT

@@ -1,0 +1,54 @@
+rules:
+- id: elixir.lang.security.command-injection.command-injection
+  message: 'Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent this
+    vulnerability, avoid executing OS commands with user input through the `:os.cmd`
+    and `System.cmd` functions. If this is unavoidable, validate and sanitize the
+    input, and use safe methods for executing the commands. '
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-77: Improper Neutralization of Special Elements used in a Command (Command
+      Injection)'
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection/
+    technology:
+    - elixir
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/elixir.lang.security.command-injection.command-injection
+    shortlink: https://sg.run/BYWy9
+    semgrep.dev:
+      rule:
+        r_id: 114607
+        rv_id: 256997
+        rule_id: x8UK8G6
+        version_id: K3Tz21X
+        url: https://semgrep.dev/playground/r/K3Tz21X/elixir.lang.security.command-injection.command-injection
+        origin: pro_rules
+  languages:
+  - elixir
+  min-version: 1.55.2
+  patterns:
+  - pattern-either:
+    - pattern: :os.cmd($ARG)
+    - pattern: System.shell($ARG)
+    - pattern: System.cmd($ARG, ...)
+    - pattern: System.cmd(..., [..., $ARG, ...])
+  - metavariable-pattern:
+      metavariable: $ARG
+      patterns:
+      - pattern: $X
+      - pattern-not: |
+          "..."
+  - focus-metavariable: $ARG

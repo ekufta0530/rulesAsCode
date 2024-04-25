@@ -1,0 +1,56 @@
+rules:
+- id: php.laravel.security.laravel-cookie-long-timeout.laravel-cookie-long-timeout
+  patterns:
+  - pattern: |
+      'lifetime'
+  - pattern-inside: |
+      return [
+        ...,
+        'lifetime' => $TIME,
+        ...
+      ];
+  - pattern-not-inside: |
+      return [
+        ...,
+        'lifetime' => env("$VAR", $DEFAULT),
+        ...
+      ];
+  - metavariable-comparison:
+      metavariable: $TIME
+      comparison: $TIME > 30
+  paths:
+    include:
+    - '*session.php'
+  message: Found a configuration file where the lifetime attribute is over 30 minutes.
+  languages:
+  - php
+  severity: ERROR
+  metadata:
+    category: security
+    cwe:
+    - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    technology:
+    - php
+    - laravel
+    references:
+    - https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Laravel_Cheat_Sheet.md
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/php.laravel.security.laravel-cookie-long-timeout.laravel-cookie-long-timeout
+    shortlink: https://sg.run/P1R0
+    semgrep.dev:
+      rule:
+        r_id: 23089
+        rv_id: 110066
+        rule_id: pKUNB7
+        version_id: ZRTQNZJ
+        url: https://semgrep.dev/playground/r/ZRTQNZJ/php.laravel.security.laravel-cookie-long-timeout.laravel-cookie-long-timeout
+        origin: community

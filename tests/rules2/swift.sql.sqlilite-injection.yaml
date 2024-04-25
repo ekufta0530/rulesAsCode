@@ -1,0 +1,59 @@
+rules:
+- id: swift.sql.sqlilite-injection.swift-sqlite-injection
+  message: Client-side SQL injection was found, which has different impacts depending
+    on the SQL use-case. The impact may include the circumvention of local authentication
+    mechanisms, obtaining of sensitive data from the app, or manipulation of client-side
+    behavior.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    functional-categories:
+    - mobile::source::user-input-fields::lang
+    - db::sink::sql-or-nosql-query::lang
+    masvs:
+    - 'MASVS-CODE-4: The app validates and sanitizes all untrusted inputs.'
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://developer.apple.com/library/archive/documentation/Security/Conceptual/SecureCodingGuide/Articles/ValidatingInput.html
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/swift.sql.sqlilite-injection.swift-sqlite-injection
+    shortlink: https://sg.run/P4Lv
+    semgrep.dev:
+      rule:
+        r_id: 66501
+        rv_id: 112034
+        rule_id: 4bUP95
+        version_id: NdT3ole
+        url: https://semgrep.dev/playground/r/NdT3ole/swift.sql.sqlilite-injection.swift-sqlite-injection
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          $OBJ.text()
+      - pattern: |
+          (UITextField: $X).text
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: sqlite3_exec($DB, $SQL, ...)
+      - pattern: sqlite3_prepare_v2($DB, $SQL, ...)
+    - focus-metavariable: $SQL

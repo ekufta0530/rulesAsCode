@@ -1,0 +1,64 @@
+rules:
+- id: dgryski.semgrep-go.close-sql-query-rows.rows-not-closed
+  patterns:
+  - pattern: $Q.QueryxContext(...)
+  - pattern-not-inside: return $X.QueryxContext(...)
+  - pattern-not-inside: |
+      $ROWS, $ERR = $Q.QueryxContext(...)
+      ...
+      $ROWS.Close()
+  - pattern-not-inside: |
+      $ROWS, $ERR = $Q.QueryxContext(...)
+      ...
+      defer $ROWS.Close()
+  - pattern-not-inside: |
+      $ROWS, $ERR = $Q.QueryxContext(...)
+      ...
+      $FUNC($ROWS)
+  - pattern-not-inside: |
+      if ... {
+        ...
+        $ROWS, $ERR = $Q.QueryxContext(...)
+        ...
+      } else { ... }
+      $ROWS.Close()
+  - pattern-not-inside: |
+      if ... {
+        ...
+        $ROWS, $ERR = $Q.QueryxContext(...)
+        ...
+      } else { ... }
+      ...
+      defer $ROWS.Close()
+  - pattern-not-inside: |
+      if ... { ...  } else {
+        ...
+        $ROWS, $ERR = $Q.QueryxContext(...)
+        ...
+      }
+      ...
+      $ROWS.Close()
+  - pattern-not-inside: |
+      if ... { ...  } else {
+        ...
+        $ROWS, $ERR = $Q.QueryxContext(...)
+        ...
+      }
+      ...
+      defer $ROWS.Close()
+  message: QueryxContext rows must be closed (or use ExecContext)
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.close-sql-query-rows.rows-not-closed
+    shortlink: https://sg.run/4xdg
+    semgrep.dev:
+      rule:
+        r_id: 8688
+        rv_id: 11975
+        rule_id: 5rUOBY
+        version_id: 6xT6E1
+        url: https://semgrep.dev/playground/r/6xT6E1/dgryski.semgrep-go.close-sql-query-rows.rows-not-closed
+        origin: community

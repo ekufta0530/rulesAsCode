@@ -1,0 +1,25 @@
+rules:
+- id: python.lang.correctness.tempfile.mktemp.tempfile-insecure
+  pattern: tempfile.mktemp(...)
+  message: 'Use tempfile.NamedTemporaryFile instead. From the official Python documentation:
+    THIS FUNCTION IS UNSAFE AND SHOULD NOT BE USED. The file name may refer to a file
+    that did not exist at some point, but by the time you get around to creating it,
+    someone else may have beaten you to the punch.'
+  languages:
+  - python
+  severity: ERROR
+  metadata:
+    category: correctness
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.correctness.tempfile.mktemp.tempfile-insecure
+    shortlink: https://sg.run/Yvye
+    semgrep.dev:
+      rule:
+        r_id: 9614
+        rv_id: 110346
+        rule_id: X5U83p
+        version_id: qkT2xlZ
+        url: https://semgrep.dev/playground/r/qkT2xlZ/python.lang.correctness.tempfile.mktemp.tempfile-insecure
+        origin: community

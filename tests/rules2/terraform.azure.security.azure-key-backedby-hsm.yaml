@@ -1,0 +1,53 @@
+rules:
+- id: terraform.azure.security.azure-key-backedby-hsm.azure-key-backedby-hsm
+  message: Ensure that key vault key is backed by HSM
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      key_type = "EC-HSM"
+      ...
+      }
+  - pattern-not-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      key_type = "RSA-HSM"
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-key-backedby-hsm.azure-key-backedby-hsm
+    shortlink: https://sg.run/PyvY
+    semgrep.dev:
+      rule:
+        r_id: 23989
+        rv_id: 110899
+        rule_id: WAUQGd
+        version_id: 5PTdeA3
+        url: https://semgrep.dev/playground/r/5PTdeA3/terraform.azure.security.azure-key-backedby-hsm.azure-key-backedby-hsm
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

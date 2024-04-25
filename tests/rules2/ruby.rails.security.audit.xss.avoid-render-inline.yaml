@@ -1,0 +1,43 @@
+rules:
+- id: ruby.rails.security.audit.xss.avoid-render-inline.avoid-render-inline
+  metadata:
+    source-rule-url: https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_render_inline.rb
+    owasp:
+    - A07:2017 - Cross-Site Scripting (XSS)
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    references:
+    - https://brakemanpro.com/2017/09/08/cross-site-scripting-in-rails#inline-renders---even-worse-than-xss
+    category: security
+    technology:
+    - rails
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/ruby.rails.security.audit.xss.avoid-render-inline.avoid-render-inline
+    shortlink: https://sg.run/E5w8
+    semgrep.dev:
+      rule:
+        r_id: 9737
+        rv_id: 110577
+        rule_id: QrU6Ww
+        version_id: gET3OWW
+        url: https://semgrep.dev/playground/r/gET3OWW/ruby.rails.security.audit.xss.avoid-render-inline.avoid-render-inline
+        origin: community
+  message: '''render inline: ...'' renders an entire ERB template inline and is dangerous.
+    If external data can reach here, this exposes your application to server-side
+    template injection (SSTI) or cross-site scripting (XSS) attacks. Instead, consider
+    using a partial or another safe rendering method.'
+  languages:
+  - ruby
+  severity: WARNING
+  pattern: 'render inline: ...'

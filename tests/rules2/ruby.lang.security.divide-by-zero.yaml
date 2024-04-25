@@ -1,0 +1,43 @@
+rules:
+- id: ruby.lang.security.divide-by-zero.divide-by-zero
+  message: Detected a possible ZeroDivisionError.
+  metadata:
+    cwe:
+    - 'CWE-369: Divide By Zero'
+    references:
+    - https://github.com/presidentbeef/brakeman/blob/main/lib/brakeman/checks/check_divide_by_zero.rb
+    category: security
+    technology:
+    - ruby
+    confidence: MEDIUM
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ruby.lang.security.divide-by-zero.divide-by-zero
+    shortlink: https://sg.run/KWpP
+    semgrep.dev:
+      rule:
+        r_id: 9711
+        rv_id: 110521
+        rule_id: oqUzXA
+        version_id: w8T9DzL
+        url: https://semgrep.dev/playground/r/w8T9DzL/ruby.lang.security.divide-by-zero.divide-by-zero
+        origin: community
+  languages:
+  - ruby
+  severity: WARNING
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern: $VAR
+    - metavariable-regex:
+        metavariable: $VAR
+        regex: ^\d*(?!\.)$
+  pattern-sinks:
+  - patterns:
+    - pattern-inside: $NUMER / 0
+    - pattern: $NUMER

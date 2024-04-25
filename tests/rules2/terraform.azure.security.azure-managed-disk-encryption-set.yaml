@@ -1,0 +1,48 @@
+rules:
+- id: terraform.azure.security.azure-managed-disk-encryption-set.azure-managed-disk-encryption-set
+  message: Ensure that managed disks use a specific set of disk encryption sets for
+    the customer-managed key encryption
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_managed_disk" "..." {
+      ...
+      disk_encryption_set_id = ...
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_managed_disk" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-managed-disk-encryption-set.azure-managed-disk-encryption-set
+    shortlink: https://sg.run/5e4A
+    semgrep.dev:
+      rule:
+        r_id: 23991
+        rv_id: 110901
+        rule_id: KxUj8J
+        version_id: RGTDRkB
+        url: https://semgrep.dev/playground/r/RGTDRkB/terraform.azure.security.azure-managed-disk-encryption-set.azure-managed-disk-encryption-set
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

@@ -1,0 +1,32 @@
+rules:
+- id: go.lang.best-practice.channel-guarded-with-mutex.channel-guarded-with-mutex
+  pattern-either:
+  - pattern: |
+      $MUX.Lock()
+      $VALUE <- $CHANNEL
+      $MUX.Unlock()
+  - pattern: |
+      $MUX.Lock()
+      $VALUE = <- $CHANNEL
+      $MUX.Unlock()
+  message: Detected a channel guarded with a mutex. Channels already have an internal
+    mutex, so this is unnecessary. Remove the mutex. See https://hackmongo.com/page/golang-antipatterns/#guarded-channel
+    for more information.
+  languages:
+  - go
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - go
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/go.lang.best-practice.channel-guarded-with-mutex.channel-guarded-with-mutex
+    shortlink: https://sg.run/Bko9
+    semgrep.dev:
+      rule:
+        r_id: 9095
+        rv_id: 109585
+        rule_id: AbUzDB
+        version_id: JdTNpYA
+        url: https://semgrep.dev/playground/r/JdTNpYA/go.lang.best-practice.channel-guarded-with-mutex.channel-guarded-with-mutex
+        origin: community

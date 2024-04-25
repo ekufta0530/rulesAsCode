@@ -1,0 +1,36 @@
+rules:
+- id: solidity.best-practice.use-ownable2step.use-ownable2step
+  metadata:
+    category: best-practice
+    references:
+    - https://docs.openzeppelin.com/contracts/4.x/api/access#Ownable2Step
+    - https://www.rareskills.io/post/openzeppelin-ownable2step
+    technology:
+    - solidity
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/solidity.best-practice.use-ownable2step.use-ownable2step
+    shortlink: https://sg.run/yBAA
+    semgrep.dev:
+      rule:
+        r_id: 67624
+        rv_id: 110651
+        rule_id: qNUn00
+        version_id: YDTpnQb
+        url: https://semgrep.dev/playground/r/YDTpnQb/solidity.best-practice.use-ownable2step.use-ownable2step
+        origin: community
+  message: By demanding that the receiver of the owner permissions actively accept
+    via a contract call of its own,  `Ownable2Step` and `Ownable2StepUpgradeable`
+    prevent the contract ownership from accidentally being transferred  to an address
+    that cannot handle it.
+  languages:
+  - solidity
+  severity: INFO
+  patterns:
+  - pattern-inside: |
+      contract $C is ...,$OWNABLE,... {
+        ...
+      }
+  - metavariable-regex:
+      metavariable: $OWNABLE
+      regex: (Ownable$|OwnableUpgradeable)
+  - focus-metavariable: $OWNABLE

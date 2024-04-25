@@ -1,0 +1,36 @@
+rules:
+- id: bash.lang.best-practice.useless-cat.useless-cat
+  pattern-either:
+  - pattern: |
+      cat | ...
+  - patterns:
+    - pattern: |
+        cat $ARG | ...
+    - pattern-not: |
+        cat ${$SEVERAL_FILES} | ...
+  - pattern: |
+      ... | cat
+  - pattern: |
+      ... | cat | ...
+  message: Useless call to 'cat' in a pipeline. Use '<' and '>' for any command to
+    read from a file or write to a file.
+  metadata:
+    references:
+    - https://github.com/koalaman/shellcheck/wiki/SC2002
+    category: best-practice
+    technology:
+    - bash
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/bash.lang.best-practice.useless-cat.useless-cat
+    shortlink: https://sg.run/pNDN
+    semgrep.dev:
+      rule:
+        r_id: 20118
+        rv_id: 108997
+        rule_id: X5UAkA
+        version_id: X0TQx25
+        url: https://semgrep.dev/playground/r/X0TQx25/bash.lang.best-practice.useless-cat.useless-cat
+        origin: community
+  severity: WARNING
+  languages:
+  - bash

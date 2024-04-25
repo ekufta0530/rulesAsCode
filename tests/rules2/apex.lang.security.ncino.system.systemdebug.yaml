@@ -1,0 +1,43 @@
+rules:
+- id: apex.lang.security.ncino.system.systemdebug.system-debug
+  min-version: 1.44.0
+  severity: WARNING
+  languages:
+  - apex
+  metadata:
+    cwe:
+    - 'CWE-489: Active Debug Code'
+    - 'CWE-779: Logging of Excessive Data'
+    category: security
+    subcategory:
+    - vuln
+    technology:
+    - vuln
+    references:
+    - https://cwe.mitre.org/data/definitions/489.html
+    - https://cwe.mitre.org/data/definitions/779.html
+    impact: MEDIUM
+    likelihood: LOW
+    confidence: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Active Debug Code
+    - Other
+    source: https://semgrep.dev/r/apex.lang.security.ncino.system.systemdebug.system-debug
+    shortlink: https://sg.run/jPJZ
+    semgrep.dev:
+      rule:
+        r_id: 72421
+        rv_id: 112357
+        rule_id: ReUlnb
+        version_id: 5PTdod0
+        url: https://semgrep.dev/playground/r/5PTdod0/apex.lang.security.ncino.system.systemdebug.system-debug
+        origin: community
+  message: In addition to debug statements potentially logging data excessively, debug
+    statements also contribute to longer transactions and consume Apex CPU time even
+    when debug logs are not being captured.
+  pattern: System.debug(...)
+  paths:
+    exclude:
+    - '*Test*'
+    - '*test*'

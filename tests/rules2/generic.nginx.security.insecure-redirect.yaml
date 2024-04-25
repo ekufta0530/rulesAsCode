@@ -1,0 +1,50 @@
+rules:
+- id: generic.nginx.security.insecure-redirect.insecure-redirect
+  patterns:
+  - pattern-either:
+    - pattern: rewrite ... redirect
+    - pattern: rewrite ... permanent
+  - pattern-not-inside: rewrite ... https ... $host ... redirect
+  - pattern-not-inside: rewrite ... https ... $host ... permanent
+  - pattern-not-regex: (?i)https:\/\/
+  paths:
+    include:
+    - '*.conf'
+    - '*.vhost'
+    - sites-available/*
+    - sites-enabled/*
+  message: Detected an insecure redirect in this nginx configuration. If no scheme
+    is specified, nginx will forward the request with the incoming scheme. This could
+    result in unencrypted communications. To fix this, include the 'https' scheme.
+  languages:
+  - generic
+  severity: WARNING
+  metadata:
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    category: security
+    technology:
+    - nginx
+    confidence: LOW
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/generic.nginx.security.insecure-redirect.insecure-redirect
+    shortlink: https://sg.run/8y14
+    semgrep.dev:
+      rule:
+        r_id: 9040
+        rv_id: 109348
+        rule_id: DbUpJe
+        version_id: yeTR2QA
+        url: https://semgrep.dev/playground/r/yeTR2QA/generic.nginx.security.insecure-redirect.insecure-redirect
+        origin: community

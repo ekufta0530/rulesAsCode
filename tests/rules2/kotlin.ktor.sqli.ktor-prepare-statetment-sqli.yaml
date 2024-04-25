@@ -1,0 +1,310 @@
+rules:
+- id: kotlin.ktor.sqli.ktor-prepare-statetment-sqli.ktor-prepare-statement-sqli
+  message: 'Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions. When
+    building SQL queries in Kotlin, it is possible to adopt prepared statements using
+    the `connection.PreparedStatement` class with parameterized queries. For more
+    information, see: [Prepared statements in Kotlin](https://developer.android.com/reference/kotlin/java/sql/PreparedStatement).'
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - db::sink::sql-or-nosql-query::Ktor
+    - web::source::cookie::Ktor
+    - web::source::header::Ktor
+    - web::source::http-params::Ktor
+    - web::source::url-path-params::Ktor
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - kotlin
+    - ktor
+    - ktorm
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/kotlin.ktor.sqli.ktor-prepare-statetment-sqli.ktor-prepare-statement-sqli
+    shortlink: https://sg.run/Rdqv
+    semgrep.dev:
+      rule:
+        r_id: 59549
+        rv_id: 731941
+        rule_id: zdUo7N
+        version_id: WrTNAlW
+        url: https://semgrep.dev/playground/r/WrTNAlW/kotlin.ktor.sqli.ktor-prepare-statetment-sqli.ktor-prepare-statement-sqli
+        origin: pro_rules
+  languages:
+  - kotlin
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - label: no_processing_needed
+    patterns:
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import io.ktor.server.*
+                ...
+            - pattern-inside: |
+                import io.ktor.server.application
+                ...
+          - pattern-either:
+            - pattern: application.call.parameters
+            - patterns:
+              - pattern: application.call.receive(...)
+              - pattern-not-inside: |
+                  val $X: Int = application.call.receive(...)
+              - pattern-not-inside: |
+                  val $X: Int = application.call.receive(...)
+            - patterns:
+              - pattern: application.call.request.$F(...)
+              - metavariable-regex:
+                  metavariable: $F
+                  regex: ^(accept|acceptCharset|acceptCharsetItems|acceptEncoding|acceptEncodingItems|acceptItems|acceptLanguage|acceptLanguageItems|cacheControl|header|location|queryString|userAgent)$
+            - patterns:
+              - pattern-either:
+                - patterns:
+                  - pattern: application.call.request.$F
+                  - metavariable-regex:
+                      metavariable: $F
+                      regex: ^(cookies|queryParameters|rawQueryParameters|uri)$
+                - pattern: application.call.request.cookies.rawCookies
+            - pattern: application.call.request.local.uri
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import io.ktor.server.application.*
+                ...
+            - pattern-inside: |
+                import io.ktor.server.application.call
+                ...
+          - pattern-either:
+            - pattern: call.parameters
+            - patterns:
+              - pattern: call.receive(...)
+              - pattern-not-inside: |
+                  val $X: Int = call.receive(...)
+              - pattern-not-inside: |
+                  val $X: Int = call.receive(...)
+            - patterns:
+              - pattern: call.request.$F(...)
+              - metavariable-regex:
+                  metavariable: $F
+                  regex: ^(accept|acceptCharset|acceptCharsetItems|acceptEncoding|acceptEncodingItems|acceptItems|acceptLanguage|acceptLanguageItems|cacheControl|header|location|queryString|userAgent)$
+            - patterns:
+              - pattern-either:
+                - patterns:
+                  - pattern: call.request.$F
+                  - metavariable-regex:
+                      metavariable: $F
+                      regex: ^(cookies|queryParameters|rawQueryParameters|uri)$
+                - pattern: call.request.cookies.rawCookies
+            - pattern: call.request.local.uri
+  - label: returns_url_encoded
+    patterns:
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import io.ktor.server.*
+                ...
+            - pattern-inside: |
+                import io.ktor.server.application
+                ...
+          - patterns:
+            - pattern-either:
+              - patterns:
+                - pattern: application.call.request.$F
+                - metavariable-regex:
+                    metavariable: $F
+                    regex: ^(uri)$
+              - patterns:
+                - pattern: application.call.request.$F(...)
+                - metavariable-regex:
+                    metavariable: $F
+                    regex: ^(document|path|toLogString)$
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import io.ktor.server.application.*
+                ...
+            - pattern-inside: |
+                import io.ktor.server.application.call
+                ...
+          - patterns:
+            - pattern-either:
+              - patterns:
+                - pattern: call.request.$F
+                - metavariable-regex:
+                    metavariable: $F
+                    regex: ^(uri)$
+              - patterns:
+                - pattern: call.request.$F(...)
+                - metavariable-regex:
+                    metavariable: $F
+                    regex: ^(document|path|toLogString)$
+  - label: urldecode
+    patterns:
+    - patterns:
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import java.*
+                ...
+            - pattern-inside: |
+                import java.net
+                ...
+          - patterns:
+            - pattern: net.URLDecoder.decode($INPUT, ...)
+            - focus-metavariable: $INPUT
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import java.net.*
+                ...
+            - pattern-inside: |
+                import java.net.URLDecoder
+                ...
+          - patterns:
+            - pattern: URLDecoder.decode($INPUT, ...)
+            - focus-metavariable: $INPUT
+    requires: returns_url_encoded
+  pattern-sinks:
+  - label: sink
+    patterns:
+    - pattern-either:
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import org.ktorm.*
+                ...
+            - pattern-inside: |
+                import org.ktorm.database
+                ...
+          - patterns:
+            - pattern-inside: $DB.useConnection(...)
+            - pattern-either:
+              - pattern-inside: database.Database.connect(...).apply(...)
+              - pattern-inside: |
+                  $DB = database.Database.connect(...)
+                  ...
+              - pattern-inside: |
+                  class $CL(...) {
+                    ...
+                    val $DB = database.Database.connect(...)
+                    ...
+                  }
+              - pattern-inside: |
+                  ($DB: database.Database).useConnection(...)
+            - pattern: $CN.prepareStatement($SQL, ...)
+            - focus-metavariable: $SQL
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import org.ktorm.database.*
+                ...
+            - pattern-inside: |
+                import org.ktorm.database.Database
+                ...
+          - patterns:
+            - pattern-inside: $DB.useConnection(...)
+            - pattern-either:
+              - pattern-inside: Database.connect(...).apply(...)
+              - pattern-inside: |
+                  $DB = Database.connect(...)
+                  ...
+              - pattern-inside: |
+                  class $CL(...) {
+                    ...
+                    val $DB = Database.connect(...)
+                    ...
+                  }
+              - pattern-inside: |
+                  ($DB: Database).useConnection(...)
+            - pattern: $CN.prepareStatement($SQL, ...)
+            - focus-metavariable: $SQL
+      - pattern-either:
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import java.*
+                ...
+            - pattern-inside: |
+                import java.sql
+                ...
+          - patterns:
+            - pattern-either:
+              - pattern: |
+                  ($CN: sql.Connection).prepareStatement($SQL, ...)
+              - patterns:
+                - pattern-either:
+                  - patterns:
+                    - pattern-inside: |
+                        $STMT = $DB.createStatement(...)
+                        ...
+                    - pattern: $STMT.$EXEC($SQL, ...)
+                  - pattern: |
+                      ($STMT: Statement).$EXEC($SQL, ...)
+                - metavariable-regex:
+                    metavariable: $EXEC
+                    regex: ^execute
+            - focus-metavariable: $SQL
+        - patterns:
+          - pattern-either:
+            - pattern-inside: |
+                import java.sql.*
+                ...
+            - pattern-inside: |
+                import java.sql.Connection
+                ...
+          - patterns:
+            - pattern-either:
+              - pattern: |
+                  ($CN: Connection).prepareStatement($SQL, ...)
+              - patterns:
+                - pattern-either:
+                  - patterns:
+                    - pattern-inside: |
+                        $STMT = $DB.createStatement(...)
+                        ...
+                    - pattern: $STMT.$EXEC($SQL, ...)
+                  - pattern: |
+                      ($STMT: Statement).$EXEC($SQL, ...)
+                - metavariable-regex:
+                    metavariable: $EXEC
+                    regex: ^execute
+            - focus-metavariable: $SQL
+    requires: urldecode or no_processing_needed
+  pattern-sanitizers:
+  - patterns:
+    - pattern: $X.$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (equals|toInt|toLong|toFloat|toDouble|toShort|toByte|toUByte|toUInt|toULong|toUShort)
+  - pattern: |
+      ($X: boolean)

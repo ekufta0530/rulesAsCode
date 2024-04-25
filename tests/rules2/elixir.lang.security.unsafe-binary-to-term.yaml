@@ -1,0 +1,45 @@
+rules:
+- id: elixir.lang.security.unsafe-binary-to-term.unsafe-binary-to-term
+  message: 'Untrusted input might be injected into the Erlang function `binary_to_term`,
+    which can lead to a remote code execution or memory exhaustion. To prevent this
+    vulnerability, replace functionality with the `Plug.Crypto.non_executable_binary_to_term`
+    function. '
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    owasp:
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection/
+    technology:
+    - elixir
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/elixir.lang.security.unsafe-binary-to-term.unsafe-binary-to-term
+    shortlink: https://sg.run/6Jqgj
+    semgrep.dev:
+      rule:
+        r_id: 114615
+        rv_id: 257005
+        rule_id: 7KUgBW2
+        version_id: 2KTQlJz
+        url: https://semgrep.dev/playground/r/2KTQlJz/elixir.lang.security.unsafe-binary-to-term.unsafe-binary-to-term
+        origin: pro_rules
+  languages:
+  - elixir
+  fix: |
+    Plug.Crypto.non_executable_binary_to_term($ARG, [:safe])
+  min-version: 1.55.2
+  patterns:
+  - pattern: |
+      :erlang.binary_to_term($ARG, ...)
+  - pattern-not: |
+      :erlang.binary_to_term("...", ...)

@@ -1,0 +1,54 @@
+rules:
+- id: clojure.lang.security.command-injection-shell-call.command-injection-shell-call
+  metadata:
+    author: Gabriel Marquet <gab.marquet@gmail.com>
+    category: security
+    confidence: LOW
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    likelihood: MEDIUM
+    impact: HIGH
+    subcategory:
+    - audit
+    technology:
+    - clojure
+    references:
+    - https://clojuredocs.org/clojure.java.shell/sh
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/clojure.lang.security.command-injection-shell-call.command-injection-shell-call
+    shortlink: https://sg.run/Ag4L
+    semgrep.dev:
+      rule:
+        r_id: 52194
+        rv_id: 109017
+        rule_id: ZqUvEe
+        version_id: 8KTQ9yX
+        url: https://semgrep.dev/playground/r/8KTQ9yX/clojure.lang.security.command-injection-shell-call.command-injection-shell-call
+        origin: community
+  patterns:
+  - pattern-either:
+    - pattern-inside: "(ns ...\n...\n(:require \n... \n[clojure.java.shell ... [sh]]\n\
+        ...\n))\n...\n"
+    - pattern-inside: "(ns ...\n...\n(:use \n... \n[clojure.java.shell ... [sh]]\n\
+        ...\n))\n...\n"
+  - pattern-either:
+    - patterns:
+      - pattern: (sh $BASH ...)
+      - metavariable-regex:
+          metavariable: $BASH
+          regex: (.*)(sh|bash|ksh|csh|tcsh|zsh)
+    - patterns:
+      - pattern: (sh $ARG ...)
+      - pattern-not: (sh "..." ...)
+  languages:
+  - clojure
+  severity: ERROR
+  message: A call to clojure.java.shell has been found, this could lead to an RCE
+    if the inputs are user-controllable. Please ensure their origin is validated and
+    sanitized.

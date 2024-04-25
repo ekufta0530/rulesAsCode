@@ -1,0 +1,44 @@
+rules:
+- id: java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
+  message: CSRF protection is disabled for this configuration. This is a security
+    risk.
+  metadata:
+    cwe:
+    - 'CWE-352: Cross-Site Request Forgery (CSRF)'
+    owasp:
+    - A01:2021 - Broken Access Control
+    source-rule-url: https://find-sec-bugs.github.io/bugs.htm#SPRING_CSRF_PROTECTION_DISABLED
+    asvs:
+      section: V4 Access Control
+      control_id: 4.2.2 CSRF
+      control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x12-V4-Access-Control.md#v42-operation-level-access-control
+      version: '4'
+    category: security
+    technology:
+    - spring
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cross-Site Request Forgery (CSRF)
+    source: https://semgrep.dev/r/java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
+    shortlink: https://sg.run/jRnl
+    semgrep.dev:
+      rule:
+        r_id: 9221
+        rv_id: 109775
+        rule_id: OrU3gK
+        version_id: 5PTdAWX
+        url: https://semgrep.dev/playground/r/5PTdAWX/java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled
+        origin: community
+  severity: WARNING
+  languages:
+  - java
+  pattern: $OBJ.csrf(...).disable(...)

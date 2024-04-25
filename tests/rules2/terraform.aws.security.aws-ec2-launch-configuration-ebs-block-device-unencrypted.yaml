@@ -1,0 +1,57 @@
+rules:
+- id: terraform.aws.security.aws-ec2-launch-configuration-ebs-block-device-unencrypted.aws-ec2-launch-configuration-ebs-block-device-unencrypted
+  patterns:
+  - pattern-inside: |
+      resource "aws_launch_configuration" $ANYTHING {
+        ...
+      }
+  - pattern: |
+      ebs_block_device {
+        ...
+      }
+  - pattern-not: |
+      ebs_block_device {
+        ...
+        encrypted = true
+        ...
+      }
+  message: The AWS launch configuration EBS block device is unencrypted. The block
+    device could be read if compromised. Block devices should be encrypted to ensure
+    sensitive data is held securely at rest.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    category: security
+    technology:
+    - terraform
+    - aws
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A04:2021 - Insecure Design
+    cwe:
+    - 'CWE-311: Missing Encryption of Sensitive Data'
+    references:
+    - https://owasp.org/Top10/A04_2021-Insecure_Design
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration#block-devices
+    - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    rule-origin-note: published from /src/aws-ec2-launch-configuration-block-device-unencrypted.yml
+      in None
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.aws.security.aws-ec2-launch-configuration-ebs-block-device-unencrypted.aws-ec2-launch-configuration-ebs-block-device-unencrypted
+    shortlink: https://sg.run/oryd
+    semgrep.dev:
+      rule:
+        r_id: 50760
+        rv_id: 110747
+        rule_id: 6JUwDr
+        version_id: WrTW3Nr
+        url: https://semgrep.dev/playground/r/WrTW3Nr/terraform.aws.security.aws-ec2-launch-configuration-ebs-block-device-unencrypted.aws-ec2-launch-configuration-ebs-block-device-unencrypted
+        origin: community

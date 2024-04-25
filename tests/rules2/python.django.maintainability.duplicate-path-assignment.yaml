@@ -1,0 +1,33 @@
+rules:
+- id: python.django.maintainability.duplicate-path-assignment.duplicate-name-assignment
+  languages:
+  - python
+  message: The name `$NAME` is used for both `$URL` and `$OTHER_URL`, which can lead
+    to unexpected behavior when using URL reversing. Pick a unique name for each path.
+  metadata:
+    category: maintainability
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    technology:
+    - django
+    references:
+    - https://docs.djangoproject.com/en/3.2/topics/http/urls/#naming-url-patterns
+    source: https://semgrep.dev/r/python.django.maintainability.duplicate-path-assignment.duplicate-name-assignment
+    shortlink: https://sg.run/pk2Z
+    semgrep.dev:
+      rule:
+        r_id: 12718
+        rv_id: 110176
+        rule_id: AbUG1k
+        version_id: 44TRlXy
+        url: https://semgrep.dev/playground/r/44TRlXy/python.django.maintainability.duplicate-path-assignment.duplicate-name-assignment
+        origin: community
+  patterns:
+  - pattern: |
+      [..., django.urls.path('$URL', $VIEW, name='$NAME', ...), ..., django.urls.path('$OTHER_URL', $OTHER_VIEW, name='$NAME', ...), ...]
+  - pattern-not: |
+      [..., django.urls.path('$URL', $VIEW, name='$NAME', ...), ..., django.urls.path('$URL', $VIEW, name='$NAME', ...), ...]
+  - pattern-not: |
+      [..., django.urls.path('$URL', $VIEW, name='$NAME', ...), ..., django.urls.path('$URL', $OTHER_VIEW, name='$NAME', ...), ...]
+  - pattern-not: |
+      [..., django.urls.path('$URL', $VIEW, name='$NAME', ...), ..., django.urls.path('$OTHER_URL', $VIEW, name='$NAME', ...), ...]
+  severity: ERROR

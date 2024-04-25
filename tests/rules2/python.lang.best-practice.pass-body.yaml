@@ -1,0 +1,25 @@
+rules:
+- id: python.lang.best-practice.pass-body.pass-body-range
+  pattern: |
+    for $X in $Y:
+        pass
+  message: '`pass` is the body of for $X in $Y. Consider removing this or raise NotImplementedError()
+    if this is a TODO'
+  languages:
+  - python
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - python
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/python.lang.best-practice.pass-body.pass-body-range
+    shortlink: https://sg.run/rdJR
+    semgrep.dev:
+      rule:
+        r_id: 9569
+        rv_id: 110302
+        rule_id: eqU8xE
+        version_id: qkT2xqZ
+        url: https://semgrep.dev/playground/r/qkT2xqZ/python.lang.best-practice.pass-body.pass-body-range
+        origin: community

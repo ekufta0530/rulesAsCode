@@ -1,0 +1,187 @@
+rules:
+- id: java.spring.tainted-html-string-responsebody.tainted-html-string-responsebody
+  message: Untrusted input could be used to tamper with a web page rendering, which
+    can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+    when untrusted input executes malicious JavaScript code, leading to issues such
+    as account compromise and sensitive information leakage. To prevent this vulnerability,
+    validate the user input, perform contextual output encoding or sanitize the input.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::sink::direct-response::Spring
+    - web::source::cookie::Spring
+    - web::source::header::Spring
+    - web::source::http-body::Spring
+    - web::source::http-params::Spring
+    - web::source::url-path-params::Spring
+    owasp:
+    - A03:2021 - Injection
+    - A07:2017 - Cross-Site Scripting (XSS)
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - Spring
+    - java
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/java.spring.tainted-html-string-responsebody.tainted-html-string-responsebody
+    shortlink: https://sg.run/wRqd
+    semgrep.dev:
+      rule:
+        r_id: 67673
+        rv_id: 742829
+        rule_id: GdUEwv
+        version_id: vdT4leD
+        url: https://semgrep.dev/playground/r/vdT4leD/java.spring.tainted-html-string-responsebody.tainted-html-string-responsebody
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - label: REQ
+    patterns:
+    - pattern-either:
+      - pattern: $RET $METHOD(..., @$REQ(...) $TYPE $SOURCE, ...) {...}
+      - pattern: $RET $METHOD(..., @$REQ $TYPE $SOURCE, ...) {...}
+    - metavariable-regex:
+        metavariable: $REQ
+        regex: (RequestBody|PathVariable|RequestParam|RequestHeader|CookieValue|ModelAttribute|MatrixVariable|RequestPart|RequestAttribute)
+    - focus-metavariable: $SOURCE
+  - label: REQ
+    patterns:
+    - pattern-either:
+      - pattern-inside: |
+          @$MAPPING(...)
+          $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+      - pattern-inside: |
+          @$MAPPING
+          $RET $METHODNAME(..., $TYPE $SOURCE, ...) {...}
+    - pattern-either:
+      - pattern: $RET $METHOD(..., String $SOURCE, ...) {...}
+      - pattern: $RET $METHOD(..., org.springframework.http.HttpEntity<$X> $SOURCE,
+          ...) {...}
+      - pattern: $RET $METHOD(..., java.io.InputStream $SOURCE, ...) {...}
+      - pattern: $RET $METHOD(..., java.io.Reader $SOURCE, ...) {...}
+    - metavariable-regex:
+        metavariable: $MAPPING
+        regex: (ResponseBody|RequestMapping|PatchMapping|GetMapping|DeleteMapping|PutMapping|PostMapping|HttpExchange|GetExchange|PostExchange|PutExchange|PatchExchange|DeleteExchange|ResponseStatus)
+    - focus-metavariable: $SOURCE
+  - label: REQ
+    patterns:
+    - pattern-either:
+      - pattern: (org.springframework.web.context.request.WebRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.context.request.NativeWebRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.context.request.FacesWebRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.context.request.ServletWebRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.servlet.handler.DispatcherServletWebRequest
+          $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.context.request.async.AsyncWebRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.context.request.async.StandardServletAsyncWebRequest
+          $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getHeader|getHeaderNames|getHeaderValues|getParameter|getParameterMap|getParameterNames|getParameterValues|getAttribute|getAttributeNames)
+  - label: REQ
+    patterns:
+    - pattern-either:
+      - pattern: (org.springframework.http.HttpRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.http.client.ClientHttpRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.http.server.ServerHttpRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.http.server.ServletServerHttpRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.web.multipart.support.RequestPartServletServerHttpRequest
+          $REQ).$METHOD(...)
+      - pattern: (org.springframework.http.server.reactive.ServerHttpRequest $REQ).$METHOD(...)
+      - pattern: (org.springframework.http.server.reactive.ServerHttpRequestDecorator
+          $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getPath|getQueryParams|getBody|getURI|getHeaders|getCookies)
+  - label: REQ
+    patterns:
+    - pattern-either:
+      - pattern: (javax.servlet.ServletRequest $REQ).$METHOD(...)
+      - pattern: (javax.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+      - pattern: (jakarta.servlet.ServletRequest $REQ).$METHOD(...)
+      - pattern: (jakarta.servlet.http.HttpServletRequest $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString|getPathInfo)
+  - label: HTML
+    patterns:
+    - pattern-either:
+      - pattern: |
+          "$STR" + ...
+      - pattern: '... + "$STR"'
+      - pattern: |
+          "$STR".concat(...)
+      - patterns:
+        - pattern-inside: |
+            StringBuilder $SB = new StringBuilder("$STR");
+            ...
+        - pattern: $SB.append(...)
+      - patterns:
+        - pattern-inside: |
+            $VAR = "$STR";
+            ...
+        - pattern: $VAR += ...
+      - pattern: String.format("$STR", ...)
+      - patterns:
+        - pattern-inside: |
+            String $VAR = "$STR";
+            ...
+        - pattern: String.format($VAR, ...)
+    - metavariable-regex:
+        metavariable: $STR
+        regex: (?i)<(a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bb|bdo|big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|command|datagrid|datalist|dd|del|details|dfn|dialog|dir|div|dl|dt|em|embed|eventsource|fieldset|figcaption|figure|font|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hgroup|hr|html|i|iframe|img|input|ins|isindex|kbd|keygen|label|legend|li|link|map|mark|menu|meta|meter|nav|noframes|noscript|object|ol|optgroup|option|output|p|param|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|small|source|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|u|ul|var|video|wbr)\b
+    requires: REQ
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - patterns:
+    - pattern: return <... $X ...>;
+    - pattern-inside: |
+        @ResponseBody
+        $RET $METHODNAME(...) {
+          ...
+        }
+    - focus-metavariable: $X
+    requires: HTML
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)
+  - pattern: new io.micronaut.views.ModelAndView<$X>(...)
+  - pattern: new io.micronaut.views.ModelAndView<?>(...)
+  - pattern: new io.micronaut.views.ModelAndView<>(...)
+  - pattern: new io.micronaut.views.ModelAndView(...)
+  - pattern: (org.owasp.html.PolicyFactory $X).sanitize(...)
+  - pattern: Jsoup.clean(...)
+  - pattern: (org.owasp.validator.html.AntiSamy $X).scan(...)
+  - pattern: Encode.forHtml(...)
+  - pattern: (Cleaner $CL).clean(...)

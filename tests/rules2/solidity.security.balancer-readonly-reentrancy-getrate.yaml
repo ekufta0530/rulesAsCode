@@ -1,0 +1,140 @@
+rules:
+- id: solidity.security.balancer-readonly-reentrancy-getrate.balancer-readonly-reentrancy-getrate
+  message: $VAR.getRate() call on a Balancer pool is not protected from the read-only
+    reentrancy.
+  metadata:
+    category: security
+    technology:
+    - solidity
+    cwe: 'CWE-841: Improper Enforcement of Behavioral Workflow'
+    confidence: HIGH
+    likelihood: MEDIUM
+    impact: HIGH
+    subcategory:
+    - vuln
+    references:
+    - https://forum.balancer.fi/t/reentrancy-vulnerability-scope-expanded/4345
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/solidity.security.balancer-readonly-reentrancy-getrate.balancer-readonly-reentrancy-getrate
+    shortlink: https://sg.run/g9e5
+    semgrep.dev:
+      rule:
+        r_id: 67641
+        rv_id: 110669
+        rule_id: wdUx3D
+        version_id: e1T03zD
+        url: https://semgrep.dev/playground/r/e1T03zD/solidity.security.balancer-readonly-reentrancy-getrate.balancer-readonly-reentrancy-getrate
+        origin: community
+  patterns:
+  - pattern: |
+      function $F(...) {
+        ...
+        $VAR.getRate();
+        ...
+      }
+  - pattern-not-inside: |
+      function $F(...) {
+        ...
+        VaultReentrancyLib.ensureNotInVaultContext(...);
+        ...
+      }
+  - pattern-not-inside: |
+      function $F(...) {
+        ...
+        $VAULT.manageUserBalance(...);
+        ...
+      }
+  - pattern-not-inside: |
+      function _updateTokenRateCache(...) {
+        ...
+      }
+  - pattern-not-inside: |
+      contract PoolRecoveryHelper {
+        ...
+      }
+  - pattern-not-inside: |
+      contract ComposableStablePoolRates {
+        ...
+      }
+  - pattern-not-inside: |
+      contract WeightedPoolProtocolFees {
+        ...
+      }
+  - pattern-not-inside: |
+      contract $C {
+        ...
+        function $CHECKFUNC(...) {
+          ...
+          VaultReentrancyLib.ensureNotInVaultContext(...);
+          ...
+        }
+        ...
+        function $F(...) {
+          ...
+          $CHECKFUNC(...);
+          ...
+          $VAR.getRate();
+          ...
+        }
+        ...
+      }
+  - pattern-not-inside: |
+      contract $C {
+        ...
+        function $CHECKFUNC(...) {
+          ...
+          VaultReentrancyLib.ensureNotInVaultContext(...);
+          ...
+        }
+        ...
+        function $F(...) {
+          ...
+          $VAR.getRate();
+          ...
+          $CHECKFUNC(...);
+          ...
+        }
+        ...
+      }
+  - pattern-not-inside: |
+      contract $C {
+        ...
+        function $CHECKFUNC(...) {
+          ...
+          $VAULT.manageUserBalance(...);
+          ...
+        }
+        ...
+        function $F(...) {
+          ...
+          $VAR.getRate();
+          ...
+          $CHECKFUNC(...);
+          ...
+        }
+        ...
+      }
+  - pattern-not-inside: |
+      contract $C {
+        ...
+        function $CHECKFUNC(...) {
+          ...
+          $VAULT.manageUserBalance(...);
+          ...
+        }
+        ...
+        function $F(...) {
+          ...
+          $CHECKFUNC(...);
+          ...
+          $VAR.getRate();
+          ...
+        }
+        ...
+      }
+  - focus-metavariable: $VAR
+  languages:
+  - solidity
+  severity: ERROR

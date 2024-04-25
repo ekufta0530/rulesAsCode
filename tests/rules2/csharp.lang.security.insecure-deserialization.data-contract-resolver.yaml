@@ -1,0 +1,41 @@
+rules:
+- id: csharp.lang.security.insecure-deserialization.data-contract-resolver.data-contract-resolver
+  severity: WARNING
+  languages:
+  - C#
+  metadata:
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://docs.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
+    category: security
+    technology:
+    - .net
+    confidence: LOW
+    cwe2022-top25: true
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/csharp.lang.security.insecure-deserialization.data-contract-resolver.data-contract-resolver
+    shortlink: https://sg.run/yXjP
+    semgrep.dev:
+      rule:
+        r_id: 18224
+        rv_id: 109201
+        rule_id: PeUxb0
+        version_id: 1QTOY3v
+        url: https://semgrep.dev/playground/r/1QTOY3v/csharp.lang.security.insecure-deserialization.data-contract-resolver.data-contract-resolver
+        origin: community
+  message: Only use DataContractResolver if you are completely sure of what information
+    is being serialized. Malicious types can cause unexpected behavior.
+  patterns:
+  - pattern: |
+      class $MYDCR : DataContractResolver { ... }

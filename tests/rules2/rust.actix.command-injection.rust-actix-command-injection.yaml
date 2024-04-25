@@ -1,0 +1,204 @@
+rules:
+- id: rust.actix.command-injection.rust-actix-command-injection.rust-actix-command-injection
+  message: Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent this
+    vulnerability, avoid executing OS commands with user input. If this is unavoidable,
+    validate and sanitize the input, and use safe methods for executing the commands.
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - os::sink::os-command-or-thread::std::process
+    - web::source::cookie::actix_web
+    - web::source::header::actix_web
+    - web::source::http-body::actix_web
+    - web::source::http-params::actix_web
+    - web::source::url-path-params::actix_web
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - actix
+    - rust
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/rust.actix.command-injection.rust-actix-command-injection.rust-actix-command-injection
+    shortlink: https://sg.run/AAoL
+    semgrep.dev:
+      rule:
+        r_id: 63194
+        rv_id: 251679
+        rule_id: bwU2nL
+        version_id: JdT5q77
+        url: https://semgrep.dev/playground/r/JdT5q77/rust.actix.command-injection.rust-actix-command-injection.rust-actix-command-injection
+        origin: pro_rules
+  languages:
+  - rust
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - label: INPUT
+    patterns:
+    - pattern: $SOURCE
+    - pattern-not-inside: |
+        fn $NAME(..., $SOURCE: actix_web::HttpRequest, ...) {
+          ...
+        }
+    - pattern-not-inside: |
+        fn $NAME(..., $SOURCE: actix_web::web::Data<$T>, ...) {
+          ...
+        }
+    - pattern-either:
+      - pattern-inside: |
+          #[actix_web::$METHOD($X)]
+          fn $NAME(..., $SOURCE: $TYPE, ...) {
+            ...
+          }
+      - pattern-inside: |
+          fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::Either<$L,$R> {
+            ...
+          }
+      - pattern-inside: |
+          fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::Result<$RES> {
+            ...
+          }
+      - pattern-inside: |
+          fn $NAME(..., $SOURCE: actix_web::web::Path<$T>, ...) {
+            ...
+          }
+      - pattern-either:
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::Responder {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::Responder, $S) {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::Responder> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::Responder, $ERR> {
+              ...
+            }
+      - pattern-either:
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::HttpResponse {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::HttpResponse, $S) {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::HttpResponse> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::HttpResponse, $ERR> {
+              ...
+            }
+      - pattern-either:
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::web::Json<$T> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::web::Json<$T>, $S) {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::web::Json<$T>> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::web::Json<$T>, $ERR> {
+              ...
+            }
+      - pattern-either:
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_web::CustomizeResponder<$T> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_web::CustomizeResponder<$T>, $S) {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_web::CustomizeResponder<$T>> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_web::CustomizeResponder<$T>, $ERR> {
+              ...
+            }
+      - pattern-either:
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> actix_files::NamedFile {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> (actix_files::NamedFile, $S) {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Option<actix_files::NamedFile> {
+              ...
+            }
+        - pattern-inside: |
+            fn $NAME(..., $SOURCE: $TYPE, ...) -> Result<actix_files::NamedFile, $ERR> {
+              ...
+            }
+  - label: REQUEST
+    patterns:
+    - pattern: $REQ
+    - pattern-inside: |
+        fn $NAME(..., $REQ: actix_web::HttpRequest, ...) {
+          ...
+        }
+  - label: REQ_INPUT
+    patterns:
+    - pattern-either:
+      - pattern: $R.headers()
+      - pattern: $R.headers_mut()
+      - pattern: $R.path()
+      - pattern: $R.query_string()
+      - pattern: $R.cookies()
+      - pattern: $R.cookie(...)
+  pattern-sinks:
+  - patterns:
+    - pattern: std::process::Command::new($CMDINPUT)
+    - focus-metavariable: $CMDINPUT
+    requires: INPUT or (REQUEST and REQ_INPUT)
+  - patterns:
+    - pattern-either:
+      - pattern: std::process::Command::new("$SHELL"). ... .arg("-c"). ... .arg($CMDINPUT)
+      - pattern: std::process::Command::new("$SHELL"). ... .args([..., "-c", ...,
+          $CMDINPUT, ...])
+      - patterns:
+        - pattern-inside: $COMMAND = std::process::Command::new("$SHELL"); ...
+        - pattern-inside: $COMMAND.arg("-c"); ...
+        - pattern: $COMMAND.arg("$CMDINPUT")
+    - metavariable-regex:
+        metavariable: $SHELL
+        regex: ^(.*\/)?(sh|bash|ksh|csh|tcsh|zsh)$
+    - focus-metavariable: $CMDINPUT
+    requires: INPUT or (REQUEST and REQ_INPUT)

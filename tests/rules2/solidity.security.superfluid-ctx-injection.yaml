@@ -1,0 +1,38 @@
+rules:
+- id: solidity.security.superfluid-ctx-injection.superfluid-ctx-injection
+  message: A specially crafted calldata may be used to impersonate other accounts
+  metadata:
+    category: security
+    technology:
+    - solidity
+    cwe: 'CWE-20: Improper Input Validation'
+    confidence: HIGH
+    likelihood: HIGH
+    impact: HIGH
+    subcategory:
+    - vuln
+    references:
+    - https://rekt.news/superfluid-rekt/
+    - https://medium.com/superfluid-blog/08-02-22-exploit-post-mortem-15ff9c97cdd
+    - https://polygonscan.com/address/0x07711bb6dfbc99a1df1f2d7f57545a67519941e7
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Validation
+    source: https://semgrep.dev/r/solidity.security.superfluid-ctx-injection.superfluid-ctx-injection
+    shortlink: https://sg.run/9KNy
+    semgrep.dev:
+      rule:
+        r_id: 67667
+        rv_id: 110695
+        rule_id: KxUqld
+        version_id: YDTpnDb
+        url: https://semgrep.dev/playground/r/YDTpnDb/solidity.security.superfluid-ctx-injection.superfluid-ctx-injection
+        origin: community
+  patterns:
+  - pattern: $T.decodeCtx(ctx);
+  - pattern-not-inside: |
+      require($T.isCtxValid(...), "...");
+      ...
+  languages:
+  - solidity
+  severity: ERROR

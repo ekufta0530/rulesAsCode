@@ -1,0 +1,23 @@
+rules:
+- id: ocaml.lang.portability.slash-tmp.not-portable-tmp-string
+  pattern: |
+    "=~/\/tmp/"
+  message: You should probably use Filename.get_temp_dirname().
+  languages:
+  - ocaml
+  severity: WARNING
+  metadata:
+    category: portability
+    technology:
+    - ocaml
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/ocaml.lang.portability.slash-tmp.not-portable-tmp-string
+    shortlink: https://sg.run/Q4ZZ
+    semgrep.dev:
+      rule:
+        r_id: 12786
+        rv_id: 110028
+        rule_id: zdU100
+        version_id: gET3x7z
+        url: https://semgrep.dev/playground/r/gET3x7z/ocaml.lang.portability.slash-tmp.not-portable-tmp-string
+        origin: community

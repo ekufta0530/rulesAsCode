@@ -1,0 +1,73 @@
+rules:
+- id: typescript.react.security.react-insecure-request.react-insecure-request
+  message: Unencrypted request over HTTP detected.
+  metadata:
+    vulnerability: Insecure Transport
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    cwe:
+    - 'CWE-319: Cleartext Transmission of Sensitive Information'
+    references:
+    - https://www.npmjs.com/package/axios
+    category: security
+    technology:
+    - react
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/typescript.react.security.react-insecure-request.react-insecure-request
+    shortlink: https://sg.run/1n0b
+    semgrep.dev:
+      rule:
+        r_id: 9766
+        rv_id: 111106
+        rule_id: NbUA3O
+        version_id: DkT6YXK
+        url: https://semgrep.dev/playground/r/DkT6YXK/typescript.react.security.react-insecure-request.react-insecure-request
+        origin: community
+  languages:
+  - typescript
+  - javascript
+  severity: ERROR
+  pattern-either:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import $AXIOS from 'axios';
+          ...
+          $AXIOS.$METHOD(...)
+      - pattern-inside: |
+          $AXIOS = require('axios');
+          ...
+          $AXIOS.$METHOD(...)
+    - pattern-either:
+      - pattern: $AXIOS.get("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+      - pattern: $AXIOS.post("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+      - pattern: $AXIOS.delete("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+      - pattern: $AXIOS.head("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+      - pattern: $AXIOS.patch("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+      - pattern: $AXIOS.put("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+      - pattern: $AXIOS.options("=~/[Hh][Tt][Tt][Pp]:\/\/.*/",...)
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import $AXIOS from 'axios';
+          ...
+          $AXIOS(...)
+      - pattern-inside: |
+          $AXIOS = require('axios');
+          ...
+          $AXIOS(...)
+    - pattern-either:
+      - pattern: '$AXIOS({url: "=~/[Hh][Tt][Tt][Pp]:\/\/.*/"}, ...)'
+      - pattern: |
+          $OPTS = {url: "=~/[Hh][Tt][Tt][Pp]:\/\/.*/"}
+          ...
+          $AXIOS($OPTS, ...)
+  - pattern: fetch("=~/[Hh][Tt][Tt][Pp]:\/\/.*/", ...)

@@ -1,0 +1,28 @@
+rules:
+- id: javascript.lang.best-practice.assigned-undefined.assigned-undefined
+  languages:
+  - javascript
+  - typescript
+  message: '`undefined` is not a reserved keyword in Javascript, so this is "valid"
+    Javascript but highly confusing and likely to result in bugs.'
+  pattern-either:
+  - pattern: undefined = $X;
+  - pattern: var undefined = $X;
+  - pattern: let undefined = $X;
+  - pattern: const undefined = $X;
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - javascript
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/javascript.lang.best-practice.assigned-undefined.assigned-undefined
+    shortlink: https://sg.run/GeK6
+    semgrep.dev:
+      rule:
+        r_id: 9304
+        rv_id: 109899
+        rule_id: lBU9DN
+        version_id: l4T4vnE
+        url: https://semgrep.dev/playground/r/l4T4vnE/javascript.lang.best-practice.assigned-undefined.assigned-undefined
+        origin: community

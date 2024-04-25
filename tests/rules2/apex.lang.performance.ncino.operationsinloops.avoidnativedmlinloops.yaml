@@ -1,0 +1,57 @@
+rules:
+- id: apex.lang.performance.ncino.operationsinloops.avoidnativedmlinloops.avoid-native-dml-in-loops
+  min-version: 1.44.0
+  severity: ERROR
+  languages:
+  - generic
+  metadata:
+    category: performance
+    references:
+    - https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_gov_limits.htm
+    technology:
+    - salesforce
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/apex.lang.performance.ncino.operationsinloops.avoidnativedmlinloops.avoid-native-dml-in-loops
+    shortlink: https://sg.run/BZlb
+    semgrep.dev:
+      rule:
+        r_id: 72407
+        rv_id: 108979
+        rule_id: GdURYn
+        version_id: JdTNppR
+        url: https://semgrep.dev/playground/r/JdTNppR/apex.lang.performance.ncino.operationsinloops.avoidnativedmlinloops.avoid-native-dml-in-loops
+        origin: community
+  message: Avoid DML statements inside loops to avoid hitting the DML governor limit.
+    Instead, try to batch up the data into a list and invoke your DML once on that
+    list of data outside the loop.
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        for (...) {
+          ...
+        }
+    - pattern-inside: |
+        while (...) {
+          ...
+        }
+    - pattern-inside: |
+        do {
+          ...
+        } while (...);
+  - pattern-either:
+    - pattern: |
+        insert $DATA;
+    - pattern: |
+        update $DATA;
+    - pattern: |
+        upsert $DATA;
+    - pattern: |
+        delete $DATA;
+    - pattern: |
+        Database.insert($DATA);
+    - pattern: |
+        Database.update($DATA);
+    - pattern: |
+        Database.upsert($DATA);
+    - pattern: |
+        Database.delete($DATA);

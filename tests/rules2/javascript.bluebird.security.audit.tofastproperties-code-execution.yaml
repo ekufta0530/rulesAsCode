@@ -1,0 +1,55 @@
+rules:
+- id: javascript.bluebird.security.audit.tofastproperties-code-execution.tofastproperties-code-execution
+  message: Potential arbitrary code execution, whatever is provided to `toFastProperties`
+    is sent straight to eval()
+  metadata:
+    cwe:
+    - 'CWE-94: Improper Control of Generation of Code (''Code Injection'')'
+    owasp:
+    - A03:2021 - Injection
+    category: security
+    technology:
+    - bluebird
+    references:
+    - http://bluebirdjs.com/docs/getting-started.html
+    cwe2022-top25: true
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Code Injection
+    source: https://semgrep.dev/r/javascript.bluebird.security.audit.tofastproperties-code-execution.tofastproperties-code-execution
+    shortlink: https://sg.run/ndnZ
+    semgrep.dev:
+      rule:
+        r_id: 9236
+        rv_id: 109813
+        rule_id: JDUy9J
+        version_id: kbTdxJn
+        url: https://semgrep.dev/playground/r/kbTdxJn/javascript.bluebird.security.audit.tofastproperties-code-execution.tofastproperties-code-execution
+        origin: community
+  languages:
+  - javascript
+  - typescript
+  severity: WARNING
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-inside: function ... (..., $ARG,...) {...}
+    - focus-metavariable: $ARG
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: $UTIL.toFastProperties($SINK,...)
+      - pattern: toFastProperties($SINK,...)
+    - pattern-either:
+      - pattern-inside: |
+          $BB = require('bluebird');
+          ...
+      - pattern-inside: |
+          import 'bluebird';
+          ...
+    - focus-metavariable: $SINK

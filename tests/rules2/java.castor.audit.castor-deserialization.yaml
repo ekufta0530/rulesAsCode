@@ -1,0 +1,58 @@
+rules:
+- id: java.castor.audit.castor-deserialization.castor-deserialization
+  message: 'The application may convert user-controlled data into an object, which
+    can lead to an insecure deserialization vulnerability. An attacker can create
+    a malicious serialized object, pass it to the application, and take advantage
+    of the deserialization process to perform Denial-of-service (DoS), Remote code
+    execution (RCE), or bypass access control measures. To prevent this vulnerability,
+    leverage data formats such as JSON or XML as safer alternatives. If you need to
+    deserialize user input in a specific format, consider digitally signing the data
+    before serialization to prevent tampering. For more information, see: [Deserialization
+    prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+    We do not recommend deserializing untrusted data with the Castor XML Framework
+    unless you explicitly define permissions for types that are allowed to be deserialized
+    by `Castor`.'
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    interfile: true
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - deserialization::sink::load-object::castor
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://castor-data-binding.github.io/castor/reference-guide/reference/xml/xml-framework.html
+    - https://www.owasp.org/index.php/Deserialization_of_untrusted_data
+    - https://www.oracle.com/java/technologies/javase/seccodeguide.html#8
+    technology:
+    - java
+    - castor
+    - xml
+    - serialization
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/java.castor.audit.castor-deserialization.castor-deserialization
+    shortlink: https://sg.run/G0yB
+    semgrep.dev:
+      rule:
+        r_id: 44904
+        rv_id: 111534
+        rule_id: zdU6ng
+        version_id: e1T032n
+        url: https://semgrep.dev/playground/r/e1T032n/java.castor.audit.castor-deserialization.castor-deserialization
+        origin: pro_rules
+  languages:
+  - java
+  patterns:
+  - pattern: (org.exolab.castor.xml.Unmarshaller $U).unmarshal($READER)

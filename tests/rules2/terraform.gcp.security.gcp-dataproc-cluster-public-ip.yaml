@@ -1,0 +1,54 @@
+rules:
+- id: terraform.gcp.security.gcp-dataproc-cluster-public-ip.gcp-dataproc-cluster-public-ip
+  patterns:
+  - pattern: resource
+  - pattern-inside: |
+      resource "google_dataproc_cluster" "..." {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "google_dataproc_cluster" "..." {
+        ...
+        cluster_config {
+          gce_cluster_config {
+            ...
+            internal_ip_only = true
+            ...
+          }
+        ...
+        }
+      }
+  message: Ensure Dataproc Clusters do not have public IPs
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://owasp.org/Top10/A01_2021-Broken_Access_Control
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-dataproc-cluster-public-ip.gcp-dataproc-cluster-public-ip
+    shortlink: https://sg.run/9GGr
+    semgrep.dev:
+      rule:
+        r_id: 33667
+        rv_id: 110994
+        rule_id: ZqUxxO
+        version_id: 0bTLeKY
+        url: https://semgrep.dev/playground/r/0bTLeKY/terraform.gcp.security.gcp-dataproc-cluster-public-ip.gcp-dataproc-cluster-public-ip
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

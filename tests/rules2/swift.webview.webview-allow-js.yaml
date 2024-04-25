@@ -1,0 +1,79 @@
+rules:
+- id: swift.webview.webview-allow-js.swift-webview-config-allows-js
+  message: Webviews were observed that do not have JavaScript disabled. Consider disabling
+    JavaScript wherever the functionality is not required, following the principle
+    of least privelege.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cwe:
+    - 'CWE-272: Least Privilege Violation'
+    functional-categories:
+    - mobile::search::privacy-controls-and-permissions::lang
+    masvs:
+    - 'MASVS-PLATFORM-2: The app uses WebViews securely'
+    references:
+    - https://mas.owasp.org/MASVS/controls/MASVS-PLATFORM-2/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/swift.webview.webview-allow-js.swift-webview-config-allows-js
+    shortlink: https://sg.run/5BKj
+    semgrep.dev:
+      rule:
+        r_id: 66503
+        rv_id: 112036
+        rule_id: JDUrke
+        version_id: w8T9Dwn
+        url: https://semgrep.dev/playground/r/w8T9Dwn/swift.webview.webview-allow-js.swift-webview-config-allows-js
+        origin: pro_rules
+  languages:
+  - swift
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: |
+          $P = $OBJECT()
+          ...
+      - metavariable-regex:
+          metavariable: $OBJECT
+          regex: ^(WKWebpagePreferences|WKPreferences)$
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern-inside: |
+                $P.$PROPERTY = $FALSE
+                ...
+                $P.$PROPERTY = $TRUE
+            - pattern-not-inside: |
+                ...
+                $P.$PROPERTY = $TRUE
+                ...
+                $P.$PROPERTY= $FALSE
+            - pattern: |
+                $P.$PROPERTY = true
+            - metavariable-regex:
+                metavariable: $TRUE
+                regex: ^(true)$
+            - metavariable-regex:
+                metavariable: $TRUE
+                regex: (.*(?!true))
+          - patterns:
+            - pattern: |
+                $P.$PROPERTY = true
+            - pattern-not-inside: |
+                ...
+                $P.$PROPERTY = ...
+                ...
+                $P.$PROPERTY = ...
+        - metavariable-regex:
+            metavariable: $PROPERTY
+            regex: ^(javaScriptEnabled|allowsContentJavaScript)$

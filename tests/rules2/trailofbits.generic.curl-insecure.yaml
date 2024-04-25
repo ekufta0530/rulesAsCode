@@ -1,0 +1,34 @@
+rules:
+- id: trailofbits.generic.curl-insecure.curl-insecure
+  message: Found `curl` command disabling SSL verification
+  languages:
+  - generic
+  severity: WARNING
+  metadata:
+    category: security
+    subcategory:
+    - audit
+    technology:
+    - shell
+    cwe: 'CWE-295: Improper Certificate Validation'
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: HIGH
+    references:
+    - https://curl.se/docs/manpage.html
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/trailofbits.generic.curl-insecure.curl-insecure
+    shortlink: https://sg.run/YG37D
+    semgrep.dev:
+      rule:
+        r_id: 113214
+        rv_id: 253284
+        rule_id: BYUXkQx
+        version_id: ZRT6EAy
+        url: https://semgrep.dev/playground/r/ZRT6EAy/trailofbits.generic.curl-insecure.curl-insecure
+        origin: community
+  pattern-either:
+  - pattern: 'curl ... -k '
+  - pattern: curl ... --insecure

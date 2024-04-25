@@ -1,0 +1,94 @@
+rules:
+- id: cpp.lang.security.memory.negative-return-value-array-index.negative-return-value-array-index
+  message: The preceding call to `$SOURCE` can return a negative value when an error
+    is encountered. This can lead to an out-of-bounds array access and possible memory
+    corruption.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-787: Out-of-bounds Write'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - memory::sink::buffer-overflow
+    references:
+    - https://cwe.mitre.org/data/definitions/787.html
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/cpp.lang.security.memory.negative-return-value-array-index.negative-return-value-array-index
+    shortlink: https://sg.run/x852p
+    semgrep.dev:
+      rule:
+        r_id: 114774
+        rv_id: 257385
+        rule_id: L1UqGQJ
+        version_id: LjT2N0O
+        url: https://semgrep.dev/playground/r/LjT2N0O/cpp.lang.security.memory.negative-return-value-array-index.negative-return-value-array-index
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  mode: taint
+  min-version: 1.59.0
+  options:
+    commutative_boolop: true
+    interfile: true
+    symmetric_eq: true
+  pattern-sources:
+  - by-side-effect: true
+    patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: $SOURCE($D, $BUFFER, ...)
+        - metavariable-pattern:
+            metavariable: $SOURCE
+            patterns:
+            - pattern: pread
+      - patterns:
+        - pattern: $SOURCE($FD, $BUFFER, ...)
+        - metavariable-pattern:
+            metavariable: $SOURCE
+            patterns:
+            - pattern: read
+      - patterns:
+        - pattern: $SOURCE($SOCKET, $BUFFER, ...)
+        - metavariable-pattern:
+            metavariable: $SOURCE
+            patterns:
+            - pattern: recv
+      - patterns:
+        - pattern: $SOURCE($FD, $BUFFER, ...)
+        - metavariable-pattern:
+            metavariable: $SOURCE
+            patterns:
+            - pattern: recvfrom
+  pattern-sinks:
+  - patterns:
+    - pattern-not-inside: pread(...)
+    - pattern-not-inside: read(...)
+    - pattern-not-inside: recv(...)
+    - pattern-not-inside: recvfrom(...)
+    - pattern: $BUFFER[$INDEX]
+    - focus-metavariable: $INDEX
+  pattern-sanitizers:
+  - by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: $INDEX < $EXPR
+      - pattern: $INDEX > $EXPR
+      - pattern: $INDEX <= $EXPR
+      - pattern: $INDEX >= $EXPR
+      - pattern: $INDEX == $EXPR
+      - pattern: $INDEX != $EXPR
+      - pattern: '!$INDEX'
+    - focus-metavariable: $INDEX

@@ -1,0 +1,29 @@
+rules:
+- id: dgryski.semgrep-go.readeof.read-io-eof
+  patterns:
+  - pattern: |
+      $N, $ERR := $R.Read(($SLICE : []byte))
+      if $ERR != nil {
+          return ...
+      }
+  - pattern-not: |
+      $N, $ERR := rand.Read(($SLICE : []byte))
+      if $ERR != nil {
+          return ...
+      }
+  message: Read() can return n bytes and io.EOF
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.readeof.read-io-eof
+    shortlink: https://sg.run/y1R7
+    semgrep.dev:
+      rule:
+        r_id: 14468
+        rv_id: 77310
+        rule_id: bwU843
+        version_id: 5PTX6k
+        url: https://semgrep.dev/playground/r/5PTX6k/dgryski.semgrep-go.readeof.read-io-eof
+        origin: community

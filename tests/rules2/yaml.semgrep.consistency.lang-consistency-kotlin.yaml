@@ -1,0 +1,29 @@
+rules:
+- fix: kotlin
+  id: yaml.semgrep.consistency.lang-consistency-kotlin.lang-consistency-kotlin
+  languages:
+  - yaml
+  message: Found '$X' in language config which diverges from semgrep.dev normalization.
+    Please use 'kotlin' instead.
+  metadata:
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.consistency.lang-consistency-kotlin.lang-consistency-kotlin
+    shortlink: https://sg.run/Rg7q
+    semgrep.dev:
+      rule:
+        r_id: 18293
+        rv_id: 111152
+        rule_id: lBUy2n
+        version_id: 0bTLeqr
+        url: https://semgrep.dev/playground/r/0bTLeqr/yaml.semgrep.consistency.lang-consistency-kotlin.lang-consistency-kotlin
+        origin: community
+  patterns:
+  - pattern: $X
+  - pattern-inside: 'languages: ...'
+  - metavariable-regex:
+      metavariable: $X
+      regex: ^(kt)$
+  severity: WARNING

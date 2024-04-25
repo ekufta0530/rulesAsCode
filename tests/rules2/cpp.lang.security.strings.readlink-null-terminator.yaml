@@ -1,0 +1,113 @@
+rules:
+- id: cpp.lang.security.strings.readlink-null-terminator.readlink-null-terminator
+  message: '`readlink` does not NULL terminate the output buffer. This expression
+    expects a NULL terminated string and will trigger an out-of-bounds read.'
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cert:
+    - C
+    - C++
+    - L1
+    - STR32-C
+    cwe:
+    - 'CWE-125: Out-of-bounds Read'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - memory::sink::buffer-overflow
+    references:
+    - https://wiki.sei.cmu.edu/confluence/display/c/STR32-C.+Do+not+pass+a+non-null-terminated+character+sequence+to+a+library+function+that+expects+a+string
+    technology:
+    - cpp
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Memory Issues
+    source: https://semgrep.dev/r/cpp.lang.security.strings.readlink-null-terminator.readlink-null-terminator
+    shortlink: https://sg.run/L1LB9
+    semgrep.dev:
+      rule:
+        r_id: 114883
+        rv_id: 257494
+        rule_id: 5rUdqon
+        version_id: 5PTPdJ8
+        url: https://semgrep.dev/playground/r/5PTPdJ8/cpp.lang.security.strings.readlink-null-terminator.readlink-null-terminator
+        origin: pro_rules
+  languages:
+  - cpp
+  - c
+  mode: taint
+  min-version: 1.59.0
+  options:
+    interfile: true
+  pattern-sources:
+  - by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: readlink($PATH, $BUFFER, sizeof($BUFFER))
+      - pattern: readlinkat($FD, $PATH, $BUFFER, sizeof($BUFFER))
+      - pattern: freadlink($FD, $BUFFER, sizeof($BUFFER))
+      - pattern: ::readlink($PATH, $BUFFER, sizeof($BUFFER))
+      - pattern: ::readlinkat($FD, $PATH, $BUFFER, sizeof($BUFFER))
+      - pattern: ::freadlink($FD, $BUFFER, sizeof($BUFFER))
+    - focus-metavariable: $BUFFER
+  - by-side-effect: true
+    patterns:
+    - pattern-either:
+      - pattern: readlink($PATH, $BUFFER, $LEN)
+      - pattern: readlinkat($FD, $PATH, $BUFFER, $LEN)
+      - pattern: freadlink($FD, $BUFFER, $LEN)
+      - pattern: ::readlink($PATH, $BUFFER, $LEN)
+      - pattern: ::readlinkat($FD, $PATH, $BUFFER, $LEN)
+      - pattern: ::freadlink($FD, $BUFFER, $LEN)
+    - pattern-inside: |
+        char $BUFFER[$BUFLEN];
+        ...
+    - metavariable-comparison:
+        comparison: $BUFLEN == $LEN
+        metavariable: $LEN
+    - focus-metavariable: $BUFFER
+  pattern-sinks:
+  - patterns:
+    - focus-metavariable: $SRC
+    - pattern-either:
+      - pattern: atof($SRC, ...)
+      - pattern: atof_l($SRC, ...)
+      - pattern: atoi($SRC, ...)
+      - pattern: atoi_l($SRC, ...)
+      - pattern: atol($SRC, ...)
+      - pattern: atol_l($SRC, ...)
+      - pattern: atoll($SRC, ...)
+      - pattern: atoll_l($SRC, ...)
+      - pattern: fprintf($_0, $SRC, ...)
+      - pattern: open($SRC, ...)
+      - pattern: openat($_0, $SRC, ...)
+      - pattern: printf($SRC, ...)
+      - pattern: snprintf($_0, $_1, $SRC)
+      - pattern: sprintf($_0, $SRC, ...)
+      - pattern: stpcpy($_0, $SRC, ...)
+      - pattern: stpncpy($_0, $SRC, ...)
+      - pattern: strcat($SRC, ...)
+      - pattern: strcat($_0, $SRC, ...)
+      - pattern: strcpy($_0, $SRC, ...)
+      - pattern: strdup($SRC)
+      - pattern: strlcat($_0, $SRC, ...)
+      - pattern: strlcpy($_0, $SRC, ...)
+      - pattern: strlen($SRC, ...)
+      - pattern: strncat($SRC, ...)
+      - pattern: strncat($_0, $SRC, ...)
+      - pattern: strncpy($_0, $SRC, ...)
+      - pattern: strnlen($SRC, ...)
+      - pattern: strtod($SRC, ...)
+      - pattern: strtoimax($SRC, ...)
+      - pattern: strtol($SRC, ...)
+      - pattern: strtoll($SRC, ...)
+      - pattern: strtoq($SRC, ...)
+      - pattern: strtoul($SRC, ...)
+      - pattern: std::string $VAR{($SRC), ...};

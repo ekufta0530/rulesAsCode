@@ -1,0 +1,139 @@
+rules:
+- id: go.gin.command-injection.gin-command-injection.gin-command-injection-taint
+  message: 'Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent this
+    vulnerability, avoid executing OS commands with user input. If this is unavoidable,
+    validate and sanitize the input, and use safe methods for executing the commands.
+    In Go, it is possible to use the `exec.Command` function in combination with the
+    `bash -c` command to run the user input as a shell command. To sanitize the user
+    input, you can use a library like `shellescape` to escape any special characters
+    before constructing the command. For more information, see: [Go command injection
+    prevention](https://semgrep.dev/docs/cheat-sheets/go-command-injection/)'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    interfile: true
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - os::sink::os-command-or-thread::io
+    - os::sink::os-command-or-thread::os
+    - os::sink::os-command-or-thread::syscall
+    - web::source::cookie::gin
+    - web::source::form-data::gin
+    - web::source::header::gin
+    - web::source::http-body::gin
+    - web::source::http-params::gin
+    - web::source::url-path-params::gin
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    - https://pkg.go.dev/os/exec
+    - https://pkg.go.dev/syscall#Exec
+    - https://semgrep.dev/docs/cheat-sheets/go-command-injection/
+    technology:
+    - gin
+    - go
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/go.gin.command-injection.gin-command-injection.gin-command-injection-taint
+    shortlink: https://sg.run/jY9J
+    semgrep.dev:
+      rule:
+        r_id: 56865
+        rv_id: 731855
+        rule_id: 5rUj7r
+        version_id: K3T56vz
+        url: https://semgrep.dev/playground/r/K3T56vz/go.gin.command-injection.gin-command-injection.gin-command-injection-taint
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-inside: |
+        import "github.com/gin-gonic/gin"
+        ...
+    - pattern-either:
+      - patterns:
+        - pattern-either:
+          - pattern: |
+              ($CONTEXT : gin.Context).$FIELD
+          - pattern: |
+              ($CONTEXT : *gin.Context).$FIELD
+        - metavariable-regex:
+            metavariable: $FIELD
+            regex: ^(Cookie|DefaultPostForm|DefaultQuery|FormFile|GetHeader|GetPostForm|GetPostFormArray|GetPostFormMap|GetQuery|GetQueryArray|GetQueryMap|GetRawData|MultipartForm|Param|Params|PostForm|PostFormArray|PostFormMap|Query|QueryArray|QueryMap)$
+      - pattern-either:
+        - pattern: |
+            ($CONTEXT : gin.Context).Request.URL.Query().Get(...)
+        - pattern: |
+            ($CONTEXT : *gin.Context).Request.URL.Query().Get(...)
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern-inside: |
+            $CMD_STRUCT := exec.Command("$SHELL")
+            ...
+        - pattern-inside: |
+            $WRITER, ... := $CMD_STRUCT.StdinPipe()
+            ...
+        - pattern-either:
+          - pattern: $WRITER.Write(...)
+          - patterns:
+            - pattern: io.WriteString($WRITER, $SHELLCMD, ...)
+            - focus-metavariable: $SHELLCMD
+      - patterns:
+        - pattern-inside: |
+            &exec.Cmd { Path: "$SHELL", ... }
+        - pattern-either:
+          - pattern: |
+              Args: { "$SHELL", "-c", $SHELLCMD, ...}
+          - pattern: |
+              Args: $TYPE{ "$SHELL", "-c", $SHELLCMD, ...}
+        - focus-metavariable: $SHELLCMD
+    - metavariable-regex:
+        metavariable: $SHELL
+        regex: (bash|csh|dash|fish|ksh|tcsh|sh|zsh)$
+  - patterns:
+    - pattern-either:
+      - pattern-inside: syscall.Exec($PATH, $ARGS, ...)
+      - pattern-inside: syscall.ForkExec($PATH, $ARGS, ...)
+      - pattern-inside: '&exec.Cmd {$PATH, $ARGS, ...}'
+      - patterns:
+        - pattern-inside: '&exec.Cmd { ... }'
+        - pattern-either:
+          - pattern-inside: |
+              Path: $INPUT
+          - pattern-inside: |
+              Args: $INPUT
+        - focus-metavariable: $INPUT
+  - patterns:
+    - pattern-either:
+      - pattern: exec.Command($PATH, ...)
+      - pattern: exec.CommandContext($CTX, $PATH, ...)
+    - focus-metavariable: $PATH
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern-inside: |
+          import "gopkg.in/alessio/shellescape.v1"
+          ...
+      - pattern-inside: |
+          import "github.com/alessio/shellescape"
+          ...
+    - pattern: shellescape.Quote(...)

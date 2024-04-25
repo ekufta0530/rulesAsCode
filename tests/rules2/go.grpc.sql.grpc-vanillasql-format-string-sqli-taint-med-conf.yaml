@@ -1,0 +1,156 @@
+rules:
+- id: go.grpc.sql.grpc-vanillasql-format-string-sqli-taint-med-conf.grpc-vanillasql-format-string-sqli-taint-med-conf
+  message: 'Untrusted input might be used to build a database query, which can lead
+    to a SQL injection vulnerability. An attacker can execute malicious SQL statements
+    and gain unauthorized access to sensitive data, modify, delete data, or execute
+    arbitrary system commands. To prevent this vulnerability, use prepared statements
+    that do not concatenate user-controllable strings and use parameterized queries
+    where SQL commands and user data are strictly separated. Also, consider using
+    an object-relational (ORM) framework to operate with safer abstractions. When
+    building SQL queries in Go, it is possible to adopt prepared statements by using
+    the `Prepare` and `PrepareContext` calls with parameterized queries. For more
+    information, see: [Prepared statements in Go](https://go.dev/doc/database/prepared-statements).'
+  severity: ERROR
+  metadata:
+    likelihood: HIGH
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (''SQL Injection'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - db::search::password::database
+    - db::search::password::gorm
+    - db::search::password::mysql
+    - db::search::password::pg
+    - db::search::password::pgx
+    - db::sink::sql-or-nosql-query::database
+    - net::source::remote-procedure-call::grpc
+    owasp:
+    - A01:2017 - Injection
+    - A03:2021 - Injection
+    references:
+    - https://golang.org/pkg/database/sql/
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - go
+    - grpc
+    - grpc-go
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - SQL Injection
+    source: https://semgrep.dev/r/go.grpc.sql.grpc-vanillasql-format-string-sqli-taint-med-conf.grpc-vanillasql-format-string-sqli-taint-med-conf
+    shortlink: https://sg.run/bd2Q
+    semgrep.dev:
+      rule:
+        r_id: 58426
+        rv_id: 229230
+        rule_id: ReUJ3z
+        version_id: 2KTGy5x
+        url: https://semgrep.dev/playground/r/2KTGy5x/go.grpc.sql.grpc-vanillasql-format-string-sqli-taint-med-conf.grpc-vanillasql-format-string-sqli-taint-med-conf
+        origin: pro_rules
+  languages:
+  - go
+  mode: taint
+  pattern-sources:
+  - label: USERINPUT
+    patterns:
+    - pattern-inside: |
+        import "google.golang.org/grpc"
+        ...
+    - pattern-inside: |
+        import $PROTOBUF "$IMPORTPATH"
+        ...
+    - pattern-inside: |
+        type $SERVER struct {
+            ...
+        }
+        ...
+    - pattern: |
+        func ($NAME *$SERVER) $FUNCNAME(..., $PARAM *$PROTOBUF.$FIELD, ...) {
+            ...
+        }
+    - focus-metavariable: $PARAM
+  - label: PREPARE
+    patterns:
+    - pattern-either:
+      - pattern: |
+          ($DB : $DBTYPE).Prepare(...)
+      - pattern: |
+          ($DB : $DBTYPE).SafeQuery(...)
+    - metavariable-regex:
+        metavariable: $DBTYPE
+        regex: ^((\*)?sql.(Conn|DB|Tx))$
+    requires: IMPORTSQL and USERINPUT
+  - label: PREPARECONN
+    patterns:
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            $DB := sql.$OPEN(...)
+            ...
+        - pattern-inside: |
+            $DB, ... := sql.$OPEN(...)
+            ...
+      - metavariable-regex:
+          metavariable: $OPEN
+          regex: ^(Open|OpenDB)$
+    - pattern-either:
+      - pattern: $DB.Prepare(...)
+      - pattern: $DB.SafeQuery(...)
+    requires: IMPORTSQL and USERINPUT
+  - label: IMPORTSQL
+    pattern: |
+      import "database/sql"
+      ...
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - patterns:
+        - pattern: |
+            ($DB : $DBTYPE). ... .$METHOD($QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(Exec|Query|QueryRow)$
+      - patterns:
+        - pattern: |
+            ($DB : $DBTYPE). ... .$METHOD($CTX, $QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(ExecContent|QueryContext|QueryRowContext)$
+    - metavariable-regex:
+        metavariable: $DBTYPE
+        regex: ^((\*)?sql\.(Conn|DB|Tx))$
+    - focus-metavariable: $QUERY
+    requires: IMPORTSQL and USERINPUT and not PREPARE and not PREPARECONN
+  - patterns:
+    - patterns:
+      - pattern-either:
+        - pattern-inside: |
+            $DB := sql.$OPEN(...)
+            ...
+        - pattern-inside: |
+            $DB, ... := sql.$OPEN(...)
+            ...
+      - metavariable-regex:
+          metavariable: $OPEN
+          regex: ^(Open|OpenDB)$
+    - pattern-either:
+      - patterns:
+        - pattern: $DB. ... .$METHOD($QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(Exec|Query|QueryRow)$
+      - patterns:
+        - pattern: $DB. ... .$METHOD($CTX, $QUERY, ...)
+        - metavariable-regex:
+            metavariable: $METHOD
+            regex: ^(ExecContent|QueryContext|QueryRowContext)$
+    - focus-metavariable: $QUERY
+    requires: IMPORTSQL and USERINPUT and not PREPARE and not PREPARECONN

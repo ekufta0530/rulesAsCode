@@ -1,0 +1,41 @@
+rules:
+- id: c.lang.security.insecure-use-string-copy-fn.insecure-use-string-copy-fn
+  pattern-either:
+  - pattern: strcpy(...)
+  - pattern: strncpy(...)
+  message: Finding triggers whenever there is a strcpy or strncpy used. This is an
+    issue because strcpy does not affirm the size of the destination array and strncpy
+    will not automatically NULL-terminate strings. This can lead to buffer overflows,
+    which can cause program crashes and potentially let an attacker inject code in
+    the program. Fix this by using strcpy_s instead (although note that strcpy_s is
+    an optional part of the C11 standard, and so may not be available).
+  metadata:
+    cwe:
+    - 'CWE-676: Use of Potentially Dangerous Function'
+    references:
+    - https://cwe.mitre.org/data/definitions/676
+    - https://nvd.nist.gov/vuln/detail/CVE-2019-11365
+    category: security
+    technology:
+    - c
+    confidence: LOW
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/c.lang.security.insecure-use-string-copy-fn.insecure-use-string-copy-fn
+    shortlink: https://sg.run/7oNk
+    semgrep.dev:
+      rule:
+        r_id: 8838
+        rv_id: 109013
+        rule_id: DbUpo5
+        version_id: nWTxPoA
+        url: https://semgrep.dev/playground/r/nWTxPoA/c.lang.security.insecure-use-string-copy-fn.insecure-use-string-copy-fn
+        origin: community
+  languages:
+  - c
+  severity: WARNING

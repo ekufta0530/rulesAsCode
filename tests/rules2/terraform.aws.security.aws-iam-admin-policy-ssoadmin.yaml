@@ -1,0 +1,58 @@
+rules:
+- id: terraform.aws.security.aws-iam-admin-policy-ssoadmin.aws-iam-admin-policy-ssoadmin
+  patterns:
+  - pattern-inside: |
+      resource "aws_ssoadmin_permission_set_inline_policy" $ANYTHING {
+        ...
+      }
+  - pattern: inline_policy = "$STATEMENT"
+  - metavariable-pattern:
+      metavariable: $STATEMENT
+      language: json
+      patterns:
+      - pattern-not-inside: |
+          {..., "Effect": "Deny", ...}
+      - pattern-either:
+        - pattern: |
+            {..., "Action": [..., "*", ...], "Resource": [..., "*", ...], ...}
+        - pattern: |
+            {..., "Action": "*", "Resource": "*", ...}
+        - pattern: |
+            {..., "Action": "*", "Resource": [...], ...}
+        - pattern: |
+            {..., "Action": [...], "Resource": "*", ...}
+  message: Detected admin access granted in your policy. This means anyone with this
+    policy can perform administrative actions. Instead, limit actions and resources
+    to what you need according to least privilege.
+  metadata:
+    category: security
+    technology:
+    - aws
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    cwe:
+    - 'CWE-732: Incorrect Permission Assignment for Critical Resource'
+    references:
+    - https://cwe.mitre.org/data/definitions/732.html
+    cwe2021-top25: true
+    subcategory:
+    - vuln
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.aws.security.aws-iam-admin-policy-ssoadmin.aws-iam-admin-policy-ssoadmin
+    shortlink: https://sg.run/jzgY
+    semgrep.dev:
+      rule:
+        r_id: 17365
+        rv_id: 110766
+        rule_id: BYUzY5
+        version_id: kbTdL25
+        url: https://semgrep.dev/playground/r/kbTdL25/terraform.aws.security.aws-iam-admin-policy-ssoadmin.aws-iam-admin-policy-ssoadmin
+        origin: community
+  languages:
+  - hcl
+  severity: ERROR

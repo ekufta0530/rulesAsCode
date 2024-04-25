@@ -1,0 +1,38 @@
+rules:
+- id: trailofbits.python.automatic-memory-pinning.automatic-memory-pinning
+  message: If possible, it is better to rely on automatic pinning in PyTorch to avoid
+    undefined behavior and for efficiency
+  languages:
+  - python
+  severity: WARNING
+  metadata:
+    category: security
+    cwe: 'CWE-676: Use of Potentially Dangerous Function'
+    subcategory:
+    - audit
+    confidence: HIGH
+    likelihood: LOW
+    impact: LOW
+    technology:
+    - pytorch
+    description: '`PyTorch` memory not automatically pinned'
+    references:
+    - https://pytorch.org/docs/stable/data.html#memory-pinning
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/trailofbits.python.automatic-memory-pinning.automatic-memory-pinning
+    shortlink: https://sg.run/jz5N
+    semgrep.dev:
+      rule:
+        r_id: 17165
+        rv_id: 250821
+        rule_id: WAUN1Z
+        version_id: 8KT4boW
+        url: https://semgrep.dev/playground/r/8KT4boW/trailofbits.python.automatic-memory-pinning.automatic-memory-pinning
+        origin: community
+  pattern-either:
+  - patterns:
+    - pattern: torch.utils.data.DataLoader(...)
+    - pattern-not: torch.utils.data.DataLoader(..., pin_memory=$VALUE, ...)
+  - pattern: torch.utils.data.DataLoader(..., pin_memory=False, ...)

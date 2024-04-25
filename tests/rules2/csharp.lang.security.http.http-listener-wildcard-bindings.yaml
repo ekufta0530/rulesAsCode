@@ -1,0 +1,45 @@
+rules:
+- id: csharp.lang.security.http.http-listener-wildcard-bindings.http-listener-wildcard-bindings
+  severity: WARNING
+  languages:
+  - C#
+  metadata:
+    cwe:
+    - 'CWE-706: Use of Incorrectly-Resolved Name or Reference'
+    owasp:
+    - A01:2021 - Broken Access Control
+    references:
+    - https://docs.microsoft.com/en-us/dotnet/api/system.net.httplistener?view=net-6.0
+    category: security
+    technology:
+    - .net
+    confidence: MEDIUM
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/csharp.lang.security.http.http-listener-wildcard-bindings.http-listener-wildcard-bindings
+    shortlink: https://sg.run/9LJr
+    semgrep.dev:
+      rule:
+        r_id: 18223
+        rv_id: 109198
+        rule_id: 4bUQ81
+        version_id: 2KTzr5x
+        url: https://semgrep.dev/playground/r/2KTzr5x/csharp.lang.security.http.http-listener-wildcard-bindings.http-listener-wildcard-bindings
+        origin: community
+  message: The top level wildcard bindings $PREFIX leaves your application open to
+    security vulnerabilities and give attackers more control over where traffic is
+    routed. If you must use wildcards, consider using subdomain wildcard binding.
+    For example, you can use "*.asdf.gov" if you own all of "asdf.gov".
+  patterns:
+  - pattern-inside: |
+      using System.Net;
+      ...
+  - pattern: $LISTENER.Prefixes.Add("$PREFIX")
+  - metavariable-regex:
+      metavariable: $PREFIX
+      regex: (http|https)://(\*|\+)(.[a-zA-Z]{2,})?:[0-9]+

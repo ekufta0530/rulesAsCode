@@ -1,0 +1,127 @@
+rules:
+- id: php.laravel.security.laravel-mail-command-injection.laravel-mail-command-injection
+  message: Untrusted input might be injected into a command executed by the application,
+    which can lead to a command injection vulnerability. An attacker can execute arbitrary
+    commands, potentially gaining complete control of the system. To prevent this
+    vulnerability, avoid executing OS commands with user input. If this is unavoidable,
+    validate and sanitize the user input, and use safe methods for executing the commands.
+    In PHP, it is possible to use `escapeshellcmd(...)` and `escapeshellarg(...)`
+    to correctly sanitize input when used respectively as system commands or command
+    arguments.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-78: Improper Neutralization of Special Elements used in an OS Command (''OS
+      Command Injection'')'
+    functional-categories:
+    - web::source::cookie::lang
+    - web::source::http-params::lang
+    - web::source::http-body::lang
+    - web::source::header::lang
+    - web::source::url-path-params::lang
+    - web::source::form-data::lang
+    - web::source::cookie::laravel
+    - web::source::http-params::laravel
+    - web::source::http-body::laravel
+    - web::source::header::laravel
+    - web::source::url-path-params::laravel
+    - web::source::form-data::laravel
+    - os::sink::os-command-or-thread::lang
+    owasp:
+    - A03:2021 - Injection
+    - A01:2017 - Injection
+    references:
+    - https://www.php.net/manual/en/function.mb-send-mail.php
+    - https://www.php.net/manual/en/function.mail.php
+    - https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html
+    - https://legalhackers.com/advisories/PHPMailer-Exploit-Remote-Code-Exec-CVE-2016-10033-Vuln.html
+    technology:
+    - laravel
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Command Injection
+    source: https://semgrep.dev/r/php.laravel.security.laravel-mail-command-injection.laravel-mail-command-injection
+    shortlink: https://sg.run/5vkK
+    semgrep.dev:
+      rule:
+        r_id: 36403
+        rv_id: 111789
+        rule_id: 4bU8q9
+        version_id: gET3ONj
+        url: https://semgrep.dev/playground/r/gET3ONj/php.laravel.security.laravel-mail-command-injection.laravel-mail-command-injection
+        origin: pro_rules
+  languages:
+  - php
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern: public function $CALL(..., $ARG, ...) {...}
+    - pattern-not: public function $CALL(..., $TYPE $ARG, ...) {...}
+    - focus-metavariable: $ARG
+    - pattern-inside: |
+        class $CLASS extends App\Http\Controllers\Controller {...}
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          Route::$METHOD($ROUTE, function(...,$ARG,...) { ... })
+      - pattern: |
+          Route::$METHOD($X, $ROUTE, function(...,$ARG,...) { ... })
+    - focus-metavariable: $ARG
+  - patterns:
+    - pattern: function handle($REQ, Closure $NEXT) {...}
+    - focus-metavariable: $REQ
+  - patterns:
+    - pattern: |
+        function $FN(..., Illuminate\Http\Request $REQ, ...) {...}
+    - focus-metavariable: $REQ
+  - patterns:
+    - pattern-either:
+      - pattern: |
+          $this->$PROPERTY
+      - pattern: |
+          $this->$PROPERTY->$GET
+    - metavariable-pattern:
+        metavariable: $PROPERTY
+        patterns:
+        - pattern-either:
+          - pattern: query
+          - pattern: request
+          - pattern: headers
+          - pattern: cookies
+          - pattern: cookie
+          - pattern: files
+          - pattern: file
+          - pattern: allFiles
+          - pattern: input
+          - pattern: all
+          - pattern: post
+          - pattern: json
+    - pattern-either:
+      - pattern-inside: |
+          class $CL extends Illuminate\Http\Request {...}
+      - pattern-inside: |
+          class $CL extends Illuminate\Foundation\Http\FormRequest {...}
+  - pattern: $_GET
+  - pattern: $_POST
+  - pattern: $_COOKIE
+  - pattern: $_REQUEST
+  - pattern: $_FILES
+  - patterns:
+    - pattern: $_SERVER['$MEMBER']
+    - metavariable-regex:
+        metavariable: $MEMBER
+        regex: ^(HTTP_ACCEPT|HTTP_ACCEPT_CHARSET|HTTP_ACCEPT_ENCODING|HTTP_ACCEPT_LANGUAGE|HTTP_CONNECTION|HTTP_HOST|HTTP_REFERER|HTTP_USER_AGENT|PHP_AUTH_DIGEST|PHP_AUTH_USER|PHP_AUTH_PW|PATH_INFO|ORIG_PATH_INFO|QUERY_STRING|REQUEST_METHOD)$
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: mail($TO, $SUB, $MSG, $HEADERS, $PARAMS, ...)
+      - pattern: mb_send_mail($TO, $SUB, $MSG, $HEADERS, $PARAMS, ...)
+    - focus-metavariable: $PARAMS
+  pattern-sanitizers:
+  - pattern: escapeshellarg(...)

@@ -1,0 +1,41 @@
+rules:
+- id: python.django.security.audit.templates.debug-template-tag.debug-template-tag
+  languages:
+  - regex
+  severity: WARNING
+  message: Detected a debug template tag in a Django template. This dumps debugging
+    information to the page when debug mode is enabled. Showing debug information
+    to users is dangerous because it may reveal information about your environment
+    that malicious actors can use to gain access to the system. Remove the debug tag.
+  pattern-regex: ({% debug %})
+  paths:
+    include:
+    - '*.html'
+  metadata:
+    owasp: A06:2017 - Security Misconfiguration
+    cwe:
+    - 'CWE-489: Active Debug Code'
+    references:
+    - https://docs.djangoproject.com/en/4.2/ref/templates/builtins/#debug
+    - https://stackoverflow.com/questions/2213977/django-debug-display-all-variables-of-a-page
+    category: security
+    technology:
+    - django
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Active Debug Code
+    source: https://semgrep.dev/r/python.django.security.audit.templates.debug-template-tag.debug-template-tag
+    shortlink: https://sg.run/dK3E
+    semgrep.dev:
+      rule:
+        r_id: 9478
+        rv_id: 110190
+        rule_id: QrUzb2
+        version_id: YDTp23Z
+        url: https://semgrep.dev/playground/r/YDTp23Z/python.django.security.audit.templates.debug-template-tag.debug-template-tag
+        origin: community

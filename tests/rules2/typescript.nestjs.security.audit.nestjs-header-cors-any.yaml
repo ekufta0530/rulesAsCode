@@ -1,0 +1,56 @@
+rules:
+- id: typescript.nestjs.security.audit.nestjs-header-cors-any.nestjs-header-cors-any
+  message: Access-Control-Allow-Origin response header is set to "*". This will disable
+    CORS Same Origin Policy restrictions.
+  metadata:
+    cwe:
+    - 'CWE-183: Permissive List of Allowed Inputs'
+    asvs:
+      section: 'V14: Configuration Verification Requirements'
+      control_id: 14.4.8 Permissive CORS
+      control_url: https://github.com/OWASP/ASVS/blob/master/4.0/en/0x22-V14-Config.md#v144-http-security-headers-requirements
+      version: '4'
+    category: security
+    technology:
+    - nestjs
+    owasp:
+    - A04:2021 - Insecure Design
+    references:
+    - https://owasp.org/Top10/A04_2021-Insecure_Design
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Validation
+    source: https://semgrep.dev/r/typescript.nestjs.security.audit.nestjs-header-cors-any.nestjs-header-cors-any
+    shortlink: https://sg.run/ljBL
+    semgrep.dev:
+      rule:
+        r_id: 9757
+        rv_id: 111077
+        rule_id: pKUG17
+        version_id: nWTxoQd
+        url: https://semgrep.dev/playground/r/nWTxoQd/typescript.nestjs.security.audit.nestjs-header-cors-any.nestjs-header-cors-any
+        origin: community
+  languages:
+  - typescript
+  severity: WARNING
+  pattern-either:
+  - pattern: |
+      class $CN {
+          @Header("=~/[Aa][Cc][Cc][Ee][Ss][Ss]-[Cc][Oo][Nn][Tt][Rr][Oo][Ll]-[Aa][Ll][Ll][Oo][Ww]-[Oo][Rr][Ii][Gg][Ii][Nn]/", '*')
+          $FN(...) {
+              ...
+          }
+      }
+  - pattern: |
+      NestFactory.create($MODULE, {cors: true})
+  - pattern: |
+      NestFactory.create($MODULE, {cors: {origin: '*'}})
+  - pattern: |
+      $APP.enableCors()
+  - pattern: |
+      $APP.enableCors({origin: '*'})

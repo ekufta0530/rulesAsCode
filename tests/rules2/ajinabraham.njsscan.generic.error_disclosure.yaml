@@ -1,0 +1,33 @@
+rules:
+- id: ajinabraham.njsscan.generic.error_disclosure.generic_error_disclosure
+  patterns:
+  - pattern-either:
+    - pattern: |
+        console.trace(...)
+    - pattern: |
+        try {
+            ...
+        } catch($ERR){
+            console.error(<... $ERR ...>, ...)
+        }
+  message: Error messages with stack traces may expose sensitive information about
+    the application.
+  languages:
+  - javascript
+  severity: WARNING
+  metadata:
+    owasp-web: a3
+    cwe: cwe-209
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/ajinabraham.njsscan.generic.error_disclosure.generic_error_disclosure
+    shortlink: https://sg.run/4oYz
+    semgrep.dev:
+      rule:
+        r_id: 43644
+        rv_id: 78262
+        rule_id: lBUY3L
+        version_id: JdTJK0
+        url: https://semgrep.dev/playground/r/JdTJK0/ajinabraham.njsscan.generic.error_disclosure.generic_error_disclosure
+        origin: community

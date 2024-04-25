@@ -1,0 +1,35 @@
+rules:
+- id: mobsf.mobsfscan.crypto.aes_encryption_keys.aes_hardcoded_key
+  patterns:
+  - pattern-either:
+    - pattern: "$S = new SecretKeySpec(\"...\".getBytes(), \"AES\");\n...\n$C.init(...,\
+        \ $S); \n"
+    - pattern: |
+        $P = "...";
+        ...
+        $S = new SecretKeySpec($P.getBytes(), "AES");
+        ...
+        $C.init(..., $S);
+  message: Hardcoded encryption key makes AES symmetric encryption useless. An attacker
+    can easily reverse engineer the application and recover the keys.
+  languages:
+  - java
+  severity: ERROR
+  metadata:
+    cwe: cwe-321
+    owasp-mobile: m5
+    masvs: crypto-1
+    reference: https://github.com/MobSF/owasp-mstg/blob/master/Document/0x04g-Testing-Cryptography.md#common-configuration-issues-mstg-crypto-1-mstg-crypto-2-and-mstg-crypto-3
+    license: LGPL-3.0-or-later
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/mobsf.mobsfscan.crypto.aes_encryption_keys.aes_hardcoded_key
+    shortlink: https://sg.run/xpJz
+    semgrep.dev:
+      rule:
+        r_id: 43730
+        rv_id: 78334
+        rule_id: KxURB0
+        version_id: zyTxeb
+        url: https://semgrep.dev/playground/r/zyTxeb/mobsf.mobsfscan.crypto.aes_encryption_keys.aes_hardcoded_key
+        origin: community

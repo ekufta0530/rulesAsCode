@@ -1,0 +1,45 @@
+rules:
+- id: json.aws.security.public-s3-policy-statement.public-s3-policy-statement
+  pattern: |
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": [
+        ..., "=~/arn:aws:s3.*/", ...
+      ],
+      ...
+    }
+  message: Detected public S3 bucket policy. This policy allows anyone to access certain
+    properties of or items in the bucket. Do not do this unless you will never have
+    sensitive data inside the bucket.
+  metadata:
+    owasp:
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-264: CWE CATEGORY: Permissions, Privileges, and Access Controls'
+    references:
+    - https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteAccessPermissionsReqd.html
+    category: security
+    technology:
+    - aws
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: HIGH
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/json.aws.security.public-s3-policy-statement.public-s3-policy-statement
+    shortlink: https://sg.run/Yv1d
+    semgrep.dev:
+      rule:
+        r_id: 9358
+        rv_id: 109987
+        rule_id: 9AU1br
+        version_id: l4T4vDE
+        url: https://semgrep.dev/playground/r/l4T4vDE/json.aws.security.public-s3-policy-statement.public-s3-policy-statement
+        origin: community
+  severity: WARNING
+  languages:
+  - json

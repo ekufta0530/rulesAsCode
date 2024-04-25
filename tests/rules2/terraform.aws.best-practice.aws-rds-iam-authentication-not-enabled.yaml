@@ -1,0 +1,34 @@
+rules:
+- id: terraform.aws.best-practice.aws-rds-iam-authentication-not-enabled.aws-rds-iam-authentication-not-enabled
+  patterns:
+  - pattern: |
+      resource "aws_db_instance" $ANYTHING {
+        ...
+      }
+  - pattern-not-inside: |
+      resource "aws_db_instance" $ANYTHING {
+        ...
+        iam_database_authentication_enabled = true
+        ...
+      }
+  message: The AWS RDS is not configured to use IAM authentication. Consider using
+    IAM for authentication.
+  languages:
+  - hcl
+  severity: WARNING
+  metadata:
+    category: best-practice
+    technology:
+    - terraform
+    - aws
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/terraform.aws.best-practice.aws-rds-iam-authentication-not-enabled.aws-rds-iam-authentication-not-enabled
+    shortlink: https://sg.run/veAA
+    semgrep.dev:
+      rule:
+        r_id: 17333
+        rv_id: 110707
+        rule_id: 2ZUL11
+        version_id: l4T46Wr
+        url: https://semgrep.dev/playground/r/l4T46Wr/terraform.aws.best-practice.aws-rds-iam-authentication-not-enabled.aws-rds-iam-authentication-not-enabled
+        origin: community

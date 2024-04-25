@@ -1,0 +1,94 @@
+rules:
+- id: java.servlets.security.servletresponse-writer-xss-deepsemgrep.servletresponse-writer-xss-deepsemgrep
+  message: Untrusted input could be used to tamper with a web page rendering, which
+    can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur
+    when untrusted input executes malicious JavaScript code, leading to issues such
+    as account compromise and sensitive information leakage. To prevent this vulnerability,
+    validate the user input, perform contextual output encoding or sanitize the input.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-79: Improper Neutralization of Input During Web Page Generation (''Cross-site
+      Scripting'')'
+    cwe2020-top25: true
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - web::sink::direct-response::Spring
+    - web::source::cookie::Servlet
+    - web::source::header::Servlet
+    - web::source::http-body::Servlet
+    - web::source::http-params::Servlet
+    - web::source::url-path-params::Servlet
+    owasp:
+    - A03:2021 - Injection
+    - A07:2017 - Cross-Site Scripting (XSS)
+    references:
+    - https://owasp.org/Top10/A03_2021-Injection
+    technology:
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cross-Site-Scripting (XSS)
+    source: https://semgrep.dev/r/java.servlets.security.servletresponse-writer-xss-deepsemgrep.servletresponse-writer-xss-deepsemgrep
+    shortlink: https://sg.run/vJN0
+    semgrep.dev:
+      rule:
+        r_id: 40133
+        rv_id: 742794
+        rule_id: EwUYz4
+        version_id: QkTn9DP
+        url: https://semgrep.dev/playground/r/QkTn9DP/java.servlets.security.servletresponse-writer-xss-deepsemgrep.servletresponse-writer-xss-deepsemgrep
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: (ServletRequest $REQ).$METHOD(...)
+      - pattern: (HttpServletRequest $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString|getPathInfo)
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: (PrintWriter $WRITER).write($STR,...)
+      - pattern: (HttpServletResponse $R).getWriter().write($STR, ...)
+    - focus-metavariable: $STR
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)
+  - pattern: new io.micronaut.views.ModelAndView<$X>(...)
+  - pattern: new io.micronaut.views.ModelAndView<?>(...)
+  - pattern: new io.micronaut.views.ModelAndView<>(...)
+  - pattern: new io.micronaut.views.ModelAndView(...)
+  - pattern: (org.owasp.html.PolicyFactory $X).sanitize(...)
+  - pattern: Jsoup.clean(...)
+  - pattern: (org.owasp.validator.html.AntiSamy $X).scan(...)
+  - pattern: Encode.forHtml(...)
+  - pattern: (Cleaner $CL).clean(...)

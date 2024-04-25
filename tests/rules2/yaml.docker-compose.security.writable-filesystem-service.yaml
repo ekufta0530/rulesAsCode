@@ -1,0 +1,59 @@
+rules:
+- id: yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service
+  patterns:
+  - pattern-inside: |
+      version: ...
+      ...
+      services:
+        ...
+  - pattern: |
+      $SERVICE:
+        ...
+        image: ...
+        ...
+  - pattern-not: |
+      $SERVICE:
+        ...
+        image: ...
+        ...
+        read_only: true
+  - focus-metavariable: $SERVICE
+  message: 'Service ''$SERVICE'' is running with a writable root filesystem. This
+    may allow malicious applications to download and run additional payloads, or modify
+    container files. If an application inside a container has to save something temporarily
+    consider using a tmpfs. Add ''read_only: true'' to this service to prevent this.'
+  metadata:
+    cwe:
+    - 'CWE-732: Incorrect Permission Assignment for Critical Resource'
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    - A06:2017 - Security Misconfiguration
+    references:
+    - https://docs.docker.com/compose/compose-file/compose-file-v3/#domainname-hostname-ipc-mac_address-privileged-read_only-shm_size-stdin_open-tty-user-working_dir
+    - https://blog.atomist.com/security-of-docker-kubernetes/
+    - https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html#rule-8-set-filesystem-and-volumes-to-read-only
+    category: security
+    technology:
+    - docker-compose
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: HIGH
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service
+    shortlink: https://sg.run/e4JE
+    semgrep.dev:
+      rule:
+        r_id: 10132
+        rv_id: 111114
+        rule_id: v8U5vN
+        version_id: o5Tg9ob
+        url: https://semgrep.dev/playground/r/o5Tg9ob/yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service
+        origin: community
+  languages:
+  - yaml
+  severity: WARNING

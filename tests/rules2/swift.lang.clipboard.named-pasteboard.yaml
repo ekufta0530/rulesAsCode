@@ -1,0 +1,50 @@
+rules:
+- id: swift.lang.clipboard.named-pasteboard.swift-named-persistent-pasteboards
+  message: The application was found to use named persistent pasteboards, which Apple
+    strongly discourages and were deprecated in iOS 10. The application should use
+    shared containers to pass data to trusted applications deployed under the same
+    developer account.
+  severity: WARNING
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-477: Use of Obsolete Function'
+    functional-categories:
+    - mobile::sink::other-app-communication::lang
+    masvs:
+    - 'MASVS-PLATFORM-1: The app uses IPC mechanisms securely'
+    references:
+    - https://developer.apple.com/documentation/uikit/uipasteboard?language=swift
+    - https://mas.owasp.org/MASTG/tests/ios/MASVS-PLATFORM/MASTG-TEST-0073/
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Dangerous Method or Function
+    source: https://semgrep.dev/r/swift.lang.clipboard.named-pasteboard.swift-named-persistent-pasteboards
+    shortlink: https://sg.run/GrYy
+    semgrep.dev:
+      rule:
+        r_id: 66492
+        rv_id: 112025
+        rule_id: ZqUP2G
+        version_id: pZT1LW1
+        url: https://semgrep.dev/playground/r/pZT1LW1/swift.lang.clipboard.named-pasteboard.swift-named-persistent-pasteboards
+        origin: pro_rules
+  languages:
+  - swift
+  mode: taint
+  options:
+    symbolic_propagation: true
+  pattern-sources:
+  - pattern: |
+      (UIPasteboard: $PB)(name: "...", ...)
+  pattern-sinks:
+  - pattern: |
+      (UIPasteboard: $PB).setPersistent(true)

@@ -1,0 +1,67 @@
+rules:
+- id: python.aws-lambda.deserialization.tainted-shelve-aws-lambda.tainted-shelve-aws-lambda
+  message: 'The application may convert user-controlled data into an object, which
+    can lead to an insecure deserialization vulnerability. An attacker can create
+    a malicious serialized object, pass it to the application, and take advantage
+    of the deserialization process to perform Denial-of-service (DoS), Remote code
+    execution (RCE), or bypass access control measures. To prevent this vulnerability,
+    leverage data formats such as JSON or XML as safer alternatives. If you need to
+    deserialize user input in a specific format, consider digitally signing the data
+    before serialization to prevent tampering. For more information, see: [Deserialization
+    prevention](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
+    The `shelve` module uses `pickle` and should not be used with data from untrusted
+    sources.'
+  severity: ERROR
+  metadata:
+    likelihood: MEDIUM
+    impact: HIGH
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-502: Deserialization of Untrusted Data'
+    cwe2021-top25: true
+    cwe2022-top25: true
+    functional-categories:
+    - deserialization::sink::load-object::lang
+    - serverless::source::function-params::aws-lambda
+    owasp:
+    - A08:2017 - Insecure Deserialization
+    - A08:2021 - Software and Data Integrity Failures
+    references:
+    - https://portswigger.net/web-security/deserialization
+    - https://docs.python.org/3/library/shelve.html
+    - https://docs.python.org/3/library/pickle.html
+    - https://davidhamann.de/2020/04/05/exploiting-python-pickle/
+    related_oss_rules:
+    - python.aws-lambda.security.tainted-pickle-deserialization
+    - python.lang.security.deserialization.avoid-shelve
+    technology:
+    - python
+    - aws-lambda
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - 'Insecure Deserialization '
+    source: https://semgrep.dev/r/python.aws-lambda.deserialization.tainted-shelve-aws-lambda.tainted-shelve-aws-lambda
+    shortlink: https://sg.run/92vk
+    semgrep.dev:
+      rule:
+        r_id: 44923
+        rv_id: 111809
+        rule_id: nJU5Gq
+        version_id: GxTv8d0
+        url: https://semgrep.dev/playground/r/GxTv8d0/python.aws-lambda.deserialization.tainted-shelve-aws-lambda.tainted-shelve-aws-lambda
+        origin: pro_rules
+  languages:
+  - python
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern: |
+        def $HANDLER($EVENT, context):
+          ...
+    - focus-metavariable: $EVENT
+  pattern-sinks:
+  - pattern-either:
+    - pattern: shelve.DbfilenameShelf($SINK, ...)

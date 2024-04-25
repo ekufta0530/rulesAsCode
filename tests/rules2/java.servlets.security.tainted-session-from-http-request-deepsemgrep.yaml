@@ -1,0 +1,77 @@
+rules:
+- id: java.servlets.security.tainted-session-from-http-request-deepsemgrep.tainted-session-from-http-request-deepsemgrep
+  message: Mixing trusted and untrusted data within the same structure can lead to
+    trust boundary violations, where unvalidated data is mistakenly trusted, potentially
+    bypassing security mechanisms. Thoroughly sanitize user input before passing it
+    into such function calls.
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-501: Trust Boundary Violation'
+    functional-categories:
+    - web::sink::session-properties::Servlet
+    - web::source::cookie::Servlet
+    - web::source::header::Servlet
+    - web::source::http-body::Servlet
+    - web::source::http-params::Servlet
+    - web::source::url-path-params::Servlet
+    owasp:
+    - A04:2021 - Insecure Design
+    references:
+    - https://owasp.org/Top10/A04_2021-Insecure_Design
+    technology:
+    - java
+    - servlets
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Other
+    source: https://semgrep.dev/r/java.servlets.security.tainted-session-from-http-request-deepsemgrep.tainted-session-from-http-request-deepsemgrep
+    shortlink: https://sg.run/El0B
+    semgrep.dev:
+      rule:
+        r_id: 40137
+        rv_id: 742798
+        rule_id: gxU5Ny
+        version_id: JdT6Xbr
+        url: https://semgrep.dev/playground/r/JdT6Xbr/java.servlets.security.tainted-session-from-http-request-deepsemgrep.tainted-session-from-http-request-deepsemgrep
+        origin: pro_rules
+  languages:
+  - java
+  mode: taint
+  options:
+    interfile: true
+    taint_assume_safe_booleans: true
+    taint_assume_safe_numbers: true
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: (ServletRequest $REQ).$METHOD(...)
+      - pattern: (HttpServletRequest $REQ).$METHOD(...)
+    - metavariable-regex:
+        metavariable: $METHOD
+        regex: (getInputStream|getParameter|getParameterMap|getParameterValues|getReader|getCookies|getHeader|getHeaderNames|getHeaders|getPart|getParts|getQueryString|getPathInfo)
+  pattern-propagators:
+  - from: $INPUT
+    patterns:
+    - pattern-either:
+      - pattern: String.format($FMT, ..., $INPUT, ...)
+      - pattern: MessageFormat.format($FMT, ..., $INPUT, ...)
+    to: $FMT
+  - from: $INPUT
+    patterns:
+    - pattern: (StringBuilder $BUILDER).append($INPUT);
+    to: $BUILDER
+  pattern-sinks:
+  - pattern-either:
+    - pattern: (HttpServletRequest $REQ).getSession().$FUNC(...)
+    - pattern: (HttpSession $SES).$FUNC(...)
+  pattern-sanitizers:
+  - pattern: (ChoiceFormat $X).format(...)
+  - pattern: (DecimalFormat $X).format(...)
+  - pattern: (java.util.UUID $X)

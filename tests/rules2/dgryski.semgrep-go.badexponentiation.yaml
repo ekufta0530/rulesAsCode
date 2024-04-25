@@ -1,0 +1,22 @@
+rules:
+- id: dgryski.semgrep-go.badexponentiation.bad-exponentiation
+  patterns:
+  - pattern-either:
+    - pattern: 10 ^ $X
+    - pattern: 2 ^ $X
+  message: Caret (^) is not exponentiation
+  languages:
+  - go
+  severity: ERROR
+  metadata:
+    license: MIT
+    source: https://semgrep.dev/r/dgryski.semgrep-go.badexponentiation.bad-exponentiation
+    shortlink: https://sg.run/Q5ND
+    semgrep.dev:
+      rule:
+        r_id: 8686
+        rv_id: 11973
+        rule_id: PeUZEb
+        version_id: l4TzWd
+        url: https://semgrep.dev/playground/r/l4TzWd/dgryski.semgrep-go.badexponentiation.bad-exponentiation
+        origin: community

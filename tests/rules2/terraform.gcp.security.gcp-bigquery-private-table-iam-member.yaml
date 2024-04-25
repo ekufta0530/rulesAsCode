@@ -1,0 +1,52 @@
+rules:
+- id: terraform.gcp.security.gcp-bigquery-private-table-iam-member.gcp-bigquery-private-table-iam-member
+  patterns:
+  - pattern: resource
+  - pattern-either:
+    - pattern-inside: |
+        resource "google_bigquery_table_iam_member" "..." {
+        ...
+        member = "allAuthenticatedUsers"
+        ...
+        }
+    - pattern-inside: |
+        resource "google_bigquery_table_iam_member" "..." {
+        ...
+        member = "allUsers"
+        ...
+        }
+  message: "Ensure that BigQuery Tables are not anonymously or publicly accessible\t\
+    \t"
+  metadata:
+    owasp:
+    - A05:2017 - Broken Access Control
+    - A01:2021 - Broken Access Control
+    cwe:
+    - 'CWE-284: Improper Access Control'
+    category: security
+    technology:
+    - terraform
+    - gcp
+    references:
+    - https://docs.bridgecrew.io/docs/google-cloud-policy-index
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authorization
+    source: https://semgrep.dev/r/terraform.gcp.security.gcp-bigquery-private-table-iam-member.gcp-bigquery-private-table-iam-member
+    shortlink: https://sg.run/K1rd
+    semgrep.dev:
+      rule:
+        r_id: 32299
+        rv_id: 110967
+        rule_id: EwUe7p
+        version_id: NdT3oon
+        url: https://semgrep.dev/playground/r/NdT3oon/terraform.gcp.security.gcp-bigquery-private-table-iam-member.gcp-bigquery-private-table-iam-member
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

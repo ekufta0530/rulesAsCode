@@ -1,0 +1,47 @@
+rules:
+- id: terraform.azure.security.azure-key-no-expiration-date.azure-key-no-expiration-date
+  message: Ensure that the expiration date is set on all keys
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      expiration_date = "..."
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      }
+  metadata:
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    cwe:
+    - 'CWE-320: CWE CATEGORY: Key Management Errors'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://owasp.org/Top10/A02_2021-Cryptographic_Failures
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: LOW
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Cryptographic Issues
+    source: https://semgrep.dev/r/terraform.azure.security.azure-key-no-expiration-date.azure-key-no-expiration-date
+    shortlink: https://sg.run/J1vw
+    semgrep.dev:
+      rule:
+        r_id: 23990
+        rv_id: 110900
+        rule_id: 0oUlgp
+        version_id: GxTv86W
+        url: https://semgrep.dev/playground/r/GxTv86W/terraform.azure.security.azure-key-no-expiration-date.azure-key-no-expiration-date
+        origin: community
+  languages:
+  - hcl
+  severity: WARNING

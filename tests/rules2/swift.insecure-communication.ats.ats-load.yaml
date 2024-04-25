@@ -1,0 +1,59 @@
+rules:
+- id: swift.insecure-communication.ats.ats-load.ATS-arbitrary-loads
+  message: The application's App Transport Security (ATS) configuration allows for
+    insecure HTTP connections. The `NSAllowsArbitraryLoads` and `NSTemporaryExceptionAllowsInsecureHTTPLoads`
+    property keys can be used to allow HTTP for all domains or a particular domain
+    respectively. HTTPs should be used in all cases, to ensure secure communications
+    - protecting data in transport.
+  severity: WARNING
+  metadata:
+    likelihood: MEDIUM
+    impact: MEDIUM
+    confidence: HIGH
+    category: security
+    subcategory:
+    - audit
+    cwe: 'CWE-319: Cleartext Transmission of Sensitive Information'
+    masvs:
+    - 'MASVS-NETWORK-1: The app secures all network traffic according to the current
+      best practices.'
+    owasp:
+    - A03:2017 - Sensitive Data Exposure
+    - A02:2021 - Cryptographic Failures
+    references:
+    - https://mobile-security.gitbook.io/mobile-security-testing-guide/ios-testing-guide/0x06g-testing-network-communication
+    technology:
+    - ios
+    - macos
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/swift.insecure-communication.ats.ats-load.ATS-arbitrary-loads
+    shortlink: https://sg.run/nE8g
+    semgrep.dev:
+      rule:
+        r_id: 60536
+        rv_id: 112016
+        rule_id: 7KU8r3
+        version_id: WrTW3wK
+        url: https://semgrep.dev/playground/r/WrTW3wK/swift.insecure-communication.ats.ats-load.ATS-arbitrary-loads
+        origin: pro_rules
+  languages:
+  - xml
+  options:
+    symbolic_propagation: true
+  paths:
+    include:
+    - Info.plist
+  patterns:
+  - pattern: |
+      <dict>
+      ...
+      <key>$KEY</key>
+      <true/>
+      ...
+      </dict>
+  - metavariable-regex:
+      metavariable: $KEY
+      regex: ^(NSAllowsArbitraryLoads|NSTemporaryExceptionAllowsInsecureHTTPLoads)$
+  - focus-metavariable: $KEY

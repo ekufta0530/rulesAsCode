@@ -1,0 +1,34 @@
+rules:
+- id: trailofbits.generic.wget-no-check-certificate.wget-no-check-certificate
+  message: Found `wget` command disabling SSL verification
+  languages:
+  - generic
+  severity: WARNING
+  metadata:
+    category: security
+    subcategory:
+    - audit
+    technology:
+    - shell
+    cwe: 'CWE-295: Improper Certificate Validation'
+    confidence: MEDIUM
+    likelihood: MEDIUM
+    impact: HIGH
+    references:
+    - https://linux.die.net/man/1/wget
+    license: AGPL-3.0 license
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/trailofbits.generic.wget-no-check-certificate.wget-no-check-certificate
+    shortlink: https://sg.run/j2WyD
+    semgrep.dev:
+      rule:
+        r_id: 113221
+        rv_id: 253291
+        rule_id: PeUJREx
+        version_id: QkT8yqY
+        url: https://semgrep.dev/playground/r/QkT8yqY/trailofbits.generic.wget-no-check-certificate.wget-no-check-certificate
+        origin: community
+  pattern-either:
+  - pattern: wget ... --no-check-certificate
+  - pattern: wget ... --no-hsts

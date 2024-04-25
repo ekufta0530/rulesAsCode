@@ -1,0 +1,46 @@
+rules:
+- id: terraform.azure.security.keyvault.keyvault-ensure-key-expires.keyvault-ensure-key-expires
+  message: Ensure that the expiration date is set on all keys
+  patterns:
+  - pattern: resource
+  - pattern-not-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      expiration_date = "..."
+      ...
+      }
+  - pattern-inside: |
+      resource "azurerm_key_vault_key" "..." {
+      ...
+      }
+  metadata:
+    cwe:
+    - 'CWE-262: Not Using Password Aging'
+    category: security
+    technology:
+    - terraform
+    - azure
+    references:
+    - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key#expiration_date
+    - https://docs.microsoft.com/en-us/powershell/module/az.keyvault/update-azkeyvaultkey?view=azps-5.8.0#example-1--modify-a-key-to-enable-it--and-set-the-expiration-date-and-tags
+    subcategory:
+    - vuln
+    likelihood: LOW
+    impact: MEDIUM
+    confidence: MEDIUM
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Improper Authentication
+    source: https://semgrep.dev/r/terraform.azure.security.keyvault.keyvault-ensure-key-expires.keyvault-ensure-key-expires
+    shortlink: https://sg.run/vq9A
+    semgrep.dev:
+      rule:
+        r_id: 15133
+        rv_id: 110929
+        rule_id: gxUgXq
+        version_id: vdTY885
+        url: https://semgrep.dev/playground/r/vdTY885/terraform.azure.security.keyvault.keyvault-ensure-key-expires.keyvault-ensure-key-expires
+        origin: community
+  languages:
+  - hcl
+  severity: INFO

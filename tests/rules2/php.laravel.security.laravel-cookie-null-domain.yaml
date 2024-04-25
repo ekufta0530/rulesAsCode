@@ -1,0 +1,63 @@
+rules:
+- id: php.laravel.security.laravel-cookie-null-domain.laravel-cookie-null-domain
+  patterns:
+  - pattern: |
+      'cookie'
+  - pattern-inside: |
+      return [
+        ...,
+        'cookie' => env(...),
+        ...
+      ];
+  - pattern-not-inside: |
+      return [
+        ...,
+        'domain' => null,
+        ...
+      ];
+  - pattern-not-inside: |
+      return [
+        ...,
+        'domain' => env('$NAME', $DEFAULT),
+        ...
+      ];
+  paths:
+    include:
+    - '*session.php'
+  message: 'Found a configuration file where the domain attribute is not set to null.
+    It is recommended (unless you are using sub-domain route registrations) to set
+    this attribute to null so that only the same origin can set the cookie, thus protecting
+    your cookies. '
+  languages:
+  - php
+  severity: ERROR
+  metadata:
+    category: security
+    cwe:
+    - 'CWE-200: Exposure of Sensitive Information to an Unauthorized Actor'
+    owasp:
+    - A01:2021 - Broken Access Control
+    technology:
+    - php
+    - laravel
+    references:
+    - https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Laravel_Cheat_Sheet.md
+    cwe2021-top25: true
+    subcategory:
+    - audit
+    likelihood: LOW
+    impact: LOW
+    confidence: LOW
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    vulnerability_class:
+    - Mishandled Sensitive Information
+    source: https://semgrep.dev/r/php.laravel.security.laravel-cookie-null-domain.laravel-cookie-null-domain
+    shortlink: https://sg.run/JbLk
+    semgrep.dev:
+      rule:
+        r_id: 23090
+        rv_id: 110067
+        rule_id: 2ZUYDx
+        version_id: nWTxPR5
+        url: https://semgrep.dev/playground/r/nWTxPR5/php.laravel.security.laravel-cookie-null-domain.laravel-cookie-null-domain
+        origin: community

@@ -1,0 +1,65 @@
+rules:
+- id: python.flask.web.flask-cookie-httponly-missing.flask-cookie-httponly-missing
+  message: Detected a cookie where the `HttpOnly` flag is either missing or disabled.
+    The `HttpOnly` cookie flag instructs the browser to forbid client-side JavaScript
+    to read the cookie. If JavaScript interaction is required, you can ignore this
+    finding. However, set the `HttpOnly` flag to `true` in all other cases.
+  severity: INFO
+  metadata:
+    likelihood: LOW
+    impact: LOW
+    confidence: HIGH
+    category: security
+    subcategory:
+    - vuln
+    cwe:
+    - 'CWE-1004: Sensitive Cookie Without ''HttpOnly'' Flag'
+    functional-categories:
+    - web::search::cookie-config::flask
+    - web::search::cookie-config::flask-jwt-extended
+    - web::search::cookie-config::flask-login
+    - web::search::cookie-config::flask-session
+    owasp:
+    - A05:2021 - Security Misconfiguration
+    references:
+    - https://owasp.org/Top10/A05_2021-Security_Misconfiguration
+    technology:
+    - cookie
+    - cookies
+    - flask
+    - web
+    license: Copyright 2023 Semgrep, Inc.
+    vulnerability_class:
+    - Cookie Security
+    source: https://semgrep.dev/r/python.flask.web.flask-cookie-httponly-missing.flask-cookie-httponly-missing
+    shortlink: https://sg.run/x8Z4j
+    semgrep.dev:
+      rule:
+        r_id: 116530
+        rv_id: 731980
+        rule_id: d8Ur84L
+        version_id: ZRTGv7L
+        url: https://semgrep.dev/playground/r/ZRTGv7L/python.flask.web.flask-cookie-httponly-missing.flask-cookie-httponly-missing
+        origin: pro_rules
+  languages:
+  - python
+  fix: $RESP.set_cookie($...ARGS, httponly=True)
+  options:
+    symbolic_propagation: true
+  patterns:
+  - pattern-either:
+    - pattern-inside: |
+        def $METHOD(..., $RESP: flask.Response, ...):
+            ...
+    - pattern-inside: |
+        $RESP = flask.make_response(...)
+        ...
+    - pattern-inside: |
+        $RESP = $APP.make_response(...)
+        ...
+    - pattern-inside: |
+        $RESP = flask.Response(...)
+        ...
+  - patterns:
+    - pattern: $RESP.set_cookie($...ARGS)
+    - pattern-not: $RESP.set_cookie(..., httponly=$BOOL, ...)

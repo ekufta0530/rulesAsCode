@@ -1,0 +1,35 @@
+rules:
+- id: yaml.semgrep.metadata-impact-incorrect-value.metadata-impact-incorrect-value
+  patterns:
+  - pattern-inside: "rules: \n  ...\n"
+  - pattern-inside: "metadata: \n  ...\n  category: security\n  ...\n"
+  - pattern: |
+      impact: $VALUE
+  - pattern-not: |
+      impact: LOW
+  - pattern-not: |
+      impact: MEDIUM
+  - pattern-not: |
+      impact: HIGH
+  message: 'Semgrep rule impact: $VALUE detected, but the value must be LOW, MEDIUM,
+    or HIGH. For more information visit:  https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/'
+  languages:
+  - yaml
+  severity: WARNING
+  metadata:
+    references:
+    - https://semgrep.dev/docs/contributing/contributing-to-semgrep-rules-repository/
+    category: correctness
+    technology:
+    - semgrep
+    license: Commons Clause License Condition v1.0[LGPL-2.1-only]
+    source: https://semgrep.dev/r/yaml.semgrep.metadata-impact-incorrect-value.metadata-impact-incorrect-value
+    shortlink: https://sg.run/DqXo
+    semgrep.dev:
+      rule:
+        r_id: 39208
+        rv_id: 111169
+        rule_id: j2U9zv
+        version_id: NdT3oJ0
+        url: https://semgrep.dev/playground/r/NdT3oJ0/yaml.semgrep.metadata-impact-incorrect-value.metadata-impact-incorrect-value
+        origin: community
