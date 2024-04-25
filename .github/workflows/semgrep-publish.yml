@@ -15,6 +15,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: publish private semgrep rules
       run: | 
-        semgrep publish /tests/rules3
+        ls github.workspace/tests/rules3
+        semgrep publish github.workspace/tests/rules3
       env:
         SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
