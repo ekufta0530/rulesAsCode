@@ -1,0 +1,21 @@
+name: semgrep-publish
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  publish:
+    name: publish-private-semgrep-rules
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+    - uses: actions/checkout@v4
+    - name: publish private semgrep rules
+      run: | 
+        ls /github/workspace/tests/rules3
+        semgrep publish /github/workspace/tests/rules3
+      env:
+        SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
