@@ -13,7 +13,7 @@ rules:
   metadata:
     license: MIT
     source: https://semgrep.dev/r/dgryski.semgrep-go.anon-struct-args.anonymous-struct-args
-    shortlink: https://sg.run/gLyo
+    shortlink: https://sg.run/ghhtgLyo
     semgrep.dev:
       rule:
         r_id: 8685
